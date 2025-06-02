@@ -1,0 +1,31 @@
+# FastAPI framework
+fastapi
+
+# ASGI serwer
+uvicorn[standard]
+
+# Firebase klient
+firebase-admin
+# Firestore biblioteka
+google-cloud-firestore
+
+# MongoDB klient
+pymongo
+# Async MongoDB
+motor
+
+# HTTP zapytania
+requests
+# HTML parser
+beautifulsoup4
+
+# Środowisko zmienne
+python-dotenv
+# Zadania cykliczne
+apscheduler
+
+# Walidacja danych
+pydantic>=2.0
+
+# Testy jednostkowe
+pytest
