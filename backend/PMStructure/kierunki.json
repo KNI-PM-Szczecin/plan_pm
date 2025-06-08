@@ -1,0 +1,86 @@
+{
+  "Logistyka": {
+    "mgr": {
+      "N": {
+        "1": [
+          "Logistyka Łańcuchów Dostaw",
+          "Logistyka Offshore"
+        ]
+      },
+      "S": {
+        "1": [
+          "Logistyka"
+        ]
+      }
+    },
+    "inż.": {
+      "N": {
+        "3": [
+          "Logistyka"
+        ],
+        "4": [
+          "Logistyka"
+        ]
+      },
+      "S": {
+        "3": [
+          "Logistyka"
+        ]
+      }
+    }
+  },
+  "Zarządzanie i Inżynieria Produkcji": {
+    "mgr": {
+      "N": {
+        "1": [
+          "Zarządzanie Zautomatyzowanymi Systemami Produkcyjnymi"
+        ]
+      },
+      "S": {
+        "1": [
+          "Zarządzanie i Inżynieria Produkcji"
+        ]
+      }
+    },
+    "inż.": {
+      "S": {
+        "3": [
+          "Zarządzanie i Inżynieria Produkcji"
+        ]
+      }
+    }
+  },
+  "Transport": {
+    "inż.": {
+      "N": {
+        "3": [
+          "Transport"
+        ],
+        "4": [
+          "Transport"
+        ]
+      },
+      "S": {
+        "3": [
+          "Transport"
+        ]
+      }
+    },
+    "mgr": {
+      "S": {
+        "1": [
+          "Transport"
+        ]
+      }
+    }
+  },
+  "Zarządzanie": {
+    "lic": {
+      "S": {
+        "3": [
+          "Zarządzanie"
+        ]
+      }
+    }
+  }
+}
