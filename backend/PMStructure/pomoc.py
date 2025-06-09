@@ -1,15 +1,15 @@
-gowno = "Programowanie N mgr 1.50 2023/2024 zima"
+zmienna = "Programowanie N mgr 1.50 2023/2024 zima"
 
-gowno = gowno.split()
+zmienna = zmienna.split()
 
-print(gowno)
+print(zmienna)
 trybIndex = 0
 try:
-    trybIndex = gowno.index("mgr")
+    trybIndex = zmienna.index("mgr")
 except ValueError:
-    trybIndex = gowno.index("inż.")
+    trybIndex = zmienna.index("inż.")
     
-rok = gowno[trybIndex + 1]
-trybStudiow = gowno[trybIndex]
+rok = zmienna[trybIndex + 1]
+trybStudiow = zmienna[trybIndex]
 print(trybStudiow)
 print(float(rok).__floor__())
