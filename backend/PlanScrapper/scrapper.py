@@ -39,7 +39,7 @@ class Scrapper:
         return lectures
 
     def scrapper(self, flow_id):
-        url = f'https://plany.am.szczecin.pl/Plany/PlanyTokow/{flow_id}'
+        url = f'https://plany.am.szczecin.pl/Index/Jezyk?lang=pl&url=%2FPlany%2FPlanyTokow%2F/{flow_id}'
         download_dir = Path(f"./downloads/{flow_id}")
         download_dir.mkdir(parents=True, exist_ok=True)
 
