@@ -22,28 +22,71 @@ def convertDateToTimestamp(date, start, end):
 
     return timestamp
 
+def parseTeachers(teacher):
+    prof = teacher.find("prof. ", 1)
+    dr = teacher.find("dr ", 7)
+    mgr = teacher.find("mgr ", 1)
+
+
+    teachers = []
+
+    if prof != -1:
+        teachers += parseTeachers(teacher[prof:])
+        teacher = teacher[:prof]
+    elif dr != -1:
+        teachers += (parseTeachers(teacher[dr:]))
+        teacher = teacher[:dr]
+    elif mgr != -1:
+        teachers += (parseTeachers(teacher[mgr:]))
+        teacher = teacher[:mgr]
+
+    teachers.append(teacher)
+
+    return teachers
+
 def getTokAndPlan(json):
     programs = []
     classes = []
+    teachers = []
     toknum = -1
     for i in json:
             obj = eval(i[:-1])
             if obj["Plan dla toku"] not in programs:
                 programs.append(obj["Plan dla toku"])
                 toknum += 1
+            if obj["Prowadzący"] not in teachers:
+                teachers.append(obj["Prowadzący"])
+            obj["Prowadzący"] = teachers.index(obj["Prowadzący"])
             obj["Plan dla toku"] = toknum
             obj["timestamp"] = convertDateToTimestamp(obj.pop("Data zajęć"), obj.pop("Czas od"), obj.pop("Czas do"))
 
             classes.append(obj)
     
-    return programs, classes
+    prof = []
+    dr = []
+    mgr = []
+
+    for i, teacher in enumerate(teachers):
+        for i in parseTeachers(teacher):
+            if "prof." in i:
+                prof.append(i)
+            elif "dr " in i:
+                dr.append(i)
+            elif "mgr " in i:
+                mgr.append(i)
+            else:
+                print(f"Unknown teacher format: {i}")
+
+    teachers = [prof, dr, mgr]
+
+    return programs, classes, teachers
 
 def readJson():
     with open("plany.json", "r", encoding="utf-8") as file:
         json = file.read().splitlines()
-        programs, classes = getTokAndPlan(json[1:])
+        programs, classes, teachers = getTokAndPlan(json[1:])
 
-        return programs, classes
+        return programs, classes, teachers
 
 def tokStringToDic(tokString):
     tok = {
@@ -87,8 +130,11 @@ def tokStringToDic(tokString):
 
     return tok
 
-programs, classes = readJson()
+programs, classes, teachers = readJson()
 programs = [tokStringToDic(tok) for tok in programs]
+
+print()
 
 print("\n", programs[12], sep="")
 print(classes[535])
+print(teachers[0])
