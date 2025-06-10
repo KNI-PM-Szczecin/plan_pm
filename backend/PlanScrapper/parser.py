@@ -23,6 +23,8 @@ def convertDateToTimestamp(date, start, end):
     return timestamp
 
 def parseTeachers(teacher):
+    if teacher == "":
+        return []
     prof = teacher.find("prof. ", 1)
     dr = teacher.find("dr ", 7)
     mgr = teacher.find("mgr ", 1)
@@ -56,30 +58,26 @@ def getTokAndPlan(json):
                 toknum += 1
             if obj["Prowadzący"] not in teachers:
                 teachers.append(obj["Prowadzący"])
-            obj["Prowadzący"] = teachers.index(obj["Prowadzący"])
             obj["Plan dla toku"] = toknum
             obj["timestamp"] = convertDateToTimestamp(obj.pop("Data zajęć"), obj.pop("Czas od"), obj.pop("Czas do"))
 
             classes.append(obj)
     
-    prof = []
-    dr = []
-    mgr = []
-
+    temp = []
     for i, teacher in enumerate(teachers):
         for i in parseTeachers(teacher):
+            if i in temp:
+                continue
             if "prof." in i:
-                prof.append(i)
+                temp.append(i)
             elif "dr " in i:
-                dr.append(i)
+                temp.append(i)
             elif "mgr " in i:
-                mgr.append(i)
+                temp.append(i)
             else:
                 print(f"Unknown teacher format: {i}")
 
-    teachers = [prof, dr, mgr]
-
-    return programs, classes, teachers
+    return programs, classes, temp
 
 def readJson():
     with open("plany.json", "r", encoding="utf-8") as file:
@@ -132,9 +130,19 @@ def tokStringToDic(tokString):
 
 programs, classes, teachers = readJson()
 programs = [tokStringToDic(tok) for tok in programs]
+classes = [{**c, "Prowadzący": " ".join(str(teachers.index(x)) for x in parseTeachers(c["Prowadzący"]))} for c in classes]
+
+# for i, c in enumerate(classes):
+#     t = c["Prowadzący"]
+#     c["Prowadzący"] = ""
+#     for x in parseTeachers(t):
+#         classes[i]["Prowadzący"] += f' {teachers.index(x)}'
+
+
 
 print()
 
 print("\n", programs[12], sep="")
 print(classes[535])
 print(teachers[0])
+print(classes[406])
