@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/welcome/welcome_page.dart';
+import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/widgets/navigation_bar.dart';
+import 'package:plan_pm/pages/home/home_page.dart';
+import 'package:plan_pm/pages/lectures/lectures_page.dart';
+import 'package:plan_pm/pages/menu/menu_page.dart';
+import 'package:plan_pm/pages/welcome/welcome_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
-  // This widget is the root of your application.
+  // Tutaj jest głowa aplikacji, najlepiej aby nic nie zmieniać.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Plan PM',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
@@ -23,6 +27,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// To jest nasz główny widok aplikacji. Tutaj mamy zakładki, po których będzie mozna się poruszać w apce.
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -32,86 +37,30 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+// To jest lista ze wszystkimi stronami i ich tytułami. W przyszłości będzie mozna dodać więcej parametrów.
+List<Map<String, dynamic>> pages = [
+  {"widget": const HomePage(), "title": "Home"},
+  {"widget": const LecturesPage(), "title": "Lectures"},
+  {"widget": const MenuPage(), "title": "Menu"},
+];
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          spacing: 20,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Dane studenta to: '),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 10,
-                children: [
-                  Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Wydział",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Kierunek",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Specjalizacja",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Rok",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Tryb studiów",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(
-                        width: 250,
-                        child: Text(Student.faculty ?? "Brak danych"),
-                      ),
-                      SizedBox(
-                        width: 250,
-                        child: Text(Student.degreeCourse ?? "Brak danych"),
-                      ),
-                      SizedBox(
-                        width: 250,
-                        child: Text(Student.specialisation ?? "Brak danych"),
-                      ),
-                      Text(
-                        Student.year != 0
-                            ? Student.year.toString()
-                            : "Brak danych",
-                      ),
-                      Text(Student.term ?? "Brak danych"),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              "Piotr Wittig was here.",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
+    // Jezeli wartosc notifiera selectedTab sie zmieni - przebuduj cala strone.
+    return ValueListenableBuilder(
+      builder: (context, selectedTab, child) {
+        return Scaffold(
+          appBar: AppBar(
+            // Tytul jest brany dynamicznie z listy pages.
+            title: Text(pages[selectedTab]['title']),
+          ),
+          bottomNavigationBar: CustomNavigationBar(),
+          body: pages[selectedTab]['widget'],
+        );
+      },
+      // Wartość, którą zmian nasłuchujemy
+      valueListenable: Notifiers.selectedTab,
     );
   }
 }
