@@ -132,17 +132,18 @@ programs, classes, teachers = readJson()
 programs = [tokStringToDic(tok) for tok in programs]
 classes = [{**c, "Prowadzący": " ".join(str(teachers.index(x)) for x in parseTeachers(c["Prowadzący"]))} for c in classes]
 
-# for i, c in enumerate(classes):
-#     t = c["Prowadzący"]
-#     c["Prowadzący"] = ""
-#     for x in parseTeachers(t):
-#         classes[i]["Prowadzący"] += f' {teachers.index(x)}'
+with open("flows.json", "r", encoding="utf-8") as file:
+    flows = file.read().splitlines()
+    flows = [tokStringToDic(i[12:]) for i in flows[1:-1]]
 
-
+for program in programs:
+    if program in flows:
+        print("Flow already exists in programs:", flow)
 
 print()
 
 print("\n", programs[12], sep="")
+print(flows[0])
 print(classes[535])
 print(teachers[0])
 print(classes[406])
