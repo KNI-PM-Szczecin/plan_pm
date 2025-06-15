@@ -1,67 +1,19 @@
 {
-  "Logistyka": {
-    "mgr": {
-      "N": {
-        "1": [
-          "Logistyka Łańcuchów Dostaw",
-          "Logistyka Offshore"
-        ]
-      },
-      "S": {
-        "1": [
-          "Logistyka"
-        ]
-      }
-    },
-    "inż.": {
-      "N": {
-        "3": [
-          "Logistyka"
-        ],
-        "4": [
-          "Logistyka"
-        ]
-      },
+  "Zarządzanie": {
+    "lic": {
       "S": {
         "3": [
-          "Logistyka"
-        ]
-      }
-    }
-  },
-  "Zarządzanie i Inżynieria Produkcji": {
-    "mgr": {
-      "N": {
-        "1": [
-          "Zarządzanie Zautomatyzowanymi Systemami Produkcyjnymi"
-        ]
-      },
-      "S": {
-        "1": [
-          "Zarządzanie i Inżynieria Produkcji"
-        ]
-      }
-    },
-    "inż.": {
-      "S": {
-        "3": [
-          "Zarządzanie i Inżynieria Produkcji"
+          "Zarządzanie",
+          "Organizacja i Zarządzanie w Gospodarce Morskiej"
         ]
       }
     }
   },
   "Transport": {
     "inż.": {
-      "N": {
-        "3": [
-          "Transport"
-        ],
-        "4": [
-          "Transport"
-        ]
-      },
       "S": {
         "3": [
+          "Eksploatacja Portów i Floty Morskiej",
           "Transport"
         ]
       }
@@ -74,11 +26,39 @@
       }
     }
   },
-  "Zarządzanie": {
-    "lic": {
+  "Zarządzanie i Inżynieria Produkcji": {
+    "inż.": {
       "S": {
         "3": [
-          "Zarządzanie"
+          "Zarządzanie Innowacjami w Produkcji i Usługach",
+          "Zarządzanie i Inżynieria Produkcji"
+        ]
+      }
+    },
+    "mgr": {
+      "S": {
+        "1": [
+          "Utrzymanie Ruchu w Przemyśle 4.0",
+          "Zarządzanie i Inżynieria Produkcji"
+        ]
+      }
+    }
+  },
+  "Logistyka": {
+    "inż.": {
+      "S": {
+        "3": [
+          "Logistyka i Zarządzanie w Europejskim Systemie Transportowym",
+          "Logistyka Przedsiębiorstw",
+          "Logistyka"
+        ]
+      }
+    },
+    "mgr": {
+      "S": {
+        "1": [
+          "Logistyka Offshore",
+          "Logistyka"
         ]
       }
     }

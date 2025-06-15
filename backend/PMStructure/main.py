@@ -1,24 +1,50 @@
-import os
 import time
 import json
-import shutil
-import threading
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium import webdriver 
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+
+def create_driver():
+    driver = None
+    
+    try:
+        print("🦊 Próba uruchomienia Firefox...")
+        firefox_options = FirefoxOptions()
+        firefox_options.add_argument("--headless")
+        
+        firefox_service = FirefoxService(GeckoDriverManager().install())
+        driver = webdriver.Firefox(service=firefox_service, options=firefox_options)
+        print("✅ Firefox uruchomiony pomyślnie!")
+        return driver
+
+    except Exception as e:
+        print(f"❌ Firefox nie działa: {e}")
+        print("🔄 Przełączanie na Chrome...")
+
+        try:
+            chrome_options = ChromeOptions()
+            chrome_options.add_argument("--headless=new")
+            
+            chrome_service = ChromeService(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+            print("✅ Chrome uruchomiony pomyślnie!")
+            return driver
+            
+        except Exception as chrome_error:
+            print(f"❌ Chrome też nie działa: {chrome_error}")
+            raise Exception("Nie udało się uruchomić ani Firefox, ani Chrome")
+
+driver = create_driver()
 
 url = f'https://plany.am.szczecin.pl/Index/Jezyk?lang=pl&url=%2FPlany%2FZnajdzTok%3FTrybStudiowId%3D-1%26WydzialId%3D735%26naborId%3D-1%26kierunekId%3D%26specjalnoscId%3D'
 
-service = Service(executable_path="./chromedriver")
-options = Options()
-# options.add_argument("--headless=new")
-
-driver = webdriver.Chrome(service=service, options=options)
 driver.get(url)
 
 WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "cc_essential")))
@@ -42,6 +68,7 @@ for row in rows:
     tryb = ""
 
     for index, child in enumerate(children):
+        child.text
         if index == 2:
             kierunek = child.text.strip()
         elif index == 3:
