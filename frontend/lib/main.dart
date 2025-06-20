@@ -40,7 +40,7 @@ class MyHomePage extends StatefulWidget {
 // To jest lista ze wszystkimi stronami i ich tytułami. W przyszłości będzie mozna dodać więcej parametrów.
 List<Map<String, dynamic>> pages = [
   {"widget": const HomePage(), "title": "Home"},
-  {"widget": const LecturesPage(), "title": "Lectures"},
+  {"widget": const LecturesPage(), "title": "Weekly schedule"},
   {"widget": const MenuPage(), "title": "Menu"},
 ];
 
@@ -53,7 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
         return Scaffold(
           appBar: AppBar(
             // Tytul jest brany dynamicznie z listy pages.
-            title: Text(pages[selectedTab]['title']),
+            title: Text(
+              pages[selectedTab]['title'],
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            forceMaterialTransparency:
+                true, // Jezeli się tego nie da to pry scrollowaniu AppBar będzie dziwny
           ),
           bottomNavigationBar: CustomNavigationBar(),
           body: pages[selectedTab]['widget'],
