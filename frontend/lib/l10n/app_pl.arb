@@ -348,6 +348,27 @@
   "@sendFeedbackButton": {
     "description": "settings_page.dart - Button label to submit feedback/suggestions."
   },
+  "feedbackPageHeadline": "Twoja opinia jest dla nas ważna!",
+  "@feedbackPageHeadline": {
+    "description": "feedback_page.dart - Main headline encouraging users to share feedback."
+  },
+  "feedbackPageDescription": "Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.",
+  "@feedbackPageDescription": {
+    "description": "feedback_page.dart - Explains that the feedback form opens externally in a browser."
+  },
+  "feedbackFormOpenGenericError": "Nie udało się otworzyć formularza opinii.",
+  "@feedbackFormOpenGenericError": {
+    "description": "feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form."
+  },
+  "feedbackFormOpenError": "Nie udało się otworzyć formularza opinii: {error}",
+  "@feedbackFormOpenError": {
+    "description": "feedback_page.dart - Snackbar shown when opening the feedback form fails.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "daysAgo": "{days, plural, =0{dzisiaj} one{1 dzień temu} few{{days} dni temu} many{{days} dni temu} other{{days} dni temu}}",
   "@daysAgo": {
     "description": "General - Relative time label like '1 dzień temu', '0 dni temu (dzisiaj)', '4 dni temu'.",

@@ -604,6 +604,30 @@ abstract class AppLocalizations {
   /// **'Prześlij opinie'**
   String get sendFeedbackButton;
 
+  /// feedback_page.dart - Main headline encouraging users to share feedback.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twoja opinia jest dla nas ważna!'**
+  String get feedbackPageHeadline;
+
+  /// feedback_page.dart - Explains that the feedback form opens externally in a browser.
+  ///
+  /// In pl, this message translates to:
+  /// **'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.'**
+  String get feedbackPageDescription;
+
+  /// feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć formularza opinii.'**
+  String get feedbackFormOpenGenericError;
+
+  /// feedback_page.dart - Snackbar shown when opening the feedback form fails.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć formularza opinii: {error}'**
+  String feedbackFormOpenError(String error);
+
   /// General - Relative time label like '1 dzień temu', '0 dni temu (dzisiaj)', '4 dni temu'.
   ///
   /// In pl, this message translates to:

@@ -73,6 +73,17 @@
   "pageTitleSettings": "Settings",
   "feedbackHeader": "Feedback and suggestions",
   "sendFeedbackButton": "Send feedback",
+  "feedbackPageHeadline": "Your feedback matters to us!",
+  "feedbackPageDescription": "The form will open in your browser so you can sign in securely.",
+  "feedbackFormOpenGenericError": "Could not open the feedback form.",
+  "feedbackFormOpenError": "Could not open the feedback form: {error}",
+  "@feedbackFormOpenError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "pageTitleNews": "News",
   "debugHeader": "Debug",
   "returnToLabel": "Return to",

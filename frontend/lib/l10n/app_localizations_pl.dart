@@ -286,6 +286,22 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sendFeedbackButton => 'Prześlij opinie';
 
   @override
+  String get feedbackPageHeadline => 'Twoja opinia jest dla nas ważna!';
+
+  @override
+  String get feedbackPageDescription =>
+      'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.';
+
+  @override
+  String get feedbackFormOpenGenericError =>
+      'Nie udało się otworzyć formularza opinii.';
+
+  @override
+  String feedbackFormOpenError(String error) {
+    return 'Nie udało się otworzyć formularza opinii: $error';
+  }
+
+  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,

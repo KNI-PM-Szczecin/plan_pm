@@ -39,48 +39,50 @@ class SettingsPage extends StatelessWidget {
         ),
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              spacing: 10,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                StudentInfo(),
-                GroupInfo(),
-                MenuSection(
-                  title: l10n.feedbackHeader,
-                  child: MenuButton(
-                    title: l10n.sendFeedbackButton,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FeedbackPage(),
-                        ),
-                      );
-                    },
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  StudentInfo(),
+                  GroupInfo(),
+                  MenuSection(
+                    title: l10n.feedbackHeader,
+                    child: MenuButton(
+                      title: l10n.sendFeedbackButton,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FeedbackPage(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                MenuSection(
-                  title: l10n.debugHeader,
-                  child: MenuButton(
-                    title: "Powrót do Welcome Screen",
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WelcomePage(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+                  // MenuSection(
+                  //   title: l10n.debugHeader,
+                  //   child: MenuButton(
+                  //     title: "Powrót do Welcome Screen",
+                  //     onTap: () {
+                  //       HapticFeedback.lightImpact();
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const WelcomePage(),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         ),

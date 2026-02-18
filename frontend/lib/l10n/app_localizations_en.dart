@@ -289,6 +289,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendFeedbackButton => 'Send feedback';
 
   @override
+  String get feedbackPageHeadline => 'Your feedback matters to us!';
+
+  @override
+  String get feedbackPageDescription =>
+      'The form will open in your browser so you can sign in securely.';
+
+  @override
+  String get feedbackFormOpenGenericError =>
+      'Could not open the feedback form.';
+
+  @override
+  String feedbackFormOpenError(String error) {
+    return 'Could not open the feedback form: $error';
+  }
+
+  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,

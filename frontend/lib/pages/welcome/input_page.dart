@@ -59,6 +59,7 @@ class _InputPageState extends State<InputPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -203,9 +204,14 @@ class _InputPageState extends State<InputPage> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            top: 15,
+            right: 15,
+            bottom: 80,
+          ),
           child: Center(
             child: Column(
               children: [
