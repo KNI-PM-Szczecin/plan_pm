@@ -94,5 +94,8 @@
   "noNews": "No news",
   "universityStructureEmpty": "The university structure is empty. Are you connected to the internet?",
   "noSpecialisationForField": "No specialisation available for this field",
+  "degreeLevelLabel": "Degree Level",
+  "degreeLevelEngineering": "Engineering",
+  "degreeLevelMasters": "Masters",
   "unexpectedError": "Oops! Something went wrong."
 }

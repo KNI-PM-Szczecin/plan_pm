@@ -59,7 +59,8 @@ class BackendService {
           "programs.name",
           Student.specialisation ?? Student.degreeCourse ?? "",
         )
-        .eq("programs.year", Student.year ?? 0);
+        .eq("programs.year", Student.year ?? 0)
+        .eq("programs.degreeLevel", Student.degreeLevel ?? "");
 
     if (selectedGroups.isNotEmpty) {
       query = query.inFilter("group", selectedGroups);
@@ -79,18 +80,22 @@ class BackendService {
   }
 
   Future<List<String>> fetchGroups() async {
-    List<Map<String, dynamic>> response = await Supabase.instance.client.rpc(
-      "get_distinct_groups",
-      params: {
-        'program_name_filter':
-            Student.specialisation ?? Student.degreeCourse ?? "",
-        'program_type_filter': Student.term?[0] ?? "S",
-        'program_year_filter': Student.year ?? 0,
-      },
-    );
-    List<String> data = response
-        .map((group) => group.values.first as String)
-        .toList();
+    final response = await Supabase.instance.client
+        .from("classes")
+        .select("group, programs!inner(name, programType, year, degreeLevel)")
+        .eq(
+          "programs.name",
+          Student.specialisation ?? Student.degreeCourse ?? "",
+        )
+        .eq("programs.programType", Student.term?[0] ?? "S")
+        .eq("programs.year", Student.year ?? 0)
+        .eq("programs.degreeLevel", Student.degreeLevel ?? "");
+
+    final Set<String> uniqueGroups = {};
+    for (final row in response) {
+      uniqueGroups.add(row["group"] as String);
+    }
+    List<String> data = uniqueGroups.toList()..sort();
     return data;
   }
 

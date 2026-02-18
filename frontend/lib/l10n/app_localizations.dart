@@ -664,6 +664,24 @@ abstract class AppLocalizations {
   /// **'Brak specjalizacji dla tego kierunku'**
   String get noSpecialisationForField;
 
+  /// input_page.dart - Label for the degree level selector.
+  ///
+  /// In pl, this message translates to:
+  /// **'Stopień studiów'**
+  String get degreeLevelLabel;
+
+  /// input_page.dart - Button label for engineering degree level.
+  ///
+  /// In pl, this message translates to:
+  /// **'Inżynierskie'**
+  String get degreeLevelEngineering;
+
+  /// input_page.dart - Button label for masters degree level.
+  ///
+  /// In pl, this message translates to:
+  /// **'Magisterskie'**
+  String get degreeLevelMasters;
+
   /// Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek.
   ///
   /// In pl, this message translates to:

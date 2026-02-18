@@ -338,5 +338,14 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noSpecialisationForField => 'Brak specjalizacji dla tego kierunku';
 
   @override
+  String get degreeLevelLabel => 'Stopień studiów';
+
+  @override
+  String get degreeLevelEngineering => 'Inżynierskie';
+
+  @override
+  String get degreeLevelMasters => 'Magisterskie';
+
+  @override
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';
 }

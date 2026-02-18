@@ -340,5 +340,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'No specialisation available for this field';
 
   @override
+  String get degreeLevelLabel => 'Degree Level';
+
+  @override
+  String get degreeLevelEngineering => 'Engineering';
+
+  @override
+  String get degreeLevelMasters => 'Masters';
+
+  @override
   String get unexpectedError => 'Oops! Something went wrong.';
 }

@@ -403,6 +403,18 @@
   "@noSpecialisationForField": {
     "description": "group_selection_page.dart - Message shown when there are no specialisations available for the selected field."
   },
+  "degreeLevelLabel": "Stopień studiów",
+  "@degreeLevelLabel": {
+    "description": "input_page.dart - Label for the degree level selector."
+  },
+  "degreeLevelEngineering": "Inżynierskie",
+  "@degreeLevelEngineering": {
+    "description": "input_page.dart - Button label for engineering degree level."
+  },
+  "degreeLevelMasters": "Magisterskie",
+  "@degreeLevelMasters": {
+    "description": "input_page.dart - Button label for masters degree level."
+  },
   "unexpectedError": "Ojej! Coś poszło nie tak.",
   "@unexpectedError": {
     "description": "Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek."

@@ -98,5 +98,8 @@
   "noNews": "Немає новин",
   "universityStructureEmpty": "Структура університету порожня. Ви підключені до інтернету?",
   "noSpecialisationForField": "Немає спеціалізацій для цього напрямку",
+  "degreeLevelLabel": "Ступінь навчання",
+  "degreeLevelEngineering": "Інженерний",
+  "degreeLevelMasters": "Магістерський",
   "unexpectedError": "Упс! Щось пішло не так."
 }
