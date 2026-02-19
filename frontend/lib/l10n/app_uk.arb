@@ -113,5 +113,8 @@
   "pePageDescription": "Оберіть заняття з фізичного виховання на цей семестр. Пам'ятайте, що запис проводиться періодично.",
   "pePageButton": "Перейти до запису",
   "pePageUrlError": "Не вдалося відкрити сторінку запису.",
+  "degreeLevelLabel": "Ступінь навчання",
+  "degreeLevelEngineering": "Інженерний",
+  "degreeLevelMasters": "Магістерський",
   "unexpectedError": "Упс! Щось пішло не так."
 }

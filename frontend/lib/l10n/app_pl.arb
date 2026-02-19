@@ -428,6 +428,18 @@
   "pePageDescription": "Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.",
   "pePageButton": "Przejdź do zapisów",
   "pePageUrlError": "Nie udało się otworzyć strony zapisów.",
+  "degreeLevelLabel": "Stopień studiów",
+  "@degreeLevelLabel": {
+    "description": "input_page.dart - Label for the degree level selector."
+  },
+  "degreeLevelEngineering": "Inżynierskie",
+  "@degreeLevelEngineering": {
+    "description": "input_page.dart - Button label for engineering degree level."
+  },
+  "degreeLevelMasters": "Magisterskie",
+  "@degreeLevelMasters": {
+    "description": "input_page.dart - Button label for masters degree level."
+  },
   "unexpectedError": "Ojej! Coś poszło nie tak.",
   "@unexpectedError": {
     "description": "Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek."

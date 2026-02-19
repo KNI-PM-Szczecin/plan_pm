@@ -36,6 +36,7 @@ Future<Widget> appInitialization() async {
   Student.specialisation = (spec != null && spec.isNotEmpty) ? spec : null;
   Student.year = prefs.getInt("year");
   Student.term = prefs.getString("term");
+  Student.degreeLevel = prefs.getString("degree_level");
   Student.selectedGroups = prefs.getStringList("groups");
 
   // Sprawdź czy student ma wszystkie mozliwe wypełnione dane

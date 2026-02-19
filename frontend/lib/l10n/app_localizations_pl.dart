@@ -365,6 +365,13 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
+  String get degreeLevelLabel => 'Stopień studiów';
+
+  @override
+  String get degreeLevelEngineering => 'Inżynierskie';
+
+  @override
+  String get degreeLevelMasters => 'Magisterskie';
 
   @override
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';

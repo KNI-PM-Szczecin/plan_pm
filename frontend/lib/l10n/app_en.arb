@@ -110,4 +110,8 @@
   "pePageDescription": "Choose your physical education classes for this semester. Remember that enrollment happens periodically.",
   "pePageButton": "Go to enrollment",
   "pePageUrlError": "Could not open the enrollment page."
+  "degreeLevelLabel": "Degree Level",
+  "degreeLevelEngineering": "Engineering",
+  "degreeLevelMasters": "Masters",
+  "unexpectedError": "Oops! Something went wrong."
 }
