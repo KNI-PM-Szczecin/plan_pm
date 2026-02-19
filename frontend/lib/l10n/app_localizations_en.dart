@@ -356,5 +356,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'No specialisation available for this field';
 
   @override
+  String get pePageTitle => 'PE Enrollment';
+
+  @override
+  String get pePageDescription =>
+      'Choose your physical education classes for this semester. Remember that enrollment happens periodically.';
+
+  @override
+  String get pePageButton => 'Go to enrollment';
+
+  @override
+  String get pePageUrlError => 'Could not open the enrollment page.';
+
+  @override
   String get unexpectedError => 'Oops! Something went wrong.';
 }

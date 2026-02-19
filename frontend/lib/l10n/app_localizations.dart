@@ -688,6 +688,30 @@ abstract class AppLocalizations {
   /// **'Brak specjalizacji dla tego kierunku'**
   String get noSpecialisationForField;
 
+  /// No description provided for @pePageTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisy na WF'**
+  String get pePageTitle;
+
+  /// No description provided for @pePageDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.'**
+  String get pePageDescription;
+
+  /// No description provided for @pePageButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejdź do zapisów'**
+  String get pePageButton;
+
+  /// No description provided for @pePageUrlError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć strony zapisów.'**
+  String get pePageUrlError;
+
   /// Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek.
   ///
   /// In pl, this message translates to:

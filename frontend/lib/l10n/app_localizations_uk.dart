@@ -364,5 +364,18 @@ class AppLocalizationsUk extends AppLocalizations {
       'Немає спеціалізацій для цього напрямку';
 
   @override
+  String get pePageTitle => 'Запис на фізичне виховання';
+
+  @override
+  String get pePageDescription =>
+      'Оберіть заняття з фізичного виховання на цей семестр. Пам\'ятайте, що запис проводиться періодично.';
+
+  @override
+  String get pePageButton => 'Перейти до запису';
+
+  @override
+  String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
+
+  @override
   String get unexpectedError => 'Упс! Щось пішло не так.';
 }

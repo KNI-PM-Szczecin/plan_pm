@@ -354,5 +354,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noSpecialisationForField => 'Brak specjalizacji dla tego kierunku';
 
   @override
+  String get pePageTitle => 'Zapisy na WF';
+
+  @override
+  String get pePageDescription =>
+      'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.';
+
+  @override
+  String get pePageButton => 'Przejdź do zapisów';
+
+  @override
+  String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
+
+  @override
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';
 }

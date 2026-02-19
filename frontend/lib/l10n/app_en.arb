@@ -105,5 +105,9 @@
   "noNews": "No news",
   "universityStructureEmpty": "The university structure is empty. Are you connected to the internet?",
   "noSpecialisationForField": "No specialisation available for this field",
-  "unexpectedError": "Oops! Something went wrong."
+  "unexpectedError": "Oops! Something went wrong.",
+  "pePageTitle": "PE Enrollment",
+  "pePageDescription": "Choose your physical education classes for this semester. Remember that enrollment happens periodically.",
+  "pePageButton": "Go to enrollment",
+  "pePageUrlError": "Could not open the enrollment page."
 }

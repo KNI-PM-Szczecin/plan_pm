@@ -9,6 +9,7 @@ import 'package:plan_pm/main.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/pages/welcome/widgets/button_switch.dart';
 import 'package:plan_pm/pages/welcome/widgets/dropdown_menu.dart';
+import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -66,7 +67,14 @@ class _InputPageState extends State<InputPage> {
         leading: IconButton(
           onPressed: () {
             HapticFeedback.lightImpact();
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomePage()),
+              );
+            }
           },
           icon: Icon(
             LucideIcons.chevronLeft,

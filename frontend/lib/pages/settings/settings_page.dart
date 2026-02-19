@@ -6,6 +6,7 @@ import 'package:plan_pm/pages/feedback/feedback_page.dart';
 import 'package:plan_pm/pages/settings/widgets/group_info.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
+import 'package:plan_pm/pages/settings/pe_page.dart';
 import 'package:plan_pm/pages/settings/widgets/student_info.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -52,6 +53,22 @@ class SettingsPage extends StatelessWidget {
                   StudentInfo(),
                   GroupInfo(),
                   MenuSection(
+                    title: l10n
+                        .studySettings, // Używam istniejącego nagłówka lub można dodać nowy
+                    child: MenuButton(
+                      title: l10n.pePageTitle,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  MenuSection(
                     title: l10n.feedbackHeader,
                     child: MenuButton(
                       title: l10n.sendFeedbackButton,
@@ -66,21 +83,21 @@ class SettingsPage extends StatelessWidget {
                       },
                     ),
                   ),
-                  // MenuSection(
-                  //   title: l10n.debugHeader,
-                  //   child: MenuButton(
-                  //     title: "Powrót do Welcome Screen",
-                  //     onTap: () {
-                  //       HapticFeedback.lightImpact();
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => const WelcomePage(),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
+                  MenuSection(
+                    title: l10n.debugHeader,
+                    child: MenuButton(
+                      title: "Powrót do Welcome Screen",
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WelcomePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
