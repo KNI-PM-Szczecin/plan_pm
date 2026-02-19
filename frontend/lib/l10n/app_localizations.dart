@@ -711,6 +711,7 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się otworzyć strony zapisów.'**
   String get pePageUrlError;
+
   /// input_page.dart - Label for the degree level selector.
   ///
   /// In pl, this message translates to:
@@ -734,6 +735,30 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Ojej! Coś poszło nie tak.'**
   String get unexpectedError;
+
+  /// settings_page.dart - Header for the appearance/theme section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wygląd'**
+  String get appearanceHeader;
+
+  /// settings_page.dart - Label for the light theme option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jasny'**
+  String get themeLight;
+
+  /// settings_page.dart - Label for the dark theme option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ciemny'**
+  String get themeDark;
+
+  /// settings_page.dart - Label for the system default theme option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Systemowy'**
+  String get themeSystem;
 }
 
 class _AppLocalizationsDelegate

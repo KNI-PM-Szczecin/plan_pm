@@ -443,5 +443,21 @@
   "unexpectedError": "Ojej! Coś poszło nie tak.",
   "@unexpectedError": {
     "description": "Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek."
+  },
+  "appearanceHeader": "Wygląd",
+  "@appearanceHeader": {
+    "description": "settings_page.dart - Header for the appearance/theme section."
+  },
+  "themeLight": "Jasny",
+  "@themeLight": {
+    "description": "settings_page.dart - Label for the light theme option."
+  },
+  "themeDark": "Ciemny",
+  "@themeDark": {
+    "description": "settings_page.dart - Label for the dark theme option."
+  },
+  "themeSystem": "Systemowy",
+  "@themeSystem": {
+    "description": "settings_page.dart - Label for the system default theme option."
   }
 }

@@ -365,6 +365,8 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
+
+  @override
   String get degreeLevelLabel => 'Stopień studiów';
 
   @override
@@ -375,4 +377,16 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';
+
+  @override
+  String get appearanceHeader => 'Wygląd';
+
+  @override
+  String get themeLight => 'Jasny';
+
+  @override
+  String get themeDark => 'Ciemny';
+
+  @override
+  String get themeSystem => 'Systemowy';
 }

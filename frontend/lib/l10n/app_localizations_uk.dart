@@ -375,6 +375,8 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
+
+  @override
   String get degreeLevelLabel => 'Ступінь навчання';
 
   @override
@@ -385,4 +387,16 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get unexpectedError => 'Упс! Щось пішло не так.';
+
+  @override
+  String get appearanceHeader => 'Зовнішній вигляд';
+
+  @override
+  String get themeLight => 'Світла';
+
+  @override
+  String get themeDark => 'Темна';
+
+  @override
+  String get themeSystem => 'Системна';
 }
