@@ -12,30 +12,35 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context).colorScheme;
     final List<Map<String, dynamic>> stages = [
       {
         "title": l10n.stage1Title,
         "lottie": "assets/lotties/calendar.json",
         "buttonLabel": l10n.stage1Button,
         "color": Colors.blueAccent,
+        "colorLight": Colors.blue,
       },
       {
         "title": l10n.stage2Title,
         "lottie": "assets/lotties/womanschedule.json",
         "buttonLabel": l10n.stage2Button,
         "color": Colors.redAccent,
+        "colorLight": Colors.red,
       },
       {
         "title": l10n.stage3Title,
         "lottie": "assets/lotties/search.json",
         "buttonLabel": l10n.stage3Button,
         "color": Colors.amberAccent,
+        "colorLight": Colors.amber,
       },
       {
         "title": l10n.stage4Title,
         "lottie": "assets/lotties/bell.json",
         "buttonLabel": l10n.stage4Button,
         "color": Colors.green,
+        "colorLight": Colors.green,
       },
     ];
     final PageController controller = PageController();
@@ -58,7 +63,9 @@ class WelcomePage extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          color: stages[index]["color"].withAlpha(50),
+                          color: theme.brightness == Brightness.dark
+                              ? stages[index]["color"].withAlpha(50)
+                              : stages[index]["colorLight"].withAlpha(150),
                         ),
                         child: Lottie.asset(
                           stages[index]["lottie"]!,
@@ -77,7 +84,9 @@ class WelcomePage extends StatelessWidget {
                   FilledButton(
                     style: FilledButton.styleFrom(
                       minimumSize: Size(300, 50.0),
-                      backgroundColor: stages[index]["color"].withAlpha(100),
+                      backgroundColor: theme.brightness == Brightness.dark
+                          ? stages[index]["color"].withAlpha(100)
+                          : stages[index]["colorLight"],
                     ),
                     onPressed: () async {
                       HapticFeedback.lightImpact();
@@ -85,7 +94,7 @@ class WelcomePage extends StatelessWidget {
                         final SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         await prefs.setString("skip_welcome", "true");
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const InputPage(),

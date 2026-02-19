@@ -13,7 +13,9 @@ class CacheService {
   Future<void> syncLectures() async {
     final lectures = await _backendService.fetchLectures();
     if (lectures.isEmpty) {
-      print("[CACHE-SERVICE] No lectures found. Maybe the internet is down?");
+      print(
+        "[CACHE-SERVICE] No lectures found in database. Maybe the user mistyped his info?",
+      );
       return;
     }
 

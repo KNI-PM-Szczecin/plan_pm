@@ -294,6 +294,22 @@ class AppLocalizationsUk extends AppLocalizations {
   String get sendFeedbackButton => 'Надіслати відгук';
 
   @override
+  String get feedbackPageHeadline => 'Ваш відгук важливий для нас!';
+
+  @override
+  String get feedbackPageDescription =>
+      'Форма відкриється у вашому браузері, щоб ви могли безпечно увійти.';
+
+  @override
+  String get feedbackFormOpenGenericError =>
+      'Не вдалося відкрити форму відгуку.';
+
+  @override
+  String feedbackFormOpenError(String error) {
+    return 'Не вдалося відкрити форму відгуку: $error';
+  }
+
+  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -348,6 +364,17 @@ class AppLocalizationsUk extends AppLocalizations {
       'Немає спеціалізацій для цього напрямку';
 
   @override
+  String get pePageTitle => 'Запис на фізичне виховання';
+
+  @override
+  String get pePageDescription =>
+      'Оберіть заняття з фізичного виховання на цей семестр. Пам\'ятайте, що запис проводиться періодично.';
+
+  @override
+  String get pePageButton => 'Перейти до запису';
+
+  @override
+  String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
   String get degreeLevelLabel => 'Ступінь навчання';
 
   @override

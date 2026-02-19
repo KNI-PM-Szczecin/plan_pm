@@ -286,6 +286,22 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sendFeedbackButton => 'Prześlij opinie';
 
   @override
+  String get feedbackPageHeadline => 'Twoja opinia jest dla nas ważna!';
+
+  @override
+  String get feedbackPageDescription =>
+      'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.';
+
+  @override
+  String get feedbackFormOpenGenericError =>
+      'Nie udało się otworzyć formularza opinii.';
+
+  @override
+  String feedbackFormOpenError(String error) {
+    return 'Nie udało się otworzyć formularza opinii: $error';
+  }
+
+  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -338,6 +354,17 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noSpecialisationForField => 'Brak specjalizacji dla tego kierunku';
 
   @override
+  String get pePageTitle => 'Zapisy na WF';
+
+  @override
+  String get pePageDescription =>
+      'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.';
+
+  @override
+  String get pePageButton => 'Przejdź do zapisów';
+
+  @override
+  String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
   String get degreeLevelLabel => 'Stopień studiów';
 
   @override

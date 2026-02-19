@@ -9,6 +9,7 @@ import 'package:plan_pm/main.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/pages/welcome/widgets/button_switch.dart';
 import 'package:plan_pm/pages/welcome/widgets/dropdown_menu.dart';
+import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -60,13 +61,21 @@ class _InputPageState extends State<InputPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
             HapticFeedback.lightImpact();
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomePage()),
+              );
+            }
           },
           icon: Icon(
             LucideIcons.chevronLeft,
@@ -215,9 +224,14 @@ class _InputPageState extends State<InputPage> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            top: 15,
+            right: 15,
+            bottom: 80,
+          ),
           child: Center(
             child: Column(
               children: [
