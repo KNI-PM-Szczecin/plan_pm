@@ -711,6 +711,7 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się otworzyć strony zapisów.'**
   String get pePageUrlError;
+
   /// input_page.dart - Label for the degree level selector.
   ///
   /// In pl, this message translates to:

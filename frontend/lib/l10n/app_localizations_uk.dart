@@ -375,6 +375,8 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
+
+  @override
   String get degreeLevelLabel => 'Ступінь навчання';
 
   @override
