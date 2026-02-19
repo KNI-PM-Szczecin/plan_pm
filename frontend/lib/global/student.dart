@@ -7,6 +7,7 @@ class Student {
   static String? specialisation;
   static int? year;
   static String? term;
+  static String? degreeLevel;
   static List<String>? selectedGroups;
 }
 

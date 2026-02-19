@@ -367,6 +367,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pePageUrlError => 'Could not open the enrollment page.';
+  String get degreeLevelLabel => 'Degree Level';
+
+  @override
+  String get degreeLevelEngineering => 'Engineering';
+
+  @override
+  String get degreeLevelMasters => 'Masters';
 
   @override
   String get unexpectedError => 'Oops! Something went wrong.';

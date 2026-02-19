@@ -31,6 +31,7 @@ class _InputPageState extends State<InputPage> {
 
   int selectedYear = 0;
   int? selectedTerm;
+  int? selectedDegreeLevel;
 
   TextEditingController facultyController = TextEditingController();
   TextEditingController degreeCourseController = TextEditingController();
@@ -150,11 +151,13 @@ class _InputPageState extends State<InputPage> {
                           ? selectedFaculty != "" &&
                                 selectedDegreeCourse != "" &&
                                 selectedYear != 0 &&
-                                selectedTerm != null
+                                selectedTerm != null &&
+                                selectedDegreeLevel != null
                           : selectedFaculty != "" &&
                                 selectedDegreeCourse != "" &&
                                 selectedYear >= 2 &&
-                                selectedTerm != null)
+                                selectedTerm != null &&
+                                selectedDegreeLevel != null)
                       ? () async {
                           HapticFeedback.lightImpact();
                           Student.degreeCourse = selectedDegreeCourse != ""
@@ -169,6 +172,9 @@ class _InputPageState extends State<InputPage> {
                           Student.term = selectedTerm == 1
                               ? "Stacjonarne"
                               : "Niestacjonarne";
+                          Student.degreeLevel = selectedDegreeLevel == 1
+                              ? "inż."
+                              : "mgr";
                           Student.year = selectedYear;
 
                           final SharedPreferences prefs =
@@ -193,6 +199,12 @@ class _InputPageState extends State<InputPage> {
                             selectedTerm == 1
                                 ? "Stacjonarne"
                                 : "Niestacjonarne",
+                          );
+                          await prefs.setString(
+                            "degree_level",
+                            selectedDegreeLevel == 1
+                                ? "inż."
+                                : "mgr",
                           );
                           final CacheService cacheService = CacheService();
                           await cacheService.syncNews();
@@ -358,6 +370,22 @@ class _InputPageState extends State<InputPage> {
                               ),
                             ),
                           ),
+                        SizedBox(height: 10),
+                        ButtonSwitch(
+                          onValueChanged: (degreeLevel) {
+                            HapticFeedback.lightImpact();
+                            setState(() {
+                              selectedDegreeLevel = degreeLevel + 1;
+                            });
+                          },
+                          buttonLabels: [
+                            l10n.degreeLevelEngineering,
+                            l10n.degreeLevelMasters,
+                          ],
+                          buttonAmount: 2,
+                          icon: LucideIcons.award,
+                          label: l10n.degreeLevelLabel,
+                        ),
                         SizedBox(height: 10),
                         ButtonSwitch(
                           onValueChanged: (term) {
