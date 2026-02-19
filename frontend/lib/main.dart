@@ -32,7 +32,8 @@ Future<Widget> appInitialization() async {
   Student.course = prefs.getString("course");
   Student.degreeCourse = prefs.getString("degree_course");
   Student.faculty = prefs.getString("faculty");
-  Student.specialisation = prefs.getString("specialisation");
+  String? spec = prefs.getString("specialisation");
+  Student.specialisation = (spec != null && spec.isNotEmpty) ? spec : null;
   Student.year = prefs.getInt("year");
   Student.term = prefs.getString("term");
   Student.selectedGroups = prefs.getStringList("groups");
