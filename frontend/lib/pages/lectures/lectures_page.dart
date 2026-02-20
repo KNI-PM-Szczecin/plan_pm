@@ -123,7 +123,10 @@ class _LecturesPageState extends State<LecturesPage> {
                     ),
                     Expanded(
                       child: Skeletonizer(
-                        effect: const SolidColorEffect(color: Color(0x00000000)),
+                        effect: const ShimmerEffect(
+                          baseColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        ),
                         enabled:
                             snapshot.connectionState == ConnectionState.waiting,
                         child: ListView.separated(
