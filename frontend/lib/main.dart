@@ -122,7 +122,10 @@ class App extends StatelessWidget {
               builder: (BuildContext innerContext) {
                 final brightness = Theme.of(innerContext).brightness;
                 AppColor.update(brightness);
-                return AppRebuilder(child: child!);
+                return KeyedSubtree(
+                  key: ValueKey(brightness),
+                  child: AppRebuilder(child: child!),
+                );
               },
             );
           },
@@ -275,6 +278,7 @@ class _AppRebuilderState extends State<AppRebuilder> {
         el.markNeedsBuild();
         el.visitChildren(rebuild);
       }
+
       (context as Element).visitChildren(rebuild);
     });
   }
