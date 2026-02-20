@@ -112,5 +112,9 @@
   "pePageUrlError": "Could not open the enrollment page.",
   "degreeLevelLabel": "Degree Level",
   "degreeLevelEngineering": "Engineering",
-  "degreeLevelMasters": "Masters"
+  "degreeLevelMasters": "Masters",
+  "appearanceHeader": "Appearance",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System"
 }

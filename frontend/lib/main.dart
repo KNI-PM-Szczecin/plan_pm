@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:plan_pm/global/notifiers.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
@@ -80,6 +81,10 @@ Future<void> main() async {
     url: Secrets.supabaseUrl,
     anonKey: Secrets.supabaseAnonKey,
   );
+
+  themeNotifier = ThemeNotifier();
+  await themeNotifier.loadFromPrefs();
+
   runApp(const App());
 }
 
@@ -88,59 +93,67 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.system,
-      title: 'Plan PM',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: "Inter",
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: ColorThemes.lightPrimary,
-          brightness: Brightness.light,
-        ),
-      ),
-      darkTheme: ThemeData(
-        fontFamily: "Inter",
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: ColorThemes.darkPrimary,
-          brightness: Brightness.dark,
-        ),
-      ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, currentThemeMode, _) {
+        return MaterialApp(
+          themeMode: currentThemeMode,
+          title: 'Plan PM',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: "Inter",
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: ColorThemes.lightPrimary,
+              brightness: Brightness.light,
+            ),
+          ),
+          darkTheme: ThemeData(
+            fontFamily: "Inter",
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: ColorThemes.darkPrimary,
+              brightness: Brightness.dark,
+            ),
+          ),
 
-      builder: (context, child) {
-        return Builder(
-          builder: (BuildContext innerContext) {
-            final brightness = Theme.of(innerContext).brightness;
-            AppColor.update(brightness);
-            return child!;
+          builder: (context, child) {
+            return Builder(
+              builder: (BuildContext innerContext) {
+                final brightness = Theme.of(innerContext).brightness;
+                AppColor.update(brightness);
+                return KeyedSubtree(
+                  key: ValueKey(brightness),
+                  child: AppRebuilder(child: child!),
+                );
+              },
+            );
           },
+
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            Locale('en'), // English
+            Locale('pl'), // Polish
+            Locale('uk'), // Ukrainian
+          ],
+          home: FutureBuilder<Widget>(
+            future: appInitialization(),
+            builder: (context, AsyncSnapshot<Widget> screen) {
+              if (screen.connectionState != ConnectionState.done) {
+                return Container(color: AppColor.background);
+              }
+              FlutterNativeSplash.remove();
+              // Zwróć odpowiednią stronę
+              return screen.data!;
+            },
+          ),
         );
       },
-
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en'), // English
-        Locale('pl'), // Polish
-        Locale('uk'), // Ukrainian
-      ],
-      home: FutureBuilder<Widget>(
-        future: appInitialization(),
-        builder: (context, AsyncSnapshot<Widget> screen) {
-          if (screen.connectionState != ConnectionState.done) {
-            return Container(color: AppColor.background);
-          }
-          FlutterNativeSplash.remove();
-          // Zwróć odpowiednią stronę
-          return screen.data!;
-        },
-      ),
     );
   }
 }
@@ -230,5 +243,48 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _preloadPageController,
       ),
     );
+  }
+}
+
+class AppRebuilder extends StatefulWidget {
+  final Widget child;
+  const AppRebuilder({super.key, required this.child});
+
+  @override
+  State<AppRebuilder> createState() => _AppRebuilderState();
+}
+
+class _AppRebuilderState extends State<AppRebuilder> {
+  @override
+  void initState() {
+    super.initState();
+    themeNotifier.addListener(_rebuildAll);
+  }
+
+  @override
+  void dispose() {
+    themeNotifier.removeListener(_rebuildAll);
+    super.dispose();
+  }
+
+  void _rebuildAll() {
+    // PL: Wymuszamy rebuild wszystkich elementów drzewa, bo klasa AppColor używa pól statycznych.
+    // PL: Bez tego GUI nie odświeżałoby się od razu po zmianie motywu, tylko po zmianie zakładki.
+    // EN: We force a complete rebuild of the element tree because AppColor is based on static fields.
+    // EN: Without this, the UI wouldn't magically update right after changing the theme but on tab change.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      void rebuild(Element el) {
+        el.markNeedsBuild();
+        el.visitChildren(rebuild);
+      }
+
+      (context as Element).visitChildren(rebuild);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

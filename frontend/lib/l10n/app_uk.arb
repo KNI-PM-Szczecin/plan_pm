@@ -116,5 +116,9 @@
   "degreeLevelLabel": "Ступінь навчання",
   "degreeLevelEngineering": "Інженерний",
   "degreeLevelMasters": "Магістерський",
-  "unexpectedError": "Упс! Щось пішло не так."
+  "unexpectedError": "Упс! Щось пішло не так.",
+  "appearanceHeader": "Зовнішній вигляд",
+  "themeLight": "Світла",
+  "themeDark": "Темна",
+  "themeSystem": "Системна"
 }
