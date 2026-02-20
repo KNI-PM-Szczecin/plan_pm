@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/widgets/generic_loading.dart';
 import 'package:plan_pm/global/widgets/generic_no_resource.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
@@ -72,6 +73,19 @@ class _LecturesPageState extends State<LecturesPage> {
               );
             }
 
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData) {
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: GenericLoading(label: l10n.lectureLoading),
+                  ),
+                ),
+              );
+            }
+
             final unfilteredLectures = snapshot.data ?? [];
 
             final lectures = unfilteredLectures.where((lecture) {
@@ -80,8 +94,8 @@ class _LecturesPageState extends State<LecturesPage> {
                   lectureDate.month == currentDate.month &&
                   lectureDate.day == currentDate.day;
             }).toList();
-            if (snapshot.connectionState == ConnectionState.done &&
-                lectures.isEmpty) {
+
+            if (lectures.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GenericNoResource(
@@ -109,7 +123,10 @@ class _LecturesPageState extends State<LecturesPage> {
                     ),
                     Expanded(
                       child: Skeletonizer(
-                        effect: const SoldColorEffect(color: Color(0x00000000)),
+                        effect: const ShimmerEffect(
+                          baseColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        ),
                         enabled:
                             snapshot.connectionState == ConnectionState.waiting,
                         child: ListView.separated(
