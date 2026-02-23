@@ -445,4 +445,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventStyleMonochrome => 'Monochrome';
+
+  @override
+  String get aboutApp => 'About application';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get createdBy => 'Created by';
+
+  @override
+  String get kniName => 'IT Science Club\nMaritime University of Szczecin';
+
+  @override
+  String get openSourceInfo => 'This app is open-source';
+
+  @override
+  String get githubRepo => 'Open repository on Github';
+
+  @override
+  String get appDescription =>
+      'A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.';
 }

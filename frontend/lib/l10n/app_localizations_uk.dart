@@ -453,4 +453,27 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get eventStyleMonochrome => 'Jednokolorowe';
+
+  @override
+  String get aboutApp => 'O aplikacji';
+
+  @override
+  String get version => 'Wersja';
+
+  @override
+  String get createdBy => 'Stworzono przez';
+
+  @override
+  String get kniName =>
+      'Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie';
+
+  @override
+  String get openSourceInfo => 'Ta aplikacja jest open-source';
+
+  @override
+  String get githubRepo => 'Otwórz repozytorium na Github';
+
+  @override
+  String get appDescription =>
+      'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.';
 }

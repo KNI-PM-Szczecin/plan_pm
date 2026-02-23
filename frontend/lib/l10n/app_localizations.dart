@@ -867,6 +867,48 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Jednokolorowe'**
   String get eventStyleMonochrome;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In pl, this message translates to:
+  /// **'O aplikacji'**
+  String get aboutApp;
+
+  /// No description provided for @version.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wersja'**
+  String get version;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Stworzono przez'**
+  String get createdBy;
+
+  /// No description provided for @kniName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie'**
+  String get kniName;
+
+  /// No description provided for @openSourceInfo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ta aplikacja jest open-source'**
+  String get openSourceInfo;
+
+  /// No description provided for @githubRepo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz repozytorium na Github'**
+  String get githubRepo;
+
+  /// No description provided for @appDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.'**
+  String get appDescription;
 }
 
 class _AppLocalizationsDelegate

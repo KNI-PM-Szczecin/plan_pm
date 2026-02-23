@@ -76,8 +76,6 @@ class LocaleNotifier extends ValueNotifier<Locale?> {
 
 late final LocaleNotifier localeNotifier;
 
-// === NEW NOTIFIERS FOR APPEARANCE ===
-
 enum AppAccentColor { blue, green, purple, orange, red, pink }
 
 class AccentColorNotifier extends ValueNotifier<AppAccentColor> {
