@@ -408,4 +408,25 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get personalizationHeader => 'Персоналізація';
+
+  @override
+  String get languageHeader => 'Мова';
+
+  @override
+  String get languageSystem => 'Системна';
+
+  @override
+  String get languagePolish => 'Польська';
+
+  @override
+  String get languageEnglish => 'Англійська';
+
+  @override
+  String get languageUkrainian => 'Українська';
+
+  @override
+  String get languageHint => 'Оберіть мову програми';
+
+  @override
+  String get activeLanguageLabel => 'Активна мова: ';
 }

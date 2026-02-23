@@ -119,5 +119,12 @@
   "themeSystem": "System",
   "appearanceHint": "Choose the theme that suits you best",
   "activeThemeLabel": "Active theme: ",
-  "personalizationHeader": "Personalization"
+  "personalizationHeader": "Personalization",
+  "languageHeader": "Language",
+  "languageSystem": "System",
+  "languagePolish": "Polish",
+  "languageEnglish": "English",
+  "languageUkrainian": "Ukrainian",
+  "languageHint": "Choose the application language",
+  "activeLanguageLabel": "Active language: "
 }

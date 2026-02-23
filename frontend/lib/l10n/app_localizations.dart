@@ -777,6 +777,48 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Personalizacja'**
   String get personalizationHeader;
+
+  /// settings_page.dart - Header for the language section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Język'**
+  String get languageHeader;
+
+  /// language_page.dart - Label for the system default language option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Systemowy'**
+  String get languageSystem;
+
+  /// language_page.dart - Label for the Polish language option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Polski'**
+  String get languagePolish;
+
+  /// language_page.dart - Label for the English language option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Angielski'**
+  String get languageEnglish;
+
+  /// language_page.dart - Label for the Ukrainian language option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ukraiński'**
+  String get languageUkrainian;
+
+  /// language_page.dart - Hint text describing the language selection.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz język aplikacji'**
+  String get languageHint;
+
+  /// language_page.dart - Label showing the currently active language.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aktywny język: '**
+  String get activeLanguageLabel;
 }
 
 class _AppLocalizationsDelegate

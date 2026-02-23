@@ -84,6 +84,9 @@ Future<void> main() async {
 
   themeNotifier = ThemeNotifier();
   await themeNotifier.loadFromPrefs();
+  
+  localeNotifier = LocaleNotifier();
+  await localeNotifier.loadFromPrefs();
 
   runApp(const App());
 }
@@ -93,13 +96,17 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, currentThemeMode, _) {
-        return MaterialApp(
-          themeMode: currentThemeMode,
-          title: 'Plan PM',
-          debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: localeNotifier,
+      builder: (context, currentLocale, _) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (context, currentThemeMode, _) {
+            return MaterialApp(
+              locale: currentLocale,
+              themeMode: currentThemeMode,
+              title: 'Plan PM',
+              debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: "Inter",
             brightness: Brightness.light,
@@ -153,6 +160,8 @@ class App extends StatelessWidget {
             },
           ),
         );
+      },
+    );
       },
     );
   }
@@ -259,11 +268,13 @@ class _AppRebuilderState extends State<AppRebuilder> {
   void initState() {
     super.initState();
     themeNotifier.addListener(_rebuildAll);
+    localeNotifier.addListener(_rebuildAll);
   }
 
   @override
   void dispose() {
     themeNotifier.removeListener(_rebuildAll);
+    localeNotifier.removeListener(_rebuildAll);
     super.dispose();
   }
 

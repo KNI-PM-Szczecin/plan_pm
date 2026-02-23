@@ -471,5 +471,33 @@
   "personalizationHeader": "Personalizacja",
   "@personalizationHeader": {
     "description": "settings_page.dart - Header for the personalization section."
+  },
+  "languageHeader": "Język",
+  "@languageHeader": {
+    "description": "settings_page.dart - Header for the language section."
+  },
+  "languageSystem": "Systemowy",
+  "@languageSystem": {
+    "description": "language_page.dart - Label for the system default language option."
+  },
+  "languagePolish": "Polski",
+  "@languagePolish": {
+    "description": "language_page.dart - Label for the Polish language option."
+  },
+  "languageEnglish": "Angielski",
+  "@languageEnglish": {
+    "description": "language_page.dart - Label for the English language option."
+  },
+  "languageUkrainian": "Ukraiński",
+  "@languageUkrainian": {
+    "description": "language_page.dart - Label for the Ukrainian language option."
+  },
+  "languageHint": "Wybierz język aplikacji",
+  "@languageHint": {
+    "description": "language_page.dart - Hint text describing the language selection."
+  },
+  "activeLanguageLabel": "Aktywny język: ",
+  "@activeLanguageLabel": {
+    "description": "language_page.dart - Label showing the currently active language."
   }
 }
