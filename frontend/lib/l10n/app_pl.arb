@@ -459,5 +459,17 @@
   "themeSystem": "Systemowy",
   "@themeSystem": {
     "description": "settings_page.dart - Label for the system default theme option."
+  },
+  "appearanceHint": "Wybierz motyw, który najbardziej Ci odpowiada",
+  "@appearanceHint": {
+    "description": "appearance_page.dart - Hint text describing the theme selection."
+  },
+  "activeThemeLabel": "Aktywny motyw: ",
+  "@activeThemeLabel": {
+    "description": "appearance_page.dart - Label showing the currently active theme."
+  },
+  "personalizationHeader": "Personalizacja",
+  "@personalizationHeader": {
+    "description": "settings_page.dart - Header for the personalization section."
   }
 }

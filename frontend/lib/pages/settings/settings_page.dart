@@ -8,7 +8,7 @@ import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
 import 'package:plan_pm/pages/settings/pe_page.dart';
 import 'package:plan_pm/pages/settings/widgets/student_info.dart';
-import 'package:plan_pm/pages/settings/widgets/theme_picker.dart';
+import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -70,8 +70,19 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   MenuSection(
-                    title: l10n.appearanceHeader,
-                    child: const ThemePicker(),
+                    title: l10n.personalizationHeader,
+                    child: MenuButton(
+                      title: l10n.appearanceHeader,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AppearancePage(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   MenuSection(
                     title: l10n.feedbackHeader,
