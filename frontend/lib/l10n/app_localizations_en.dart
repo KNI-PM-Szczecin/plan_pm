@@ -391,4 +391,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System';
+
+  @override
+  String get appearanceHint => 'Choose the theme that suits you best';
+
+  @override
+  String get activeThemeLabel => 'Active theme: ';
+
+  @override
+  String get personalizationHeader => 'Personalization';
 }

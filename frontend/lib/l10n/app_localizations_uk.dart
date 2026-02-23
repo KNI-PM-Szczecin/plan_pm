@@ -399,4 +399,13 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get themeSystem => 'Системна';
+
+  @override
+  String get appearanceHint => 'Виберіть тему, яка вам найбільше підходить';
+
+  @override
+  String get activeThemeLabel => 'Активна тема: ';
+
+  @override
+  String get personalizationHeader => 'Персоналізація';
 }

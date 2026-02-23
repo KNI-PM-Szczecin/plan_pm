@@ -759,6 +759,24 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Systemowy'**
   String get themeSystem;
+
+  /// appearance_page.dart - Hint text describing the theme selection.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz motyw, który najbardziej Ci odpowiada'**
+  String get appearanceHint;
+
+  /// appearance_page.dart - Label showing the currently active theme.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aktywny motyw: '**
+  String get activeThemeLabel;
+
+  /// settings_page.dart - Header for the personalization section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Personalizacja'**
+  String get personalizationHeader;
 }
 
 class _AppLocalizationsDelegate

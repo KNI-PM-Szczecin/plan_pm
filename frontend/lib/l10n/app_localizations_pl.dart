@@ -389,4 +389,13 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get themeSystem => 'Systemowy';
+
+  @override
+  String get appearanceHint => 'Wybierz motyw, który najbardziej Ci odpowiada';
+
+  @override
+  String get activeThemeLabel => 'Aktywny motyw: ';
+
+  @override
+  String get personalizationHeader => 'Personalizacja';
 }

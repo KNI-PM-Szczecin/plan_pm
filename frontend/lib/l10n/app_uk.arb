@@ -120,5 +120,8 @@
   "appearanceHeader": "Зовнішній вигляд",
   "themeLight": "Світла",
   "themeDark": "Темна",
-  "themeSystem": "Системна"
+  "themeSystem": "Системна",
+  "appearanceHint": "Виберіть тему, яка вам найбільше підходить",
+  "activeThemeLabel": "Активна тема: ",
+  "personalizationHeader": "Персоналізація"
 }
