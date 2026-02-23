@@ -124,7 +124,121 @@ class AppearancePage extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          )
+                          ),
+                          const SizedBox(height: 24),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // AMOLED Toggle
+                          ValueListenableBuilder<bool>(
+                            valueListenable: amoledModeNotifier,
+                            builder: (context, isAmoled, _) {
+                              return SwitchListTile(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: AppColor.primary,
+                                title: Text(l10n.amoledModeTitle, style: TextStyle(color: AppColor.onSurface, fontWeight: FontWeight.w600)),
+                                subtitle: Text(l10n.amoledModeDesc, style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13)),
+                                value: isAmoled,
+                                onChanged: (val) {
+                                  HapticFeedback.selectionClick();
+                                  amoledModeNotifier.setAmoledMode(val);
+                                },
+                              );
+                            },
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // Accent Color
+                          Text(
+                            l10n.accentColorTitle,
+                            style: TextStyle(
+                              color: AppColor.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ValueListenableBuilder<AppAccentColor>(
+                            valueListenable: accentColorNotifier,
+                            builder: (context, currentColor, _) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: AppAccentColor.values.map((color) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.selectionClick();
+                                      accentColorNotifier.setAccentColor(color);
+                                    },
+                                    child: Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: _getAccentColorValue(color, Theme.of(context).brightness),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: currentColor == color ? AppColor.onSurface : Colors.transparent,
+                                          width: 3,
+                                        ),
+                                      ),
+                                      child: currentColor == color
+                                          ? Icon(LucideIcons.check, color: Colors.white, size: 22)
+                                          : null,
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 24),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // Event Color Style
+                          ValueListenableBuilder<EventColorStyle>(
+                            valueListenable: eventColorStyleNotifier,
+                            builder: (context, currentStyle, _) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.eventStyleTitle,
+                                    style: TextStyle(
+                                      color: AppColor.onSurfaceVariant,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.background,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: AppColor.outline),
+                                    ),
+                                    child: Column(
+                                      children: EventColorStyle.values.map((style) {
+                                        return RadioListTile<EventColorStyle>(
+                                          activeColor: AppColor.primary,
+                                          title: Text(_getEventStyleName(style, l10n), style: TextStyle(color: AppColor.onSurface)),
+                                          value: style,
+                                          groupValue: currentStyle,
+                                          onChanged: (val) {
+                                            if (val != null) {
+                                              HapticFeedback.selectionClick();
+                                              eventColorStyleNotifier.setEventStyle(val);
+                                            }
+                                          },
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          
                         ],
                       );
                     },
@@ -147,6 +261,37 @@ class AppearancePage extends StatelessWidget {
     if (mode == ThemeMode.light) return l10n.themeLight;
     if (mode == ThemeMode.dark) return l10n.themeDark;
     return l10n.themeSystem;
+  }
+
+  Color _getAccentColorValue(AppAccentColor color, Brightness brightness) {
+    if (brightness == Brightness.light) {
+      switch (color) {
+        case AppAccentColor.blue: return ColorThemes.lightPrimary;
+        case AppAccentColor.green: return const Color(0xFF10B981);
+        case AppAccentColor.purple: return const Color(0xFF8B5CF6);
+        case AppAccentColor.orange: return const Color(0xFFF59E0B);
+        case AppAccentColor.red: return const Color(0xFFEF4444);
+        case AppAccentColor.pink: return const Color(0xFFEC4899);
+      }
+    } else {
+      switch (color) {
+        case AppAccentColor.blue: return ColorThemes.darkPrimary;
+        case AppAccentColor.green: return const Color(0xFF34D399);
+        case AppAccentColor.purple: return const Color(0xFFA855F7);
+        case AppAccentColor.orange: return const Color(0xFFFBBF24);
+        case AppAccentColor.red: return const Color(0xFFF87171);
+        case AppAccentColor.pink: return const Color(0xFFF472B6);
+      }
+    }
+  }
+
+  String _getEventStyleName(EventColorStyle style, AppLocalizations l10n) {
+    switch (style) {
+      case EventColorStyle.current: return l10n.eventStyleCurrent;
+      case EventColorStyle.pastel: return l10n.eventStylePastel;
+      case EventColorStyle.vibrant: return l10n.eventStyleVibrant;
+      case EventColorStyle.monochrome: return l10n.eventStyleMonochrome;
+    }
   }
 }
 

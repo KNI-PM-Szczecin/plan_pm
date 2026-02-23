@@ -819,6 +819,54 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Aktywny język: '**
   String get activeLanguageLabel;
+
+  /// No description provided for @accentColorTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kolor wiodący'**
+  String get accentColorTitle;
+
+  /// No description provided for @amoledModeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prawdziwa czerń'**
+  String get amoledModeTitle;
+
+  /// No description provided for @amoledModeDesc.
+  ///
+  /// In pl, this message translates to:
+  /// **'Całkowicie czarne tło w trybie ciemnym'**
+  String get amoledModeDesc;
+
+  /// No description provided for @eventStyleTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Styl kolorowania zajęć'**
+  String get eventStyleTitle;
+
+  /// No description provided for @eventStyleCurrent.
+  ///
+  /// In pl, this message translates to:
+  /// **'Domyślny'**
+  String get eventStyleCurrent;
+
+  /// No description provided for @eventStylePastel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pastelowe'**
+  String get eventStylePastel;
+
+  /// No description provided for @eventStyleVibrant.
+  ///
+  /// In pl, this message translates to:
+  /// **'Żywe'**
+  String get eventStyleVibrant;
+
+  /// No description provided for @eventStyleMonochrome.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jednokolorowe'**
+  String get eventStyleMonochrome;
 }
 
 class _AppLocalizationsDelegate

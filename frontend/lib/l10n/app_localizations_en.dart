@@ -421,4 +421,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activeLanguageLabel => 'Active language: ';
+
+  @override
+  String get accentColorTitle => 'Accent Color';
+
+  @override
+  String get amoledModeTitle => 'AMOLED Black';
+
+  @override
+  String get amoledModeDesc => 'Pitch black background for dark mode';
+
+  @override
+  String get eventStyleTitle => 'Event Style';
+
+  @override
+  String get eventStyleCurrent => 'Default';
+
+  @override
+  String get eventStylePastel => 'Pastel';
+
+  @override
+  String get eventStyleVibrant => 'Vibrant';
+
+  @override
+  String get eventStyleMonochrome => 'Monochrome';
 }

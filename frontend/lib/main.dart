@@ -88,6 +88,15 @@ Future<void> main() async {
   localeNotifier = LocaleNotifier();
   await localeNotifier.loadFromPrefs();
 
+  accentColorNotifier = AccentColorNotifier();
+  await accentColorNotifier.loadFromPrefs();
+
+  amoledModeNotifier = AmoledModeNotifier();
+  await amoledModeNotifier.loadFromPrefs();
+
+  eventColorStyleNotifier = EventColorStyleNotifier();
+  await eventColorStyleNotifier.loadFromPrefs();
+
   runApp(const App());
 }
 
@@ -111,7 +120,7 @@ class App extends StatelessWidget {
             fontFamily: "Inter",
             brightness: Brightness.light,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: ColorThemes.lightPrimary,
+              seedColor: AppColor.primary,
               brightness: Brightness.light,
             ),
           ),
@@ -119,7 +128,7 @@ class App extends StatelessWidget {
             fontFamily: "Inter",
             brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: ColorThemes.darkPrimary,
+              seedColor: AppColor.primary,
               brightness: Brightness.dark,
             ),
           ),
@@ -269,12 +278,18 @@ class _AppRebuilderState extends State<AppRebuilder> {
     super.initState();
     themeNotifier.addListener(_rebuildAll);
     localeNotifier.addListener(_rebuildAll);
+    accentColorNotifier.addListener(_rebuildAll);
+    amoledModeNotifier.addListener(_rebuildAll);
+    eventColorStyleNotifier.addListener(_rebuildAll);
   }
 
   @override
   void dispose() {
     themeNotifier.removeListener(_rebuildAll);
     localeNotifier.removeListener(_rebuildAll);
+    accentColorNotifier.removeListener(_rebuildAll);
+    amoledModeNotifier.removeListener(_rebuildAll);
+    eventColorStyleNotifier.removeListener(_rebuildAll);
     super.dispose();
   }
 

@@ -499,5 +499,13 @@
   "activeLanguageLabel": "Aktywny język: ",
   "@activeLanguageLabel": {
     "description": "language_page.dart - Label showing the currently active language."
-  }
+  },
+  "accentColorTitle": "Kolor wiodący",
+  "amoledModeTitle": "Prawdziwa czerń",
+  "amoledModeDesc": "Całkowicie czarne tło w trybie ciemnym",
+  "eventStyleTitle": "Styl kolorowania zajęć",
+  "eventStyleCurrent": "Domyślny",
+  "eventStylePastel": "Pastelowe",
+  "eventStyleVibrant": "Żywe",
+  "eventStyleMonochrome": "Jednokolorowe"
 }

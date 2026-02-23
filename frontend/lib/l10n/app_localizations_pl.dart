@@ -419,4 +419,28 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get activeLanguageLabel => 'Aktywny język: ';
+
+  @override
+  String get accentColorTitle => 'Kolor wiodący';
+
+  @override
+  String get amoledModeTitle => 'Prawdziwa czerń';
+
+  @override
+  String get amoledModeDesc => 'Całkowicie czarne tło w trybie ciemnym';
+
+  @override
+  String get eventStyleTitle => 'Styl kolorowania zajęć';
+
+  @override
+  String get eventStyleCurrent => 'Domyślny';
+
+  @override
+  String get eventStylePastel => 'Pastelowe';
+
+  @override
+  String get eventStyleVibrant => 'Żywe';
+
+  @override
+  String get eventStyleMonochrome => 'Jednokolorowe';
 }

@@ -126,5 +126,16 @@
   "languageEnglish": "English",
   "languageUkrainian": "Ukrainian",
   "languageHint": "Choose the application language",
-  "activeLanguageLabel": "Active language: "
+  "activeLanguageLabel": "Active language: ",
+  "@activeLanguageLabel": {
+    "description": "language_page.dart - Label showing the currently active language."
+  },
+  "accentColorTitle": "Accent Color",
+  "amoledModeTitle": "AMOLED Black",
+  "amoledModeDesc": "Pitch black background for dark mode",
+  "eventStyleTitle": "Event Style",
+  "eventStyleCurrent": "Default",
+  "eventStylePastel": "Pastel",
+  "eventStyleVibrant": "Vibrant",
+  "eventStyleMonochrome": "Monochrome"
 }
