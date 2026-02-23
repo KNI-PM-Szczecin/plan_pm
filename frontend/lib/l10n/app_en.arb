@@ -116,5 +116,8 @@
   "appearanceHeader": "Appearance",
   "themeLight": "Light",
   "themeDark": "Dark",
-  "themeSystem": "System"
+  "themeSystem": "System",
+  "appearanceHint": "Choose the theme that suits you best",
+  "activeThemeLabel": "Active theme: ",
+  "personalizationHeader": "Personalization"
 }
