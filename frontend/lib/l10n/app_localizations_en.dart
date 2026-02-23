@@ -400,4 +400,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalizationHeader => 'Personalization';
+
+  @override
+  String get languageHeader => 'Language';
+
+  @override
+  String get languageSystem => 'System';
+
+  @override
+  String get languagePolish => 'Polish';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageUkrainian => 'Ukrainian';
+
+  @override
+  String get languageHint => 'Choose the application language';
+
+  @override
+  String get activeLanguageLabel => 'Active language: ';
 }

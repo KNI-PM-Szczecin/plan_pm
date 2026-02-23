@@ -398,4 +398,25 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get personalizationHeader => 'Personalizacja';
+
+  @override
+  String get languageHeader => 'Język';
+
+  @override
+  String get languageSystem => 'Systemowy';
+
+  @override
+  String get languagePolish => 'Polski';
+
+  @override
+  String get languageEnglish => 'Angielski';
+
+  @override
+  String get languageUkrainian => 'Ukraiński';
+
+  @override
+  String get languageHint => 'Wybierz język aplikacji';
+
+  @override
+  String get activeLanguageLabel => 'Aktywny język: ';
 }
