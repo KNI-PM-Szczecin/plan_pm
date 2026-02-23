@@ -11,7 +11,7 @@ class AppearancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
@@ -50,7 +50,7 @@ class AppearancePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     l10n.appearanceHint,
                     style: TextStyle(
                       color: AppColor.onSurfaceVariant,
@@ -95,8 +95,8 @@ class AppearancePage extends StatelessWidget {
                           Row(
                             children: [
                               Icon(
-                                currentMode == ThemeMode.light 
-                                    ? LucideIcons.sun 
+                                currentMode == ThemeMode.light
+                                    ? LucideIcons.sun
                                     : (currentMode == ThemeMode.dark ? LucideIcons.moon : LucideIcons.monitor),
                                 color: AppColor.onSurfaceVariant,
                                 size: 20,
@@ -150,7 +150,7 @@ class AppearancePage extends StatelessWidget {
   }
 }
 
-class _ThemeCard extends StatelessWidget {
+class _ThemeCard extends StatefulWidget {
   final String title;
   final String imageAsset;
   final bool isSelected;
@@ -164,55 +164,70 @@ class _ThemeCard extends StatelessWidget {
   });
 
   @override
+  State<_ThemeCard> createState() => _ThemeCardState();
+}
+
+class _ThemeCardState extends State<_ThemeCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? AppColor.primary : Colors.transparent,
-                  width: 2.0,
+        onTap: widget.onTap,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.97 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: widget.isSelected ? AppColor.primary : Colors.transparent,
+                    width: 2.0,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    widget.imageAsset,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  imageAsset,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: isSelected ? AppColor.onSurface : AppColor.onSurfaceVariant,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      fontSize: 13,
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                        color: widget.isSelected ? AppColor.onSurface : AppColor.onSurfaceVariant,
+                        fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                if (isSelected) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    LucideIcons.check,
-                    color: AppColor.primary,
-                    size: 14,
-                  ),
+                  if (widget.isSelected) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      LucideIcons.check,
+                      color: AppColor.primary,
+                      size: 14,
+                    ),
+                  ],
                 ],
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
