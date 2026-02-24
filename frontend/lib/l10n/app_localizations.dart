@@ -909,6 +909,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.'**
   String get appDescription;
+
+  /// No description provided for @debugReturnToWelcome.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powrót do Welcome Screen'**
+  String get debugReturnToWelcome;
+
+  /// No description provided for @infoSection.
+  ///
+  /// In pl, this message translates to:
+  /// **'Informacje'**
+  String get infoSection;
 }
 
 class _AppLocalizationsDelegate

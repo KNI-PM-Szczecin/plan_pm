@@ -467,4 +467,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appDescription =>
       'A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.';
+
+  @override
+  String get debugReturnToWelcome => 'Return to Welcome Screen';
+
+  @override
+  String get infoSection => 'Information';
 }

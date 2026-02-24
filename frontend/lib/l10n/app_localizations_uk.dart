@@ -431,49 +431,55 @@ class AppLocalizationsUk extends AppLocalizations {
   String get activeLanguageLabel => 'Активна мова: ';
 
   @override
-  String get accentColorTitle => 'Kolor wiodący';
+  String get accentColorTitle => 'Колір акценту';
 
   @override
-  String get amoledModeTitle => 'Prawdziwa czerń';
+  String get amoledModeTitle => 'AMOLED Чорний';
 
   @override
-  String get amoledModeDesc => 'Całkowicie czarne tło w trybie ciemnym';
+  String get amoledModeDesc => 'Абсолютно чорний фон для темного режиму';
 
   @override
-  String get eventStyleTitle => 'Styl kolorowania zajęć';
+  String get eventStyleTitle => 'Стиль подій';
 
   @override
-  String get eventStyleCurrent => 'Domyślny';
+  String get eventStyleCurrent => 'За замовчуванням';
 
   @override
-  String get eventStylePastel => 'Pastelowe';
+  String get eventStylePastel => 'Пастельний';
 
   @override
-  String get eventStyleVibrant => 'Żywe';
+  String get eventStyleVibrant => 'Яскравий';
 
   @override
-  String get eventStyleMonochrome => 'Jednokolorowe';
+  String get eventStyleMonochrome => 'Монохромний';
 
   @override
-  String get aboutApp => 'O aplikacji';
+  String get aboutApp => 'Про додаток';
 
   @override
-  String get version => 'Wersja';
+  String get version => 'Версія';
 
   @override
-  String get createdBy => 'Stworzono przez';
+  String get createdBy => 'Створено';
 
   @override
   String get kniName =>
-      'Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie';
+      'Науковий гурток інформатики\nМорського університету в Щецині';
 
   @override
-  String get openSourceInfo => 'Ta aplikacja jest open-source';
+  String get openSourceInfo => 'Цей додаток має відкритий вихідний код';
 
   @override
-  String get githubRepo => 'Otwórz repozytorium na Github';
+  String get githubRepo => 'Відкрити репозиторій на Github';
 
   @override
   String get appDescription =>
-      'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.';
+      'Зрозумілий та швидкий розклад із попереднім переглядом наживо. Створений спеціально для студентів Морського університету, щоб полегшити організацію та відстеження щоденних лекцій.';
+
+  @override
+  String get debugReturnToWelcome => 'Повернутися до Welcome Screen';
+
+  @override
+  String get infoSection => 'Інформація';
 }

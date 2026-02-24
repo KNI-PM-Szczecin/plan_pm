@@ -121,7 +121,7 @@ class SettingsPage extends StatelessWidget {
                   MenuSection(
                     title: l10n.debugHeader,
                     child: MenuButton(
-                      title: "Powrót do Welcome Screen",
+                      title: l10n.debugReturnToWelcome,
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
@@ -134,7 +134,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   MenuSection(
-                    title: "Informacje",
+                    title: l10n.infoSection,
                     child: MenuButton(
                       title: l10n.aboutApp,
                       onTap: () {

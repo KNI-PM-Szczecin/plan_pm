@@ -466,4 +466,10 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get appDescription =>
       'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.';
+
+  @override
+  String get debugReturnToWelcome => 'Powrót do Welcome Screen';
+
+  @override
+  String get infoSection => 'Informacje';
 }
