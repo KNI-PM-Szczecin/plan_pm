@@ -419,4 +419,60 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get activeLanguageLabel => 'Aktywny język: ';
+
+  @override
+  String get accentColorTitle => 'Kolor wiodący';
+
+  @override
+  String get amoledModeTitle => 'Prawdziwa czerń';
+
+  @override
+  String get amoledModeDesc => 'Całkowicie czarne tło w trybie ciemnym';
+
+  @override
+  String get eventStyleTitle => 'Styl kolorowania zajęć';
+
+  @override
+  String get eventStyleCurrent => 'Domyślny';
+
+  @override
+  String get eventStylePastel => 'Pastelowe';
+
+  @override
+  String get eventStyleVibrant => 'Żywe';
+
+  @override
+  String get eventStyleMonochrome => 'Jednokolorowe';
+
+  @override
+  String get aboutApp => 'O aplikacji';
+
+  @override
+  String get version => 'Wersja';
+
+  @override
+  String get createdBy => 'Stworzono przez';
+
+  @override
+  String get kniName =>
+      'Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie';
+
+  @override
+  String get openSourceInfo => 'Ta aplikacja jest open-source';
+
+  @override
+  String get githubRepo => 'Otwórz repozytorium na Github';
+
+  @override
+  String get couldNotOpenRepo => 'Nie udało się otworzyć repozytorium';
+
+  @override
+  String get appDescription =>
+      'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.';
+
+  @override
+  String get debugReturnToWelcome => 'Powrót do Welcome Screen';
+
+  @override
+  String get infoSection => 'Informacje';
 }

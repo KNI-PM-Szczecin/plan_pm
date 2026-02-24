@@ -126,5 +126,26 @@
   "languageEnglish": "English",
   "languageUkrainian": "Ukrainian",
   "languageHint": "Choose the application language",
-  "activeLanguageLabel": "Active language: "
+  "activeLanguageLabel": "Active language: ",
+  "@activeLanguageLabel": {
+    "description": "language_page.dart - Label showing the currently active language."
+  },
+  "accentColorTitle": "Accent Color",
+  "amoledModeTitle": "AMOLED Black",
+  "amoledModeDesc": "Pitch black background for dark mode",
+  "eventStyleTitle": "Event Style",
+  "eventStyleCurrent": "Default",
+  "eventStylePastel": "Pastel",
+  "eventStyleVibrant": "Vibrant",
+  "eventStyleMonochrome": "Monochrome",
+  "aboutApp": "About application",
+  "version": "Version",
+  "createdBy": "Created by",
+  "kniName": "IT Science Club\nMaritime University of Szczecin",
+  "openSourceInfo": "This app is open-source",
+  "githubRepo": "Open repository on Github",
+  "couldNotOpenRepo": "Could not open repository",
+  "appDescription": "A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.",
+  "debugReturnToWelcome": "Return to Welcome Screen",
+  "infoSection": "Information"
 }

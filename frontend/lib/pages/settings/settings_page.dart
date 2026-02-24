@@ -11,6 +11,7 @@ import 'package:plan_pm/pages/settings/widgets/student_info.dart';
 import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/settings/language_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
+import 'package:plan_pm/pages/settings/about_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -120,13 +121,28 @@ class SettingsPage extends StatelessWidget {
                   MenuSection(
                     title: l10n.debugHeader,
                     child: MenuButton(
-                      title: "Powrót do Welcome Screen",
+                      title: l10n.debugReturnToWelcome,
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const WelcomePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  MenuSection(
+                    title: l10n.infoSection,
+                    child: MenuButton(
+                      title: l10n.aboutApp,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AboutPage(),
                           ),
                         );
                       },

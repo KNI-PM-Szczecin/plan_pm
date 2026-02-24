@@ -819,6 +819,114 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Aktywny język: '**
   String get activeLanguageLabel;
+
+  /// No description provided for @accentColorTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kolor wiodący'**
+  String get accentColorTitle;
+
+  /// No description provided for @amoledModeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prawdziwa czerń'**
+  String get amoledModeTitle;
+
+  /// No description provided for @amoledModeDesc.
+  ///
+  /// In pl, this message translates to:
+  /// **'Całkowicie czarne tło w trybie ciemnym'**
+  String get amoledModeDesc;
+
+  /// No description provided for @eventStyleTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Styl kolorowania zajęć'**
+  String get eventStyleTitle;
+
+  /// No description provided for @eventStyleCurrent.
+  ///
+  /// In pl, this message translates to:
+  /// **'Domyślny'**
+  String get eventStyleCurrent;
+
+  /// No description provided for @eventStylePastel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pastelowe'**
+  String get eventStylePastel;
+
+  /// No description provided for @eventStyleVibrant.
+  ///
+  /// In pl, this message translates to:
+  /// **'Żywe'**
+  String get eventStyleVibrant;
+
+  /// No description provided for @eventStyleMonochrome.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jednokolorowe'**
+  String get eventStyleMonochrome;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In pl, this message translates to:
+  /// **'O aplikacji'**
+  String get aboutApp;
+
+  /// No description provided for @version.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wersja'**
+  String get version;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Stworzono przez'**
+  String get createdBy;
+
+  /// No description provided for @kniName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie'**
+  String get kniName;
+
+  /// No description provided for @openSourceInfo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ta aplikacja jest open-source'**
+  String get openSourceInfo;
+
+  /// No description provided for @githubRepo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz repozytorium na Github'**
+  String get githubRepo;
+
+  /// No description provided for @couldNotOpenRepo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć repozytorium'**
+  String get couldNotOpenRepo;
+
+  /// No description provided for @appDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.'**
+  String get appDescription;
+
+  /// No description provided for @debugReturnToWelcome.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powrót do Welcome Screen'**
+  String get debugReturnToWelcome;
+
+  /// No description provided for @infoSection.
+  ///
+  /// In pl, this message translates to:
+  /// **'Informacje'**
+  String get infoSection;
 }
 
 class _AppLocalizationsDelegate

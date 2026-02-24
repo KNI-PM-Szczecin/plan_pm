@@ -5,6 +5,8 @@ import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
 import 'package:plan_pm/pages/news/widgets/news_builder.dart';
 import 'package:plan_pm/service/cache_service.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -13,7 +15,7 @@ class HomePage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return RefreshIndicator(
       onRefresh: () async {
-        print("Refreshing");
+        AppLogger.d("Refreshing home page elements...");
         final CacheService cacheService = CacheService();
         await cacheService.syncLectures();
         await cacheService.syncNews();

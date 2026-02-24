@@ -75,3 +75,72 @@ class LocaleNotifier extends ValueNotifier<Locale?> {
 }
 
 late final LocaleNotifier localeNotifier;
+
+enum AppAccentColor { blue, green, purple, orange, red, pink }
+
+class AccentColorNotifier extends ValueNotifier<AppAccentColor> {
+  static const String _key = 'accent_color';
+
+  AccentColorNotifier() : super(AppAccentColor.blue);
+
+  Future<void> loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_key);
+    value = AppAccentColor.values.firstWhere(
+      (e) => e.name == saved,
+      orElse: () => AppAccentColor.blue,
+    );
+  }
+
+  Future<void> setAccentColor(AppAccentColor color) async {
+    value = color;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, color.name);
+  }
+}
+
+late final AccentColorNotifier accentColorNotifier;
+
+class AmoledModeNotifier extends ValueNotifier<bool> {
+  static const String _key = 'amoled_mode';
+
+  AmoledModeNotifier() : super(false);
+
+  Future<void> loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getBool(_key) ?? false;
+  }
+
+  Future<void> setAmoledMode(bool amoled) async {
+    value = amoled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_key, amoled);
+  }
+}
+
+late final AmoledModeNotifier amoledModeNotifier;
+
+enum EventColorStyle { current, pastel, vibrant, monochrome }
+
+class EventColorStyleNotifier extends ValueNotifier<EventColorStyle> {
+  static const String _key = 'event_color_style';
+
+  EventColorStyleNotifier() : super(EventColorStyle.current);
+
+  Future<void> loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_key);
+    value = EventColorStyle.values.firstWhere(
+      (e) => e.name == saved,
+      orElse: () => EventColorStyle.current,
+    );
+  }
+
+  Future<void> setEventStyle(EventColorStyle style) async {
+    value = style;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, style.name);
+  }
+}
+
+late final EventColorStyleNotifier eventColorStyleNotifier;

@@ -429,4 +429,60 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get activeLanguageLabel => 'Активна мова: ';
+
+  @override
+  String get accentColorTitle => 'Колір акценту';
+
+  @override
+  String get amoledModeTitle => 'AMOLED Чорний';
+
+  @override
+  String get amoledModeDesc => 'Абсолютно чорний фон для темного режиму';
+
+  @override
+  String get eventStyleTitle => 'Стиль подій';
+
+  @override
+  String get eventStyleCurrent => 'За замовчуванням';
+
+  @override
+  String get eventStylePastel => 'Пастельний';
+
+  @override
+  String get eventStyleVibrant => 'Яскравий';
+
+  @override
+  String get eventStyleMonochrome => 'Монохромний';
+
+  @override
+  String get aboutApp => 'Про додаток';
+
+  @override
+  String get version => 'Версія';
+
+  @override
+  String get createdBy => 'Створено';
+
+  @override
+  String get kniName =>
+      'Науковий гурток інформатики\nМорського університету в Щецині';
+
+  @override
+  String get openSourceInfo => 'Цей додаток має відкритий вихідний код';
+
+  @override
+  String get githubRepo => 'Відкрити репозиторій на Github';
+
+  @override
+  String get couldNotOpenRepo => 'Не вдалося відкрити репозиторій';
+
+  @override
+  String get appDescription =>
+      'Зрозумілий та швидкий розклад із попереднім переглядом наживо. Створений спеціально для студентів Морського університету, щоб полегшити організацію та відстеження щоденних лекцій.';
+
+  @override
+  String get debugReturnToWelcome => 'Повернутися до Welcome Screen';
+
+  @override
+  String get infoSection => 'Інформація';
 }

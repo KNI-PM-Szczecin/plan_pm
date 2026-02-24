@@ -1,6 +1,8 @@
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 class CacheService {
   static final CacheService _cacheService = CacheService._internal();
 
@@ -13,17 +15,17 @@ class CacheService {
   Future<void> syncLectures() async {
     final lectures = await _backendService.fetchLectures();
     if (lectures.isEmpty) {
-      print(
+      AppLogger.w(
         "[CACHE-SERVICE] No lectures found in database. Maybe the user mistyped his info?",
       );
       return;
     }
 
-    final DatabaseService _databaseService = DatabaseService.instance;
-    await _databaseService.clearLectures();
+    final DatabaseService databaseService = DatabaseService.instance;
+    await databaseService.clearLectures();
 
     for (var lecture in lectures) {
-      _databaseService.addLecture(
+      databaseService.addLecture(
         name: lecture.name,
         startTime: lecture.startTime,
         endTime: lecture.endTime,
@@ -41,14 +43,14 @@ class CacheService {
   Future<void> syncNews() async {
     final news = await _backendService.fetchNews();
     if (news.isEmpty) {
-      print("[CACHE-SERVICE] No news found. Maybe the internet is down?");
+      AppLogger.w("[CACHE-SERVICE] No news found. Maybe the internet is down?");
       return;
     }
-    final DatabaseService _databaseService = DatabaseService.instance;
-    await _databaseService.clearNews();
+    final DatabaseService databaseService = DatabaseService.instance;
+    await databaseService.clearNews();
 
     for (var singleNews in news) {
-      _databaseService.addNews(
+      databaseService.addNews(
         createdAt: singleNews.createdAt,
         title: singleNews.title,
         imageUrl: singleNews.imageUrl,
