@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:home_widget/home_widget.dart';
+import 'package:intl/intl.dart';
+import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 
@@ -37,6 +41,66 @@ class CacheService {
         duration: lecture.duration,
         date: lecture.date,
       );
+    }
+    
+    // Update Android Home Widget with grouped lectures
+    await _updateHomeWidget(lectures);
+  }
+
+  Future<void> _updateHomeWidget(List<LectureModel> allLectures) async {
+    try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      
+      // We will prepare data for offsets between -30 and 30 days
+      for (int offset = -30; offset <= 30; offset++) {
+        final targetDate = today.add(Duration(days: offset));
+        final dayLectures = allLectures.where((l) {
+          final lDate = DateTime(l.date.year, l.date.month, l.date.day);
+          return lDate.isAtSameMomentAs(targetDate);
+        }).toList();
+        
+        // Sort by start time just to be sure
+        dayLectures.sort((a, b) => a.startTime.compareTo(b.startTime));
+        
+        final jsonList = dayLectures.map((l) => {
+          "name": l.name,
+          "startTime": l.startTime,
+          "endTime": l.endTime,
+          "room": l.room,
+          "building": l.building,
+        }).toList();
+        
+        final jsonStr = jsonEncode(jsonList);
+        
+        String dayNameStr;
+        if (offset == 0) {
+          dayNameStr = "Dzisiaj";
+        } else if (offset == 1) {
+          dayNameStr = "Jutro";
+        } else if (offset == -1) {
+          dayNameStr = "Wczoraj";
+        } else {
+          dayNameStr = DateFormat("EEEE, d MMM", "pl_PL").format(targetDate);
+          // Capitalize first letter
+          if (dayNameStr.isNotEmpty) {
+            dayNameStr = dayNameStr[0].toUpperCase() + dayNameStr.substring(1);
+          }
+        }
+        
+        await HomeWidget.saveWidgetData("schedule_data_$offset", jsonStr);
+        await HomeWidget.saveWidgetData("day_name_$offset", dayNameStr);
+      }
+      
+      // Trigger widget update
+      await HomeWidget.updateWidget(
+        androidName: 'ScheduleWidgetReceiver',
+      );
+      await HomeWidget.updateWidget(
+        androidName: 'TodayWidgetReceiver',
+      );
+    } catch (e) {
+      AppLogger.e("Failed to update home widget: $e");
     }
   }
 
