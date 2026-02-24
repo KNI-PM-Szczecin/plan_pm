@@ -20,9 +20,11 @@ import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 // Funkcja odpowiada za inicjalizację aplikacji na wejściu - robi wszystkie rzeczy, a następnie zdejmuje splashScreen
 Future<Widget> appInitialization() async {
-  print("[APP-INIT] Start");
+  AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // Jezeli nie ma flagi skip_welcome to znaczy, ze uzytkownik jest pierwszy raz w apce
@@ -60,7 +62,7 @@ Future<Widget> appInitialization() async {
     await cacheService.syncLectures();
     await cacheService.syncNews();
   } catch (error) {
-    print("[APP-INIT] Caching error: $error");
+    AppLogger.e("[APP-INIT] Caching error", error);
   }
 
   return const MyHomePage(title: "Strona główna");
@@ -71,7 +73,7 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   if (Secrets.supabaseUrl.isEmpty || Secrets.supabaseAnonKey.isEmpty) {
-    print(
+    AppLogger.e(
       "Secrets file is not defined! Visit secrets_example.dart for more information!",
     );
     return;

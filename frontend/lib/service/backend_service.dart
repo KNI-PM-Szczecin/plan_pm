@@ -5,12 +5,14 @@ import 'package:plan_pm/api/models/news_model.dart';
 import 'package:plan_pm/global/student.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
 
   void messToText(List<Map<String, dynamic>> response) {
     response.forEach((value) {
-      print(
+      AppLogger.d(
         "${value["group"]}|${DateFormat.EEEE().format(DateTime.parse(value["startTime"]))}|${value["startTime"]} - ${value["endTime"]}, Subject: ${value["subject"]}, ",
       );
     });
@@ -30,7 +32,7 @@ class BackendService {
 
   Future<List<LectureModel>> fetchLectures() async {
     if (Student.specialisation == null) {
-      print("Specjalizacja studenta nie została ustawiona");
+      AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
     final List<String> selectedGroups = Student.selectedGroups ?? [];
 
