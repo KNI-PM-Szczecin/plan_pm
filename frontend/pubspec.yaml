@@ -89,7 +89,6 @@ flutter:
   assets:
     - assets/lotties/
     - assets/
-    - assets/kni_logo.png
     - fonts/
 
 flutter_launcher_icons:

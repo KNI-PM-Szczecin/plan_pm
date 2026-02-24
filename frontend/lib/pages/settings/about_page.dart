@@ -37,9 +37,9 @@ class _AboutPageState extends State<AboutPage> {
     final Uri url = Uri.parse('https://github.com/KNI-PM-Szczecin/plan_pm');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open repository')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not open repository')));
       }
     }
   }
@@ -73,151 +73,179 @@ class _AboutPageState extends State<AboutPage> {
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              // Logo KNI
-              Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(20),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/kni_logo.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              
-              // App Name and Version
-              Text(
-                "Plan PM",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.onBackground,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _version.isNotEmpty ? "${l10n.version} $_version" : l10n.version,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColor.onBackgroundVariant,
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  l10n.appDescription,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColor.onBackgroundVariant,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-
-              const Spacer(),
-              Column(
-                  children: [
-                    Icon(
-                      LucideIcons.code,
-                      color: AppColor.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.createdBy,
-                      style: TextStyle(
-                        color: AppColor.onBackgroundVariant,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.kniName,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColor.onBackground,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 32),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColor.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColor.outline),
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          Icon(LucideIcons.heart, color: Colors.red, size: 20),
-                          const SizedBox(width: 8),
+                          const SizedBox(height: 20),
+                          // Logo KNI
+                          Container(
+                            width: 160,
+                            height: 160,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(20),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/kni_logo.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // App Name and Version
                           Text(
-                            l10n.openSourceInfo,
+                            "Plan PM",
                             style: TextStyle(
-                              color: AppColor.onSurface,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.onBackground,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _version.isNotEmpty
+                                ? "${l10n.version} $_version"
+                                : l10n.version,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColor.onBackgroundVariant,
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Text(
+                              l10n.appDescription,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.onBackgroundVariant,
+                                height: 1.5,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            _launchRepo();
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: isDark ? Colors.white : Colors.black,
-                            foregroundColor: isDark ? Colors.black : Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 24),
+                      Column(
+                        children: [
+                          Icon(
+                            LucideIcons.code,
+                            color: AppColor.primary,
+                            size: 28,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            l10n.createdBy,
+                            style: TextStyle(
+                              color: AppColor.onBackgroundVariant,
+                              fontSize: 13,
                             ),
                           ),
-                          icon: Icon(LucideIcons.github, size: 20),
-                          label: Text(
-                            l10n.githubRepo,
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.kniName,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColor.onBackground,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              height: 1.4,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 32),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColor.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColor.outline),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.heart,
+                                      color: Colors.red,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      l10n.openSourceInfo,
+                                      style: TextStyle(
+                                        color: AppColor.onSurface,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: FilledButton.icon(
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+                                      _launchRepo();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      foregroundColor: isDark
+                                          ? Colors.black
+                                          : Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    icon: Icon(LucideIcons.github, size: 20),
+                                    label: Text(
+                                      l10n.githubRepo,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
-      );
+      ),
+    );
   }
 }
