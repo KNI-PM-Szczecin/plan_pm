@@ -197,7 +197,7 @@ class _LectureState extends State<Lecture> {
       cardColor = AppColor.primary;
     } else if (style == EventColorStyle.pastel) {
       cardGradient = pastelGradients[widget.idx % pastelGradients.length];
-      textColor = Colors.black87; // Patel colors are light
+      textColor = Colors.black87; // Pastel colors are light
     } else if (style == EventColorStyle.vibrant) {
       cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
     } else {
