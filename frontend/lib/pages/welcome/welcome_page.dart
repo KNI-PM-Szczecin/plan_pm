@@ -94,6 +94,7 @@ class WelcomePage extends StatelessWidget {
                         final SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         await prefs.setString("skip_welcome", "true");
+                        if (!context.mounted) return;
                         Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -10,8 +10,8 @@ extension StringCasingExtension on String {
 
 extension DateTimeExtension on DateTime {
   DateTime next(int day) {
-    return this.add(
-      Duration(days: (day - this.weekday) % DateTime.daysPerWeek),
+    return add(
+      Duration(days: (day - weekday) % DateTime.daysPerWeek),
     );
   }
 }

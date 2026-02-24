@@ -11,14 +11,14 @@ class BackendService {
   static final BackendService _backendService = BackendService._internal();
 
   void messToText(List<Map<String, dynamic>> response) {
-    response.forEach((value) {
+    for (final value in response) {
       AppLogger.d(
         "${value["group"]}|${DateFormat.EEEE().format(DateTime.parse(value["startTime"]))}|${value["startTime"]} - ${value["endTime"]}, Subject: ${value["subject"]}, ",
       );
-    });
+    }
   }
 
-  String DateTimeToSupabase(DateTime datetime) {
+  String dateTimeToSupabase(DateTime datetime) {
     return DateFormat(
       "yyyy-MM-dd",
     ).format(DateTime(datetime.year, datetime.month, datetime.day));
@@ -54,8 +54,8 @@ class BackendService {
           building:building(name)
         )
       ''')
-        // .gte('startTime', DateTimeToSupabase(today))
-        // .lt('startTime', DateTimeToSupabase(tomorrow))
+        // .gte('startTime', dateTimeToSupabase(today))
+        // .lt('startTime', dateTimeToSupabase(tomorrow))
         .eq("programs.programType", Student.term?[0] ?? "S")
         .eq(
           "programs.name",

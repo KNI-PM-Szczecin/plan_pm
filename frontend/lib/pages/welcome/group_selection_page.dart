@@ -104,6 +104,7 @@ class GroupSelectionPage extends StatelessWidget {
                     await cacheService.syncNews();
                     await cacheService.syncLectures();
 
+                    if (!context.mounted) return;
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

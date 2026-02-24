@@ -21,11 +21,11 @@ class CacheService {
       return;
     }
 
-    final DatabaseService _databaseService = DatabaseService.instance;
-    await _databaseService.clearLectures();
+    final DatabaseService databaseService = DatabaseService.instance;
+    await databaseService.clearLectures();
 
     for (var lecture in lectures) {
-      _databaseService.addLecture(
+      databaseService.addLecture(
         name: lecture.name,
         startTime: lecture.startTime,
         endTime: lecture.endTime,
@@ -46,11 +46,11 @@ class CacheService {
       AppLogger.w("[CACHE-SERVICE] No news found. Maybe the internet is down?");
       return;
     }
-    final DatabaseService _databaseService = DatabaseService.instance;
-    await _databaseService.clearNews();
+    final DatabaseService databaseService = DatabaseService.instance;
+    await databaseService.clearNews();
 
     for (var singleNews in news) {
-      _databaseService.addNews(
+      databaseService.addNews(
         createdAt: singleNews.createdAt,
         title: singleNews.title,
         imageUrl: singleNews.imageUrl,

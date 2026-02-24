@@ -135,7 +135,7 @@ class AppearancePage extends StatelessWidget {
                             builder: (context, isAmoled, _) {
                               return SwitchListTile(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: AppColor.primary,
+                                activeThumbColor: AppColor.primary,
                                 title: Text(l10n.amoledModeTitle, style: TextStyle(color: AppColor.onSurface, fontWeight: FontWeight.w600)),
                                 subtitle: Text(l10n.amoledModeDesc, style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13)),
                                 value: isAmoled,
@@ -217,21 +217,23 @@ class AppearancePage extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: AppColor.outline),
                                     ),
-                                    child: Column(
-                                      children: EventColorStyle.values.map((style) {
-                                        return RadioListTile<EventColorStyle>(
-                                          activeColor: AppColor.primary,
-                                          title: Text(_getEventStyleName(style, l10n), style: TextStyle(color: AppColor.onSurface)),
-                                          value: style,
-                                          groupValue: currentStyle,
-                                          onChanged: (val) {
-                                            if (val != null) {
-                                              HapticFeedback.selectionClick();
-                                              eventColorStyleNotifier.setEventStyle(val);
-                                            }
-                                          },
-                                        );
-                                      }).toList(),
+                                    child: RadioGroup<EventColorStyle>(
+                                      groupValue: currentStyle,
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          HapticFeedback.selectionClick();
+                                          eventColorStyleNotifier.setEventStyle(val);
+                                        }
+                                      },
+                                      child: Column(
+                                        children: EventColorStyle.values.map((style) {
+                                          return RadioListTile<EventColorStyle>(
+                                            activeColor: AppColor.primary,
+                                            title: Text(_getEventStyleName(style, l10n), style: TextStyle(color: AppColor.onSurface)),
+                                            value: style,
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
                                   ),
                                 ],
