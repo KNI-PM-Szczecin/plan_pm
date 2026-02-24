@@ -904,6 +904,12 @@ abstract class AppLocalizations {
   /// **'Otwórz repozytorium na Github'**
   String get githubRepo;
 
+  /// No description provided for @couldNotOpenRepo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć repozytorium'**
+  String get couldNotOpenRepo;
+
   /// No description provided for @appDescription.
   ///
   /// In pl, this message translates to:

@@ -464,6 +464,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get githubRepo => 'Otwórz repozytorium na Github';
 
   @override
+  String get couldNotOpenRepo => 'Nie udało się otworzyć repozytorium';
+
+  @override
   String get appDescription =>
       'Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.';
 

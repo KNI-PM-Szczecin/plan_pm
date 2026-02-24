@@ -34,12 +34,13 @@ class _AboutPageState extends State<AboutPage> {
   }
 
   Future<void> _launchRepo() async {
+    final l10n = AppLocalizations.of(context)!;
     final Uri url = Uri.parse('https://github.com/KNI-PM-Szczecin/plan_pm');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not open repository')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.couldNotOpenRepo)),
+        );
       }
     }
   }

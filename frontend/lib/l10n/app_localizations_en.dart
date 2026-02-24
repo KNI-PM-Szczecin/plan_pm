@@ -465,6 +465,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get githubRepo => 'Open repository on Github';
 
   @override
+  String get couldNotOpenRepo => 'Could not open repository';
+
+  @override
   String get appDescription =>
       'A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.';
 

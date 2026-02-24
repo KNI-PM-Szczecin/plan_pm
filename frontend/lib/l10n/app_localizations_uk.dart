@@ -474,6 +474,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get githubRepo => 'Відкрити репозиторій на Github';
 
   @override
+  String get couldNotOpenRepo => 'Не вдалося відкрити репозиторій';
+
+  @override
   String get appDescription =>
       'Зрозумілий та швидкий розклад із попереднім переглядом наживо. Створений спеціально для студентів Морського університету, щоб полегшити організацію та відстеження щоденних лекцій.';
 
