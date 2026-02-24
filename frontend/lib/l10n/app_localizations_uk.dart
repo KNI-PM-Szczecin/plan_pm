@@ -482,4 +482,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get infoSection => 'Інформація';
+
+  @override
+  String get nextClassCountdownTitle => 'Наступне заняття';
+
+  @override
+  String get nextClassCountdownRemaining => 'залишилося';
 }

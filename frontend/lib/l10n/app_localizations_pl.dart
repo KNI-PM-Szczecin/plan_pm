@@ -472,4 +472,10 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get infoSection => 'Informacje';
+
+  @override
+  String get nextClassCountdownTitle => 'Następne zajęcia';
+
+  @override
+  String get nextClassCountdownRemaining => 'pozostało';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
+import 'package:plan_pm/pages/home/widgets/next_class_countdown.dart';
 import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
 import 'package:plan_pm/pages/news/widgets/news_builder.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -28,6 +29,7 @@ class HomePage extends StatelessWidget {
             spacing: 20,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              NextClassCountdown(),
               HomeSection(
                 title: l10n.newsSectionLabel,
                 child: NewsBuilder(limit: 3),

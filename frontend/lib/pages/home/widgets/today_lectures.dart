@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
+import 'package:plan_pm/global/app_time.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/global/widgets/generic_loading.dart';
 import 'package:plan_pm/global/widgets/generic_no_resource.dart';
@@ -38,7 +39,7 @@ class TodayLectures extends StatefulWidget {
 }
 
 class _TodayLecturesState extends State<TodayLectures> {
-  DateTime currentDate = DateTime.now();
+  DateTime currentDate = AppTime.now();
 
   @override
   Widget build(BuildContext context) {

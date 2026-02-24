@@ -473,4 +473,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get infoSection => 'Information';
+
+  @override
+  String get nextClassCountdownTitle => 'Next class';
+
+  @override
+  String get nextClassCountdownRemaining => 'remaining';
 }

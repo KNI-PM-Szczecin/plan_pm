@@ -147,5 +147,7 @@
   "githubRepo": "Відкрити репозиторій на Github",
   "appDescription": "Зрозумілий та швидкий розклад із попереднім переглядом наживо. Створений спеціально для студентів Морського університету, щоб полегшити організацію та відстеження щоденних лекцій.",
   "debugReturnToWelcome": "Повернутися до Welcome Screen",
-  "infoSection": "Інформація"
+  "infoSection": "Інформація",
+  "nextClassCountdownTitle": "Наступне заняття",
+  "nextClassCountdownRemaining": "залишилося"
 }

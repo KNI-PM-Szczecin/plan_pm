@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:plan_pm/global/app_time.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -92,7 +93,7 @@ class FullNewsPage extends StatelessWidget {
                           ),
                           Text(
                             l10n.daysAgo(
-                              DateTime.now().difference(timestamp).inDays,
+                              AppTime.now().difference(timestamp).inDays,
                             ),
                             style: TextStyle(color: AppColor.onSurfaceVariant),
                           ),

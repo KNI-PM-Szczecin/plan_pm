@@ -921,6 +921,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Informacje'**
   String get infoSection;
+
+  /// No description provided for @nextClassCountdownTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Następne zajęcia'**
+  String get nextClassCountdownTitle;
+
+  /// No description provided for @nextClassCountdownRemaining.
+  ///
+  /// In pl, this message translates to:
+  /// **'pozostało'**
+  String get nextClassCountdownRemaining;
 }
 
 class _AppLocalizationsDelegate

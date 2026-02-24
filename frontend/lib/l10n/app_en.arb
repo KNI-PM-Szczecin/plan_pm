@@ -146,5 +146,7 @@
   "githubRepo": "Open repository on Github",
   "appDescription": "A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.",
   "debugReturnToWelcome": "Return to Welcome Screen",
-  "infoSection": "Information"
+  "infoSection": "Information",
+  "nextClassCountdownTitle": "Next class",
+  "nextClassCountdownRemaining": "remaining"
 }

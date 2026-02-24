@@ -4,6 +4,7 @@ import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/global/widgets/generic_loading.dart';
 import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/global/app_time.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
 import 'package:plan_pm/service/database_service.dart';
@@ -18,9 +19,9 @@ class LecturesPage extends StatefulWidget {
 }
 
 class _LecturesPageState extends State<LecturesPage> {
-  int currentWeekDay = DateTime.now().weekday - 1;
+  int currentWeekDay = AppTime.now().weekday - 1;
 
-  DateTime now = DateTime.now();
+  DateTime now = AppTime.now();
   late DateTime currentDate;
 
   @override
