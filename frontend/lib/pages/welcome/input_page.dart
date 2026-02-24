@@ -209,6 +209,7 @@ class _InputPageState extends State<InputPage> {
                           final CacheService cacheService = CacheService();
                           await cacheService.syncNews();
                           await cacheService.syncLectures();
+                          if (!context.mounted) return;
                           Navigator.push(
                             context,
                             MaterialPageRoute(

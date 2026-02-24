@@ -5,18 +5,20 @@ import 'package:plan_pm/api/models/news_model.dart';
 import 'package:plan_pm/global/student.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
 
   void messToText(List<Map<String, dynamic>> response) {
-    response.forEach((value) {
-      print(
+    for (final value in response) {
+      AppLogger.d(
         "${value["group"]}|${DateFormat.EEEE().format(DateTime.parse(value["startTime"]))}|${value["startTime"]} - ${value["endTime"]}, Subject: ${value["subject"]}, ",
       );
-    });
+    }
   }
 
-  String DateTimeToSupabase(DateTime datetime) {
+  String dateTimeToSupabase(DateTime datetime) {
     return DateFormat(
       "yyyy-MM-dd",
     ).format(DateTime(datetime.year, datetime.month, datetime.day));
@@ -30,7 +32,7 @@ class BackendService {
 
   Future<List<LectureModel>> fetchLectures() async {
     if (Student.specialisation == null) {
-      print("Specjalizacja studenta nie została ustawiona");
+      AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
     final List<String> selectedGroups = Student.selectedGroups ?? [];
 
@@ -52,8 +54,8 @@ class BackendService {
           building:building(name)
         )
       ''')
-        // .gte('startTime', DateTimeToSupabase(today))
-        // .lt('startTime', DateTimeToSupabase(tomorrow))
+        // .gte('startTime', dateTimeToSupabase(today))
+        // .lt('startTime', dateTimeToSupabase(tomorrow))
         .eq("programs.programType", Student.term?[0] ?? "S")
         .eq(
           "programs.name",

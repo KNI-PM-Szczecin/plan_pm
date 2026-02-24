@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plan_pm/global/notifiers.dart';
 
 class ColorThemes {
   static const Color lightBackground = Color(0xf7f8faFF);
@@ -33,9 +34,14 @@ class AppColor {
     _brightness = brightness;
   }
 
-  static Color get background => _brightness == Brightness.light
-      ? ColorThemes.lightBackground
-      : ColorThemes.darkBackground;
+  static Color get background {
+    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
+      return Colors.black;
+    }
+    return _brightness == Brightness.light
+        ? ColorThemes.lightBackground
+        : ColorThemes.darkBackground;
+  }
 
   static Color get onBackground => _brightness == Brightness.light
       ? ColorThemes.lightOnBackground
@@ -45,9 +51,14 @@ class AppColor {
       ? ColorThemes.lightOnBackgroundVariant
       : ColorThemes.darkOnBackgroundVariant;
 
-  static Color get surface => _brightness == Brightness.light
-      ? ColorThemes.lightSurface
-      : ColorThemes.darkSurface;
+  static Color get surface {
+    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
+      return const Color(0xFF090909);
+    }
+    return _brightness == Brightness.light
+        ? ColorThemes.lightSurface
+        : ColorThemes.darkSurface;
+  }
 
   static Color get onSurface => _brightness == Brightness.light
       ? ColorThemes.lightOnSurface
@@ -57,9 +68,28 @@ class AppColor {
       ? ColorThemes.lightOnSurfaceVariant
       : ColorThemes.darkOnSurfaceVariant;
 
-  static Color get primary => _brightness == Brightness.light
-      ? ColorThemes.lightPrimary
-      : ColorThemes.darkPrimary;
+  static Color get primary {
+     final accent = accentColorNotifier.value;
+     if (_brightness == Brightness.light) {
+       switch (accent) {
+         case AppAccentColor.blue: return ColorThemes.lightPrimary;
+         case AppAccentColor.green: return const Color(0xFF10B981);
+         case AppAccentColor.purple: return const Color(0xFF8B5CF6);
+         case AppAccentColor.orange: return const Color(0xFFF59E0B);
+         case AppAccentColor.red: return const Color(0xFFEF4444);
+         case AppAccentColor.pink: return const Color(0xFFEC4899);
+       }
+     } else {
+       switch (accent) {
+         case AppAccentColor.blue: return ColorThemes.darkPrimary;
+         case AppAccentColor.green: return const Color(0xFF34D399);
+         case AppAccentColor.purple: return const Color(0xFFA855F7);
+         case AppAccentColor.orange: return const Color(0xFFFBBF24);
+         case AppAccentColor.red: return const Color(0xFFF87171);
+         case AppAccentColor.pink: return const Color(0xFFF472B6);
+       }
+     }
+  }
 
   static Color get onPrimary => _brightness == Brightness.light
       ? ColorThemes.lightOnPrimary

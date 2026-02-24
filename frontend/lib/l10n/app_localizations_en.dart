@@ -400,4 +400,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalizationHeader => 'Personalization';
+
+  @override
+  String get languageHeader => 'Language';
+
+  @override
+  String get languageSystem => 'System';
+
+  @override
+  String get languagePolish => 'Polish';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageUkrainian => 'Ukrainian';
+
+  @override
+  String get languageHint => 'Choose the application language';
+
+  @override
+  String get activeLanguageLabel => 'Active language: ';
+
+  @override
+  String get accentColorTitle => 'Accent Color';
+
+  @override
+  String get amoledModeTitle => 'AMOLED Black';
+
+  @override
+  String get amoledModeDesc => 'Pitch black background for dark mode';
+
+  @override
+  String get eventStyleTitle => 'Event Style';
+
+  @override
+  String get eventStyleCurrent => 'Default';
+
+  @override
+  String get eventStylePastel => 'Pastel';
+
+  @override
+  String get eventStyleVibrant => 'Vibrant';
+
+  @override
+  String get eventStyleMonochrome => 'Monochrome';
+
+  @override
+  String get aboutApp => 'About application';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get createdBy => 'Created by';
+
+  @override
+  String get kniName => 'IT Science Club\nMaritime University of Szczecin';
+
+  @override
+  String get openSourceInfo => 'This app is open-source';
+
+  @override
+  String get githubRepo => 'Open repository on Github';
+
+  @override
+  String get couldNotOpenRepo => 'Could not open repository';
+
+  @override
+  String get appDescription =>
+      'A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.';
+
+  @override
+  String get debugReturnToWelcome => 'Return to Welcome Screen';
+
+  @override
+  String get infoSection => 'Information';
 }

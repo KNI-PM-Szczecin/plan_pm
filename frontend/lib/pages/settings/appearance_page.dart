@@ -11,7 +11,7 @@ class AppearancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
@@ -50,7 +50,7 @@ class AppearancePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     l10n.appearanceHint,
                     style: TextStyle(
                       color: AppColor.onSurfaceVariant,
@@ -95,8 +95,8 @@ class AppearancePage extends StatelessWidget {
                           Row(
                             children: [
                               Icon(
-                                currentMode == ThemeMode.light 
-                                    ? LucideIcons.sun 
+                                currentMode == ThemeMode.light
+                                    ? LucideIcons.sun
                                     : (currentMode == ThemeMode.dark ? LucideIcons.moon : LucideIcons.monitor),
                                 color: AppColor.onSurfaceVariant,
                                 size: 20,
@@ -124,7 +124,123 @@ class AppearancePage extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          )
+                          ),
+                          const SizedBox(height: 24),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // AMOLED Toggle
+                          ValueListenableBuilder<bool>(
+                            valueListenable: amoledModeNotifier,
+                            builder: (context, isAmoled, _) {
+                              return SwitchListTile(
+                                contentPadding: EdgeInsets.zero,
+                                activeThumbColor: AppColor.primary,
+                                title: Text(l10n.amoledModeTitle, style: TextStyle(color: AppColor.onSurface, fontWeight: FontWeight.w600)),
+                                subtitle: Text(l10n.amoledModeDesc, style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13)),
+                                value: isAmoled,
+                                onChanged: (val) {
+                                  HapticFeedback.selectionClick();
+                                  amoledModeNotifier.setAmoledMode(val);
+                                },
+                              );
+                            },
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // Accent Color
+                          Text(
+                            l10n.accentColorTitle,
+                            style: TextStyle(
+                              color: AppColor.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ValueListenableBuilder<AppAccentColor>(
+                            valueListenable: accentColorNotifier,
+                            builder: (context, currentColor, _) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: AppAccentColor.values.map((color) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.selectionClick();
+                                      accentColorNotifier.setAccentColor(color);
+                                    },
+                                    child: Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: _getAccentColorValue(color, Theme.of(context).brightness),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: currentColor == color ? AppColor.onSurface : Colors.transparent,
+                                          width: 3,
+                                        ),
+                                      ),
+                                      child: currentColor == color
+                                          ? Icon(LucideIcons.check, color: Colors.white, size: 22)
+                                          : null,
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 24),
+                          Divider(color: AppColor.outline, height: 1),
+                          const SizedBox(height: 16),
+                          
+                          // Event Color Style
+                          ValueListenableBuilder<EventColorStyle>(
+                            valueListenable: eventColorStyleNotifier,
+                            builder: (context, currentStyle, _) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.eventStyleTitle,
+                                    style: TextStyle(
+                                      color: AppColor.onSurfaceVariant,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.background,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: AppColor.outline),
+                                    ),
+                                    child: RadioGroup<EventColorStyle>(
+                                      groupValue: currentStyle,
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          HapticFeedback.selectionClick();
+                                          eventColorStyleNotifier.setEventStyle(val);
+                                        }
+                                      },
+                                      child: Column(
+                                        children: EventColorStyle.values.map((style) {
+                                          return RadioListTile<EventColorStyle>(
+                                            activeColor: AppColor.primary,
+                                            title: Text(_getEventStyleName(style, l10n), style: TextStyle(color: AppColor.onSurface)),
+                                            value: style,
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          
                         ],
                       );
                     },
@@ -148,9 +264,40 @@ class AppearancePage extends StatelessWidget {
     if (mode == ThemeMode.dark) return l10n.themeDark;
     return l10n.themeSystem;
   }
+
+  Color _getAccentColorValue(AppAccentColor color, Brightness brightness) {
+    if (brightness == Brightness.light) {
+      switch (color) {
+        case AppAccentColor.blue: return ColorThemes.lightPrimary;
+        case AppAccentColor.green: return const Color(0xFF10B981);
+        case AppAccentColor.purple: return const Color(0xFF8B5CF6);
+        case AppAccentColor.orange: return const Color(0xFFF59E0B);
+        case AppAccentColor.red: return const Color(0xFFEF4444);
+        case AppAccentColor.pink: return const Color(0xFFEC4899);
+      }
+    } else {
+      switch (color) {
+        case AppAccentColor.blue: return ColorThemes.darkPrimary;
+        case AppAccentColor.green: return const Color(0xFF34D399);
+        case AppAccentColor.purple: return const Color(0xFFA855F7);
+        case AppAccentColor.orange: return const Color(0xFFFBBF24);
+        case AppAccentColor.red: return const Color(0xFFF87171);
+        case AppAccentColor.pink: return const Color(0xFFF472B6);
+      }
+    }
+  }
+
+  String _getEventStyleName(EventColorStyle style, AppLocalizations l10n) {
+    switch (style) {
+      case EventColorStyle.current: return l10n.eventStyleCurrent;
+      case EventColorStyle.pastel: return l10n.eventStylePastel;
+      case EventColorStyle.vibrant: return l10n.eventStyleVibrant;
+      case EventColorStyle.monochrome: return l10n.eventStyleMonochrome;
+    }
+  }
 }
 
-class _ThemeCard extends StatelessWidget {
+class _ThemeCard extends StatefulWidget {
   final String title;
   final String imageAsset;
   final bool isSelected;
@@ -164,55 +311,70 @@ class _ThemeCard extends StatelessWidget {
   });
 
   @override
+  State<_ThemeCard> createState() => _ThemeCardState();
+}
+
+class _ThemeCardState extends State<_ThemeCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? AppColor.primary : Colors.transparent,
-                  width: 2.0,
+        onTap: widget.onTap,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.97 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: widget.isSelected ? AppColor.primary : Colors.transparent,
+                    width: 2.0,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    widget.imageAsset,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  imageAsset,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: isSelected ? AppColor.onSurface : AppColor.onSurfaceVariant,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      fontSize: 13,
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                        color: widget.isSelected ? AppColor.onSurface : AppColor.onSurfaceVariant,
+                        fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                if (isSelected) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    LucideIcons.check,
-                    color: AppColor.primary,
-                    size: 14,
-                  ),
+                  if (widget.isSelected) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      LucideIcons.check,
+                      color: AppColor.primary,
+                      size: 14,
+                    ),
+                  ],
                 ],
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

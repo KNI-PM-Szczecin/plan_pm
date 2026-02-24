@@ -471,5 +471,51 @@
   "personalizationHeader": "Personalizacja",
   "@personalizationHeader": {
     "description": "settings_page.dart - Header for the personalization section."
-  }
+  },
+  "languageHeader": "Język",
+  "@languageHeader": {
+    "description": "settings_page.dart - Header for the language section."
+  },
+  "languageSystem": "Systemowy",
+  "@languageSystem": {
+    "description": "language_page.dart - Label for the system default language option."
+  },
+  "languagePolish": "Polski",
+  "@languagePolish": {
+    "description": "language_page.dart - Label for the Polish language option."
+  },
+  "languageEnglish": "Angielski",
+  "@languageEnglish": {
+    "description": "language_page.dart - Label for the English language option."
+  },
+  "languageUkrainian": "Ukraiński",
+  "@languageUkrainian": {
+    "description": "language_page.dart - Label for the Ukrainian language option."
+  },
+  "languageHint": "Wybierz język aplikacji",
+  "@languageHint": {
+    "description": "language_page.dart - Hint text describing the language selection."
+  },
+  "activeLanguageLabel": "Aktywny język: ",
+  "@activeLanguageLabel": {
+    "description": "language_page.dart - Label showing the currently active language."
+  },
+  "accentColorTitle": "Kolor wiodący",
+  "amoledModeTitle": "Prawdziwa czerń",
+  "amoledModeDesc": "Całkowicie czarne tło w trybie ciemnym",
+  "eventStyleTitle": "Styl kolorowania zajęć",
+  "eventStyleCurrent": "Domyślny",
+  "eventStylePastel": "Pastelowe",
+  "eventStyleVibrant": "Żywe",
+  "eventStyleMonochrome": "Jednokolorowe",
+  "aboutApp": "O aplikacji",
+  "version": "Wersja",
+  "createdBy": "Stworzono przez",
+  "kniName": "Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie",
+  "openSourceInfo": "Ta aplikacja jest open-source",
+  "githubRepo": "Otwórz repozytorium na Github",
+  "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
+  "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",
+  "debugReturnToWelcome": "Powrót do Welcome Screen",
+  "infoSection": "Informacje"
 }

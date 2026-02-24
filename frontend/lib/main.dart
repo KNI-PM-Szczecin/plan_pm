@@ -20,9 +20,11 @@ import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
 // Funkcja odpowiada za inicjalizację aplikacji na wejściu - robi wszystkie rzeczy, a następnie zdejmuje splashScreen
 Future<Widget> appInitialization() async {
-  print("[APP-INIT] Start");
+  AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // Jezeli nie ma flagi skip_welcome to znaczy, ze uzytkownik jest pierwszy raz w apce
@@ -60,7 +62,7 @@ Future<Widget> appInitialization() async {
     await cacheService.syncLectures();
     await cacheService.syncNews();
   } catch (error) {
-    print("[APP-INIT] Caching error: $error");
+    AppLogger.e("[APP-INIT] Caching error", error);
   }
 
   return const MyHomePage(title: "Strona główna");
@@ -71,7 +73,7 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   if (Secrets.supabaseUrl.isEmpty || Secrets.supabaseAnonKey.isEmpty) {
-    print(
+    AppLogger.e(
       "Secrets file is not defined! Visit secrets_example.dart for more information!",
     );
     return;
@@ -84,6 +86,18 @@ Future<void> main() async {
 
   themeNotifier = ThemeNotifier();
   await themeNotifier.loadFromPrefs();
+  
+  localeNotifier = LocaleNotifier();
+  await localeNotifier.loadFromPrefs();
+
+  accentColorNotifier = AccentColorNotifier();
+  await accentColorNotifier.loadFromPrefs();
+
+  amoledModeNotifier = AmoledModeNotifier();
+  await amoledModeNotifier.loadFromPrefs();
+
+  eventColorStyleNotifier = EventColorStyleNotifier();
+  await eventColorStyleNotifier.loadFromPrefs();
 
   runApp(const App());
 }
@@ -93,18 +107,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, currentThemeMode, _) {
-        return MaterialApp(
-          themeMode: currentThemeMode,
-          title: 'Plan PM',
-          debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: localeNotifier,
+      builder: (context, currentLocale, _) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (context, currentThemeMode, _) {
+            return MaterialApp(
+              locale: currentLocale,
+              themeMode: currentThemeMode,
+              title: 'Plan PM',
+              debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: "Inter",
             brightness: Brightness.light,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: ColorThemes.lightPrimary,
+              seedColor: AppColor.primary,
               brightness: Brightness.light,
             ),
           ),
@@ -112,7 +130,7 @@ class App extends StatelessWidget {
             fontFamily: "Inter",
             brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: ColorThemes.darkPrimary,
+              seedColor: AppColor.primary,
               brightness: Brightness.dark,
             ),
           ),
@@ -153,6 +171,8 @@ class App extends StatelessWidget {
             },
           ),
         );
+      },
+    );
       },
     );
   }
@@ -259,11 +279,19 @@ class _AppRebuilderState extends State<AppRebuilder> {
   void initState() {
     super.initState();
     themeNotifier.addListener(_rebuildAll);
+    localeNotifier.addListener(_rebuildAll);
+    accentColorNotifier.addListener(_rebuildAll);
+    amoledModeNotifier.addListener(_rebuildAll);
+    eventColorStyleNotifier.addListener(_rebuildAll);
   }
 
   @override
   void dispose() {
     themeNotifier.removeListener(_rebuildAll);
+    localeNotifier.removeListener(_rebuildAll);
+    accentColorNotifier.removeListener(_rebuildAll);
+    amoledModeNotifier.removeListener(_rebuildAll);
+    eventColorStyleNotifier.removeListener(_rebuildAll);
     super.dispose();
   }
 
