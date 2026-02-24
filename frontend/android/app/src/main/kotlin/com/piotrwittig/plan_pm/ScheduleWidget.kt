@@ -65,7 +65,7 @@ class ScheduleWidget : GlanceAppWidget() {
         }
     }
 
-    @Composable
+@Composable
     private fun WidgetContent(context: Context) {
         val prefs = HomeWidgetPlugin.getData(context)
         
@@ -74,6 +74,8 @@ class ScheduleWidget : GlanceAppWidget() {
         
         val scheduleJsonStr = prefs.getString("schedule_data_$selectedDayOffset", "[]") ?: "[]"
         val dayName = prefs.getString("day_name_$selectedDayOffset", "Dzisiaj") ?: "Dzisiaj"
+        val eventColorStyle = prefs.getString("event_color_style", "current") ?: "current"
+        val primaryColorHex = prefs.getString("primary_color", "#FF409CFF") ?: "#FF409CFF"
         
         val lectures = try {
             parseLectures(scheduleJsonStr)
@@ -157,7 +159,7 @@ class ScheduleWidget : GlanceAppWidget() {
             } else {
                 LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
                     items(lectures) { lecture ->
-                        LectureItem(context, lecture)
+                        LectureItem(context, lecture, eventColorStyle, primaryColorHex)
                     }
                 }
             }
@@ -181,6 +183,8 @@ class TodayWidget : GlanceAppWidget() {
     private fun WidgetContent(context: Context) {
         val prefs = HomeWidgetPlugin.getData(context)
         val scheduleJsonStr = prefs.getString("schedule_data_0", "[]") ?: "[]"
+        val eventColorStyle = prefs.getString("event_color_style", "current") ?: "current"
+        val primaryColorHex = prefs.getString("primary_color", "#FF409CFF") ?: "#FF409CFF"
         
         val lectures = try {
             parseLectures(scheduleJsonStr)
@@ -225,7 +229,7 @@ class TodayWidget : GlanceAppWidget() {
             } else {
                 LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
                     items(lectures) { lecture ->
-                        LectureItem(context, lecture)
+                        LectureItem(context, lecture, eventColorStyle, primaryColorHex)
                     }
                 }
             }
@@ -234,45 +238,76 @@ class TodayWidget : GlanceAppWidget() {
 }
 
 @Composable
-private fun LectureItem(context: Context, lecture: LectureData) {
+private fun LectureItem(context: Context, lecture: LectureData, eventColorStyle: String, primaryColorHex: String) {
     val launchIntent = Intent(context, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
+
+    val styleType = when (eventColorStyle) {
+        "pastel" -> "pastel"
+        "vibrant" -> "vibrant"
+        "monochrome" -> "monochrome"
+        else -> "default"
+    }
+
+    val textColor = if (styleType == "pastel") ColorProvider(day = Color(0xDE000000), night = Color(0xDE000000)) else ColorProvider(day = Color.White, night = Color.White)
+    val secondaryTextColor = if (styleType == "pastel") ColorProvider(day = Color(0x99000000), night = Color(0x99000000)) else ColorProvider(day = Color(0xCCFFFFFF), night = Color(0xCCFFFFFF))
+
+    val backgroundModifier = if (styleType == "monochrome") {
+        try {
+            val colorInt = android.graphics.Color.parseColor(primaryColorHex)
+            val baseColor = Color(colorInt)
+            // Make it slightly transparent for glassy look
+            val glassyColor = baseColor.copy(alpha = 0.8f) 
+            GlanceModifier.background(ColorProvider(day = glassyColor, night = glassyColor)).cornerRadius(12.dp)
+        } catch (e: Exception) {
+            GlanceModifier.background(GlanceTheme.colors.primary).cornerRadius(12.dp)
+        }
+    } else {
+        val drawableName = "tile_${styleType}_${lecture.idx % 8}"
+        val resId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+        if (resId != 0) {
+            GlanceModifier.background(androidx.glance.ImageProvider(resId))
+        } else {
+            GlanceModifier.background(GlanceTheme.colors.surface).cornerRadius(12.dp)
+        }
+    }
+
     // Margin wrapper
     Column(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 8.dp)) {
         Column(
             modifier = GlanceModifier
                 .fillMaxWidth()
-                .background(GlassSurface)
-                .cornerRadius(16.dp)
-                .padding(12.dp)
+                .then(backgroundModifier)
+                .padding(16.dp)
                 .clickable(actionStartActivity(launchIntent))
         ) {
             Text(
-                text = "${lecture.startTime} - ${lecture.endTime}",
-                style = TextStyle(
-                    color = GlanceTheme.colors.primary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
-            )
-            Spacer(modifier = GlanceModifier.height(4.dp))
-            Text(
                 text = lecture.name,
                 style = TextStyle(
-                    color = GlanceTheme.colors.onSurface,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp
+                    color = textColor,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
             )
-            Spacer(modifier = GlanceModifier.height(4.dp))
-            Text(
-                text = "Sala: ${lecture.room ?: "---"} (${lecture.building ?: "---"})",
-                style = TextStyle(
-                    color = GlanceTheme.colors.onSurfaceVariant,
-                    fontSize = 14.sp
+            Spacer(modifier = GlanceModifier.height(6.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "${lecture.startTime} - ${lecture.endTime}",
+                    style = TextStyle(
+                        color = secondaryTextColor,
+                        fontSize = 13.sp
+                    )
                 )
-            )
+                Spacer(modifier = GlanceModifier.size(12.dp))
+                Text(
+                    text = lecture.room ?: "---",
+                    style = TextStyle(
+                        color = secondaryTextColor,
+                        fontSize = 13.sp
+                    )
+                )
+            }
         }
     }
 }
@@ -284,6 +319,7 @@ private fun parseLectures(jsonStr: String): List<LectureData> {
         val obj = jsonArray.getJSONObject(i)
         list.add(
             LectureData(
+                idx = if (obj.has("idx")) obj.getInt("idx") else i,
                 name = obj.getString("name"),
                 startTime = obj.getString("startTime"),
                 endTime = obj.getString("endTime"),
@@ -296,6 +332,7 @@ private fun parseLectures(jsonStr: String): List<LectureData> {
 }
 
 data class LectureData(
+    val idx: Int,
     val name: String,
     val startTime: String,
     val endTime: String,

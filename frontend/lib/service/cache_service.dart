@@ -6,7 +6,9 @@ import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 
 import 'package:plan_pm/global/logger.dart';
-
+import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class CacheService {
   static final CacheService _cacheService = CacheService._internal();
 
@@ -63,12 +65,17 @@ class CacheService {
         // Sort by start time just to be sure
         dayLectures.sort((a, b) => a.startTime.compareTo(b.startTime));
         
-        final jsonList = dayLectures.map((l) => {
-          "name": l.name,
-          "startTime": l.startTime,
-          "endTime": l.endTime,
-          "room": l.room,
-          "building": l.building,
+        final jsonList = dayLectures.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final l = entry.value;
+          return {
+            "idx": idx,
+            "name": l.name,
+            "startTime": l.startTime,
+            "endTime": l.endTime,
+            "room": l.room,
+            "building": l.building,
+          };
         }).toList();
         
         final jsonStr = jsonEncode(jsonList);
@@ -91,6 +98,14 @@ class CacheService {
         await HomeWidget.saveWidgetData("schedule_data_$offset", jsonStr);
         await HomeWidget.saveWidgetData("day_name_$offset", dayNameStr);
       }
+      
+      // Save global styles
+      final prefs = await SharedPreferences.getInstance();
+      final styleString = prefs.getString('event_color_style') ?? 'current';
+      await HomeWidget.saveWidgetData("event_color_style", styleString);
+
+      final primaryHex = '#${AppColor.primary.value.toRadixString(16).padLeft(8, '0')}';
+      await HomeWidget.saveWidgetData("primary_color", primaryHex);
       
       // Trigger widget update
       await HomeWidget.updateWidget(
