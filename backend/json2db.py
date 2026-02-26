@@ -54,7 +54,7 @@ class json2db:
                 "title": teacher["title"]
             })
         
-        _ = self.db.table("teachers").insert(query).execute()
+        _ = self.db.table("teachers").upsert(query, on_conflict="fullName, title").execute()
         print("Done.")
     
     def load_buildings(self):
@@ -65,7 +65,7 @@ class json2db:
                 "name": building
             })
 
-        _ = self.db.table("building").insert(query).execute()
+        _ = self.db.table("building").upsert(query, on_conflict="name").execute()
         print("Done")
     
     def load_rooms(self):
@@ -90,7 +90,7 @@ class json2db:
                     "building": None
                     })
                 
-        _ = self.db.table("rooms").insert(query).execute()
+        _ = self.db.table("rooms").upsert(query, on_conflict="name, building").execute()
                 
         print("Done")
     
@@ -125,7 +125,7 @@ class json2db:
                 "courseLength": float(program["course_length"]),
                 "year": final_year
             })
-        _ = self.db.table("programs").insert(query).execute()
+        _ = self.db.table("programs").upsert(query, on_conflict="name, programType, degreeLevel, language, academicYear").execute()
         print("Done")
         
     
@@ -138,6 +138,9 @@ class json2db:
         
         rooms = self.db.table("rooms").select("id, name").execute()
         room_map = {v["name"]: v["id"] for v in rooms.data}
+        
+        processed_class_keys = set() 
+
         for sclass in self.data["classes"]:
             found_program = self.data["programs"][sclass["program"]]
             program_name = found_program["name"]
@@ -146,7 +149,6 @@ class json2db:
             academic_year = found_program["academic_year"]
             course_length = float(found_program["course_length"])
             language = found_program["language"]
-            # Get the id of the program
             
             found_program_id = None
             program = [program_name, academic_year, language, program_type, course_length, degree_level]
@@ -158,22 +160,28 @@ class json2db:
                 print("Nie znaleziono ID dla programu - niedobrze")
                 continue
             
-
-            # Get the id of the room
             room = sclass["room"]
             room_id = None
             if (room != None):
                 room_name = self.data["rooms"][sclass["room"]]["room"]
                 room_id = room_map.get(room_name)
             
-            # Get the subject
             subject = sclass["subject"]
             subject_name = self.data["subjects"][subject]
             
-            # Combine this shit into a whole query
+            start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
+            end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"])).strftime("%Y-%m-%dT%H:%M:%S")
+
+            current_class_key = (subject_name, start_time_formatted, sclass["group"])
+            
+            if current_class_key in processed_class_keys:
+                # print(f"Pominięto duplikat klasy w JSON: {current_class_key}")
+                continue
+            processed_class_keys.add(current_class_key)
+
             query.append({
-                "startTime": datetime.datetime.fromtimestamp(int(sclass["startTime"])).strftime("%Y-%m-%d %H:%M:%S"),
-                "endTime": datetime.datetime.fromtimestamp(int(sclass["endTime"])).strftime("%Y-%m-%d %H:%M:%S"),
+                "startTime": start_time_formatted,
+                "endTime": end_time_formatted,
                 "program": found_program_id,
                 "subject": subject_name,
                 "group": sclass["group"],
@@ -181,62 +189,62 @@ class json2db:
                 "notes": sclass["notes"]
             })
 
-        _ = self.db.table("classes").insert(query).execute()
+        _ = self.db.table("classes").upsert(query, on_conflict="subject, startTime, group").execute()
         print("Done")
     
     def load_teachers_classes(self):
         print("Loading teachers/classes")
-        classes = self.db.table("classes").select("id, subject, group, program(name), room(name), startTime, endTime, notes").execute()
-        classes_map = {v["id"]: [v["subject"], v["group"], v["program"]["name"] if v["program"] else None, v["room"]["name"] if v["room"] else None, v["startTime"], v["endTime"], v["notes"]] for v in classes.data}
-        
-        teachers = self.db.table("teachers").select("id, fullName").execute()
-        teachers_map = {v["fullName"]: v["id"] for v in teachers.data}
-        # print(teachers_map)
+
+        classes_response = self.db.table("classes").select("id, subject, group, startTime").execute()
+        teachers_response = self.db.table("teachers").select("id, fullName").execute()
+
+        classes_map = {
+            (v["subject"], v["group"], v["startTime"]): v["id"] 
+            for v in classes_response.data
+        }
+
+        teachers_map = {v["fullName"]: v["id"] for v in teachers_response.data}
+
         query = []
+        added_links = set() 
+
         for tc in self.data["teachersclasses"]:
-            found_class = self.data["classes"][tc["class"]]
-            start_time = datetime.datetime.fromtimestamp(int(found_class["startTime"])).strftime("%Y-%m-%d %H:%M:%S").replace(" ", "T")
-            end_time = datetime.datetime.fromtimestamp(int(found_class["endTime"])).strftime("%Y-%m-%d %H:%M:%S").replace(" ", "T")
-            subject = self.data["subjects"][found_class["subject"]]
-            program_name = self.data["programs"][found_class["program"]]["name"]
-            notes = found_class["notes"]
-            group = found_class["group"]
-            room_name = None
-            if (found_class["room"] != None):
-                room_name = self.data["rooms"][found_class["room"]]["room"]
-            
-            sclass = [
-                subject, group, program_name, room_name, start_time, end_time, notes
-            ]
-            
-            found_class_id = None
-            
-            for class_id, class_value in classes_map.items():
-                if (class_value == sclass):
-                    found_class_id = class_id
-                    
-            
+            found_class_json = self.data["classes"][tc["class"]]
+
+            subject = self.data["subjects"][found_class_json["subject"]]
+            group = found_class_json["group"]
+            start_time = datetime.datetime.fromtimestamp(int(found_class_json["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
+
+            unique_class_key = (subject, group, start_time)
+
+            found_class_id = classes_map.get(unique_class_key)
+
             if (found_class_id == None):
-                print(f"Nie znaleziono ID dla klasy - niedobrze.")
+                print(f"Nie znaleziono ID dla klasy: {unique_class_key}")
                 continue
-            
-            for teacher in tc["teachers"]:
-                teacher_fullname = self.data["teachers"][teacher]["fullName"]
+
+            for teacher_index in set(tc["teachers"]): 
+                teacher_fullname = self.data["teachers"][teacher_index]["fullName"]
                 teacher_id = teachers_map.get(teacher_fullname)
-                
-                query.append({
-                    "teachers": teacher_id,
-                    "classes": found_class_id
-                })
-            
-        _ = self.db.table("teachersclasses").insert(query).execute()
+
+                if teacher_id:
+                    link_key = (teacher_id, found_class_id)
+                    if link_key not in added_links: 
+                        query.append({
+                            "teachers": teacher_id,
+                            "classes": found_class_id
+                        })
+                        added_links.add(link_key)
+
+        if query:
+            _ = self.db.table("teachersclasses").upsert(query, on_conflict="teachers, classes").execute()
         print("Done")
             
     def run(self):
         print("Executing json2db.py")
         start_time = time.time()
         self.load_env()
-        self.clear_db()
+        # self.clear_db()
         self.load_teachers()
         self.load_buildings()
         self.load_rooms()
@@ -252,5 +260,3 @@ class json2db:
 if __name__ == "__main__":
     App = json2db(input="./output/parser.json")
     App.run()
-    
-    

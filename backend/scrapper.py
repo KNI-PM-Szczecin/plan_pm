@@ -118,7 +118,6 @@ class Scrapper:
                             "Grupy": " ".join(cells[3].get_attribute('textContent').strip().split()),
                             "Przedmiot": cells[4].get_attribute('textContent').strip(),
                             "Forma zajęć": cells[5].get_attribute('textContent').strip(),
-                            "Nr uruch.": cells[6].get_attribute('textContent').strip(),
                             "Sala": cells[7].get_attribute('textContent').strip(),
                             "Prowadzący": " ".join(cells[8].get_attribute('textContent').strip().split()),
                             "Forma zaliczenia": cells[9].get_attribute('textContent').strip(),
@@ -141,8 +140,6 @@ class Scrapper:
             if self.debug:
                 print(schedule_data)
             
-            for lecture in lectures:
-                lecture["flow_id"] = flow_id
             with self.output_lock:
                 self.results.extend(lectures)
             self.stats["success"] += 1

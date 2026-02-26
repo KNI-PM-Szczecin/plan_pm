@@ -74,6 +74,16 @@ def analyze_weekend_classes(input_file="./output/parser.json"):
         print("\n")
 
 
-if __name__ == "__main__":
-    analyze_weekend_classes()
+def xd(input_file="./output/parser.json"):
+    with open(input_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            # print(data["teachersclasses"])
+            for tc in data["teachersclasses"]:
+                if (len(tc["teachers"]) > 1):
+                    print(tc)
+                    sclass = tc["class"]
+                    print(data["classes"][sclass])
 
+if __name__ == "__main__":
+    # analyze_weekend_classes()
+    xd()

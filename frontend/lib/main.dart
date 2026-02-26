@@ -1,52 +1,178 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plan_pm/global/notifiers.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
-import 'package:plan_pm/pages/menu/menu_page.dart';
+import 'package:plan_pm/pages/settings/settings_page.dart';
+import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/secrets.dart';
+import 'package:plan_pm/service/cache_service.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:plan_pm/global/logger.dart';
+
+// Funkcja odpowiada za inicjalizację aplikacji na wejściu - robi wszystkie rzeczy, a następnie zdejmuje splashScreen
+Future<Widget> appInitialization() async {
+  AppLogger.i("[APP-INIT] Start");
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Jezeli nie ma flagi skip_welcome to znaczy, ze uzytkownik jest pierwszy raz w apce
+  if (!prefs.containsKey("skip_welcome")) {
+    return const WelcomePage();
+  }
+
+  Student.course = prefs.getString("course");
+  Student.degreeCourse = prefs.getString("degree_course");
+  Student.faculty = prefs.getString("faculty");
+  String? spec = prefs.getString("specialisation");
+  Student.specialisation = (spec != null && spec.isNotEmpty) ? spec : null;
+  Student.year = prefs.getInt("year");
+  Student.term = prefs.getString("term");
+  Student.degreeLevel = prefs.getString("degree_level");
+  Student.selectedGroups = prefs.getStringList("groups");
+
+  // Sprawdź czy student ma wszystkie mozliwe wypełnione dane
+  final bool allFieldsArePresent =
+      Student.course != null &&
+      Student.degreeCourse != null &&
+      Student.faculty != null &&
+      Student.specialisation != null &&
+      Student.year != null &&
+      Student.term != null &&
+      Student.selectedGroups != null;
+
+  // Jezeli uzytkownik nie ma danych o kierunku to przenieś go do InputPage
+  if (!allFieldsArePresent) {
+    return const InputPage();
+  }
+
+  try {
+    final cacheService = CacheService();
+    await cacheService.syncLectures();
+    await cacheService.syncNews();
+  } catch (error) {
+    AppLogger.e("[APP-INIT] Caching error", error);
+  }
+
+  return const MyHomePage(title: "Strona główna");
+}
+
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  if (Secrets.supabaseUrl.isEmpty || Secrets.supabaseAnonKey.isEmpty) {
+    AppLogger.e(
+      "Secrets file is not defined! Visit secrets_example.dart for more information!",
+    );
+    return;
+  }
 
   await Supabase.initialize(
-    url: "https://nfujukqusxcwkewpeikw.supabase.co",
-    anonKey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mdWp1a3F1c3hjd2tld3BlaWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTAyODcsImV4cCI6MjA2OTk4NjI4N30.UbH0dCf15sJxq-aI1HlFt2XxrPAIerod1KeHdEKA6WA",
+    url: Secrets.supabaseUrl,
+    anonKey: Secrets.supabaseAnonKey,
   );
+
+  themeNotifier = ThemeNotifier();
+  await themeNotifier.loadFromPrefs();
+  
+  localeNotifier = LocaleNotifier();
+  await localeNotifier.loadFromPrefs();
+
+  accentColorNotifier = AccentColorNotifier();
+  await accentColorNotifier.loadFromPrefs();
+
+  amoledModeNotifier = AmoledModeNotifier();
+  await amoledModeNotifier.loadFromPrefs();
+
+  eventColorStyleNotifier = EventColorStyleNotifier();
+  await eventColorStyleNotifier.loadFromPrefs();
+
   runApp(const App());
 }
 
 class App extends StatelessWidget {
   const App({super.key});
 
-  // Tutaj jest głowa aplikacji, najlepiej aby nic nie zmieniać.
   @override
   Widget build(BuildContext context) {
-    Future<bool> checkSkip() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      return prefs.containsKey("skip_welcome");
-    }
-
-    return FutureBuilder<bool>(
-      future: checkSkip(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
-          );
-        }
-        return MaterialApp(
-          title: 'Plan PM',
-          debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: localeNotifier,
+      builder: (context, currentLocale, _) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (context, currentThemeMode, _) {
+            return MaterialApp(
+              locale: currentLocale,
+              themeMode: currentThemeMode,
+              title: 'Plan PM',
+              debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            fontFamily: "Inter",
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColor.primary,
+              brightness: Brightness.light,
+            ),
           ),
-          home: snapshot.data == true ? const InputPage() : const WelcomePage(),
+          darkTheme: ThemeData(
+            fontFamily: "Inter",
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColor.primary,
+              brightness: Brightness.dark,
+            ),
+          ),
+
+          builder: (context, child) {
+            return Builder(
+              builder: (BuildContext innerContext) {
+                final brightness = Theme.of(innerContext).brightness;
+                AppColor.update(brightness);
+                return KeyedSubtree(
+                  key: ValueKey(brightness),
+                  child: AppRebuilder(child: child!),
+                );
+              },
+            );
+          },
+
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            Locale('en'), // English
+            Locale('pl'), // Polish
+            Locale('uk'), // Ukrainian
+          ],
+          home: FutureBuilder<Widget>(
+            future: appInitialization(),
+            builder: (context, AsyncSnapshot<Widget> screen) {
+              if (screen.connectionState != ConnectionState.done) {
+                return Container(color: AppColor.background);
+              }
+              FlutterNativeSplash.remove();
+              // Zwróć odpowiednią stronę
+              return screen.data!;
+            },
+          ),
         );
+      },
+    );
       },
     );
   }
@@ -62,30 +188,131 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// To jest lista ze wszystkimi stronami i ich tytułami. W przyszłości będzie mozna dodać więcej parametrów.
-List<Map<String, dynamic>> pages = [
-  {"widget": const HomePage(), "title": "Home"},
-  {"widget": const LecturesPage(), "title": "Lectures"},
-  {"widget": const MenuPage(), "title": "Menu"},
-];
+List<Map<String, dynamic>> getPages(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  return [
+    {"widget": const HomePage(), "title": l10n.pageTitleHome},
+    {"widget": const LecturesPage(), "title": l10n.pageTitleLectures},
+    {"widget": const NewsPage(), "title": l10n.pageTitleNews},
+  ];
+}
+// prze†łumaczyć date w today Lectures
+// przetlumaczyc date w dayselection
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
+  final PreloadPageController _preloadPageController = PreloadPageController(
+    initialPage: 0,
+  );
+
   @override
   Widget build(BuildContext context) {
-    // Jezeli wartosc notifiera selectedTab sie zmieni - przebuduj cala strone.
-    return ValueListenableBuilder(
-      builder: (context, selectedTab, child) {
-        return Scaffold(
-          appBar: AppBar(
-            // Tytul jest brany dynamicznie z listy pages.
-            title: Text(pages[selectedTab]['title']),
+    final pages = getPages(context);
+    return Scaffold(
+      backgroundColor: AppColor.background,
+      appBar: AppBar(
+        backgroundColor: AppColor.background,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+            icon: Icon(
+              LucideIcons.settings,
+              color: AppColor.onBackgroundVariant,
+            ),
           ),
-          bottomNavigationBar: CustomNavigationBar(),
-          body: pages[selectedTab]['widget'],
-        );
-      },
-      // Wartość, którą zmian nasłuchujemy
-      valueListenable: Notifiers.selectedTab,
+        ],
+        forceMaterialTransparency: true,
+        shape: Border(bottom: BorderSide(color: AppColor.outline)),
+        // Tytul jest brany dynamicznie z listy pages.
+        title: Text(
+          pages[_currentIndex]['title'],
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: AppColor.onBackground,
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomNavigationBar(
+        index: _currentIndex,
+        onChange: (newIndex) {
+          setState(() {
+            _currentIndex = newIndex;
+          });
+          _preloadPageController.animateToPage(
+            newIndex,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        },
+      ),
+      body: PreloadPageView.builder(
+        itemCount: pages.length,
+        itemBuilder: (context, index) => pages[index]["widget"],
+        preloadPagesCount: 2,
+        onPageChanged: (value) {
+          setState(() {
+            _currentIndex = value;
+          });
+        },
+        controller: _preloadPageController,
+      ),
     );
+  }
+}
+
+class AppRebuilder extends StatefulWidget {
+  final Widget child;
+  const AppRebuilder({super.key, required this.child});
+
+  @override
+  State<AppRebuilder> createState() => _AppRebuilderState();
+}
+
+class _AppRebuilderState extends State<AppRebuilder> {
+  @override
+  void initState() {
+    super.initState();
+    themeNotifier.addListener(_rebuildAll);
+    localeNotifier.addListener(_rebuildAll);
+    accentColorNotifier.addListener(_rebuildAll);
+    amoledModeNotifier.addListener(_rebuildAll);
+    eventColorStyleNotifier.addListener(_rebuildAll);
+  }
+
+  @override
+  void dispose() {
+    themeNotifier.removeListener(_rebuildAll);
+    localeNotifier.removeListener(_rebuildAll);
+    accentColorNotifier.removeListener(_rebuildAll);
+    amoledModeNotifier.removeListener(_rebuildAll);
+    eventColorStyleNotifier.removeListener(_rebuildAll);
+    super.dispose();
+  }
+
+  void _rebuildAll() {
+    // PL: Wymuszamy rebuild wszystkich elementów drzewa, bo klasa AppColor używa pól statycznych.
+    // PL: Bez tego GUI nie odświeżałoby się od razu po zmianie motywu, tylko po zmianie zakładki.
+    // EN: We force a complete rebuild of the element tree because AppColor is based on static fields.
+    // EN: Without this, the UI wouldn't magically update right after changing the theme but on tab change.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      void rebuild(Element el) {
+        el.markNeedsBuild();
+        el.visitChildren(rebuild);
+      }
+
+      (context as Element).visitChildren(rebuild);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

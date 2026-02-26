@@ -1,0 +1,521 @@
+{
+  "@@locale": "pl",
+  "stage1Title": "",
+  "@stage1Title": {
+    "description": "onboarding_screen.dart - Title/Header for the first onboarding step. (Empty value is intentional)"
+  },
+  "stage1Button": "Witaj w Plan PM",
+  "@stage1Button": {
+    "description": "onboarding_screen.dart - Action button on the first welcome screen."
+  },
+  "stage2Title": "Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.",
+  "@stage2Title": {
+    "description": "onboarding_screen.dart - Feature description for the second step."
+  },
+  "stage2Button": "Dalej",
+  "@stage2Button": {
+    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
+  },
+  "stage3Title": "Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.",
+  "@stage3Title": {
+    "description": "onboarding_screen.dart - Feature description for the third step."
+  },
+  "stage3Button": "Dalej",
+  "@stage3Button": {
+    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
+  },
+  "stage4Title": "Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.",
+  "@stage4Title": {
+    "description": "onboarding_screen.dart - Feature description for the final step."
+  },
+  "stage4Button": "Rozpocznij",
+  "@stage4Button": {
+    "description": "onboarding_screen.dart - Button to finalize onboarding and start configuration."
+  },
+  "welcomePageSelectionText": "Powrót do WelcomeScreen",
+  "@welcomePageSelectionText": {
+    "description": "debug_menu.dart - Debug/Navigation link to return to the Welcome screen."
+  },
+  "inputPageSelectionText": "Powrót do InputPage",
+  "@inputPageSelectionText": {
+    "description": "debug_menu.dart - Debug/Navigation link to return to the Data Input screen."
+  },
+  "inputPageLabel": "Twoje Dane Akademickie",
+  "@inputPageLabel": {
+    "description": "input_page.dart - Header for the screen where the user enters academic data."
+  },
+  "facultyLabel": "Wydział",
+  "@facultyLabel": {
+    "description": "input_page.dart - Label for the 'Faculty' selection field."
+  },
+  "facultyHintText": "Wybierz wydział",
+  "@facultyHintText": {
+    "description": "input_page.dart - Placeholder text for the faculty selection."
+  },
+  "fieldLabel": "Kierunek studiów",
+  "@fieldLabel": {
+    "description": "input_page.dart - Label for the 'Field of Study' selection field."
+  },
+  "fieldHintText": "Wybierz kierunek studiów",
+  "@fieldHintText": {
+    "description": "input_page.dart - Placeholder text for the field of study selection."
+  },
+  "yearLabel": "Aktualny Rok",
+  "@yearLabel": {
+    "description": "input_page.dart - Label for the 'Current Year' selector."
+  },
+  "specialisationLabel": "Specjalizacja",
+  "@specialisationLabel": {
+    "description": "input_page.dart - Label for the 'Specialization' selection field."
+  },
+  "specialisationHintText": "Wybierz specjalizacje",
+  "@specialisationHintText": {
+    "description": "input_page.dart - Placeholder text for the specialization selection."
+  },
+  "typeLabel": "Tryb studiów",
+  "@typeLabel": {
+    "description": "input_page.dart - Label for the Study Mode selection section."
+  },
+  "campusButton": "Stacjonarne",
+  "@campusButton": {
+    "description": "input_page.dart - Option button for 'Full-time' study mode."
+  },
+  "extramuralButton": "Zaoczne",
+  "@extramuralButton": {
+    "description": "input_page.dart - Option button for 'Part-time/Extramural' study mode."
+  },
+  "continueButton": "Kontynuuj",
+  "@continueButton": {
+    "description": "input_page.dart - Main action button to proceed after data input."
+  },
+  "homePageLabel": "Dane studenta to: ",
+  "@homePageLabel": {
+    "description": "home_page.dart - Header for the student data summary section."
+  },
+  "facultyText": "Wydział",
+  "@facultyText": {
+    "description": "home_page.dart - Label for the displayed 'Faculty' value."
+  },
+  "fieldText": "Kierunek",
+  "@fieldText": {
+    "description": "home_page.dart - Label for the displayed 'Field of Study' value."
+  },
+  "specialisationText": "Specjalizacja",
+  "@specialisationText": {
+    "description": "home_page.dart - Label for the displayed 'Specialization' value."
+  },
+  "yearText": "Rok",
+  "@yearText": {
+    "description": "home_page.dart - Label for the displayed 'Year' value."
+  },
+  "typeText": "Tryb studiów",
+  "@typeText": {
+    "description": "home_page.dart - Label for the displayed 'Study Mode' value."
+  },
+  "dataNaN": "Brak danych",
+  "@dataNaN": {
+    "description": "home_page.dart - Message shown when specific academic data is missing."
+  },
+  "studySettings": "Ustawienia studiów",
+  "@studySettings": {
+    "description": "settings_page.dart - Title for the study settings section or button."
+  },
+  "skipButton": "Pomiń",
+  "@skipButton": {
+    "description": "group_selection_page.dart - Button to skip the current configuration step."
+  },
+  "fullTimeStudy": "Stacjonarne",
+  "@fullTimeStudy": {
+    "description": "settings_page.dart - Full name of the Full-time study mode."
+  },
+  "partTimeStudy": "Niestacjonarne",
+  "@partTimeStudy": {
+    "description": "settings_page.dart - Full name of the Part-time study mode."
+  },
+  "groupSelection": "Wybór grupy",
+  "@groupSelection": {
+    "description": "group_selection_page.dart - Title for the Group Selection screen/section."
+  },
+  "groupSelectionHint": "Wybierz swój wydział, kierunek i tryb, aby spersonalizować plan zajęć",
+  "@groupSelectionHint": {
+    "description": "group_selection_page.dart - Initial hint/instruction for group selection."
+  },
+  "groupLoading": "Ładowanie grup...",
+  "@groupLoading": {
+    "description": "group_selection_page.dart - Loading message while fetching available groups."
+  },
+  "groupSettings": "Ustawienia studiów",
+  "@groupSettings": {
+    "description": "group_selection_page.dart - Header for the study settings context within group selection."
+  },
+  "groupSelectionHintAfterLoad": "Na podstawie Twoich ustawień studiów pobraliśmy dostępne grupy. Wybierz jedną lub wiele, aby śledzić kilka planów.",
+  "@groupSelectionHintAfterLoad": {
+    "description": "group_selection_page.dart - Hint/Instruction displayed after groups have been successfully loaded."
+  },
+  "save": "Zapisz",
+  "@save": {
+    "description": "group_selection_page.dart - Action button to save settings or selected groups."
+  },
+  "todayDataNaN": "Brak zajęć na dziś",
+  "@todayDataNaN": {
+    "description": "schedule_view.dart - Message shown on the 'Today' tab when no classes are scheduled."
+  },
+  "pageErrorMess": "Błąd w FutureBuilder {snapshotError}",
+  "@pageErrorMess": {
+    "type": "text",
+    "placeholders": {
+      "snapshotError": {}
+    }
+  },
+  "lectureLength": "{lecturesLength} zajęcia",
+  "@lectureLength": {
+    "type": "text",
+    "placeholders": {
+      "lecturesLength": {}
+    }
+  },
+  "recentLecture": "Twoje najblizsze zajęcia",
+  "@recentLecture": {
+    "description": "today_lectures.dart - Label for the next upcoming class/lecture."
+  },
+  "lectureLoading": "Ładowanie planu",
+  "@lectureLoading": {
+    "description": "schedule_view.dart - General loading indicator text for the schedule."
+  },
+  "todayLecturesNaN": "Brak zajęć na dziś",
+  "@todayLecturesNaN": {
+    "description": "today_lectures.dart - Message shown when there are no lectures for the current day."
+  },
+  "lectureWigetHint": "Jesteś na bieżąco! Skorzystaj z wolnego czasu lub przejrzyj swój harmonogram.",
+  "@lectureWigetHint": {
+    "description": "today_lectures.dart - Hint/message shown after the last lecture of the day has finished."
+  },
+  "daysShortMon": "Pon",
+  "@daysShortMon": {
+    "description": "day_selection.dart - Short name for Monday (Poniedziałek)."
+  },
+  "daysShortTue": "Wt",
+  "@daysShortTue": {
+    "description": "day_selection.dart - Short name for Tuesday (Wtorek)."
+  },
+  "daysShortWed": "Śr",
+  "@daysShortWed": {
+    "description": "day_selection.dart - Short name for Wednesday (Środa)."
+  },
+  "daysShortThu": "Czw",
+  "@daysShortThu": {
+    "description": "day_selection.dart - Short name for Thursday (Czwartek)."
+  },
+  "daysShortFri": "Pt",
+  "@daysShortFri": {
+    "description": "day_selection.dart - Short name for Friday (Piątek)."
+  },
+  "daysMon": "poniedziałek",
+  "@daysMon": {
+    "description": "day_selection.dart - Full lowercase name for Monday."
+  },
+  "daysTue": "wtorek",
+  "@daysTue": {
+    "description": "day_selection.dart - Full lowercase name for Tuesday."
+  },
+  "daysWed": "środa",
+  "@daysWed": {
+    "description": "day_selection.dart - Full lowercase name for Wednesday."
+  },
+  "daysThu": "czwartek",
+  "@daysThu": {
+    "description": "day_selection.dart - Full lowercase name for Thursday."
+  },
+  "daysFri": "piątek",
+  "@daysFri": {
+    "description": "day_selection.dart - Full lowercase name for Friday."
+  },
+  "selectedGroupsHeader": "Wybrane grupy",
+  "@selectedGroupsHeader": {
+    "description": "group_info.dart - Header for the selected groups section."
+  },
+  "changeGroupsButton": "Zmień grupy",
+  "@changeGroupsButton": {
+    "description": "group_info.dart - Label for the button to navigate to group selection."
+  },
+  "selectedGroupsLabel": "Wybrane grupy",
+  "@selectedGroupsLabel": {
+    "description": "group_info.dart - Small label/title above the list of selected group tags."
+  },
+  "noDataAvailable": "Brak danych",
+  "@noDataAvailable": {
+    "description": "group_info.dart - Placeholder text displayed when no groups have been selected."
+  },
+  "academicInfoHeader": "Informacje akademickie",
+  "@academicInfoHeader": {
+    "description": "student_info.dart - Header for the section displaying the user's academic details."
+  },
+  "editButton": "Edytuj",
+  "@editButton": {
+    "description": "student_info.dart - Label for the button to navigate to the input/edit page."
+  },
+  "studyYear": "{year, plural, one{1 rok} few{{year} lata} many{{year} lat} other{{year} roku}}",
+  "@studyYear": {
+    "description": "student_info.dart - Displays the current year of study with proper pluralization (e.g., 1 rok, 2 lata, 5 lat).",
+    "placeholders": {
+      "year": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "studyModeLabel": "Tryb studiów",
+  "@studyModeLabel": {
+    "description": "student_info.dart - Label for the study mode (e.g., 'Full-time')."
+  },
+  "groupTypeAuditorium": "Audytorium",
+  "@groupTypeAuditorium": {
+    "description": "group_builder.dart - Full name for group type 'A' (Audytorium)."
+  },
+  "groupTypeClasses": "Ćwiczenia",
+  "@groupTypeClasses": {
+    "description": "group_builder.dart - Full name for group type 'C' (Classes/Ćwiczenia)."
+  },
+  "groupTypeLabs": "Laboratoria",
+  "@groupTypeLabs": {
+    "description": "group_builder.dart - Full name for group type 'L' (Laboratoria)."
+  },
+  "groupTypeOther": "Inne",
+  "@groupTypeOther": {
+    "description": "group_builder.dart - Default name for unmapped group types."
+  },
+  "pageTitleHome": "Strona główna",
+  "@pageTitleHome": {
+    "description": "main.dart - Title for the Home page in the navigation bar."
+  },
+  "pageTitleLectures": "Zajęcia",
+  "@pageTitleLectures": {
+    "description": "main.dart - Title for the Lectures/Schedule page in the navigation bar."
+  },
+  "pageTitleSettings": "Ustawienia",
+  "@pageTitleSettings": {
+    "description": "main.dart - Title for the Settings page in the navigation bar."
+  },
+  "pageTitleNews": "Nowości",
+  "@pageTitleNews": {
+    "description": "news_page.dart - Title for the NewsPage page in the navigation bar."
+  },
+  "debugHeader": "Debug",
+  "@debugHeader": {
+    "description": "menu_page.dart - Header for the debug/development section."
+  },
+  "returnToLabel": "Powrót do",
+  "@returnToLabel": {
+    "description": "menu_page.dart - Introductory label for navigation buttons in the debug section (e.g., 'Return to [Welcome screen]')."
+  },
+  "welcomeScreenButton": "Welcome screen",
+  "@welcomeScreenButton": {
+    "description": "menu_page.dart - Label for the button that resets navigation to the Welcome Page."
+  },
+  "inputPageButton": "Podaj dane",
+  "@inputPageButton": {
+    "description": "menu_page.dart - Label for the button that resets navigation to the Input Page."
+  },
+  "professorLabel": "Profesor",
+  "@professorLabel": {
+    "description": "lecture.dart - Label for the lecture wiget professor header."
+  },
+  "groupLabel": "Grupa",
+  "@groupLabel": {
+    "description": "lecture.dart - Label for the lecture wiget group header."
+  },
+  "lengthLabel": "Czas trwania",
+  "@lengthLabel": {
+    "description": "lecture.dart - Label for the lecture wiget lecture length header."
+  },
+  "notesLabel": "Notatki",
+  "@notesLabel": {
+    "description": "lecture.dart - Label for the lecture wiget notes header."
+  },
+  "emptyNotesLabel": "Puste",
+  "@emptyNotesLabel": {
+    "description": "lecture.dart - Label for the lecture wiget if there are no notes."
+  },
+  "newsSectionLabel": "Nowości z uczelni",
+  "@newsSectionLabel": {
+    "description": "news_page.dart - Label/header for the section showing university news."
+  },
+  "feedbackHeader": "Opinie i sugestie",
+  "@feedbackHeader": {
+    "description": "settings_page.dart - Header for the feedback and suggestions section."
+  },
+  "sendFeedbackButton": "Prześlij opinie",
+  "@sendFeedbackButton": {
+    "description": "settings_page.dart - Button label to submit feedback/suggestions."
+  },
+  "feedbackPageHeadline": "Twoja opinia jest dla nas ważna!",
+  "@feedbackPageHeadline": {
+    "description": "feedback_page.dart - Main headline encouraging users to share feedback."
+  },
+  "feedbackPageDescription": "Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.",
+  "@feedbackPageDescription": {
+    "description": "feedback_page.dart - Explains that the feedback form opens externally in a browser."
+  },
+  "feedbackFormOpenGenericError": "Nie udało się otworzyć formularza opinii.",
+  "@feedbackFormOpenGenericError": {
+    "description": "feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form."
+  },
+  "feedbackFormOpenError": "Nie udało się otworzyć formularza opinii: {error}",
+  "@feedbackFormOpenError": {
+    "description": "feedback_page.dart - Snackbar shown when opening the feedback form fails.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "daysAgo": "{days, plural, =0{dzisiaj} one{1 dzień temu} few{{days} dni temu} many{{days} dni temu} other{{days} dni temu}}",
+  "@daysAgo": {
+    "description": "General - Relative time label like '1 dzień temu', '0 dni temu (dzisiaj)', '4 dni temu'.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "professorNaN": "Brak wykładowcy",
+  "@professorNaN": {
+    "description": "lecture.dart - Message shown when a lecture has no professor assigned."
+  },
+  "roomNaN": "Brak sali",
+  "@roomNaN": {
+    "description": "lecture.dart - Message shown when a lecture has no assigned room."
+  },
+  "dateWithWeekday": "{date}",
+  "@dateWithWeekday": {
+    "description": "Ogólne — data w formacie dd.MM.yyyy oraz skrócony dzień tygodnia (EEE). Przykład: 16.11.2025 - nie",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMEd"
+      }
+    }
+  },
+  "dateDayMonth": "{date1}",
+  "@dateDayMonth": {
+    "description": "Ogólne — pełna nazwa dnia tygodnia (EEEE). Przykład: „poniedziałek”",
+    "placeholders": {
+      "date1": {
+        "type": "DateTime",
+        "format": "MMMM"
+      }
+    }
+  },
+  "details": "Szczegóły",
+  "@details": {},
+  "universityStructureLoading": "Ładowanie struktury uczelni",
+  "@universityStructureLoading": {
+    "description": "university_structure.dart - Loading message while fetching the university structure."
+  },
+  "noNews": "Brak aktualności",
+  "@noNews": {
+    "description": "news_page.dart - Message shown when there are no news items."
+  },
+  "universityStructureEmpty": "Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?",
+  "@universityStructureEmpty": {
+    "description": "university_structure.dart - Message shown when the university structure couldn't be loaded; suggests checking internet connection."
+  },
+  "noSpecialisationForField": "Brak specjalizacji dla tego kierunku",
+  "@noSpecialisationForField": {
+    "description": "group_selection_page.dart - Message shown when there are no specialisations available for the selected field."
+  },
+  "pePageTitle": "Zapisy na WF",
+  "pePageDescription": "Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.",
+  "pePageButton": "Przejdź do zapisów",
+  "pePageUrlError": "Nie udało się otworzyć strony zapisów.",
+  "degreeLevelLabel": "Stopień studiów",
+  "@degreeLevelLabel": {
+    "description": "input_page.dart - Label for the degree level selector."
+  },
+  "degreeLevelEngineering": "Inżynierskie",
+  "@degreeLevelEngineering": {
+    "description": "input_page.dart - Button label for engineering degree level."
+  },
+  "degreeLevelMasters": "Magisterskie",
+  "@degreeLevelMasters": {
+    "description": "input_page.dart - Button label for masters degree level."
+  },
+  "unexpectedError": "Ojej! Coś poszło nie tak.",
+  "@unexpectedError": {
+    "description": "Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek."
+  },
+  "appearanceHeader": "Wygląd",
+  "@appearanceHeader": {
+    "description": "settings_page.dart - Header for the appearance/theme section."
+  },
+  "themeLight": "Jasny",
+  "@themeLight": {
+    "description": "settings_page.dart - Label for the light theme option."
+  },
+  "themeDark": "Ciemny",
+  "@themeDark": {
+    "description": "settings_page.dart - Label for the dark theme option."
+  },
+  "themeSystem": "Systemowy",
+  "@themeSystem": {
+    "description": "settings_page.dart - Label for the system default theme option."
+  },
+  "appearanceHint": "Wybierz motyw, który najbardziej Ci odpowiada",
+  "@appearanceHint": {
+    "description": "appearance_page.dart - Hint text describing the theme selection."
+  },
+  "activeThemeLabel": "Aktywny motyw: ",
+  "@activeThemeLabel": {
+    "description": "appearance_page.dart - Label showing the currently active theme."
+  },
+  "personalizationHeader": "Personalizacja",
+  "@personalizationHeader": {
+    "description": "settings_page.dart - Header for the personalization section."
+  },
+  "languageHeader": "Język",
+  "@languageHeader": {
+    "description": "settings_page.dart - Header for the language section."
+  },
+  "languageSystem": "Systemowy",
+  "@languageSystem": {
+    "description": "language_page.dart - Label for the system default language option."
+  },
+  "languagePolish": "Polski",
+  "@languagePolish": {
+    "description": "language_page.dart - Label for the Polish language option."
+  },
+  "languageEnglish": "Angielski",
+  "@languageEnglish": {
+    "description": "language_page.dart - Label for the English language option."
+  },
+  "languageUkrainian": "Ukraiński",
+  "@languageUkrainian": {
+    "description": "language_page.dart - Label for the Ukrainian language option."
+  },
+  "languageHint": "Wybierz język aplikacji",
+  "@languageHint": {
+    "description": "language_page.dart - Hint text describing the language selection."
+  },
+  "activeLanguageLabel": "Aktywny język: ",
+  "@activeLanguageLabel": {
+    "description": "language_page.dart - Label showing the currently active language."
+  },
+  "accentColorTitle": "Kolor wiodący",
+  "amoledModeTitle": "Prawdziwa czerń",
+  "amoledModeDesc": "Całkowicie czarne tło w trybie ciemnym",
+  "eventStyleTitle": "Styl kolorowania zajęć",
+  "eventStyleCurrent": "Domyślny",
+  "eventStylePastel": "Pastelowe",
+  "eventStyleVibrant": "Żywe",
+  "eventStyleMonochrome": "Jednokolorowe",
+  "aboutApp": "O aplikacji",
+  "version": "Wersja",
+  "createdBy": "Stworzono przez",
+  "kniName": "Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie",
+  "openSourceInfo": "Ta aplikacja jest open-source",
+  "githubRepo": "Otwórz repozytorium na Github",
+  "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
+  "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",
+  "debugReturnToWelcome": "Powrót do Welcome Screen",
+  "infoSection": "Informacje"
+}

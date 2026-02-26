@@ -1,47 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
+import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/widgets/generic_loading.dart';
+import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
-import 'package:plan_pm/service/backend_service.dart';
+import 'package:plan_pm/service/database_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:collection/collection.dart';
+import 'package:plan_pm/l10n/app_localizations.dart';
 
 List<LectureModel> getClosestLectures(
   List<LectureModel> lectures,
-  TimeOfDay referenceTime, {
+  DateTime referenceTime, {
   int count = 3,
 }) {
-  lectures.sort((a, b) {
-    final aTime = TimeOfDay.fromDateTime(
-      DateFormat("HH:mm").parse(a.startTime),
-    );
-    final bTime = TimeOfDay.fromDateTime(
-      DateFormat("HH:mm").parse(b.startTime),
-    );
-
-    int aMinutes =
-        (aTime.hour * 60 + aTime.minute) -
-        (referenceTime.hour * 60 + referenceTime.minute);
-    int bMinutes =
-        (bTime.hour * 60 + bTime.minute) -
-        (referenceTime.hour * 60 + referenceTime.minute);
-
-    if (aMinutes < 0 && bMinutes >= 0) return 1;
-    if (bMinutes < 0 && aMinutes >= 0) return -1;
-
-    return aMinutes.abs().compareTo(bMinutes.abs());
-  });
-
   // Filter out past lectures
   final filtered = lectures.where((lecture) {
-    final lectureTime = TimeOfDay.fromDateTime(
-      DateFormat("HH:mm").parse(lecture.startTime),
-    );
-    final minutesDiff =
-        (lectureTime.hour * 60 + lectureTime.minute) -
-        (referenceTime.hour * 60 + referenceTime.minute);
+    final minutesDiff = lecture.date.difference(referenceTime).inMinutes;
     return minutesDiff >= 0;
   }).toList();
 
+  // Sort those lectures by date from oldest to newest
+  filtered.sort((a, b) {
+    return a.date.compareTo(b.date);
+  });
+  // Take {count} from those lectures
   return filtered.take(count).toList();
 }
 
@@ -53,86 +38,105 @@ class TodayLectures extends StatefulWidget {
 }
 
 class _TodayLecturesState extends State<TodayLectures> {
-  final DateTime currentDate = DateTime(2025, 6, 16, 9, 45);
+  DateTime currentDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    final _backendService = BackendService();
-    return Column(
-      spacing: 10,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            "Najblizsze zajęcia",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          ),
-        ),
-        FutureBuilder<List<LectureModel>>(
-          future: _backendService.fetchLectures(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('Błąd w FutureBuilder ${snapshot.error}'),
-              );
-            }
-            if (snapshot.data == null) {
-              return Center(child: Text("Brak zajęć na dziś"));
-            }
-            final unfilteredLectures = snapshot.data ?? [];
-            if (unfilteredLectures.isEmpty) {
-              return Center(child: Text("No data"));
-            }
-
-            final lectures = getClosestLectures(
-              unfilteredLectures.where((lecture) {
-                final lectureDate = lecture.date;
-                return lectureDate.year == currentDate.year &&
-                    lectureDate.month == currentDate.month &&
-                    lectureDate.day == currentDate.day;
-              }).toList(),
-              TimeOfDay.fromDateTime(currentDate),
+    final l10n = AppLocalizations.of(context)!;
+    int idx = 0;
+    final databaseService = DatabaseService.instance;
+    return HomeSection(
+      title: l10n.recentLecture,
+      child: FutureBuilder<List<LectureModel>>(
+        future: databaseService.fetchLectures(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return GenericNoResource(
+              label: l10n.unexpectedError,
+              icon: LucideIcons.bug,
+              description: snapshot.error.toString(),
             );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return GenericLoading(label: l10n.lectureLoading);
+          }
+          final unfilteredLectures = snapshot.data ?? [];
+          if (unfilteredLectures.isEmpty) {
+            return GenericNoResource(
+              label: l10n.todayLecturesNaN,
+              icon: LucideIcons.calendarX,
+              description: l10n.lectureWigetHint,
+            );
+          }
 
-            if (lectures.isEmpty) {
-              return Center(child: Text("No data"));
-            }
+          final lectures = getClosestLectures(
+            unfilteredLectures.where((lecture) {
+              final lectureDate = lecture.date;
+              return lectureDate.year == currentDate.year &&
+                  lectureDate.month == currentDate.month;
+            }).toList(),
+            currentDate,
+          );
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                spacing: 10,
-                children: [
-                  Skeletonizer(
-                    effect: const ShimmerEffect(baseColor: Color(0x4FFFFFFF)),
-                    enabled:
-                        snapshot.connectionState == ConnectionState.waiting,
-                    child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: lectures.length,
-                      itemBuilder: (context, index) {
-                        final lecture = lectures[index];
-                        return Lecture(
-                          idx: index,
-                          name: lecture.name,
-                          timeFrom: lecture.startTime,
-                          timeTo: lecture.endTime,
-                          location: lecture.location,
-                          professor: lecture.professor,
-                          group: lecture.group,
-                          duration: lecture.duration,
-                        );
-                      },
-                    ),
-                  ),
-                ],
+          if (lectures.isEmpty) {
+            return GenericNoResource(
+              label: l10n.todayLecturesNaN,
+              icon: LucideIcons.calendarX,
+              description: l10n.lectureWigetHint,
+            );
+          }
+
+          // Group those lectures by date
+          Map<DateTime, List<LectureModel>> groups = groupBy(
+            lectures,
+            (lecture) => DateTime(
+              lecture.date.year,
+              lecture.date.month,
+              lecture.date.day,
+            ),
+          );
+          return Column(
+            spacing: 10,
+            children: [
+              Skeletonizer(
+                effect: const ShimmerEffect(baseColor: Color(0x4FFFFFFF)),
+                enabled: snapshot.connectionState == ConnectionState.waiting,
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: groups.keys.length,
+                  itemBuilder: (context, index) {
+                    final lectures = groups[groups.keys.toList()[index]];
+                    final lecturesWidgets = lectures!.map((lecture) {
+                      return Lecture(
+                        idx: idx++,
+                        name: lecture.name,
+                        timeFrom: lecture.startTime,
+                        timeTo: lecture.endTime,
+                        location: lecture.location,
+                        professor: lecture.professor,
+                        group: lecture.group,
+                        duration: lecture.duration,
+                      );
+                    }).toList();
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.dateWithWeekday(groups.keys.toList()[index]),
+                          style: TextStyle(color: AppColor.onBackgroundVariant),
+                        ),
+                        ...lecturesWidgets,
+                      ],
+                    );
+                  },
+                ),
               ),
-            );
-          },
-        ),
-      ],
+            ],
+          );
+        },
+      ),
     );
   }
 }
