@@ -352,6 +352,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'The university structure is empty. Are you connected to the internet?';
 
   @override
+  String get noSpecialisationOption => 'No specialisation';
+
+  @override
   String get noSpecialisationForField =>
       'No specialisation available for this field';
 

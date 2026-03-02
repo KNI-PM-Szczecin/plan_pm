@@ -47,7 +47,6 @@ Future<Widget> appInitialization() async {
       Student.course != null &&
       Student.degreeCourse != null &&
       Student.faculty != null &&
-      Student.specialisation != null &&
       Student.year != null &&
       Student.term != null &&
       Student.selectedGroups != null;
@@ -86,7 +85,7 @@ Future<void> main() async {
 
   themeNotifier = ThemeNotifier();
   await themeNotifier.loadFromPrefs();
-  
+
   localeNotifier = LocaleNotifier();
   await localeNotifier.loadFromPrefs();
 
@@ -118,61 +117,61 @@ class App extends StatelessWidget {
               themeMode: currentThemeMode,
               title: 'Plan PM',
               debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            fontFamily: "Inter",
-            brightness: Brightness.light,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColor.primary,
-              brightness: Brightness.light,
-            ),
-          ),
-          darkTheme: ThemeData(
-            fontFamily: "Inter",
-            brightness: Brightness.dark,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColor.primary,
-              brightness: Brightness.dark,
-            ),
-          ),
+              theme: ThemeData(
+                fontFamily: "Inter",
+                brightness: Brightness.light,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: AppColor.primary,
+                  brightness: Brightness.light,
+                ),
+              ),
+              darkTheme: ThemeData(
+                fontFamily: "Inter",
+                brightness: Brightness.dark,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: AppColor.primary,
+                  brightness: Brightness.dark,
+                ),
+              ),
 
-          builder: (context, child) {
-            return Builder(
-              builder: (BuildContext innerContext) {
-                final brightness = Theme.of(innerContext).brightness;
-                AppColor.update(brightness);
-                return KeyedSubtree(
-                  key: ValueKey(brightness),
-                  child: AppRebuilder(child: child!),
+              builder: (context, child) {
+                return Builder(
+                  builder: (BuildContext innerContext) {
+                    final brightness = Theme.of(innerContext).brightness;
+                    AppColor.update(brightness);
+                    return KeyedSubtree(
+                      key: ValueKey(brightness),
+                      child: AppRebuilder(child: child!),
+                    );
+                  },
                 );
               },
+
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                Locale('en'), // English
+                Locale('pl'), // Polish
+                Locale('uk'), // Ukrainian
+              ],
+              home: FutureBuilder<Widget>(
+                future: appInitialization(),
+                builder: (context, AsyncSnapshot<Widget> screen) {
+                  if (screen.connectionState != ConnectionState.done) {
+                    return Container(color: AppColor.background);
+                  }
+                  FlutterNativeSplash.remove();
+                  // Zwróć odpowiednią stronę
+                  return screen.data!;
+                },
+              ),
             );
           },
-
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: [
-            Locale('en'), // English
-            Locale('pl'), // Polish
-            Locale('uk'), // Ukrainian
-          ],
-          home: FutureBuilder<Widget>(
-            future: appInitialization(),
-            builder: (context, AsyncSnapshot<Widget> screen) {
-              if (screen.connectionState != ConnectionState.done) {
-                return Container(color: AppColor.background);
-              }
-              FlutterNativeSplash.remove();
-              // Zwróć odpowiednią stronę
-              return screen.data!;
-            },
-          ),
         );
-      },
-    );
       },
     );
   }

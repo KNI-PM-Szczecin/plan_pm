@@ -351,6 +351,9 @@ class AppLocalizationsPl extends AppLocalizations {
       'Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?';
 
   @override
+  String get noSpecialisationOption => 'Brak specjalizacji';
+
+  @override
   String get noSpecialisationForField => 'Brak specjalizacji dla tego kierunku';
 
   @override
