@@ -60,6 +60,7 @@ class _InputPageState extends State<InputPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final noSpecialisationOption = l10n.noSpecialisationOption;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
@@ -202,9 +203,7 @@ class _InputPageState extends State<InputPage> {
                           );
                           await prefs.setString(
                             "degree_level",
-                            selectedDegreeLevel == 1
-                                ? "inż."
-                                : "mgr",
+                            selectedDegreeLevel == 1 ? "inż." : "mgr",
                           );
                           final CacheService cacheService = CacheService();
                           await cacheService.syncNews();
@@ -274,7 +273,10 @@ class _InputPageState extends State<InputPage> {
 
                     final List<String> specialisations =
                         selectedDegreeCourse != ""
-                        ? facultiesData[selectedFaculty]![selectedDegreeCourse]!
+                        ? [
+                            noSpecialisationOption,
+                            ...facultiesData[selectedFaculty]![selectedDegreeCourse]!,
+                          ]
                         : <String>[];
 
                     return Column(
@@ -352,7 +354,10 @@ class _InputPageState extends State<InputPage> {
                             onChanged: (value) {
                               HapticFeedback.lightImpact();
                               setState(() {
-                                selectedSpecialisation = value!;
+                                selectedSpecialisation =
+                                    value == noSpecialisationOption
+                                    ? ""
+                                    : value!;
                               });
                             },
                           )

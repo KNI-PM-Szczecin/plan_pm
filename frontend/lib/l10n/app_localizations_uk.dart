@@ -360,6 +360,9 @@ class AppLocalizationsUk extends AppLocalizations {
       'Структура університету порожня. Ви підключені до інтернету?';
 
   @override
+  String get noSpecialisationOption => 'Без спеціалізації';
+
+  @override
   String get noSpecialisationForField =>
       'Немає спеціалізацій для цього напрямку';
 
