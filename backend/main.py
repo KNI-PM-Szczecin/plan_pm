@@ -9,7 +9,7 @@ print("Starting PlanPM worker")
 
 Mapper(output="./output/mapper.json").run(minID=0, maxID=600)
 
-Scrapper(input="./output/mapper.json", output="./output/scrapper.json").run(max_workers=5)
+Scrapper(input="./output/mapper.json", output="./output/scrapper.json", debug=True).run(max_workers=5)
 
 Parser(input="scrapper.json").run()
 
