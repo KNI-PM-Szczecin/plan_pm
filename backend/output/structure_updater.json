@@ -1,0 +1,149 @@
+[
+  {
+    "name": "Szkoła Doktorska",
+    "degree_courses": []
+  },
+  {
+    "name": "Geoinżynierii i Ochrony Środowiska",
+    "degree_courses": [
+      {
+        "name": "Hydrografia",
+        "specialisations": []
+      },
+      {
+        "name": "Geodezja i Kartografia",
+        "specialisations": [
+          "Geoinformatyka",
+          "Hydrografia"
+        ]
+      },
+      {
+        "name": "Geoinformatyka",
+        "specialisations": []
+      }
+    ]
+  },
+  {
+    "name": "Nawigacyjny",
+    "degree_courses": [
+      {
+        "name": "Oceanotechnika- Budowa Jachtów i Okrętów",
+        "specialisations": [
+          "Projektowanie i Budowa Jachtów",
+          "Projektowanie i Budowa Okrętów"
+        ]
+      },
+      {
+        "name": "Nawigacja",
+        "specialisations": [
+          "Cyberbezpieczeństwo w żegludze morskiej",
+          "Eksploatacja Jednostek Pływających Offshore",
+          "Inżynieria Ruchu Morskiego",
+          "Ratownictwo",
+          "Transport Morski"
+        ]
+      },
+      {
+        "name": "Oceanotechnika",
+        "specialisations": []
+      }
+    ]
+  },
+  {
+    "name": "Mechaniczny",
+    "degree_courses": [
+      {
+        "name": "Inżynieria przemysłowa i morskie elektrownie wiatrowe",
+        "specialisations": [
+          "Ekspolatacja siłowni wiatrowych"
+        ]
+      },
+      {
+        "name": "Inżynieria Modelowania Przestrzennego",
+        "specialisations": [
+          "Inżynieria Wydruku 3D"
+        ]
+      },
+      {
+        "name": "Mechanika i Budowa Maszyn",
+        "specialisations": [
+          "Budowa i Eksploatacja Morskich Systemów Energetycznych",
+          "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych",
+          "Eksploatacja Siłowni Okrętowych"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Inżynieryjno-Ekonomiczny Transportu",
+    "degree_courses": [
+      {
+        "name": "Zarządzanie i Inżynieria Produkcji",
+        "specialisations": [
+          "Utrzymanie Ruchu w Przemyśle 4.0",
+          "Zarządzanie Innowacjami w Produkcji i Usługach",
+          "Zarządzanie Jakością Produkcji i Usług",
+          "Zarządzanie Zautomatyzowanymi Systemami Produkcyjnymi"
+        ]
+      },
+      {
+        "name": "Transport",
+        "specialisations": [
+          "Eksploatacja Portów i Floty Morskiej",
+          "Inżynieria i Bezpieczeństwo w Transporcie Drogowym"
+        ]
+      },
+      {
+        "name": "Logistyka",
+        "specialisations": [
+          "Logistyka i Zarządzanie w Europejskim Systemie Transportowym",
+          "Logistyka Łańcuchów Dostaw",
+          "Logistyka Offshore",
+          "Logistyka Przedsiębiorstw"
+        ]
+      },
+      {
+        "name": "Zarządzanie",
+        "specialisations": [
+          "Organizacja i Zarządzanie w Gospodarce Morskiej",
+          "Zarządzanie Zasobami Ludzkimi"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mechatroniki i Elektrotechniki",
+    "degree_courses": [
+      {
+        "name": "Automatyka i robotyka",
+        "specialisations": []
+      },
+      {
+        "name": "Mechatronika",
+        "specialisations": [
+          "Mechatronika i Elektrotechnika Przemysłowa"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Informatyki i Telekomunikacji",
+    "degree_courses": [
+      {
+        "name": "Informatyka",
+        "specialisations": [
+          "Programowanie systemów informatycznych",
+          "Programowanie systemów multimedialnych",
+          "Sztuczna Inteligencja"
+        ]
+      },
+      {
+        "name": "Teleinformatyka",
+        "specialisations": [
+          "Cyberbezpieczeństwo",
+          "Eksploatacja systemów łączności"
+        ]
+      }
+    ]
+  }
+]

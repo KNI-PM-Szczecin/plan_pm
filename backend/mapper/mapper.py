@@ -16,9 +16,18 @@ class Mapper:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         self.output = output
+        logs_dir = "./logs"
+        log_file = os.path.join(logs_dir, "mapper.log")
+
+        if not os.path.isdir(logs_dir):
+            os.makedirs(logs_dir, exist_ok=True)
+
+        if not os.path.exists(log_file):
+            with open(log_file, "a", encoding="utf-8"):
+                pass
 
         if not self.logger.handlers:
-            handler = logging.FileHandler("./logs/mapper.log", mode="w+", encoding="utf-8")
+            handler = logging.FileHandler(log_file, mode="w+", encoding="utf-8")
             formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
@@ -31,7 +40,7 @@ class Mapper:
         self.valid_records = {}
 
         logging.basicConfig(
-            filename="./logs/mapper.log",
+            filename=log_file,
             filemode="w+",
             encoding="utf-8",
             level=logging.INFO,
@@ -79,6 +88,9 @@ class Mapper:
                     p.update(task, advance=1, description=f"Mapping... {self.stats['success']} found")
 
         # Zapis do pliku
+        output_dir = os.path.dirname(self.output)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
         if os.path.exists(self.output):
             print("Znaleziono poprzedni plik mappera. Usuwam.")
             os.remove(self.output)
