@@ -53,7 +53,9 @@ class Scrapper:
 
         options = Options()
         if not self.debug:
-            options.add_argument("--headless=new")  
+            options.add_argument('--headless=new') 
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
 
         start_time = time.time()
         
@@ -73,32 +75,45 @@ class Scrapper:
             self.logger.info(f"[{flow_id}] Odrzucam cookies")
             driver.find_elements(By.CSS_SELECTOR, "button.btn.my-2")[1].click()
 
-            self.logger.info(f"[{flow_id}] Otwieram checkdown z językami")
-            driver.find_element(By.ID, "ho-language").click()
+            self.logger.info(f"[{flow_id}] Ustawiam język Polski")
+            driver.get('https://plany.am.szczecin.pl/ZmienJezyk?lang=pl')
 
-            self.logger.info(f"[{flow_id}] Wybieram język Polski")
-            driver.find_element(By.XPATH, "/html/body/div[1]/div/header/nav/div/div[1]/div/div/ul/li/a").click()
+            self.logger.info(f"[{flow_id}] Wracam na stronę planu")
+            driver.get(url)
 
-            self.logger.info(f"[{flow_id}] Wybieram 3 radio button")
-            driver.find_elements(By.CLASS_NAME, "custom-control-label")[2].click()
-            
+            self.logger.info(f"[{flow_id}] Czekam na załadowanie tabeli")
+            wait.until(EC.presence_of_element_located((By.ID, "gridViewPlanyTokow_DXMainTable")))
+
+            self.logger.info(f"[{flow_id}] URL: {driver.current_url}")
+
             self.logger.info(f"[{flow_id}] Ściągam nazwe toku")
             tok = driver.find_element(By.TAG_NAME, "strong").text.strip()
-            
+
+            self.logger.info(f"[{flow_id}] Klikam radio 'Najbliższe zajęcia'")
+            labels = driver.find_elements(By.CSS_SELECTOR, "label.custom-control-label")
+            labels[2].click()
+
+            self.logger.info(f"[{flow_id}] Pobieram referencję do tabeli przed kliknięciem SzukajLogout")
             old_table = driver.find_element(By.ID, "gridViewPlanyTokow_DXMainTable")
-            
-            self.logger.info(f"[{flow_id}] Filtruje dane")
-            wait.until(EC.element_to_be_clickable((By.ID, "SzukajLogout"))).click()
-            
-            self.logger.info(f"[{flow_id}] Czekam na odswiezenie tabeli")
+
+            self.logger.info(f"[{flow_id}] Klikam SzukajLogout")
+            szukaj = driver.find_element(By.ID, "SzukajLogout")
+            szukaj.click()
+
+            self.logger.info(f"[{flow_id}] Czekam na przeładowanie tabeli (staleness)")
             wait.until(EC.staleness_of(old_table))
-            
+
+            self.logger.info(f"[{flow_id}] Tabela przeładowana, czekam na nową")
+            wait.until(EC.presence_of_element_located((By.ID, "gridViewPlanyTokow_DXMainTable")))
+
             schedule_data = []
             current_date = ""
-        
+
             self.logger.info(f"[{flow_id}] Pobieram dane z tabeli")
             table = driver.find_element(By.ID, "gridViewPlanyTokow_DXMainTable")
-            rows = table.find_elements(By.TAG_NAME, "tr")
+            tbody = table.find_element(By.TAG_NAME, "tbody")
+            rows = tbody.find_elements(By.TAG_NAME, "tr")
+            self.logger.info(f"[{flow_id}] Znaleziono wierszy: {len(rows)}")
             for row in rows:
                 classes = row.get_attribute("class") or ""
                 if "dxgvGroupRow_iOS" in classes:
@@ -112,61 +127,64 @@ class Scrapper:
                         entry = {
                             "Plan dla toku": tok,
                             "Data zajęć": current_date,
-                            "Czas od": cells[0].get_attribute('textContent').strip(),
-                            "Czas do": cells[1].get_attribute('textContent').strip(),
-                            "Liczba godzin": cells[2].get_attribute('textContent').strip(),
-                            "Grupy": " ".join(cells[3].get_attribute('textContent').strip().split()),
-                            "Przedmiot": cells[4].get_attribute('textContent').strip(),
-                            "Forma zajęć": cells[5].get_attribute('textContent').strip(),
-                            "Sala": cells[7].get_attribute('textContent').strip(),
-                            "Prowadzący": " ".join(cells[8].get_attribute('textContent').strip().split()),
-                            "Forma zaliczenia": cells[9].get_attribute('textContent').strip(),
-                            "Uwagi": cells[10].get_attribute('textContent').strip()
+                            "Czas od": (cells[0].get_attribute('textContent') or "").strip(),
+                            "Czas do": (cells[1].get_attribute('textContent') or "").strip(),
+                            "Liczba godzin": (cells[2].get_attribute('textContent') or "").strip(),
+                            "Grupy": " ".join((cells[3].get_attribute('textContent') or "").strip().split()),
+                            "Przedmiot": (cells[4].get_attribute('textContent') or "").strip(),
+                            "Forma zajęć": (cells[5].get_attribute('textContent') or "").strip(),
+                            "Sala": (cells[7].get_attribute('textContent') or "").strip(),
+                            "Prowadzący": " ".join((cells[8].get_attribute('textContent') or "").strip().split()),
+                            "Forma zaliczenia": (cells[9].get_attribute('textContent') or "").strip(),
+                            "Uwagi": (cells[10].get_attribute('textContent') or "").strip()
                         }
                         schedule_data.append(entry)
             
         except Exception as e:
             log_print(f"❌ {flow_id}: Błąd interakcji.")
             self.logger.error(f"{flow_id}: Interakcja ze stroną nie powiodła się: {e}")
-            self.failed_flows.append(flow_id)
-            self.stats["interaction_fail"] += 1
+            with self.output_lock:
+                self.failed_flows.append(flow_id)
+                self.stats["interaction_fail"] += 1
             driver.quit()
             return
 
         driver.quit()
 
-        try:
-            lectures = schedule_data
-            if self.debug:
-                print(schedule_data)
-            
-            with self.output_lock:
-                self.results.extend(lectures)
+        if self.debug:
+            print(schedule_data)
+
+        with self.output_lock:
+            self.results.extend(schedule_data)
             self.stats["success"] += 1
-            self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie.")
-            self.logger.info(f"[{flow_id}] Lectures: {str(lectures)[:300]}...")
-        except Exception as e:
-            log_print(f"❌ {flow_id}: Błąd parsowania.")
-            self.logger.error(f"{flow_id}: Błąd parsowania pliku: {e}")
-            self.failed_flows.append(flow_id)
-            self.stats["parse_fail"] += 1
+        self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie.")
+        self.logger.info(f"[{flow_id}] Lectures: {str(schedule_data)[:300]}...")
 
         log_print(f"✅ Gotowe ({time.time() - start_time:.2f} s)")
+        if self.debug:
+            time.sleep(3)
 
     def run(self, max_workers=5, flow_id = -1):
         if flow_id == -1:
-            print("Debug mode off, running with full threads.")
             with open(self.input, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            with Progress() as p:
-                total = len(data.keys())
-                task = p.add_task("Scraping...", total=total)
-                with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                    futures = [executor.submit(self.scrapper, flow_id, p) for flow_id in sorted(data.keys())]
-                    for future in as_completed(futures):
-
-                        future.result() 
-                        p.update(task, advance=1, description=f"Scraping... {self.stats['success']} done")
+            if self.debug:
+                print("Debug mode on, running sequentially with 3s delay.")
+                for fid in sorted(data.keys()):
+                    self.scrapper(fid)
+            else:
+                print("Debug mode off, running with full threads.")
+                with Progress() as p:
+                    total = len(data.keys())
+                    task = p.add_task("Scraping...", total=total)
+                    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                        futures = [executor.submit(self.scrapper, fid, p) for fid in sorted(data.keys())]
+                        for future in as_completed(futures):
+                            try:
+                                future.result()
+                            except Exception as e:
+                                self.logger.error(f"Nieoczekiwany błąd wątku: {e}")
+                            p.update(task, advance=1, description=f"Scraping... {self.stats['success']} done")
         else:
             self.scrapper(flow_id)
             
@@ -188,3 +206,15 @@ class Scrapper:
         for k, v in self.stats.items():
             self.logger.info(f"  {k}: {v}")
 
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Scrapper planów toków")
+    parser.add_argument("--id", type=str, default=None, help="Scrape tylko jeden tok o podanym ID")
+    parser.add_argument("--debug", action="store_true", help="Tryb debug (widoczna przeglądarka, wolniej)")
+    parser.add_argument("--workers", type=int, default=5, help="Liczba równoległych wątków (domyślnie 5)")
+    parser.add_argument("--output", type=str, default="./output/scrapper.json", help="Plik wyjściowy JSON")
+    parser.add_argument("--input", type=str, default="./output/mapper.json", help="Plik wejściowy (mapper)")
+    args = parser.parse_args()
+
+    s = Scrapper(debug=args.debug, output=args.output, input=args.input)
+    s.run(max_workers=args.workers, flow_id=args.id if args.id else -1)
