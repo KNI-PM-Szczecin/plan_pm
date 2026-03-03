@@ -72,7 +72,10 @@ class Parser:
     
         print("Normalizing buildings and rooms")
         self.sched.rooms, self.sched.buildings = self.breakDownBuildings(self.sched.rooms)
-    
+
+
+
+
     @staticmethod
     def tokStringToDic(tokString):
         tok = {
@@ -86,27 +89,30 @@ class Parser:
         
         original = tokString
         
-        for program_type in PROGRAM_TYPE:
-            if f' {program_type} ' in original:
-                tok["program_type"] = program_type
-                break
-            
-        for language in LANGUAGE:
-            if f' {language} ' in original:
-                tok["language"] = language
-                break
-            
+
         for degree_level in DEGREE_LEVEL:
             if f'{degree_level} ' in original:
                 tok["degree_level"] = degree_level
                 break
-            
-        remaining = original
-        
+
+
+        temp = original.split(tok['degree_level'])
+
+        for program_type in PROGRAM_TYPE:
+            if f'{program_type} ' in temp[0][-2:]:
+                tok["program_type"] = program_type
+                temp[0] = temp[0][:-3]
+                break
+
+
+        for language in LANGUAGE:
+            if f'{language}' in temp[0][-6:].upper():
+                tok["language"] = language
+                temp[0] = temp[0].split(language)[0].strip()
+                break
+
         try:
-            remaining = remaining.replace(f' {tok["program_type"]} ', ' ')
-            remaining = remaining.replace(f' {tok["language"]} ', ' ')
-            parts = remaining.split(f'{tok["degree_level"]} ')
+            parts = temp
             tok["name"] = parts[0].strip()
             length_season = parts[1].strip().split(' ')
             tok["course_length"] = length_season[0]
@@ -115,6 +121,8 @@ class Parser:
             print(f"Error processing course: {original}")
     
         return tok
+
+
 
     def breakDownTok(self, tok):
         if tok["Plan dla toku"] not in self.sched._programs_set:
@@ -177,7 +185,7 @@ class Parser:
             return []
     
         parsed_rooms = []
-        for r in room.split(","):
+        for r in room.split(", "):
             r = r.strip()
             if r not in parsed_rooms:
                 parsed_rooms.append(r)

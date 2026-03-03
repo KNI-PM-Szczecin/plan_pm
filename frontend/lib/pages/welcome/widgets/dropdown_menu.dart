@@ -31,6 +31,15 @@ class FacultyDropDownMenu extends StatefulWidget {
 class _FacultyDropDownMenuState extends State<FacultyDropDownMenu> {
   @override
   Widget build(BuildContext context) {
+    final bool isEnabled = widget.enabled ?? true;
+    final Color disabledFillColor = Color.alphaBlend(
+      Colors.black.withAlpha(70),
+      AppColor.surface,
+    );
+    final Color disabledForegroundColor = AppColor.onSurfaceVariant.withAlpha(
+      110,
+    );
+
     return Column(
       spacing: 5,
       children: [
@@ -49,12 +58,15 @@ class _FacultyDropDownMenuState extends State<FacultyDropDownMenu> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: AppColor.surface,
+            color: isEnabled ? AppColor.surface : disabledFillColor,
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownMenu(
-            trailingIcon: Icon(LucideIcons.chevronDown),
-            enabled: widget.enabled!,
+            trailingIcon: Icon(
+              LucideIcons.chevronDown,
+              color: isEnabled ? AppColor.onSurface : disabledForegroundColor,
+            ),
+            enabled: isEnabled,
             controller: widget.controller,
             initialSelection: widget.selectedValue,
             hintText: widget.hint,
@@ -62,21 +74,27 @@ class _FacultyDropDownMenuState extends State<FacultyDropDownMenu> {
             menuStyle: MenuStyle(
               backgroundColor: WidgetStatePropertyAll(AppColor.surface),
             ),
-            textStyle: TextStyle(color: AppColor.onSurface),
+            textStyle: TextStyle(
+              color: isEnabled ? AppColor.onSurface : disabledForegroundColor,
+            ),
             width: double.infinity,
             inputDecorationTheme: InputDecorationTheme(
-              hintStyle: TextStyle(color: AppColor.onSurfaceVariant),
+              hintStyle: TextStyle(
+                color: isEnabled
+                    ? AppColor.onSurfaceVariant
+                    : disabledForegroundColor,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: AppColor.outline),
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
 
               disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColor.outline),
+                borderSide: BorderSide.none,
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               filled: true,
-              fillColor: AppColor.surface,
+              fillColor: isEnabled ? AppColor.surface : disabledFillColor,
               helperStyle: TextStyle(color: Colors.red),
 
               border: OutlineInputBorder(

@@ -14,7 +14,7 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  String _version = "";
+  String _version = "unknown";
 
   @override
   void initState() {

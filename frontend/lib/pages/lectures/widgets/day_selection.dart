@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/global/extensions.dart';
+import 'package:plan_pm/global/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 List<String> days = [];
@@ -156,20 +157,24 @@ class _DaySelectionState extends State<DaySelection> {
             ],
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColor.outline),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: AppColor.surface,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(daysShort.length, (index) {
-              final isSelected = index == selectedDay;
-              final selectedBgColor =
-                  softHorizontalGradients[index].colors.first;
-              return Expanded(
-                child: Padding(
+        ValueListenableBuilder<EventColorStyle>(
+          valueListenable: eventColorStyleNotifier,
+          builder: (context, style, _) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColor.outline),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: AppColor.surface,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(daysShort.length, (index) {
+                  final isSelected = index == selectedDay;
+                  final selectedBgColor = style == EventColorStyle.monochrome
+                      ? AppColor.primary
+                      : softHorizontalGradients[index].colors.first;
+                  return Expanded(
+                    child: Padding(
                   padding: const EdgeInsets.all(5),
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 250),
@@ -222,6 +227,8 @@ class _DaySelectionState extends State<DaySelection> {
               );
             }),
           ),
+        );
+          },
         ),
       ],
     );

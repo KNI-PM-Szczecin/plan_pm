@@ -682,6 +682,12 @@ abstract class AppLocalizations {
   /// **'Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?'**
   String get universityStructureEmpty;
 
+  /// input_page.dart - Option in specialization dropdown to clear a previously selected specialization.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak specjalizacji'**
+  String get noSpecialisationOption;
+
   /// group_selection_page.dart - Message shown when there are no specialisations available for the selected field.
   ///
   /// In pl, this message translates to:

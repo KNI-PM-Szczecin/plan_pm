@@ -84,7 +84,7 @@
 			"name": "Eksploatacja Siłowni Okrętowych ang.",
 			"program_type": "S",
 			"degree_level": "inż.",
-			"language": "POL",
+			"language": "ANG",
 			"academic_year": "2022/2023 zima",
 			"course_length": "4.00"
 		},
@@ -265,10 +265,10 @@
 			"course_length": "3.50"
 		},
 		{
-			"name": "Transport Morski ANG.",
+			"name": "Transport Morski",
 			"program_type": "S",
 			"degree_level": "inż.",
-			"language": "POL",
+			"language": "ANG",
 			"academic_year": "2024/2025 zima",
 			"course_length": "4.00"
 		},
@@ -521,10 +521,10 @@
 			"course_length": "3.50"
 		},
 		{
-			"name": "Transport Morski ANG.S",
-			"program_type": "",
+			"name": "Transport Morski",
+			"program_type": "S",
 			"degree_level": "inż.",
-			"language": "POL",
+			"language": "ANG",
 			"academic_year": "2025/2026 zima",
 			"course_length": "4.00"
 		},
@@ -57770,7 +57770,7 @@
 			"program": 73,
 			"subject": 386,
 			"group": "C02/IMP/2025/2026 ZS",
-			"room": null,
+			"room": 129,
 			"notes": "Brak"
 		},
 		{
@@ -57779,7 +57779,7 @@
 			"program": 73,
 			"subject": 386,
 			"group": "C02/IMP/2025/2026 ZS",
-			"room": null,
+			"room": 129,
 			"notes": "Brak"
 		},
 		{
@@ -57986,7 +57986,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58013,7 +58013,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58040,7 +58040,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58157,7 +58157,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58175,7 +58175,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58184,7 +58184,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58274,7 +58274,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L06/LOG/2025/2026 Z SS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58283,7 +58283,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L04/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58301,7 +58301,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L02/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58418,7 +58418,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58427,7 +58427,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58454,7 +58454,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58571,7 +58571,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58580,7 +58580,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58598,7 +58598,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58688,7 +58688,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L02/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58742,7 +58742,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L04/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58751,7 +58751,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L06/LOG/2025/2026 Z SS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58868,7 +58868,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L06/LOG/2025/2026 Z SS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58877,7 +58877,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L04/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -58895,7 +58895,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L02/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59012,7 +59012,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59021,7 +59021,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59057,7 +59057,7 @@
 			"program": 74,
 			"subject": 403,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59165,7 +59165,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L05/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59174,7 +59174,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L03/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59192,7 +59192,7 @@
 			"program": 74,
 			"subject": 392,
 			"group": "L01/LOG/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -59255,7 +59255,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L02/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59390,7 +59390,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L03/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59417,7 +59417,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L01/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59588,7 +59588,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L03/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59606,7 +59606,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L01/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59750,7 +59750,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L02/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59894,7 +59894,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L03/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -59921,7 +59921,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L01/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -60065,7 +60065,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L02/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -60218,7 +60218,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L03/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -60236,7 +60236,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L01/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -60425,7 +60425,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L02/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -60569,7 +60569,7 @@
 			"program": 75,
 			"subject": 389,
 			"group": "L03/IPIMEW/2025/2026 ZS",
-			"room": 132,
+			"room": 131,
 			"notes": "Brak"
 		},
 		{
@@ -62198,7 +62198,7 @@
 			"program": 78,
 			"subject": 392,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62216,7 +62216,7 @@
 			"program": 78,
 			"subject": 403,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62396,7 +62396,7 @@
 			"program": 78,
 			"subject": 392,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62414,7 +62414,7 @@
 			"program": 78,
 			"subject": 403,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62531,7 +62531,7 @@
 			"program": 78,
 			"subject": 392,
 			"group": "L02/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62549,7 +62549,7 @@
 			"program": 78,
 			"subject": 403,
 			"group": "L02/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62684,7 +62684,7 @@
 			"program": 78,
 			"subject": 392,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62702,7 +62702,7 @@
 			"program": 78,
 			"subject": 403,
 			"group": "L01/T/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62783,7 +62783,7 @@
 			"program": 79,
 			"subject": 392,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62792,7 +62792,7 @@
 			"program": 79,
 			"subject": 403,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -62999,7 +62999,7 @@
 			"program": 79,
 			"subject": 392,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -63008,7 +63008,7 @@
 			"program": 79,
 			"subject": 403,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -63125,7 +63125,7 @@
 			"program": 79,
 			"subject": 392,
 			"group": "L02/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -63143,7 +63143,7 @@
 			"program": 79,
 			"subject": 403,
 			"group": "L02/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -63269,7 +63269,7 @@
 			"program": 79,
 			"subject": 392,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -63278,7 +63278,7 @@
 			"program": 79,
 			"subject": 403,
 			"group": "L01/ZiIP/2025/2026 ZS",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -64853,7 +64853,7 @@
 			"program": 84,
 			"subject": 392,
 			"group": "L02/LOG/2025/2026 ZN",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -64871,7 +64871,7 @@
 			"program": 84,
 			"subject": 392,
 			"group": "L01/LOG/2025/2026 ZN",
-			"room": 131,
+			"room": 130,
 			"notes": "Brak"
 		},
 		{
@@ -111905,11 +111905,7 @@
 		},
 		{
 			"building": 5,
-			"room": "14"
-		},
-		{
-			"building": null,
-			"room": "15"
+			"room": "14,15"
 		},
 		{
 			"building": 4,

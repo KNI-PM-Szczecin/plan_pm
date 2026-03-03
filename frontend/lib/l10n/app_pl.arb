@@ -420,6 +420,10 @@
   "@universityStructureEmpty": {
     "description": "university_structure.dart - Message shown when the university structure couldn't be loaded; suggests checking internet connection."
   },
+  "noSpecialisationOption": "Brak specjalizacji",
+  "@noSpecialisationOption": {
+    "description": "input_page.dart - Option in specialization dropdown to clear a previously selected specialization."
+  },
   "noSpecialisationForField": "Brak specjalizacji dla tego kierunku",
   "@noSpecialisationForField": {
     "description": "group_selection_page.dart - Message shown when there are no specialisations available for the selected field."
