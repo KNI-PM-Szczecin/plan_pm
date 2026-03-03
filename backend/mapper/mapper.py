@@ -88,6 +88,9 @@ class Mapper:
                     p.update(task, advance=1, description=f"Mapping... {self.stats['success']} found")
 
         # Zapis do pliku
+        output_dir = os.path.dirname(self.output)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
         if os.path.exists(self.output):
             print("Znaleziono poprzedni plik mappera. Usuwam.")
             os.remove(self.output)
