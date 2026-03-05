@@ -415,19 +415,50 @@ markers =
 Run fast tests only: `pytest -m "not slow"`
 Run slow (live) tests: `pytest -m slow`
 
+### Coverage (fast tests only, `pytest -m "not slow"`)
+
+| Module | Coverage | Notes |
+|--------|----------|-------|
+| `parser/parser.py` | 99% | 2 dead-code lines (see below) |
+| `structure_updater/structure_updater.py` | 72% | `fetch_structure_from_web` only covered by slow tests |
+| `json2db/json2db.py` | 15% | All Supabase I/O — expected |
+| `scrapper/scrapper.py` | 11% | Selenium — expected |
+| `mapper/mapper.py` | 14% | Selenium — expected |
+
+Install coverage tool: `pip install pytest-cov`. Generate lcov for VSCode Coverage Gutters extension:
+```bash
+pytest --cov=. --cov-report=lcov:coverage/lcov.info -m "not slow"
+```
+
+### Known dead code / bugs found via coverage
+
+- **`parser.py:120-121`** — `except` block in `tokStringToDic` is unreachable: if no degree level is found `tok['degree_level']` stays `""` and `original.split("")` raises `ValueError` at line 99, *outside* the try block. The except never fires.
+- **`parser.py:269`** — `else: pop(old)` in `run()` for MAP entries where `MAP[old]` is falsy — currently all MAP values are non-empty strings, so branch is dead.
+- **`parser.py:280`** (fixed) — previously `self.sched.classes[535]` hardcoded index in DEBUG mode caused `IndexError` on datasets with fewer than 536 classes. Fixed to use `self.sched.classes[0]` with a guard.
+
 ### Test Files Summary
 
 | File | Tests | Notes |
 |------|-------|-------|
 | `mapper/test_mapper.py` | `@pytest.mark.slow` — real HTTP | Skipped if `output/mapper.json` not found |
 | `scrapper/test_scrapper.py` | 2 `@pytest.mark.slow` Selenium tests | ID 404 = valid (has data); ID 1 = invalid (`interaction_fail=1`) |
-| `parser/test_parser.py` | Integration — runs `Parser.run()` on copy | Skipped if `output/scrapper.json` not found |
+| `parser/test_parser.py` | 11 unit + integration tests | Skipped if `output/scrapper.json` not found |
 | `json2db/test_json2db.py` | Integration — calls `json2db()` | Skipped if `output/parser.json` not found |
-| `structure_updater/test_structure_updater.py` | 15 unit tests + 2 slow | See below |
+| `structure_updater/test_structure_updater.py` | 21 unit tests + 2 slow | See below |
+
+### parser Tests
+
+**`parseTeachers`** (4 tests): single dr, multiple dr, **prof branch** (requires teacher string where `prof.` is found after position 1 and `dr` is at position 0 so `find("dr ", 7)` misses it), empty string.
+
+**`tokStringToDic`** (2 tests): standard parse, no-degree-level raises `ValueError`.
+
+**`Parser(debug=True)`** (1 test): verifies DEBUG mode works on small datasets after fixing hardcoded index 535.
+
+**Bugs found in tests**: room `None` for PSM plan 457 caused by `\xa0` before `, ` separator in sala strings — `parseRooms` already strips it correctly, but `parser.json` was stale (generated before the fix was applied).
 
 ### structure_updater Tests
 
-**`_extract_items`** (7 tests): blank value filtering, text/value preservation, whitespace stripping, internal space collapse, unknown control name → empty list, capitalisation preserved.
+**`_extract_items`** (9 tests): blank value filtering, text/value preservation, whitespace stripping, internal space collapse, unknown control name → empty list, capitalisation preserved, **no `itemsInfo`** (line 40), **unbalanced brackets** (line 55).
 
 **`parse_university_structure`** (4 tests): shape, specialisations list, empty specialisations, real XML (skipped if not found).
 
@@ -446,6 +477,10 @@ def _make_db_mock(faculty_ids=None, dc_ids=None):
     db.table.side_effect = _tbl
     return db
 ```
+
+**`clear_structure_tables`** (1 test): mocked db, verifies delete called on all 3 tables.
+
+**`main()`** (3 tests): dry-run with xml, missing env vars → prints error and exits cleanly, `clear_structure_tables` raises → `RuntimeError` propagated. Uses `monkeypatch.setattr(su, "create_client", lambda *_: fake_db)` to inject mock DB.
 
 **`fetch_structure_from_web`** (2 `@pytest.mark.slow` tests): shape validation and whitespace checks against live site.
 
