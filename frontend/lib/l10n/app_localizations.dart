@@ -945,6 +945,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Informacje'**
   String get infoSection;
+
+  /// news_card.dart - Read more label shown at the bottom of news card preview.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czytaj dalej'**
+  String get readMore;
 }
 
 class _AppLocalizationsDelegate

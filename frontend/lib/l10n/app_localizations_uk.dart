@@ -496,4 +496,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get infoSection => 'Інформація';
+
+  @override
+  String get readMore => 'Читати далі';
 }

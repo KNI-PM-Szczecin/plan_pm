@@ -534,5 +534,9 @@
       }
     }
   },
-  "infoSection": "Informacje"
+  "infoSection": "Informacje",
+  "readMore": "Czytaj dalej",
+  "@readMore": {
+    "description": "news_card.dart - Read more label shown at the bottom of news card preview."
+  }
 }

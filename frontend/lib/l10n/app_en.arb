@@ -150,5 +150,6 @@
   "debugReturnToWelcome": "Return to Welcome Screen",
   "debugModeUnlocked": "Debug mode unlocked!",
   "debugTapsRemaining": "{count} more taps to unlock debug",
-  "infoSection": "Information"
+  "infoSection": "Information",
+  "readMore": "Read more"
 }

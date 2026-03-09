@@ -487,4 +487,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get infoSection => 'Information';
+
+  @override
+  String get readMore => 'Read more';
 }

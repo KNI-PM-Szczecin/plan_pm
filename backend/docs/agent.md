@@ -496,3 +496,85 @@ SUPABASE_KEY=...
 ```
 
 Loaded via `python-dotenv`. Missing variables cause an error log and early exit (not an exception) in the main entry points.
+
+`SUPABASE_SERVICE_KEY` (service role key) is optional but required for:
+- `json2db clear_db()` — deletes all rows from schedule tables (bypasses RLS and statement timeout)
+- `news_tool` — image uploads to Supabase Storage
+
+If `SUPABASE_SERVICE_KEY` is absent, `json2db` falls back to the anon key for `clear_db()` (likely to time out on large tables).
+
+---
+
+## News Tool
+
+A local Flask web app for managing news posts displayed in the mobile app. Located at `news_tool/`.
+
+### File Structure
+
+```
+news_tool/
+├── app.py              # Flask application (routes + Supabase logic)
+├── templates/
+│   └── index.html      # Main page – form, live preview, post list, edit modal
+└── static/
+    └── style.css       # Dark theme styles
+```
+
+### Running
+
+```bash
+python news_tool/app.py
+# opens at http://localhost:5050
+```
+
+Requires `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` in `.env`.
+
+### Routes
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | List all posts, show add form |
+| POST | `/add` | Insert new post, upload image if provided |
+| POST | `/edit/<uuid>` | Update post fields, replace image if provided |
+| POST | `/delete/<uuid>` | Delete post row and its image from Storage |
+
+All POST routes redirect to `/` (POST-Redirect-GET pattern) with a flash message stored in `session`.
+
+### Image Handling
+
+Images are stored in Supabase Storage bucket `Files` under path `News/{post_id}.png`.
+
+- Upload: `PIL.Image` opens the file, converts to RGBA, calls `.thumbnail((1024, 1024), LANCZOS)`, saves as PNG to a `BytesIO` buffer, uploads with `x-upsert: true` (safe to call on insert or update).
+- Retrieval: `db.storage.from_("Files").get_public_url("News/{post_id}.png")` — injected as `_image_url` into each post dict before rendering.
+- Missing images: `<img onerror="this.style.display='none'">` hides the element gracefully.
+- For new posts: the row is inserted first to obtain the UUID, then the image is uploaded using that UUID.
+
+### Message Types
+
+Three types stored in the `message_type` column:
+
+| Value | Polish label | Badge color |
+|-------|-------------|-------------|
+| `info` | Komunikat | Blue (`#93c5fd`) |
+| `warning` | Ostrzeżenie | Yellow (`#fcd34d`) |
+| `alert` | Alert | Red (`#fca5a5`) |
+
+### Live Preview
+
+JavaScript in `index.html` listens to `input`/`change` events on the title, content, type, and image fields. Content is rendered as `innerHTML` (supports HTML tags like `<b>`, `<i>`, `<h2>`). Image preview uses `URL.createObjectURL()`.
+
+### Edit Modal
+
+Clicking "Edytuj" on a post calls `openEdit(post)` with the full post object serialised via `{{ post | tojson }}`. The modal populates form fields and sets `action="/edit/{id}"` dynamically.
+
+### Supabase Table: `news`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | UUID | Primary key, auto-generated |
+| `title` | text | Post title |
+| `content` | text | HTML content |
+| `message_type` | text | `info` / `warning` / `alert` |
+| `created_at` | timestamptz | Auto-set by Supabase |
+
+Image URL is derived from the `id` at runtime — there is no `image_url` column.

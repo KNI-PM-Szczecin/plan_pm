@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
             children: <Widget>[
               HomeSection(
                 title: l10n.newsSectionLabel,
-                child: NewsBuilder(limit: 3),
+                child: NewsBuilder(limit: 1),
               ),
               TodayLectures(),
             ],

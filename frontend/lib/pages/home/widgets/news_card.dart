@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/news/full_news_page.dart';
@@ -67,8 +66,7 @@ class NewsCard extends StatelessWidget {
                 placeholder: (context, url) =>
                     Skeleton.leaf(child: SizedBox(height: 150)),
                 // Container(),
-                errorWidget: (context, url, error) =>
-                    const Icon(LucideIcons.eggFried),
+                errorWidget: (context, url, error) => const SizedBox.shrink(),
               ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -125,6 +123,13 @@ class NewsCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     },
+                  ),
+                  Text(
+                    l10n.readMore,
+                    style: TextStyle(
+                      color: AppColor.onSurfaceVariant,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),

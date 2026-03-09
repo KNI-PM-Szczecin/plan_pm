@@ -151,5 +151,6 @@
   "debugReturnToWelcome": "Повернутися до Welcome Screen",
   "debugModeUnlocked": "Режим налагодження розблоковано!",
   "debugTapsRemaining": "Ще {count} натискань для розблокування",
-  "infoSection": "Інформація"
+  "infoSection": "Інформація",
+  "readMore": "Читати далі"
 }
