@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+from typing import Any
 from dotenv import load_dotenv
 from supabase import create_client
 import datetime
@@ -18,7 +19,7 @@ import time
 load_dotenv()
 
 class json2db:
-    db: object
+    db: Any
     data: dict
     
     def __init__(self, input, dry_run=False):
@@ -32,19 +33,20 @@ class json2db:
         # Load environment variables and create a db connection
         url = os.environ.get("SUPABASE_URL")
         key = os.environ.get("SUPABASE_KEY")
-        
+        service_key = os.environ.get("SUPABASE_SERVICE_KEY")
+
         print("Got url: ", url)
-        print("Got key: ", key)
-        
+
         self.db = create_client(url, key)
+        self.admin_db = create_client(url, service_key) if service_key else self.db
         
     def clear_db(self):
-        self.db.table("teachersclasses").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()    
-        self.db.table("classes").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-        self.db.table("programs").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-        self.db.table("rooms").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-        self.db.table("teachers").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-        self.db.table("building").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("teachersclasses").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("classes").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("programs").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("rooms").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("teachers").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        self.admin_db.table("building").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
         
         
     def load_teachers(self):
@@ -133,11 +135,11 @@ class json2db:
     
     def load_classes(self):
         print("Loading classes")
-        
+
         query = []
         programs = self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel").execute()
         programs_map = {v["id"] : [v["name"], v["academicYear"], v["language"], v["programType"], v["courseLength"], v["degreeLevel"]] for v in programs.data}
-        
+
         buildings_response = self.db.table("building").select("id, name").execute()
         buildings_map = {v["name"]: v["id"] for v in buildings_response.data}
 
@@ -258,7 +260,7 @@ class json2db:
 
         start_time = time.time()
         self.load_env()
-        # self.clear_db()
+        self.clear_db()
         self.load_teachers()
         self.load_buildings()
         self.load_rooms()
