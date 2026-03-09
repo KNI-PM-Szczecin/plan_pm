@@ -209,9 +209,13 @@ class Parser:
     def normalizeClasses(self, classes, teachers, rooms):
         teacher_to_idx = {teacher: i for i, teacher in enumerate(teachers)}
         room_to_idx = {room: i for i, room in enumerate(rooms)}
-        
+
+        def sala_idx(sala_str):
+            parsed = self.parseRooms(sala_str)
+            return room_to_idx.get(parsed[0]) if parsed else None
+
         length = len(classes)
-        return [{k: v for k, v in c.items() if k not in {"Liczba godzin", "Forma zajęć", "Forma zaliczenia"}} | {"Prowadzący": [teacher_to_idx[x] for x in self.parseTeachers(c["Prowadzący"])], "Sala": (room_to_idx[c["Sala"]] if c["Sala"] in rooms else None)} for num, c in enumerate(classes) if not progressBar(num, length) ]
+        return [{k: v for k, v in c.items() if k not in {"Liczba godzin", "Forma zajęć", "Forma zaliczenia"}} | {"Prowadzący": [teacher_to_idx[x] for x in self.parseTeachers(c["Prowadzący"])], "Sala": sala_idx(c["Sala"])} for num, c in enumerate(classes) if not progressBar(num, length) ]
     
 
     @staticmethod
@@ -271,9 +275,12 @@ class Parser:
 
         if self.DEBUG:
             print()
-            print(self.sched.programs[0])
-            print(self.sched.classes[535])
-            print(self.sched.teachers[0])
+            if self.sched.programs:
+                print(self.sched.programs[0])
+            if self.sched.classes:
+                print(self.sched.classes[0])
+            if self.sched.teachers:
+                print(self.sched.teachers[0])
 
         print(f'Zapisuję dane do {path.abspath(self.outputFile)}')
         with open (self.outputFile, "w", encoding="utf-8") as file:

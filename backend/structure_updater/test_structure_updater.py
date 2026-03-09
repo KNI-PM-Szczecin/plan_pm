@@ -205,6 +205,130 @@ def test_propagate_skips_specialisations_insert_when_none():
 
 # ── fetch_structure_from_web ──────────────────────────────────────────────────
 
+def test_extract_items_no_itemsinfo_returns_empty():
+    """Linia 40: marker kontrolki znaleziony, ale brak 'itemsInfo':[ za nim."""
+    html = "ASPx.createControl(MVCxClientListBox,'Kierunki_DDD_L','',{});"
+    items = _extract_items(html, 'Kierunki')
+    assert items == []
+
+
+def test_extract_items_unbalanced_brackets_returns_empty():
+    """Linia 55: pętla kończy się bez znalezienia zamykającego ] → return []."""
+    html = "ASPx.createControl(MVCxClientListBox,'Kierunki_DDD_L','',{'itemsInfo':[{'value':'1','text':'Informatyka'}"
+    items = _extract_items(html, 'Kierunki')
+    assert items == []
+
+
+# ── clear_structure_tables ────────────────────────────────────────────────────
+
+def test_clear_structure_tables_calls_delete_on_all_tables():
+    from structure_updater.structure_updater import clear_structure_tables
+    db = MagicMock()
+    _tables: dict = {}
+
+    def _tbl(name):
+        if name not in _tables:
+            _tables[name] = MagicMock()
+        return _tables[name]
+
+    db.table.side_effect = _tbl
+    clear_structure_tables(db)
+
+    _tables["specialisations"].delete.assert_called_once()
+    _tables["degree_courses"].delete.assert_called_once()
+    _tables["faculties"].delete.assert_called_once()
+
+
+# ── main() ────────────────────────────────────────────────────────────────────
+
+def test_main_dry_run_xml(tmp_path, monkeypatch, capsys):
+    """main() z --source xml --dry-run wypisuje strukturę i nie zapisuje do bazy."""
+    import sys
+    from structure_updater.structure_updater import main
+
+    xml = tmp_path / "structure.xml"
+    xml.write_text(textwrap.dedent("""\
+        <?xml version="1.0" encoding="UTF-8"?>
+        <university>
+            <faculty name="Wydział Testowy">
+                <degree_course name="Kierunek A">
+                    <specialisation>Spec 1</specialisation>
+                </degree_course>
+            </faculty>
+        </university>
+    """), encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, "argv", [
+        "structure_updater", "--source", "xml",
+        "--xml-path", str(xml), "--dry-run"
+    ])
+
+    main()
+
+    output = capsys.readouterr().out
+    assert "Wydział Testowy" in output
+    assert "Kierunek A" in output
+
+
+def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
+    """main() bez SUPABASE_URL/KEY drukuje błąd i nie crashuje."""
+    import sys
+    from structure_updater.structure_updater import main
+
+    xml = tmp_path / "structure.xml"
+    xml.write_text(textwrap.dedent("""\
+        <?xml version="1.0" encoding="UTF-8"?>
+        <university>
+            <faculty name="W">
+                <degree_course name="K"></degree_course>
+            </faculty>
+        </university>
+    """), encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    monkeypatch.delenv("SUPABASE_KEY", raising=False)
+    monkeypatch.setattr(sys, "argv", [
+        "structure_updater", "--source", "xml", "--xml-path", str(xml)
+    ])
+
+    main()
+
+    output = capsys.readouterr().out
+    assert "SUPABASE" in output
+
+
+def test_main_clear_tables_error(tmp_path, monkeypatch):
+    """main() propaguje RuntimeError gdy clear_structure_tables zawodzi."""
+    import sys
+    from structure_updater import structure_updater as su
+
+    xml = tmp_path / "structure.xml"
+    xml.write_text(textwrap.dedent("""\
+        <?xml version="1.0" encoding="UTF-8"?>
+        <university>
+            <faculty name="W">
+                <degree_course name="K"></degree_course>
+            </faculty>
+        </university>
+    """), encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
+    monkeypatch.setenv("SUPABASE_KEY", "fake-key")
+    monkeypatch.setattr(sys, "argv", [
+        "structure_updater", "--source", "xml", "--xml-path", str(xml)
+    ])
+
+    fake_db = MagicMock()
+    fake_db.table.return_value.delete.return_value.gte.return_value.execute.side_effect = Exception("RLS error")
+    monkeypatch.setattr(su, "create_client", lambda *_: fake_db)
+
+    with pytest.raises(RuntimeError, match="Failed to clear structure tables"):
+        su.main()
+
+
 @pytest.mark.slow
 def test_fetch_structure_from_web_shape():
     data = fetch_structure_from_web()

@@ -1,3 +1,4 @@
+import argparse
 import os
 import json
 from dotenv import load_dotenv
@@ -17,10 +18,11 @@ import time
 load_dotenv()
 
 class json2db:
-    db = ""
-    data = ""
+    db: object
+    data: dict
     
-    def __init__(self, input):
+    def __init__(self, input, dry_run=False):
+        self.dry_run = dry_run
         print("Json2DB loaded.")
         with open(input, encoding="utf8") as file:
             self.data = json.loads(file.read())
@@ -136,10 +138,13 @@ class json2db:
         programs = self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel").execute()
         programs_map = {v["id"] : [v["name"], v["academicYear"], v["language"], v["programType"], v["courseLength"], v["degreeLevel"]] for v in programs.data}
         
-        rooms = self.db.table("rooms").select("id, name").execute()
-        room_map = {v["name"]: v["id"] for v in rooms.data}
-        
-        processed_class_keys = set() 
+        buildings_response = self.db.table("building").select("id, name").execute()
+        buildings_map = {v["name"]: v["id"] for v in buildings_response.data}
+
+        rooms = self.db.table("rooms").select("id, name, building").execute()
+        room_map = {(v["name"], v["building"]): v["id"] for v in rooms.data}
+
+        processed_class_keys = set()
 
         for sclass in self.data["classes"]:
             found_program = self.data["programs"][sclass["program"]]
@@ -149,31 +154,34 @@ class json2db:
             academic_year = found_program["academic_year"]
             course_length = float(found_program["course_length"])
             language = found_program["language"]
-            
+
             found_program_id = None
             program = [program_name, academic_year, language, program_type, course_length, degree_level]
             for program_id, program_value in programs_map.items():
                 if (program_value == program):
                     found_program_id = program_id
-                   
+
             if (found_program_id == None):
                 print("Nie znaleziono ID dla programu - niedobrze")
                 continue
-            
+
             room = sclass["room"]
             room_id = None
             if (room != None):
-                room_name = self.data["rooms"][sclass["room"]]["room"]
-                room_id = room_map.get(room_name)
-            
+                room_data = self.data["rooms"][sclass["room"]]
+                room_name = room_data["room"]
+                b_idx = room_data.get("building")
+                building_uuid = buildings_map.get(self.data["building"][b_idx]) if b_idx is not None else None
+                room_id = room_map.get((room_name, building_uuid))
+
             subject = sclass["subject"]
             subject_name = self.data["subjects"][subject]
-            
+
             start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
             end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"])).strftime("%Y-%m-%dT%H:%M:%S")
 
             current_class_key = (subject_name, start_time_formatted, sclass["group"])
-            
+
             if current_class_key in processed_class_keys:
                 # print(f"Pominięto duplikat klasy w JSON: {current_class_key}")
                 continue
@@ -191,7 +199,7 @@ class json2db:
 
         _ = self.db.table("classes").upsert(query, on_conflict="subject, startTime, group").execute()
         print("Done")
-    
+
     def load_teachers_classes(self):
         print("Loading teachers/classes")
 
@@ -242,6 +250,12 @@ class json2db:
             
     def run(self):
         print("Executing json2db.py")
+
+        if self.dry_run:
+            print("Tryb dry-run — pominięto zapis do bazy danych")
+            print(json.dumps(self.data, ensure_ascii=False, indent=2))
+            return
+
         start_time = time.time()
         self.load_env()
         # self.clear_db()
@@ -258,5 +272,16 @@ class json2db:
 
 
 if __name__ == "__main__":
-    App = json2db(input="./output/parser.json")
+    parser = argparse.ArgumentParser(description="Wczytaj dane z parser.json do bazy danych")
+    parser.add_argument(
+        "--input", default="./output/parser.json",
+        help="Ścieżka do pliku wejściowego parser.json (domyślnie: ./output/parser.json)",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="Wyświetl dane bez zapisywania do bazy danych",
+    )
+    args = parser.parse_args()
+
+    App = json2db(input=args.input, dry_run=args.dry_run)
     App.run()
