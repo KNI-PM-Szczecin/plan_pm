@@ -174,7 +174,7 @@
       "lecturesLength": {}
     }
   },
-  "recentLecture": "Twoje najblizsze zajęcia",
+  "recentLecture": "Twoje 3 najbliższe zajęcia",
   "@recentLecture": {
     "description": "today_lectures.dart - Label for the next upcoming class/lecture."
   },
@@ -316,7 +316,7 @@
   "@inputPageButton": {
     "description": "menu_page.dart - Label for the button that resets navigation to the Input Page."
   },
-  "professorLabel": "Profesor",
+  "professorLabel": "Prowadzący",
   "@professorLabel": {
     "description": "lecture.dart - Label for the lecture wiget professor header."
   },
@@ -521,5 +521,18 @@
   "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
   "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",
   "debugReturnToWelcome": "Powrót do Welcome Screen",
+  "debugModeUnlocked": "Tryb debug odblokowany!",
+  "@debugModeUnlocked": {
+    "description": "about_page.dart - Snackbar message shown when debug mode is unlocked after 7 taps."
+  },
+  "debugTapsRemaining": "Jeszcze {count} tapnięć do odblokowania debug",
+  "@debugTapsRemaining": {
+    "description": "about_page.dart - Hint shown after 3+ taps on version number, showing remaining taps needed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "infoSection": "Informacje"
 }

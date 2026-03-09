@@ -42,7 +42,7 @@
   "todayDataNaN": "No classes for today",
   "pageErrorMess": "Error in FutureBuilder {snapshotError}",
   "lectureLength": "{lecturesLength, plural, one{1 lecture} other{{lecturesLength} lectures}}",
-  "recentLecture": "Future classes",
+  "recentLecture": "Your 3 upcoming classes",
   "lectureLoading": "Loading schedule",
   "todayLecturesNaN": "No classes for today",
   "lectureWigetHint": "You're up to date! Use your free time or review your schedule.",
@@ -148,5 +148,7 @@
   "couldNotOpenRepo": "Could not open repository",
   "appDescription": "A clear and fast schedule with live preview. Created specifically for students of the Maritime University to help organize and track daily lectures.",
   "debugReturnToWelcome": "Return to Welcome Screen",
+  "debugModeUnlocked": "Debug mode unlocked!",
+  "debugTapsRemaining": "{count} more taps to unlock debug",
   "infoSection": "Information"
 }

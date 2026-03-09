@@ -42,7 +42,7 @@
   "todayDataNaN": "Немає занять на сьогодні",
   "pageErrorMess": "Помилка у FutureBuilder {snapshotError}",
   "lectureLength": "{lecturesLength, plural, one{1 заняття} few{{lecturesLength} заняття} many{{lecturesLength} занять} other{{lecturesLength} заняття}}",
-  "recentLecture": "Ваше найближче заняття",
+  "recentLecture": "Ваші 3 найближчі заняття",
   "lectureLoading": "Завантаження розкладу",
   "todayLecturesNaN": "Немає занять на сьогодні",
   "lectureWigetHint": "Ви в курсі! Скористайтеся вільним часом або перегляньте свій розклад.",
@@ -149,5 +149,7 @@
   "couldNotOpenRepo": "Не вдалося відкрити репозиторій",
   "appDescription": "Зрозумілий та швидкий розклад із попереднім переглядом наживо. Створений спеціально для студентів Морського університету, щоб полегшити організацію та відстеження щоденних лекцій.",
   "debugReturnToWelcome": "Повернутися до Welcome Screen",
+  "debugModeUnlocked": "Режим налагодження розблоковано!",
+  "debugTapsRemaining": "Ще {count} натискань для розблокування",
   "infoSection": "Інформація"
 }

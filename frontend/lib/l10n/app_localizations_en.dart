@@ -149,7 +149,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get recentLecture => 'Future classes';
+  String get recentLecture => 'Your 3 upcoming classes';
 
   @override
   String get lectureLoading => 'Loading schedule';
@@ -476,6 +476,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debugReturnToWelcome => 'Return to Welcome Screen';
+
+  @override
+  String get debugModeUnlocked => 'Debug mode unlocked!';
+
+  @override
+  String debugTapsRemaining(int count) {
+    return '$count more taps to unlock debug';
+  }
 
   @override
   String get infoSection => 'Information';

@@ -226,6 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+        centerTitle: true,
         forceMaterialTransparency: true,
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
         // Tytul jest brany dynamicznie z listy pages.

@@ -144,7 +144,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get recentLecture => 'Twoje najblizsze zajęcia';
+  String get recentLecture => 'Twoje 3 najbliższe zajęcia';
 
   @override
   String get lectureLoading => 'Ładowanie planu';
@@ -262,7 +262,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get inputPageButton => 'Podaj dane';
 
   @override
-  String get professorLabel => 'Profesor';
+  String get professorLabel => 'Prowadzący';
 
   @override
   String get groupLabel => 'Grupa';
@@ -475,6 +475,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get debugReturnToWelcome => 'Powrót do Welcome Screen';
+
+  @override
+  String get debugModeUnlocked => 'Tryb debug odblokowany!';
+
+  @override
+  String debugTapsRemaining(int count) {
+    return 'Jeszcze $count tapnięć do odblokowania debug';
+  }
 
   @override
   String get infoSection => 'Informacje';

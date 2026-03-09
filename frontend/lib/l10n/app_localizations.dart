@@ -355,7 +355,7 @@ abstract class AppLocalizations {
   /// today_lectures.dart - Label for the next upcoming class/lecture.
   ///
   /// In pl, this message translates to:
-  /// **'Twoje najblizsze zajęcia'**
+  /// **'Twoje 3 najbliższe zajęcia'**
   String get recentLecture;
 
   /// schedule_view.dart - General loading indicator text for the schedule.
@@ -559,7 +559,7 @@ abstract class AppLocalizations {
   /// lecture.dart - Label for the lecture wiget professor header.
   ///
   /// In pl, this message translates to:
-  /// **'Profesor'**
+  /// **'Prowadzący'**
   String get professorLabel;
 
   /// lecture.dart - Label for the lecture wiget group header.
@@ -927,6 +927,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Powrót do Welcome Screen'**
   String get debugReturnToWelcome;
+
+  /// about_page.dart - Snackbar message shown when debug mode is unlocked after 7 taps.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb debug odblokowany!'**
+  String get debugModeUnlocked;
+
+  /// about_page.dart - Hint shown after 3+ taps on version number, showing remaining taps needed.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeszcze {count} tapnięć do odblokowania debug'**
+  String debugTapsRemaining(int count);
 
   /// No description provided for @infoSection.
   ///
