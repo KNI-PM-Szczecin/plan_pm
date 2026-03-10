@@ -187,7 +187,7 @@ class _LectureState extends State<Lecture> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     final style = eventColorStyleNotifier.value;
     Gradient? cardGradient;
     Color? cardColor;
@@ -236,41 +236,30 @@ class _LectureState extends State<Lecture> {
                               ),
                             ),
                           ),
-                          !expanded
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    LucideIcons.chevronDown,
-                                    color: textColor,
-                                  ),
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    LucideIcons.chevronUp,
-                                    color: textColor,
-                                  ),
-                                ),
+                          AnimatedRotation(
+                            turns: expanded ? 0.5 : 0.0,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                LucideIcons.chevronDown,
+                                color: textColor,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       Row(
                         spacing: 5,
                         children: [
-                          Icon(
-                            LucideIcons.clock,
-                            size: 16,
-                            color: textColor,
-                          ),
+                          Icon(LucideIcons.clock, size: 16, color: textColor),
                           Text(
                             "${widget.timeFrom} - ${widget.timeTo}",
                             style: TextStyle(color: textColor),
                           ),
                           SizedBox(width: 5),
-                          Icon(
-                            LucideIcons.mapPin,
-                            size: 16,
-                            color: textColor,
-                          ),
+                          Icon(LucideIcons.mapPin, size: 16, color: textColor),
                           Expanded(
                             child: Text(
                               // Ten kod jest po to, zeby nie dodawać spacji przed przecinkiem jezeli są więcej niz dwie sale.
@@ -294,58 +283,63 @@ class _LectureState extends State<Lecture> {
               ),
             ),
           ),
-          expanded
-              ? Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.surface,
-                    boxShadow: [BoxShadow()],
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: switchExpanded,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        spacing: 10,
-                        children: [
-                          widget.professor != null
-                              ? DescriptionItem(
-                                  icon: LucideIcons.user,
-                                  color: Colors.blue,
-                                  name: l10n.professorLabel,
-                                  content:
-                                      widget.professor ?? l10n.professorNaN,
-                                )
-                              : Container(),
-                          DescriptionItem(
-                            icon: LucideIcons.bookLock,
-                            color: Colors.green,
-                            name: l10n.groupLabel,
-                            content: longToShort(widget.group),
-                          ),
-                          DescriptionItem(
-                            icon: LucideIcons.clock,
-                            color: Colors.purple,
-                            name: l10n.lengthLabel,
-                            content: widget.duration,
-                          ),
-                          widget.notes != null
-                              ? DescriptionItem(
-                                  icon: LucideIcons.stickyNote,
-                                  color: Colors.yellow,
-                                  name: l10n.notesLabel,
-                                  content: widget.notes ?? l10n.emptyNotesLabel,
-                                )
-                              : Container(),
-                        ],
+          AnimatedSize(
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut,
+            child: expanded
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.surface,
+                      boxShadow: [BoxShadow()],
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
                       ),
                     ),
-                  ),
-                )
-              : SizedBox(),
+                    child: GestureDetector(
+                      onTap: switchExpanded,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            widget.professor != null
+                                ? DescriptionItem(
+                                    icon: LucideIcons.user,
+                                    color: Colors.blue,
+                                    name: l10n.professorLabel,
+                                    content:
+                                        widget.professor ?? l10n.professorNaN,
+                                  )
+                                : Container(),
+                            DescriptionItem(
+                              icon: LucideIcons.bookLock,
+                              color: Colors.green,
+                              name: l10n.groupLabel,
+                              content: longToShort(widget.group),
+                            ),
+                            DescriptionItem(
+                              icon: LucideIcons.clock,
+                              color: Colors.purple,
+                              name: l10n.lengthLabel,
+                              content: widget.duration,
+                            ),
+                            widget.notes != null
+                                ? DescriptionItem(
+                                    icon: LucideIcons.stickyNote,
+                                    color: Colors.yellow,
+                                    name: l10n.notesLabel,
+                                    content:
+                                        widget.notes ?? l10n.emptyNotesLabel,
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );

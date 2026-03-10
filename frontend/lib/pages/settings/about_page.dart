@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -15,11 +16,16 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   String _version = "unknown";
+  int _tapCount = 0;
+  bool _debugUnlocked = false;
+
+  static const String _debugUnlockedKey = 'debug_unlocked';
 
   @override
   void initState() {
     super.initState();
     _initPackageInfo();
+    _loadDebugState();
   }
 
   Future<void> _initPackageInfo() async {
@@ -30,6 +36,44 @@ class _AboutPageState extends State<AboutPage> {
       });
     } catch (e) {
       // package_info_plus might not be working in dev / not installed
+    }
+  }
+
+  Future<void> _loadDebugState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _debugUnlocked = prefs.getBool(_debugUnlockedKey) ?? false;
+    });
+  }
+
+  Future<void> _onVersionTap() async {
+    if (_debugUnlocked) return;
+    HapticFeedback.selectionClick();
+    setState(() {
+      _tapCount++;
+    });
+    if (_tapCount >= 7) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_debugUnlockedKey, true);
+      setState(() {
+        _debugUnlocked = true;
+      });
+      HapticFeedback.heavyImpact();
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.debugModeUnlocked)),
+        );
+      }
+    } else if (_tapCount >= 3) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            SnackBar(content: Text(l10n.debugTapsRemaining(7 - _tapCount))),
+          );
+      }
     }
   }
 
@@ -121,13 +165,16 @@ class _AboutPageState extends State<AboutPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            _version.isNotEmpty
-                                ? "${l10n.version} $_version"
-                                : l10n.version,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColor.onBackgroundVariant,
+                          GestureDetector(
+                            onTap: _onVersionTap,
+                            child: Text(
+                              _version.isNotEmpty
+                                  ? "${l10n.version} $_version"
+                                  : l10n.version,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.onBackgroundVariant,
+                              ),
                             ),
                           ),
 

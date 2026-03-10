@@ -152,7 +152,7 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get recentLecture => 'Ваше найближче заняття';
+  String get recentLecture => 'Ваші 3 найближчі заняття';
 
   @override
   String get lectureLoading => 'Завантаження розкладу';
@@ -485,6 +485,14 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get debugReturnToWelcome => 'Повернутися до Welcome Screen';
+
+  @override
+  String get debugModeUnlocked => 'Режим налагодження розблоковано!';
+
+  @override
+  String debugTapsRemaining(int count) {
+    return 'Ще $count натискань для розблокування';
+  }
 
   @override
   String get infoSection => 'Інформація';

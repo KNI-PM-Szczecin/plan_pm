@@ -25,7 +25,7 @@ class CacheService {
     await databaseService.clearLectures();
 
     for (var lecture in lectures) {
-      databaseService.addLecture(
+      await databaseService.addLecture(
         name: lecture.name,
         startTime: lecture.startTime,
         endTime: lecture.endTime,

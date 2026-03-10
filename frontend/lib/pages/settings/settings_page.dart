@@ -13,9 +13,30 @@ import 'package:plan_pm/pages/settings/language_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/pages/settings/about_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _debugUnlocked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDebugState();
+  }
+
+  Future<void> _loadDebugState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _debugUnlocked = prefs.getBool('debug_unlocked') ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +77,7 @@ class SettingsPage extends StatelessWidget {
                   StudentInfo(),
                   GroupInfo(),
                   MenuSection(
-                    title: l10n
-                        .studySettings, // Używam istniejącego nagłówka lub można dodać nowy
+                    title: l10n.studySettings,
                     child: MenuButton(
                       title: l10n.pePageTitle,
                       onTap: () {
@@ -118,21 +138,22 @@ class SettingsPage extends StatelessWidget {
                       },
                     ),
                   ),
-                  MenuSection(
-                    title: l10n.debugHeader,
-                    child: MenuButton(
-                      title: l10n.debugReturnToWelcome,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const WelcomePage(),
-                          ),
-                        );
-                      },
+                  if (_debugUnlocked)
+                    MenuSection(
+                      title: l10n.debugHeader,
+                      child: MenuButton(
+                        title: l10n.debugReturnToWelcome,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const WelcomePage(),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
                   MenuSection(
                     title: l10n.infoSection,
                     child: MenuButton(
@@ -144,7 +165,7 @@ class SettingsPage extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => const AboutPage(),
                           ),
-                        );
+                        ).then((_) => _loadDebugState());
                       },
                     ),
                   ),
