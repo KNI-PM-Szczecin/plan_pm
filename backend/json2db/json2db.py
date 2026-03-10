@@ -37,8 +37,11 @@ class json2db:
 
         print("Got url: ", url)
 
+        if not service_key:
+            raise EnvironmentError("SUPABASE_SERVICE_KEY is required for clear_db(). Add it to your .env file.")
+
         self.db = create_client(url, key)
-        self.admin_db = create_client(url, service_key) if service_key else self.db
+        self.admin_db = create_client(url, service_key)
         
     def clear_db(self):
         self.admin_db.table("teachersclasses").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
