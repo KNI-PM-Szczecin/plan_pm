@@ -50,7 +50,7 @@ class CacheService {
     await databaseService.clearNews();
 
     for (var singleNews in news) {
-      databaseService.addNews(
+      await databaseService.addNews(
         createdAt: singleNews.createdAt,
         title: singleNews.title,
         imageUrl: singleNews.imageUrl,

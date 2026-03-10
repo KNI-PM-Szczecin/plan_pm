@@ -62,7 +62,7 @@
   "noDataAvailable": "Дані недоступні",
   "academicInfoHeader": "Академічна інформація",
   "editButton": "Редагувати",
-  "studyYear": "{year, plural, one{1 рік} few{{year} роки} many{{year} років} other{{year} року}}",
+  "studyYear": "{year} курс",
   "studyModeLabel": "Форма навчання",
   "groupTypeAuditorium": "Аудиторія",
   "groupTypeClasses": "Практичні заняття",

@@ -11,7 +11,16 @@ db = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or os.urandom(24)
+
+
+@app.before_request
+def check_origin():
+    if request.method == "POST":
+        origin = request.headers.get("Origin", "")
+        referer = request.headers.get("Referer", "")
+        if not (origin.startswith("http://localhost") or referer.startswith("http://localhost")):
+            return "Forbidden", 403
 
 BUCKET = "Files"
 IMAGE_PATH = "News/{post_id}.png"
@@ -92,4 +101,5 @@ def delete(post_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5050)
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug, port=5050)

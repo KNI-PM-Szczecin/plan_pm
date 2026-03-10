@@ -199,27 +199,14 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noDataAvailable => 'Brak danych';
 
   @override
-  String get academicInfoHeader => 'Informacje akademickie';
+  String get academicInfoHeader => 'Dane studenta';
 
   @override
   String get editButton => 'Edytuj';
 
   @override
   String studyYear(int year) {
-    final intl.NumberFormat yearNumberFormat = intl.NumberFormat.compact(
-      locale: localeName,
-    );
-    final String yearString = yearNumberFormat.format(year);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      year,
-      locale: localeName,
-      other: '$yearString roku',
-      many: '$yearString lat',
-      few: '$yearString lata',
-      one: '1 rok',
-    );
-    return '$_temp0';
+    return '$year. rok';
   }
 
   @override

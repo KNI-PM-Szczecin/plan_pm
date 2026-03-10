@@ -211,18 +211,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String studyYear(int year) {
-    final intl.NumberFormat yearNumberFormat = intl.NumberFormat.compact(
-      locale: localeName,
-    );
-    final String yearString = yearNumberFormat.format(year);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      year,
-      locale: localeName,
-      other: '$yearString years',
-      one: '1 year',
-    );
-    return '$_temp0';
+    return 'Year $year';
   }
 
   @override

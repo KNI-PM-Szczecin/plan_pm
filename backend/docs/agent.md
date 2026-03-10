@@ -527,7 +527,11 @@ python news_tool/app.py
 # opens at http://localhost:5050
 ```
 
-Requires `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` in `.env`.
+Requires `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, and optionally `FLASK_SECRET_KEY` in `.env`. If `FLASK_SECRET_KEY` is not set, a random key is generated on each restart (sessions won't persist across restarts).
+
+### Security
+
+All POST requests are protected by an `Origin`/`Referer` check — requests that do not originate from `http://localhost` are rejected with `403 Forbidden`. This prevents CSRF attacks from malicious webpages. The tool is intended to run locally only and should never be exposed on a public network.
 
 ### Routes
 
@@ -538,7 +542,7 @@ Requires `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` in `.env`.
 | POST | `/edit/<uuid>` | Update post fields, replace image if provided |
 | POST | `/delete/<uuid>` | Delete post row and its image from Storage |
 
-All POST routes redirect to `/` (POST-Redirect-GET pattern) with a flash message stored in `session`.
+`/add` and `/edit/<uuid>` redirect to `/` (POST-Redirect-GET pattern) with a flash message stored in `session`. `/delete/<uuid>` returns `204 No Content` directly (no redirect).
 
 ### Image Handling
 

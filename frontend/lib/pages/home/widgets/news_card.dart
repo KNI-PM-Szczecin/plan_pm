@@ -102,7 +102,9 @@ class NewsCard extends StatelessWidget {
                     ),
                   ),
                   Html(
-                    data: "${description.substring(0, 45)}...",
+                    data: description.length > 45
+                        ? "${description.substring(0, 45)}..."
+                        : description,
                     style: {
                       "body": Style(
                         margin: Margins.zero,

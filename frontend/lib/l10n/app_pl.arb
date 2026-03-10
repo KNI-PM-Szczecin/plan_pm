@@ -246,7 +246,7 @@
   "@noDataAvailable": {
     "description": "group_info.dart - Placeholder text displayed when no groups have been selected."
   },
-  "academicInfoHeader": "Informacje akademickie",
+  "academicInfoHeader": "Dane studenta",
   "@academicInfoHeader": {
     "description": "student_info.dart - Header for the section displaying the user's academic details."
   },
@@ -254,13 +254,12 @@
   "@editButton": {
     "description": "student_info.dart - Label for the button to navigate to the input/edit page."
   },
-  "studyYear": "{year, plural, one{1 rok} few{{year} lata} many{{year} lat} other{{year} roku}}",
+  "studyYear": "{year}. rok",
   "@studyYear": {
-    "description": "student_info.dart - Displays the current year of study with proper pluralization (e.g., 1 rok, 2 lata, 5 lat).",
+    "description": "student_info.dart - Displays the current year of study as ordinal (e.g., 1. rok, 2. rok).",
     "placeholders": {
       "year": {
-        "type": "int",
-        "format": "compact"
+        "type": "int"
       }
     }
   },
