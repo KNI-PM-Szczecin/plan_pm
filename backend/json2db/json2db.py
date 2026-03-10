@@ -22,8 +22,9 @@ class json2db:
     db: Any
     data: dict
     
-    def __init__(self, input, dry_run=False):
+    def __init__(self, input, dry_run=False, clear=False):
         self.dry_run = dry_run
+        self.clear = clear
         print("Json2DB loaded.")
         with open(input, encoding="utf8") as file:
             self.data = json.loads(file.read())
@@ -35,10 +36,15 @@ class json2db:
         key = os.environ.get("SUPABASE_KEY")
         service_key = os.environ.get("SUPABASE_SERVICE_KEY")
 
+        if not url or not key:
+            raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY are required. Add them to your .env file.")
+        if not service_key:
+            raise EnvironmentError("SUPABASE_SERVICE_KEY is required for clear_db(). Add it to your .env file.")
+
         print("Got url: ", url)
 
         self.db = create_client(url, key)
-        self.admin_db = create_client(url, service_key) if service_key else self.db
+        self.admin_db = create_client(url, service_key)
         
     def clear_db(self):
         self.admin_db.table("teachersclasses").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
@@ -260,7 +266,8 @@ class json2db:
 
         start_time = time.time()
         self.load_env()
-        self.clear_db()
+        if self.clear:
+            self.clear_db()
         self.load_teachers()
         self.load_buildings()
         self.load_rooms()
@@ -283,7 +290,11 @@ if __name__ == "__main__":
         "--dry-run", action="store_true",
         help="Wyświetl dane bez zapisywania do bazy danych",
     )
+    parser.add_argument(
+        "--clear", action="store_true",
+        help="Wyczyść bazę danych przed zapisem (domyślnie: wyłączone)",
+    )
     args = parser.parse_args()
 
-    App = json2db(input=args.input, dry_run=args.dry_run)
+    App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear)
     App.run()

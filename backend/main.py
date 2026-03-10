@@ -13,6 +13,6 @@ Scrapper(input="./output/mapper.json", output="./output/scrapper.json").run(max_
 
 Parser(input="scrapper.json").run()
 
-json2db(input="./output/parser.json").run()
+json2db(input="./output/parser.json", clear=True).run()
 
 print(f"✅ PlanPM gotowy ({time.time() - start_time:.2f} s)")

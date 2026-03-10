@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+const String kDebugUnlockedKey = 'debug_unlocked';
+
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
 
@@ -19,7 +21,7 @@ class _AboutPageState extends State<AboutPage> {
   int _tapCount = 0;
   bool _debugUnlocked = false;
 
-  static const String _debugUnlockedKey = 'debug_unlocked';
+  static const String _debugUnlockedKey = kDebugUnlockedKey;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _AboutPageState extends State<AboutPage> {
 
   Future<void> _loadDebugState() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       _debugUnlocked = prefs.getBool(_debugUnlockedKey) ?? false;
     });
@@ -55,6 +58,7 @@ class _AboutPageState extends State<AboutPage> {
     if (_tapCount >= 7) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_debugUnlockedKey, true);
+      if (!mounted) return;
       setState(() {
         _debugUnlocked = true;
       });

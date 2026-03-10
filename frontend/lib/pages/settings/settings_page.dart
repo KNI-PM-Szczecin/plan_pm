@@ -33,8 +33,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _loadDebugState() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
-      _debugUnlocked = prefs.getBool('debug_unlocked') ?? false;
+      _debugUnlocked = prefs.getBool(kDebugUnlockedKey) ?? false;
     });
   }
 

@@ -463,7 +463,7 @@ abstract class AppLocalizations {
   /// student_info.dart - Header for the section displaying the user's academic details.
   ///
   /// In pl, this message translates to:
-  /// **'Informacje akademickie'**
+  /// **'Dane studenta'**
   String get academicInfoHeader;
 
   /// student_info.dart - Label for the button to navigate to the input/edit page.
@@ -472,10 +472,10 @@ abstract class AppLocalizations {
   /// **'Edytuj'**
   String get editButton;
 
-  /// student_info.dart - Displays the current year of study with proper pluralization (e.g., 1 rok, 2 lata, 5 lat).
+  /// student_info.dart - Displays the current year of study as ordinal (e.g., 1. rok, 2. rok).
   ///
   /// In pl, this message translates to:
-  /// **'{year, plural, one{1 rok} few{{year} lata} many{{year} lat} other{{year} roku}}'**
+  /// **'{year}. rok'**
   String studyYear(int year);
 
   /// student_info.dart - Label for the study mode (e.g., 'Full-time').
@@ -945,6 +945,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Informacje'**
   String get infoSection;
+
+  /// news_card.dart - Read more label shown at the bottom of news card preview.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czytaj dalej'**
+  String get readMore;
 }
 
 class _AppLocalizationsDelegate

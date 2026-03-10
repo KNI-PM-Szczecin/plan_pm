@@ -62,7 +62,7 @@
   "noDataAvailable": "No data available",
   "academicInfoHeader": "Academic Information",
   "editButton": "Edit",
-  "studyYear": "{year, plural, one{1 year} other{{year} years}}",
+  "studyYear": "Year {year}",
   "studyModeLabel": "Study Mode",
   "groupTypeAuditorium": "Auditorium",
   "groupTypeClasses": "Classes",
@@ -150,5 +150,6 @@
   "debugReturnToWelcome": "Return to Welcome Screen",
   "debugModeUnlocked": "Debug mode unlocked!",
   "debugTapsRemaining": "{count} more taps to unlock debug",
-  "infoSection": "Information"
+  "infoSection": "Information",
+  "readMore": "Read more"
 }

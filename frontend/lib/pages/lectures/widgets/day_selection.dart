@@ -97,7 +97,7 @@ class _DaySelectionState extends State<DaySelection> {
 
     days = [
       l10n.daysMon,
-      l10n.daysThu,
+      l10n.daysTue,
       l10n.daysWed,
       l10n.daysThu,
       l10n.daysFri,
