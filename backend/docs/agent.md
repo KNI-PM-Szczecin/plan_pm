@@ -168,8 +168,6 @@ Data cell order in a `dxgvDataRow_iOS` row (0-indexed from `all_tds[1]`):
 12. re-find table, parse dxgvGroupRow_iOS / dxgvDataRow_iOS rows
 ```
 
-**Outstanding issue (as of 2026-03-03):** Even with the correct language, radio selection, and dates (Mar 2 – Apr 1 confirmed via JS), `PerformCallback` still returns a table with only header rows and no data rows. Root cause not yet confirmed — likely a server-side session requirement or the `callbackState` not matching. Next step: inspect the actual HTTP request/response from the AJAX callback (network tab) to see what the server returns and why.
-
 ---
 
 ## Language Change — What NOT to do
@@ -202,7 +200,8 @@ backend/
 │   └── test_mapper.py
 ├── scrapper/
 │   ├── __init__.py                 # Re-exports Scrapper
-│   ├── scrapper.py
+│   ├── scrapper.py                 # Selenium-based scrapper
+│   ├── http_scrapper.py            # HTTP-only scrapper (no browser, ~10× faster)
 │   └── test_scrapper.py
 ├── parser/
 │   ├── __init__.py                 # Re-exports Parser
@@ -233,7 +232,7 @@ Mapper → Scrapper → Parser → json2db
 | Step | Input | Output | Description |
 |------|-------|--------|-------------|
 | `Mapper` | ID range | `output/mapper.json` | HTTP GET each ID, detect valid plan pages by presence of "Plan dla toku:" string |
-| `Scrapper` | `output/mapper.json` | `output/scrapper.json` | Selenium scrape per flow_id, outputs flat list of schedule rows |
+| `Scrapper` / `HttpScrapper` | `output/mapper.json` | `output/scrapper.json` | Scrapes per flow_id, outputs flat list of schedule rows. Use `HttpScrapper` (preferred) or `Scrapper` (Selenium fallback) |
 | `Parser` | `output/scrapper.json` | `output/parser.json` | Normalises data, deduplicates, extracts teachers/rooms/subjects, converts dates to UNIX timestamps |
 | `json2db` | `output/parser.json` | Supabase DB | Upserts all entities into Supabase tables |
 
@@ -250,18 +249,52 @@ The `structure_updater` is a **separate pipeline** — it populates the universi
 - Output format: `{ "flow_id": "plan_name", ... }`
 - Logging: `./logs/mapper.log` (mode `w+`)
 
-### Scrapper (`scrapper/scrapper.py`)
+### Scrapper (`scrapper/scrapper.py`) — Selenium
 - `Scrapper(debug, output, input)`
 - `run(max_workers=5, flow_id=-1)` — if `flow_id == -1`, reads all IDs from mapper output; otherwise scrapes single ID
 - `scrapper(flow_id, progress=None)` — single-ID Selenium scrape
 - Stats: `success`, `download_fail`, `interaction_fail`, `parse_fail`, `total`
 - Thread-safe via `threading.Lock()` on `self.results` and `self.stats`
 - Chrome flags required for headless parallel: `--headless=new`, `--no-sandbox`, `--disable-dev-shm-usage`
-- **Critical**: `os._exit(1)` was replaced with `return` — using `os._exit` kills the entire process from a thread, stopping the progress bar and all other threads
+- **Critical**: use `return` not `os._exit()` in thread workers — `os._exit` kills the entire process from a thread
 - `future.result()` is wrapped in `try/except` so one thread's exception doesn't stall the progress loop
 - Output: list of flat schedule-row dicts with Polish field names
 - Fields in each row: `Plan dla toku`, `Data zajęć`, `Czas od`, `Czas do`, `Liczba godzin`, `Grupy`, `Przedmiot`, `Forma zajęć`, `Sala`, `Prowadzący`, `Forma zaliczenia`, `Uwagi`
 - Logging: `./logs/scrapper.log` (mode `w+`)
+- **Speed**: ~15–20s per plan (sequential), ~5s per plan at 5 workers
+
+### HttpScrapper (`scrapper/http_scrapper.py`) — HTTP only (preferred)
+- **No browser required** — ~2s per plan sequential, ~0.35s/plan at 10 workers
+- Same class interface as `Scrapper`: `HttpScrapper(output, input)`, `run(max_workers=10, flow_id=-1)`, `scrapper(flow_id, progress=None)`
+- Same argparse CLI: `--id`, `--workers`, `--output`, `--input`
+- Same output format, same field names — output is directly usable by `Parser`
+- `fetch_plan_http(flow_id, zaz_button=2)` is also a standalone function (used in tests)
+- Logging: `./logs/http_scrapper.log` (mode `w+`)
+
+#### HTTP scraping protocol
+The DevExpress grid can be driven without a browser via 3 HTTP calls:
+
+1. `GET /ZmienJezyk?lang=pl` + `GET /Plany/PlanyTokow/{flow_id}` — set session language, read radio button date values and plan name (`<strong>`)
+2. `GET /Plany/PlanyTokowGrid/{flow_id}` — extract `customOperationState` and `callbackState` from page JS via regex
+3. `POST /Plany/PlanyTokowGridCustom/{flow_id}` — trigger `FiltrujDane` server-side
+
+POST body fields:
+```
+DXCallbackName         = gridViewPlanyTokow
+__DXCallbackArgument   = c0:KV|2;[];GB|35;14|CUSTOMCALLBACK15|[object Object];
+gridViewPlanyTokow     = {"customOperationState":"...","callbackState":"...","selection":"","keys":[]}
+                         (with " replaced by &quot; — HTML-entity encoding, NOT double-encoding & as &amp;)
+parametry              = "YYYY-M-D;YYYY-M-D;zazButton;flow_id"  (e.g. "2026-3-16;2026-4-15;2;404")
+id                     = flow_id
+```
+
+Response format: `/*DX*/({...JSON...})/*DXHTML*/<actual HTML>` — split on `/*DXHTML*/`, parse the HTML part.
+
+Rows to parse: `dxgvGroupRow_iOS` (date headers) and `dxgvDataRow_iOS` (data rows) — same CSS classes as Selenium.
+
+**Key insight**: `[object Object]` in `__DXCallbackArgument` is literal — JavaScript's `toString()` of the customArgs object. The actual filter params are in the separate `parametry` and `id` fields.
+
+**Multi-value cells** (`Prowadzący`, `Grupy`): use `get_text(separator=" ", strip=True)` to prevent adjacent inline elements from being concatenated without a space.
 
 ### Parser (`parser/parser.py`)
 - `Parser(debug, input, output, outputFile)`
@@ -441,7 +474,7 @@ pytest --cov=. --cov-report=lcov:coverage/lcov.info -m "not slow"
 | File | Tests | Notes |
 |------|-------|-------|
 | `mapper/test_mapper.py` | `@pytest.mark.slow` — real HTTP | Skipped if `output/mapper.json` not found |
-| `scrapper/test_scrapper.py` | 2 `@pytest.mark.slow` Selenium tests | ID 404 = valid (has data); ID 1 = invalid (`interaction_fail=1`) |
+| `scrapper/test_scrapper.py` | 11 `@pytest.mark.slow` tests | 2 Selenium, 3 HTTP-only, 4 HTTP vs Selenium side-by-side, 2+ parametrized from mapper |
 | `parser/test_parser.py` | 11 unit + integration tests | Skipped if `output/scrapper.json` not found |
 | `json2db/test_json2db.py` | Integration — calls `json2db()` | Skipped if `output/parser.json` not found |
 | `structure_updater/test_structure_updater.py` | 21 unit tests + 2 slow | See below |
