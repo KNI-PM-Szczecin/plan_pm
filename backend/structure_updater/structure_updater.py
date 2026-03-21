@@ -13,6 +13,9 @@ from supabase import create_client
 
 load_dotenv()
 
+_env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
+_prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
+
 BASE_URL = "https://plany.am.szczecin.pl"
 FACULTIES_TABLE_NAME: str = "faculties"
 DEGREE_COURSES_TABLE_NAME: str = "degree_courses"
@@ -211,8 +214,8 @@ def main() -> None:
         print(json.dumps(structure, ensure_ascii=False, indent=2))
         return
 
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
+    url = os.environ.get(f"{_prefix}SUPABASE_URL")
+    key = os.environ.get(f"{_prefix}SUPABASE_KEY")
     if not url or not key:
         logger.error("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych")
         print("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych.")

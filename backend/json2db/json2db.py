@@ -15,8 +15,10 @@ import time
 # Teachers
 # Teachersclasses
 
-# Load environmental variables from .env
 load_dotenv()
+
+_env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
+_prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
 
 class json2db:
     db: Any
@@ -32,9 +34,9 @@ class json2db:
         
     def load_env(self):
         # Load environment variables and create a db connection
-        url = os.environ.get("SUPABASE_URL")
-        key = os.environ.get("SUPABASE_KEY")
-        service_key = os.environ.get("SUPABASE_SERVICE_KEY")
+        url = os.environ.get(f"{_prefix}SUPABASE_URL")
+        key = os.environ.get(f"{_prefix}SUPABASE_KEY")
+        service_key = os.environ.get(f"{_prefix}SUPABASE_SERVICE_KEY")
 
         if not url or not key:
             raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY are required. Add them to your .env file.")

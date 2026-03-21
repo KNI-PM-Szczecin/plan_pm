@@ -15,6 +15,7 @@ import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/secrets.dart';
+import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/service/cache_service.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,7 +117,7 @@ class App extends StatelessWidget {
               locale: currentLocale,
               themeMode: currentThemeMode,
               title: 'Plan PM',
-              debugShowCheckedModeBanner: false,
+              debugShowCheckedModeBanner: kUseTestDb,
               theme: ThemeData(
                 fontFamily: "Inter",
                 brightness: Brightness.light,
