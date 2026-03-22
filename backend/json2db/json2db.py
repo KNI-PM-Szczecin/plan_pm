@@ -188,7 +188,7 @@ class json2db:
             start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
             end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"])).strftime("%Y-%m-%dT%H:%M:%S")
 
-            current_class_key = (subject_name, start_time_formatted, sclass["group"])
+            current_class_key = (subject_name, start_time_formatted, sclass["group"], program_name)
 
             if current_class_key in processed_class_keys:
                 # print(f"Pominięto duplikat klasy w JSON: {current_class_key}")
@@ -205,7 +205,7 @@ class json2db:
                 "notes": sclass["notes"]
             })
 
-        _ = self.db.table("classes").upsert(query, on_conflict="subject, startTime, group").execute()
+        _ = self.db.table("classes").upsert(query, on_conflict="subject, startTime, group, program").execute()
         print("Done")
 
     def load_teachers_classes(self):

@@ -2064,7 +2064,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22792"
 		},
 		{
@@ -2190,7 +2190,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22789"
 		},
 		{
@@ -2235,7 +2235,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22790"
 		},
 		{
@@ -2271,7 +2271,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22791"
 		},
 		{
@@ -2280,7 +2280,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -2289,7 +2289,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -2307,7 +2307,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -2316,7 +2316,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -2415,7 +2415,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2424,7 +2424,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2433,7 +2433,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2442,7 +2442,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2505,7 +2505,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22792"
 		},
 		{
@@ -2667,7 +2667,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22789"
 		},
 		{
@@ -2703,7 +2703,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22790"
 		},
 		{
@@ -2730,7 +2730,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22791"
 		},
 		{
@@ -2757,7 +2757,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -2766,7 +2766,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -2784,7 +2784,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -2793,7 +2793,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -2892,7 +2892,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2901,7 +2901,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2910,7 +2910,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2919,7 +2919,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -2991,7 +2991,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22792"
 		},
 		{
@@ -3162,7 +3162,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22789"
 		},
 		{
@@ -3189,7 +3189,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22790"
 		},
 		{
@@ -3207,7 +3207,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22791"
 		},
 		{
@@ -3252,7 +3252,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -3261,7 +3261,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -3270,7 +3270,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -3279,7 +3279,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -3378,7 +3378,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3387,7 +3387,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3396,7 +3396,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3405,7 +3405,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3495,7 +3495,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22792"
 		},
 		{
@@ -3648,7 +3648,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22789"
 		},
 		{
@@ -3684,7 +3684,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22790"
 		},
 		{
@@ -3711,7 +3711,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "22791"
 		},
 		{
@@ -3738,7 +3738,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -3747,7 +3747,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24595"
 		},
 		{
@@ -3756,7 +3756,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -3765,7 +3765,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24593"
 		},
 		{
@@ -3864,7 +3864,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L01/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3873,7 +3873,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L02/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3882,7 +3882,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L03/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -3891,7 +3891,7 @@
 			"program": 3,
 			"subject": 22,
 			"group": "L04/TM/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24591"
 		},
 		{
@@ -5520,7 +5520,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22863"
 		},
 		{
@@ -5529,7 +5529,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22864"
 		},
 		{
@@ -5700,7 +5700,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -5709,7 +5709,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -5718,7 +5718,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22863"
 		},
 		{
@@ -5727,7 +5727,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22864"
 		},
 		{
@@ -5925,7 +5925,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -5934,7 +5934,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -5943,7 +5943,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22863"
 		},
 		{
@@ -5952,7 +5952,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22864"
 		},
 		{
@@ -6141,7 +6141,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -6150,7 +6150,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -6159,7 +6159,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22863"
 		},
 		{
@@ -6177,7 +6177,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22864"
 		},
 		{
@@ -6366,7 +6366,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L01/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -6375,7 +6375,7 @@
 			"program": 8,
 			"subject": 62,
 			"group": "L02/TM ANG/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "24586"
 		},
 		{
@@ -7338,7 +7338,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -7356,7 +7356,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -7383,7 +7383,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -7392,7 +7392,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -7473,7 +7473,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -7482,7 +7482,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -7509,7 +7509,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -7518,7 +7518,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -7554,7 +7554,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -7563,7 +7563,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -7635,7 +7635,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -7644,7 +7644,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -7671,7 +7671,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -7689,7 +7689,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -7716,7 +7716,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -7725,7 +7725,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -7797,7 +7797,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -7806,7 +7806,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -7824,7 +7824,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -7842,7 +7842,7 @@
 			"program": 11,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -7878,7 +7878,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -7887,7 +7887,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -7905,7 +7905,7 @@
 			"program": 11,
 			"subject": 88,
 			"group": "SYM01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 68,
 			"notes": "23552"
 		},
 		{
@@ -7968,7 +7968,7 @@
 			"program": 11,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -7977,7 +7977,7 @@
 			"program": 11,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -8139,7 +8139,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L03/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23792"
 		},
 		{
@@ -8148,7 +8148,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L02/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23791"
 		},
 		{
@@ -8166,7 +8166,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L01/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23790"
 		},
 		{
@@ -8310,7 +8310,7 @@
 			"program": 12,
 			"subject": 98,
 			"group": "L01/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23830"
 		},
 		{
@@ -8319,7 +8319,7 @@
 			"program": 12,
 			"subject": 98,
 			"group": "L02/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23831"
 		},
 		{
@@ -8328,7 +8328,7 @@
 			"program": 12,
 			"subject": 98,
 			"group": "L03/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23832"
 		},
 		{
@@ -8517,7 +8517,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L03/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23792"
 		},
 		{
@@ -8535,7 +8535,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L02/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23791"
 		},
 		{
@@ -8544,7 +8544,7 @@
 			"program": 12,
 			"subject": 86,
 			"group": "L01/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 71,
 			"notes": "23790"
 		},
 		{
@@ -8643,7 +8643,7 @@
 			"program": 12,
 			"subject": 98,
 			"group": "L02/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23831"
 		},
 		{
@@ -8652,7 +8652,7 @@
 			"program": 12,
 			"subject": 98,
 			"group": "L03/MiEP/2023/2024 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23832"
 		},
 		{
@@ -8814,7 +8814,7 @@
 			"program": 13,
 			"subject": 86,
 			"group": "L01/AiR/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23934"
 		},
 		{
@@ -8931,7 +8931,7 @@
 			"program": 13,
 			"subject": 86,
 			"group": "L01/AiR/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23934"
 		},
 		{
@@ -9048,7 +9048,7 @@
 			"program": 13,
 			"subject": 86,
 			"group": "L01/AiR/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23934"
 		},
 		{
@@ -9165,7 +9165,7 @@
 			"program": 13,
 			"subject": 86,
 			"group": "L01/AiR/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23934"
 		},
 		{
@@ -12225,7 +12225,7 @@
 			"program": 21,
 			"subject": 6,
 			"group": "L01/MiEP/2023/2024 ZN",
-			"room": null,
+			"room": 97,
 			"notes": "21962"
 		},
 		{
@@ -12279,7 +12279,7 @@
 			"program": 21,
 			"subject": 6,
 			"group": "L01/MiEP/2023/2024 ZN",
-			"room": null,
+			"room": 97,
 			"notes": "21962"
 		},
 		{
@@ -12360,7 +12360,7 @@
 			"program": 21,
 			"subject": 6,
 			"group": "L01/MiEP/2023/2024 ZN",
-			"room": null,
+			"room": 97,
 			"notes": "21962"
 		},
 		{
@@ -13026,7 +13026,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L01/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22892"
 		},
 		{
@@ -13035,7 +13035,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L02/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22893"
 		},
 		{
@@ -13224,7 +13224,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L01/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22892"
 		},
 		{
@@ -13233,7 +13233,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L02/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22893"
 		},
 		{
@@ -13422,7 +13422,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L01/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22892"
 		},
 		{
@@ -13440,7 +13440,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L02/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22893"
 		},
 		{
@@ -13638,7 +13638,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L01/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22892"
 		},
 		{
@@ -13647,7 +13647,7 @@
 			"program": 23,
 			"subject": 22,
 			"group": "L02/OFF/2022/2023 ZS",
-			"room": null,
+			"room": 26,
 			"notes": "22893"
 		},
 		{
@@ -13764,7 +13764,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L02/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24597"
 		},
 		{
@@ -13782,7 +13782,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L01/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24596"
 		},
 		{
@@ -13971,7 +13971,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L02/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24597"
 		},
 		{
@@ -13989,7 +13989,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L01/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24596"
 		},
 		{
@@ -14196,7 +14196,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L02/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24597"
 		},
 		{
@@ -14214,7 +14214,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L01/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24596"
 		},
 		{
@@ -14421,7 +14421,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L02/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24597"
 		},
 		{
@@ -14430,7 +14430,7 @@
 			"program": 24,
 			"subject": 22,
 			"group": "L01/RAT/2022/2023 ZS",
-			"room": null,
+			"room": 19,
 			"notes": "24596"
 		},
 		{
@@ -17157,7 +17157,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23784"
 		},
 		{
@@ -17202,7 +17202,7 @@
 			"program": 28,
 			"subject": 188,
 			"group": "L02/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 106,
 			"notes": "23769"
 		},
 		{
@@ -17319,7 +17319,7 @@
 			"program": 28,
 			"subject": 188,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 106,
 			"notes": "23770"
 		},
 		{
@@ -17328,7 +17328,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L02/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23783"
 		},
 		{
@@ -17364,7 +17364,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23784"
 		},
 		{
@@ -17400,7 +17400,7 @@
 			"program": 28,
 			"subject": 188,
 			"group": "L02/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 106,
 			"notes": "23769"
 		},
 		{
@@ -17508,7 +17508,7 @@
 			"program": 28,
 			"subject": 188,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 106,
 			"notes": "23770"
 		},
 		{
@@ -17526,7 +17526,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L02/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23783"
 		},
 		{
@@ -17562,7 +17562,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23784"
 		},
 		{
@@ -17670,7 +17670,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23784"
 		},
 		{
@@ -17814,7 +17814,7 @@
 			"program": 28,
 			"subject": 188,
 			"group": "L03/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 106,
 			"notes": "23770"
 		},
 		{
@@ -17823,7 +17823,7 @@
 			"program": 28,
 			"subject": 185,
 			"group": "L01/MiEP/2024/2025 ZS",
-			"room": null,
+			"room": 64,
 			"notes": "23782"
 		},
 		{
@@ -18804,7 +18804,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23899"
 		},
 		{
@@ -18831,7 +18831,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23900"
 		},
 		{
@@ -18867,7 +18867,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23891"
 		},
 		{
@@ -18903,7 +18903,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23892"
 		},
 		{
@@ -19110,7 +19110,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23899"
 		},
 		{
@@ -19128,7 +19128,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23900"
 		},
 		{
@@ -19155,7 +19155,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23891"
 		},
 		{
@@ -19191,7 +19191,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23892"
 		},
 		{
@@ -19371,7 +19371,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23899"
 		},
 		{
@@ -19389,7 +19389,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23900"
 		},
 		{
@@ -19416,7 +19416,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23891"
 		},
 		{
@@ -19452,7 +19452,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23892"
 		},
 		{
@@ -19632,7 +19632,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23899"
 		},
 		{
@@ -19641,7 +19641,7 @@
 			"program": 30,
 			"subject": 201,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 69,
 			"notes": "23900"
 		},
 		{
@@ -19677,7 +19677,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L01/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23891"
 		},
 		{
@@ -19713,7 +19713,7 @@
 			"program": 30,
 			"subject": 203,
 			"group": "L02/AiR/2024/2025 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23892"
 		},
 		{
@@ -19794,7 +19794,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23590"
 		},
 		{
@@ -19812,7 +19812,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23589"
 		},
 		{
@@ -19839,7 +19839,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23608"
 		},
 		{
@@ -19857,7 +19857,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23609"
 		},
 		{
@@ -19947,7 +19947,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23588"
 		},
 		{
@@ -19965,7 +19965,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23587"
 		},
 		{
@@ -19983,7 +19983,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23590"
 		},
 		{
@@ -20010,7 +20010,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23589"
 		},
 		{
@@ -20037,7 +20037,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23608"
 		},
 		{
@@ -20046,7 +20046,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23609"
 		},
 		{
@@ -20109,7 +20109,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23588"
 		},
 		{
@@ -20136,7 +20136,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23587"
 		},
 		{
@@ -20154,7 +20154,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23590"
 		},
 		{
@@ -20163,7 +20163,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23589"
 		},
 		{
@@ -20208,7 +20208,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23608"
 		},
 		{
@@ -20217,7 +20217,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23609"
 		},
 		{
@@ -20298,7 +20298,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23588"
 		},
 		{
@@ -20316,7 +20316,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23587"
 		},
 		{
@@ -20343,7 +20343,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23590"
 		},
 		{
@@ -20352,7 +20352,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "P01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23589"
 		},
 		{
@@ -20388,7 +20388,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23608"
 		},
 		{
@@ -20397,7 +20397,7 @@
 			"program": 31,
 			"subject": 208,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 111,
 			"notes": "23609"
 		},
 		{
@@ -20469,7 +20469,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L02/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23588"
 		},
 		{
@@ -20487,7 +20487,7 @@
 			"program": 31,
 			"subject": 206,
 			"group": "L01/IW3D/2024/2025 ZS",
-			"room": null,
+			"room": 40,
 			"notes": "23587"
 		},
 		{
@@ -29892,7 +29892,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -29910,7 +29910,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -29937,7 +29937,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -29946,7 +29946,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -30027,7 +30027,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -30036,7 +30036,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -30063,7 +30063,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -30072,7 +30072,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -30108,7 +30108,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -30117,7 +30117,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -30189,7 +30189,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -30198,7 +30198,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -30225,7 +30225,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -30243,7 +30243,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -30270,7 +30270,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -30279,7 +30279,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -30351,7 +30351,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -30360,7 +30360,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -30378,7 +30378,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23533"
 		},
 		{
@@ -30396,7 +30396,7 @@
 			"program": 48,
 			"subject": 85,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 59,
 			"notes": "23532"
 		},
 		{
@@ -30432,7 +30432,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23535"
 		},
 		{
@@ -30441,7 +30441,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23541"
 		},
 		{
@@ -30459,7 +30459,7 @@
 			"program": 48,
 			"subject": 88,
 			"group": "SYM01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 68,
 			"notes": "23552"
 		},
 		{
@@ -30522,7 +30522,7 @@
 			"program": 48,
 			"subject": 86,
 			"group": "L02/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 66,
 			"notes": "23536"
 		},
 		{
@@ -30531,7 +30531,7 @@
 			"program": 48,
 			"subject": 87,
 			"group": "L01/ESW/2023/2024 ZS",
-			"room": null,
+			"room": 63,
 			"notes": "23540"
 		},
 		{
@@ -30738,7 +30738,7 @@
 			"program": 49,
 			"subject": 289,
 			"group": "L01/IRM/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22700"
 		},
 		{
@@ -30927,7 +30927,7 @@
 			"program": 49,
 			"subject": 289,
 			"group": "L01/IRM/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22700"
 		},
 		{
@@ -31107,7 +31107,7 @@
 			"program": 49,
 			"subject": 289,
 			"group": "L01/IRM/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22700"
 		},
 		{
@@ -31287,7 +31287,7 @@
 			"program": 49,
 			"subject": 289,
 			"group": "L01/IRM/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22700"
 		},
 		{
@@ -31485,7 +31485,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22757"
 		},
 		{
@@ -31512,7 +31512,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "24637"
 		},
 		{
@@ -31674,7 +31674,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22757"
 		},
 		{
@@ -31701,7 +31701,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "24637"
 		},
 		{
@@ -31872,7 +31872,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22757"
 		},
 		{
@@ -31890,7 +31890,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "24637"
 		},
 		{
@@ -32034,7 +32034,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22757"
 		},
 		{
@@ -32061,7 +32061,7 @@
 			"program": 50,
 			"subject": 289,
 			"group": "L01/RAT/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "24637"
 		},
 		{
@@ -32286,7 +32286,7 @@
 			"program": 51,
 			"subject": 289,
 			"group": "L01/OFF/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22729"
 		},
 		{
@@ -32484,7 +32484,7 @@
 			"program": 51,
 			"subject": 289,
 			"group": "L01/OFF/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22729"
 		},
 		{
@@ -32664,7 +32664,7 @@
 			"program": 51,
 			"subject": 289,
 			"group": "L01/OFF/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22729"
 		},
 		{
@@ -32853,7 +32853,7 @@
 			"program": 51,
 			"subject": 289,
 			"group": "L01/OFF/2023/2024 ZS",
-			"room": null,
+			"room": 24,
 			"notes": "22729"
 		},
 		{
@@ -33627,7 +33627,7 @@
 			"program": 53,
 			"subject": 298,
 			"group": "L01/TM ANG/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22478"
 		},
 		{
@@ -33636,7 +33636,7 @@
 			"program": 53,
 			"subject": 298,
 			"group": "L02/TM ANG/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22479"
 		},
 		{
@@ -33924,7 +33924,7 @@
 			"program": 53,
 			"subject": 298,
 			"group": "L01/TM ANG/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22478"
 		},
 		{
@@ -34203,7 +34203,7 @@
 			"program": 53,
 			"subject": 298,
 			"group": "L02/TM ANG/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22479"
 		},
 		{
@@ -37443,7 +37443,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22461"
 		},
 		{
@@ -37497,7 +37497,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22462"
 		},
 		{
@@ -37515,7 +37515,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L07/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22435"
 		},
 		{
@@ -37524,7 +37524,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22436"
 		},
 		{
@@ -37893,7 +37893,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22433"
 		},
 		{
@@ -37902,7 +37902,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22434"
 		},
 		{
@@ -37920,7 +37920,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L03/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22381"
 		},
 		{
@@ -37965,7 +37965,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L04/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22382"
 		},
 		{
@@ -37974,7 +37974,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L03/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22409"
 		},
 		{
@@ -38109,7 +38109,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L04/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22410"
 		},
 		{
@@ -38145,7 +38145,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22464"
 		},
 		{
@@ -38163,7 +38163,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L07/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22463"
 		},
 		{
@@ -38253,7 +38253,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22461"
 		},
 		{
@@ -38262,7 +38262,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L01/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22379"
 		},
 		{
@@ -38289,7 +38289,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L02/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22380"
 		},
 		{
@@ -38316,7 +38316,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22462"
 		},
 		{
@@ -38325,7 +38325,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22436"
 		},
 		{
@@ -38712,7 +38712,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L01/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22407"
 		},
 		{
@@ -38721,7 +38721,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22433"
 		},
 		{
@@ -38748,7 +38748,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L02/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22408"
 		},
 		{
@@ -38892,7 +38892,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22464"
 		},
 		{
@@ -38928,7 +38928,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L07/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22463"
 		},
 		{
@@ -39018,7 +39018,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22461"
 		},
 		{
@@ -39027,7 +39027,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L02/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22380"
 		},
 		{
@@ -39054,7 +39054,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L07/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22435"
 		},
 		{
@@ -39072,7 +39072,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22462"
 		},
 		{
@@ -39441,7 +39441,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22434"
 		},
 		{
@@ -39450,7 +39450,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L01/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22407"
 		},
 		{
@@ -39495,7 +39495,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L02/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22408"
 		},
 		{
@@ -39612,7 +39612,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22464"
 		},
 		{
@@ -39648,7 +39648,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L07/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22463"
 		},
 		{
@@ -39756,7 +39756,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L05/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22461"
 		},
 		{
@@ -39765,7 +39765,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L01/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22379"
 		},
 		{
@@ -39792,7 +39792,7 @@
 			"program": 58,
 			"subject": 327,
 			"group": "L08/N/2025/2026 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22436"
 		},
 		{
@@ -39819,7 +39819,7 @@
 			"program": 58,
 			"subject": 22,
 			"group": "L06/N/2025/2026 ZS",
-			"room": null,
+			"room": 48,
 			"notes": "22462"
 		},
 		{
@@ -43743,7 +43743,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23686"
 		},
 		{
@@ -43779,7 +43779,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23688"
 		},
 		{
@@ -43797,7 +43797,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23687"
 		},
 		{
@@ -43842,7 +43842,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23695"
 		},
 		{
@@ -43869,7 +43869,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23697"
 		},
 		{
@@ -43878,7 +43878,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23684"
 		},
 		{
@@ -43923,7 +43923,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23685"
 		},
 		{
@@ -44166,7 +44166,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23693"
 		},
 		{
@@ -44175,7 +44175,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23694"
 		},
 		{
@@ -44202,7 +44202,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23696"
 		},
 		{
@@ -44256,7 +44256,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23686"
 		},
 		{
@@ -44283,7 +44283,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23688"
 		},
 		{
@@ -44319,7 +44319,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23687"
 		},
 		{
@@ -44364,7 +44364,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23695"
 		},
 		{
@@ -44382,7 +44382,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23697"
 		},
 		{
@@ -44409,7 +44409,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23684"
 		},
 		{
@@ -44436,7 +44436,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23685"
 		},
 		{
@@ -44670,7 +44670,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23693"
 		},
 		{
@@ -44688,7 +44688,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23694"
 		},
 		{
@@ -44697,7 +44697,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23696"
 		},
 		{
@@ -44769,7 +44769,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23686"
 		},
 		{
@@ -44796,7 +44796,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23688"
 		},
 		{
@@ -44823,7 +44823,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23687"
 		},
 		{
@@ -44859,7 +44859,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23695"
 		},
 		{
@@ -44886,7 +44886,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23697"
 		},
 		{
@@ -44904,7 +44904,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23684"
 		},
 		{
@@ -44958,7 +44958,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23685"
 		},
 		{
@@ -45183,7 +45183,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23693"
 		},
 		{
@@ -45201,7 +45201,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23694"
 		},
 		{
@@ -45210,7 +45210,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23696"
 		},
 		{
@@ -45264,7 +45264,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 61,
 			"notes": "23686"
 		},
 		{
@@ -45300,7 +45300,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23688"
 		},
 		{
@@ -45327,7 +45327,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23687"
 		},
 		{
@@ -45381,7 +45381,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L03/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23695"
 		},
 		{
@@ -45390,7 +45390,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L05/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23697"
 		},
 		{
@@ -45426,7 +45426,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23684"
 		},
 		{
@@ -45444,7 +45444,7 @@
 			"program": 63,
 			"subject": 340,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 142,
 			"notes": "23685"
 		},
 		{
@@ -45687,7 +45687,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L01/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23693"
 		},
 		{
@@ -45705,7 +45705,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L02/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23694"
 		},
 		{
@@ -45723,7 +45723,7 @@
 			"program": 63,
 			"subject": 342,
 			"group": "L04/MECH/2025/2026 ZS",
-			"room": null,
+			"room": 114,
 			"notes": "23696"
 		},
 		{
@@ -49665,7 +49665,7 @@
 			"program": 68,
 			"subject": 327,
 			"group": "L02/T/2025/2026 ZS",
-			"room": null,
+			"room": 144,
 			"notes": "23987"
 		},
 		{
@@ -49881,7 +49881,7 @@
 			"program": 68,
 			"subject": 327,
 			"group": "L02/T/2025/2026 ZS",
-			"room": null,
+			"room": 144,
 			"notes": "23987"
 		},
 		{
@@ -50070,7 +50070,7 @@
 			"program": 68,
 			"subject": 327,
 			"group": "L02/T/2025/2026 ZS",
-			"room": null,
+			"room": 144,
 			"notes": "23987"
 		},
 		{
@@ -50250,7 +50250,7 @@
 			"program": 68,
 			"subject": 327,
 			"group": "L02/T/2025/2026 ZS",
-			"room": null,
+			"room": 144,
 			"notes": "23987"
 		},
 		{
@@ -51942,7 +51942,7 @@
 			"program": 73,
 			"subject": 377,
 			"group": "L01/ESO/2025/2026 ZN",
-			"room": null,
+			"room": 115,
 			"notes": "21333"
 		},
 		{
@@ -52842,7 +52842,7 @@
 			"program": 76,
 			"subject": 334,
 			"group": "L01/MECH/2025/2026 ZN",
-			"room": null,
+			"room": 64,
 			"notes": "21905"
 		},
 		{
@@ -52914,7 +52914,7 @@
 			"program": 76,
 			"subject": 334,
 			"group": "L01/MECH/2025/2026 ZN",
-			"room": null,
+			"room": 64,
 			"notes": "21905"
 		},
 		{
@@ -52959,7 +52959,7 @@
 			"program": 76,
 			"subject": 334,
 			"group": "L01/MECH/2025/2026 ZN",
-			"room": null,
+			"room": 64,
 			"notes": "21905"
 		},
 		{
@@ -53085,7 +53085,7 @@
 			"program": 76,
 			"subject": 334,
 			"group": "L01/MECH/2025/2026 ZN",
-			"room": null,
+			"room": 64,
 			"notes": "21905"
 		},
 		{
@@ -56550,7 +56550,7 @@
 			"program": 84,
 			"subject": 429,
 			"group": "L01/CB/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23011"
 		},
 		{
@@ -56703,7 +56703,7 @@
 			"program": 84,
 			"subject": 429,
 			"group": "L01/CB/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23011"
 		},
 		{
@@ -56847,7 +56847,7 @@
 			"program": 84,
 			"subject": 429,
 			"group": "L01/CB/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23011"
 		},
 		{
@@ -56991,7 +56991,7 @@
 			"program": 84,
 			"subject": 429,
 			"group": "L01/CB/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "23011"
 		},
 		{
@@ -58062,7 +58062,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "C01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22633"
 		},
 		{
@@ -58071,7 +58071,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "L01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22634"
 		},
 		{
@@ -58314,7 +58314,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "C01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22633"
 		},
 		{
@@ -58323,7 +58323,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "L01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22634"
 		},
 		{
@@ -58530,7 +58530,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "C01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22633"
 		},
 		{
@@ -58539,7 +58539,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "L01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22634"
 		},
 		{
@@ -58764,7 +58764,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "C01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22633"
 		},
 		{
@@ -58773,7 +58773,7 @@
 			"program": 86,
 			"subject": 436,
 			"group": "L01/CBM/2024/2025 ZS",
-			"room": null,
+			"room": 77,
 			"notes": "22634"
 		},
 		{
@@ -63597,7 +63597,7 @@
 			"program": 93,
 			"subject": 460,
 			"group": "L01/PSM/2024/2025 ZS",
-			"room": null,
+			"room": 55,
 			"notes": "23263"
 		},
 		{
@@ -63615,7 +63615,7 @@
 			"program": 93,
 			"subject": 460,
 			"group": "L01/PSM/2024/2025 ZS",
-			"room": null,
+			"room": 55,
 			"notes": "23263"
 		},
 		{
@@ -63912,7 +63912,7 @@
 			"program": 93,
 			"subject": 460,
 			"group": "L01/PSM/2024/2025 ZS",
-			"room": null,
+			"room": 55,
 			"notes": "23263"
 		},
 		{
@@ -64164,7 +64164,7 @@
 			"program": 93,
 			"subject": 460,
 			"group": "L01/PSM/2024/2025 ZS",
-			"room": null,
+			"room": 55,
 			"notes": "23263"
 		},
 		{
@@ -64434,7 +64434,7 @@
 			"program": 93,
 			"subject": 460,
 			"group": "L01/PSM/2024/2025 ZS",
-			"room": null,
+			"room": 55,
 			"notes": "23263"
 		},
 		{
@@ -64794,7 +64794,7 @@
 			"program": 94,
 			"subject": 467,
 			"group": "L01/H/2025/2026/MGR/LS",
-			"room": null,
+			"room": 77,
 			"notes": "24526"
 		},
 		{
@@ -65028,7 +65028,7 @@
 			"program": 94,
 			"subject": 467,
 			"group": "L02/H/2025/2026/MGR/LS",
-			"room": null,
+			"room": 77,
 			"notes": "24527"
 		},
 		{
@@ -65235,7 +65235,7 @@
 			"program": 94,
 			"subject": 467,
 			"group": "L01/H/2025/2026/MGR/LS",
-			"room": null,
+			"room": 77,
 			"notes": "24526"
 		},
 		{
@@ -65433,7 +65433,7 @@
 			"program": 94,
 			"subject": 467,
 			"group": "L02/H/2025/2026/MGR/LS",
-			"room": null,
+			"room": 77,
 			"notes": "24527"
 		},
 		{
