@@ -13,6 +13,38 @@ BUILDINGS = ["WChrobrego", "HPobożnego", "Willowa", "Szczerbcow", "Żołnierska
 
 MAP = {"Plan dla toku" : "program", "Przedmiot" : "subject", "Grupy" : "group", "Sala" : "room", "Prowadzący" : "teacher", "Uwagi" : "notes"}
 
+DEBUG = False
+
+DEBUG = True
+
+### DEBUG TOOL
+def printTok(tok):
+    if not DEBUG:
+        return
+    print("========================================")
+    print(f"Plan dla toku: {tok['Plan dla toku']}")
+    print(f"Przedmiot: {tok['Przedmiot']}")
+    print(f"Grupy: {tok['Grupy']}")
+    print(f"Sala: {tok['Sala']}")
+    print(f"Prowadzący: {tok['Prowadzący']}")
+    print(f"Data zajęć: {tok['Data zajęć']}")
+    print(f"Od: {tok['Czas od']}")
+    print(f"Do: {tok['Czas do']}")
+    print("========================================\n")
+
+def printConvertedTok(tok):
+    if not DEBUG:
+        return
+    print("========================================")
+    print(f"Plan dla toku: {tok['Plan dla toku']}")
+    print(f"Przedmiot: {tok['Przedmiot']}")
+    print(f"Grupy: {tok['Grupy']}")
+    print(f"Sala: {tok['Sala']}")
+    print(f"Prowadzący: {tok['Prowadzący']}")
+    print(f"Od: {datetime.fromtimestamp(tok['startTime']).strftime('%Y-%m-%d %H:%M')} ({tok["startTime"]})")
+    print(f"Do: {datetime.fromtimestamp(tok['endTime']).strftime('%Y-%m-%d %H:%M')} ({tok["endTime"]})")
+    print("========================================\n")
+
 @dataclass
 class ScheduleData:
     programs: list
