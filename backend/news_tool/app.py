@@ -7,7 +7,9 @@ from PIL import Image
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
-db = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"])
+_env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
+_prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
+db = create_client(os.environ[f"{_prefix}SUPABASE_URL"], os.environ[f"{_prefix}SUPABASE_SERVICE_KEY"])
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB

@@ -1,0 +1,21 @@
+name: Check env mode
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-env-mode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sprawdź tryb środowiska
+        run: |
+          MODE=$(cat backend/.env_mode | tr -d '[:space:]')
+          if [ "$MODE" = "test" ]; then
+            echo "❌ Aplikacja jest przestawiona na tryb TEST."
+            echo "   Uruchom scripts/switch_env.sh prod przed otwarciem PR."
+            exit 1
+          fi
+          echo "✅ Tryb: $MODE"
