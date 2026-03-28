@@ -180,6 +180,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get daysShortFri => 'Пт';
 
   @override
+  String get daysShortSat => 'Сб';
+
+  @override
+  String get daysShortSun => 'Нд';
+
+  @override
   String get daysMon => 'понеділок';
 
   @override

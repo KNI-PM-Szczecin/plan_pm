@@ -4,10 +4,31 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/global/extensions.dart';
 import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
-List<String> days = [];
 List<String> daysShort = [];
+
+int daysForward(StudyMode? mode, int weekday, bool sevenDay) {
+  if (sevenDay) return 1;
+  if (mode == StudyMode.stationary && weekday == DateTime.friday) return 3;
+  if (mode == StudyMode.notStationary && weekday == DateTime.sunday) return 5;
+  return 1;
+}
+
+int daysBackward(StudyMode? mode, int weekday, bool sevenDay) {
+  if (sevenDay && weekday == DateTime.monday) return 6;
+  if (sevenDay) return 1;
+  if (mode == StudyMode.stationary && weekday == DateTime.monday) return 3;
+  if (mode == StudyMode.notStationary && weekday == DateTime.friday) return 5;
+  return 1;
+}
+
+List<int> visibleDayIndices(StudyMode? mode, bool sevenDay) {
+  if (sevenDay) return List.generate(7, (i) => i);
+  if (mode == StudyMode.notStationary) return List.generate(3, (i) => i + 4);
+  return List.generate(5, (i) => i);
+}
 
 List<LinearGradient> softHorizontalGradients = [
   LinearGradient(
@@ -85,6 +106,34 @@ class _DaySelectionState extends State<DaySelection> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    sevenDayModeNotifier.addListener(onModeChange);
+  }
+
+  @override
+  void dispose() {
+    sevenDayModeNotifier.removeListener(onModeChange);
+    super.dispose();
+  }
+
+  void onModeChange() {
+    setState(() {
+      final indices = visibleDayIndices(
+        Student.studyMode,
+        sevenDayModeNotifier.value,
+      );
+      if (!indices.contains(selectedDay)) {
+        selectedDay = indices.reduce(
+          (a, b) => (a - selectedDay).abs() <= (b - selectedDay).abs() ? a : b,
+        );
+        currentDate = getDateFromIndex(currentDate, selectedDay);
+        widget.onChange(selectedDay, currentDate);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     daysShort = [
@@ -93,16 +142,9 @@ class _DaySelectionState extends State<DaySelection> {
       l10n.daysShortWed,
       l10n.daysShortThu,
       l10n.daysShortFri,
+      l10n.daysShortSat,
+      l10n.daysShortSun,
     ];
-
-    days = [
-      l10n.daysMon,
-      l10n.daysTue,
-      l10n.daysWed,
-      l10n.daysThu,
-      l10n.daysFri,
-    ];
-
     return Column(
       children: [
         Center(
@@ -113,11 +155,15 @@ class _DaySelectionState extends State<DaySelection> {
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   setState(() {
-                    if (currentDate.weekday == 1) {
-                      currentDate = currentDate.subtract(Duration(days: 3));
-                    } else {
-                      currentDate = currentDate.subtract(Duration(days: 1));
-                    }
+                    currentDate = currentDate.subtract(
+                      Duration(
+                        days: daysBackward(
+                          Student.studyMode,
+                          currentDate.weekday,
+                          sevenDayModeNotifier.value,
+                        ),
+                      ),
+                    );
                     selectedDay = currentDate.weekday - 1;
                     widget.onChange(selectedDay, currentDate);
                   });
@@ -139,12 +185,15 @@ class _DaySelectionState extends State<DaySelection> {
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   setState(() {
-                    if (currentDate.weekday == 5) {
-                      currentDate = currentDate.add(Duration(days: 3));
-                    } else {
-                      currentDate = currentDate.add(Duration(days: 1));
-                    }
-
+                    currentDate = currentDate.add(
+                      Duration(
+                        days: daysForward(
+                          Student.studyMode,
+                          currentDate.weekday,
+                          sevenDayModeNotifier.value,
+                        ),
+                      ),
+                    );
                     selectedDay = currentDate.weekday - 1;
                     widget.onChange(selectedDay, currentDate);
                   });
@@ -168,66 +217,76 @@ class _DaySelectionState extends State<DaySelection> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(daysShort.length, (index) {
-                  final isSelected = index == selectedDay;
-                  final selectedBgColor = style == EventColorStyle.monochrome
-                      ? AppColor.primary
-                      : softHorizontalGradients[index].colors.first;
-                  return Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      color: isSelected ? selectedBgColor : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        side: BorderSide.none,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: isSelected
-                          ? null
-                          : () {
-                              HapticFeedback.selectionClick();
-                              setState(() {
-                                selectedDay = index;
-                                currentDate = getDateFromIndex(
-                                  currentDate,
-                                  index,
-                                );
-                                widget.onChange(selectedDay, currentDate);
-                              });
-                            },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 40,
-                        child: Text(
-                          daysShort[index],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: isSelected
-                                ? AppColor.onPrimary
-                                : AppColor.onSurfaceVariant,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                children:
+                    visibleDayIndices(
+                      Student.studyMode,
+                      sevenDayModeNotifier.value,
+                    ).map((index) {
+                      final isSelected = index == selectedDay;
+                      final selectedBgColor =
+                          style == EventColorStyle.monochrome
+                          ? AppColor.primary
+                          : softHorizontalGradients[index].colors.first;
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? selectedBgColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                side: BorderSide.none,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: isSelected
+                                  ? null
+                                  : () {
+                                      HapticFeedback.selectionClick();
+                                      setState(() {
+                                        selectedDay = index;
+                                        currentDate = getDateFromIndex(
+                                          currentDate,
+                                          index,
+                                        );
+                                        widget.onChange(
+                                          selectedDay,
+                                          currentDate,
+                                        );
+                                      });
+                                    },
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 40,
+                                child: Text(
+                                  daysShort[index],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? AppColor.onPrimary
+                                        : AppColor.onSurfaceVariant,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        );
+                      );
+                    }).toList(),
+              ),
+            );
           },
         ),
       ],

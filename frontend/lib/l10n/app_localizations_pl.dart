@@ -172,6 +172,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get daysShortFri => 'Pt';
 
   @override
+  String get daysShortSat => 'Sob';
+
+  @override
+  String get daysShortSun => 'Nd';
+
+  @override
   String get daysMon => 'poniedziałek';
 
   @override

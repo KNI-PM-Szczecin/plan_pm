@@ -14,6 +14,7 @@ import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/pages/settings/about_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:plan_pm/global/notifiers.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -142,17 +143,40 @@ class _SettingsPageState extends State<SettingsPage> {
                   if (_debugUnlocked)
                     MenuSection(
                       title: l10n.debugHeader,
-                      child: MenuButton(
-                        title: l10n.debugReturnToWelcome,
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WelcomePage(),
+                      child: Column(
+                        children: [
+                          MenuButton(
+                            title: l10n.debugReturnToWelcome,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const WelcomePage(),
+                                ),
+                              );
+                            },
+                          ),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: sevenDayModeNotifier,
+                            builder: (context, value, child) => Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Tryb 7-dniowy", style: TextStyle(color: AppColor.onSurface)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(
+                                      value: value,
+                                      onChanged: (_) => SevenDayModeNotifier.toggle(),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
                     ),
                   MenuSection(
