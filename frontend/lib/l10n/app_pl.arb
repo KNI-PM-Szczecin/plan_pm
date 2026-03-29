@@ -210,6 +210,14 @@
   "@daysShortFri": {
     "description": "day_selection.dart - Short name for Friday (Piątek)."
   },
+  "daysShortSat": "Sob",
+  "@daysShortSat": {
+    "description": "day_selection.dart - Short name for Saturday (Sobota)."
+  },
+  "daysShortSun": "Nd",
+  "@daysShortSun": {
+    "description": "day_selection.dart - Short name for Sunday (Niedziela)."
+  },
   "daysMon": "poniedziałek",
   "@daysMon": {
     "description": "day_selection.dart - Full lowercase name for Monday."
