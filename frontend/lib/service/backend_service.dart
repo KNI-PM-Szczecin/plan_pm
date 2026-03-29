@@ -54,9 +54,7 @@ class BackendService {
           building:building(name)
         )
       ''')
-        // .gte('startTime', dateTimeToSupabase(today))
-        // .lt('startTime', dateTimeToSupabase(tomorrow))
-        .eq("programs.programType", Student.term?[0] ?? "S")
+        .eq("programs.programType", Student.studyMode?.programType ?? "S")
         .eq(
           "programs.name",
           Student.specialisation ?? Student.degreeCourse ?? "",
@@ -89,7 +87,7 @@ class BackendService {
           "programs.name",
           Student.specialisation ?? Student.degreeCourse ?? "",
         )
-        .eq("programs.programType", Student.term?[0] ?? "S")
+        .eq("programs.programType", Student.studyMode?.programType ?? "S")
         .eq("programs.year", Student.year ?? 0)
         .eq("programs.degreeLevel", Student.degreeLevel ?? "");
 

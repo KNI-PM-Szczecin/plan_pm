@@ -170,9 +170,9 @@ class _InputPageState extends State<InputPage> {
                           Student.specialisation = selectedSpecialisation != ""
                               ? selectedSpecialisation
                               : null;
-                          Student.term = selectedTerm == 1
-                              ? "Stacjonarne"
-                              : "Niestacjonarne";
+                          Student.studyMode = selectedTerm == 1
+                              ? StudyMode.stationary
+                              : StudyMode.notStationary;
                           Student.degreeLevel = selectedDegreeLevel == 1
                               ? "inż."
                               : "mgr";
@@ -196,10 +196,8 @@ class _InputPageState extends State<InputPage> {
                           );
                           await prefs.setInt("year", selectedYear);
                           await prefs.setString(
-                            "term",
-                            selectedTerm == 1
-                                ? "Stacjonarne"
-                                : "Niestacjonarne",
+                            "study_mode",
+                            Student.studyMode?.programType ?? "S",
                           );
                           await prefs.setString(
                             "degree_level",

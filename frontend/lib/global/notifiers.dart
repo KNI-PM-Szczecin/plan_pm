@@ -144,3 +144,20 @@ class EventColorStyleNotifier extends ValueNotifier<EventColorStyle> {
 }
 
 late final EventColorStyleNotifier eventColorStyleNotifier;
+
+final ValueNotifier<bool> sevenDayModeNotifier = ValueNotifier(false);
+
+class SevenDayModeNotifier {
+  static const String key = 'seven_day_mode';
+
+  static Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    sevenDayModeNotifier.value = prefs.getBool(key) ?? false;
+  }
+
+  static Future<void> toggle() async {
+    final prefs = await SharedPreferences.getInstance();
+    sevenDayModeNotifier.value = !sevenDayModeNotifier.value;
+    await prefs.setBool(key, sevenDayModeNotifier.value);
+  }
+}

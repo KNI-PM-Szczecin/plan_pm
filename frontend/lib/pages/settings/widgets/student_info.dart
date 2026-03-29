@@ -49,7 +49,10 @@ class StudentInfo extends StatelessWidget {
             content: l10n.studyYear(Student.year ?? 0),
           ),
           Divider(height: 1, thickness: 1, indent: 12, color: AppColor.outline),
-          InfoText(title: l10n.studyModeLabel, content: Student.term),
+          InfoText(
+            title: l10n.studyModeLabel,
+            content: Student.studyMode?.displayName,
+          ),
           SizedBox(height: 5),
         ],
       ),

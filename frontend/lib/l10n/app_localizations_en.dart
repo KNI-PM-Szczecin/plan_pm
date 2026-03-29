@@ -177,6 +177,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daysShortFri => 'Fri';
 
   @override
+  String get daysShortSat => 'Sat';
+
+  @override
+  String get daysShortSun => 'Sun';
+
+  @override
   String get daysMon => 'monday';
 
   @override

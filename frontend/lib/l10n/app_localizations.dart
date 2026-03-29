@@ -406,6 +406,18 @@ abstract class AppLocalizations {
   /// **'Pt'**
   String get daysShortFri;
 
+  /// day_selection.dart - Short name for Saturday (Sobota).
+  ///
+  /// In pl, this message translates to:
+  /// **'Sob'**
+  String get daysShortSat;
+
+  /// day_selection.dart - Short name for Sunday (Niedziela).
+  ///
+  /// In pl, this message translates to:
+  /// **'Nd'**
+  String get daysShortSun;
+
   /// day_selection.dart - Full lowercase name for Monday.
   ///
   /// In pl, this message translates to:

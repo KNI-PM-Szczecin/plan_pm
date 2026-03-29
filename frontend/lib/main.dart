@@ -39,7 +39,14 @@ Future<Widget> appInitialization() async {
   String? spec = prefs.getString("specialisation");
   Student.specialisation = (spec != null && spec.isNotEmpty) ? spec : null;
   Student.year = prefs.getInt("year");
-  Student.term = prefs.getString("term");
+
+  final String? rawStudyMode =
+      prefs.getString("study_mode") ?? prefs.getString("term");
+  Student.studyMode = switch (rawStudyMode) {
+    "S" || "Stacjonarne" => StudyMode.stationary,
+    "N" || "Niestacjonarne" => StudyMode.notStationary,
+    _ => null,
+  };
   Student.degreeLevel = prefs.getString("degree_level");
   Student.selectedGroups = prefs.getStringList("groups");
 
@@ -49,7 +56,7 @@ Future<Widget> appInitialization() async {
       Student.degreeCourse != null &&
       Student.faculty != null &&
       Student.year != null &&
-      Student.term != null &&
+      Student.studyMode != null &&
       Student.selectedGroups != null;
 
   // Jezeli uzytkownik nie ma danych o kierunku to przenieś go do InputPage
@@ -98,6 +105,8 @@ Future<void> main() async {
 
   eventColorStyleNotifier = EventColorStyleNotifier();
   await eventColorStyleNotifier.loadFromPrefs();
+
+  await SevenDayModeNotifier.init();
 
   runApp(const App());
 }
