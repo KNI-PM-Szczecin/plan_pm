@@ -221,21 +221,18 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: AppColor.background,
       appBar: AppBar(
         backgroundColor: AppColor.background,
-        actions: <Widget>[
-          IconButton(
+        leading: Builder(
+          builder: (context) => IconButton(
             onPressed: () {
               HapticFeedback.selectionClick();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
+              Scaffold.of(context).openDrawer();
             },
             icon: Icon(
-              LucideIcons.settings,
+              LucideIcons.menu,
               color: AppColor.onBackgroundVariant,
             ),
           ),
-        ],
+        ),
         centerTitle: true,
         forceMaterialTransparency: true,
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
@@ -248,8 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomNavigationBar(
-        index: _currentIndex,
+      drawer: CustomSidebar(
+        currentIndex: _currentIndex,
         onChange: (newIndex) {
           setState(() {
             _currentIndex = newIndex;
@@ -258,6 +255,13 @@ class _MyHomePageState extends State<MyHomePage> {
             newIndex,
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
+          );
+        },
+        onSettingsTap: () {
+          HapticFeedback.selectionClick();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
           );
         },
       ),
