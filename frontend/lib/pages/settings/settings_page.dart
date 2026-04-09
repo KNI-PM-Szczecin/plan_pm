@@ -78,21 +78,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [
                   StudentInfo(),
                   GroupInfo(),
-                  MenuSection(
-                    title: l10n.studySettings,
-                    child: MenuButton(
-                      title: l10n.pePageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PePage(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  // MenuSection(
+                  //   title: l10n.studySettings,
+                  //   child: MenuButton(
+                  //     title: l10n.pePageTitle,
+                  //     onTap: () {
+                  //       HapticFeedback.lightImpact();
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const PePage(),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   MenuSection(
                     title: l10n.personalizationHeader,
                     child: Column(

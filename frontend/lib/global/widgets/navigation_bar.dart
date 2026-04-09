@@ -25,6 +25,7 @@ class CustomSidebar extends StatelessWidget {
       _SidebarItem(icon: LucideIcons.home, label: l10n.pageTitleHome),
       _SidebarItem(icon: LucideIcons.calendar, label: l10n.pageTitleLectures),
       _SidebarItem(icon: LucideIcons.newspaper, label: l10n.pageTitleNews),
+      _SidebarItem(icon: LucideIcons.activity, label: l10n.pePageTitle)
     ];
 
     return Drawer(

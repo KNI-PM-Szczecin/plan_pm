@@ -8,6 +8,7 @@ import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
+import 'package:plan_pm/pages/settings/pe_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
@@ -203,6 +204,7 @@ List<Map<String, dynamic>> getPages(BuildContext context) {
     {"widget": const HomePage(), "title": l10n.pageTitleHome},
     {"widget": const LecturesPage(), "title": l10n.pageTitleLectures},
     {"widget": const NewsPage(), "title": l10n.pageTitleNews},
+    {"widget": const PePage(), "title": l10n.pePageTitle},
   ];
 }
 // prze†łumaczyć date w today Lectures

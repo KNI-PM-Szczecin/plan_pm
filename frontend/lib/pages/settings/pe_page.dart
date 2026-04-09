@@ -36,27 +36,27 @@ class PePage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        title: Text(
-          l10n.pePageTitle,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: AppColor.background,
+      //   automaticallyImplyLeading: false,
+      //   leading: IconButton(
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //     icon: Icon(
+      //       LucideIcons.chevronLeft,
+      //       color: AppColor.onBackgroundVariant,
+      //     ),
+      //   ),
+      //   title: Text(
+      //     l10n.pePageTitle,
+      //     style: TextStyle(
+      //       fontWeight: FontWeight.w600,
+      //       color: AppColor.onBackground,
+      //     ),
+      //   ),
+      //   shape: Border(bottom: BorderSide(color: AppColor.outline)),
+      // ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
