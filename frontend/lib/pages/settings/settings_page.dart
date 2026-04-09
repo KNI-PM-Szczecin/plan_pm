@@ -6,7 +6,6 @@ import 'package:plan_pm/pages/feedback/feedback_page.dart';
 import 'package:plan_pm/pages/settings/widgets/group_info.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
-import 'package:plan_pm/pages/settings/pe_page.dart';
 import 'package:plan_pm/pages/settings/widgets/student_info.dart';
 import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/settings/language_page.dart';
@@ -78,21 +77,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [
                   StudentInfo(),
                   GroupInfo(),
-                  // MenuSection(
-                  //   title: l10n.studySettings,
-                  //   child: MenuButton(
-                  //     title: l10n.pePageTitle,
-                  //     onTap: () {
-                  //       HapticFeedback.lightImpact();
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => const PePage(),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                   MenuSection(
                     title: l10n.personalizationHeader,
                     child: Column(
