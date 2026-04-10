@@ -7,26 +7,17 @@ import 'package:plan_pm/l10n/app_localizations.dart';
 class CustomSidebar extends StatelessWidget {
   const CustomSidebar({
     super.key,
-    required this.currentIndex,
-    required this.onChange,
+    required this.onPeTap,
     required this.onSettingsTap,
   });
 
-  final int currentIndex;
-  final Function(int newIndex) onChange;
+  final VoidCallback onPeTap;
   final VoidCallback onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final items = [
-      _SidebarItem(icon: LucideIcons.home, label: l10n.pageTitleHome),
-      _SidebarItem(icon: LucideIcons.calendar, label: l10n.pageTitleLectures),
-      _SidebarItem(icon: LucideIcons.newspaper, label: l10n.pageTitleNews),
-      _SidebarItem(icon: LucideIcons.activity, label: l10n.pePageTitle)
-    ];
 
     return Drawer(
       elevation: 0,
@@ -83,21 +74,13 @@ class CustomSidebar extends StatelessWidget {
               // ── Nav items ────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  children: List.generate(items.length, (index) {
-                    final item = items[index];
-                    final isActive = currentIndex == index;
-                    return _SidebarNavItem(
-                      icon: item.icon,
-                      label: item.label,
-                      isActive: isActive,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onChange(index);
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  }),
+                child: _SidebarNavItem(
+                  icon: LucideIcons.activity,
+                  label: l10n.pePageTitle,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    onPeTap();
+                  },
                 ),
               ),
 
@@ -118,10 +101,8 @@ class CustomSidebar extends StatelessWidget {
                 child: _SidebarNavItem(
                   icon: LucideIcons.settings,
                   label: l10n.pageTitleSettings,
-                  isActive: false,
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    Navigator.of(context).pop();
                     onSettingsTap();
                   },
                 ),
@@ -135,24 +116,67 @@ class CustomSidebar extends StatelessWidget {
   }
 }
 
+class CustomNavigationBar extends StatelessWidget {
+  const CustomNavigationBar({
+    super.key,
+    required this.index,
+    required this.onChange,
+  });
+
+  final int index;
+  final Function(int newIndex) onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: AppColor.outline)),
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: AppColor.background,
+        selectedItemColor: AppColor.primary,
+        unselectedItemColor: AppColor.onBackgroundVariant,
+        currentIndex: index,
+        enableFeedback: false,
+        onTap: (i) {
+          HapticFeedback.lightImpact();
+          onChange(i);
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(LucideIcons.home),
+            label: l10n.pageTitleHome,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LucideIcons.calendar),
+            label: l10n.pageTitleLectures,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LucideIcons.newspaper),
+            label: l10n.pageTitleNews,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SidebarNavItem extends StatelessWidget {
   const _SidebarNavItem({
     required this.icon,
     required this.label,
-    required this.isActive,
     required this.onTap,
   });
 
   final IconData icon;
   final String label;
-  final bool isActive;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = AppColor.primary;
-    final inactiveColor = AppColor.onBackgroundVariant;
-    final color = isActive ? activeColor : inactiveColor;
+    final color = AppColor.onBackgroundVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -162,15 +186,9 @@ class _SidebarNavItem extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: onTap,
-          splashColor: activeColor.withAlpha(30),
-          highlightColor: activeColor.withAlpha(18),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            decoration: BoxDecoration(
-              color: isActive ? activeColor.withAlpha(22) : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-            ),
+          splashColor: AppColor.primary.withAlpha(30),
+          highlightColor: AppColor.primary.withAlpha(18),
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
             child: Row(
               children: [
@@ -182,21 +200,12 @@ class _SidebarNavItem extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 15,
-                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: FontWeight.w500,
                       color: color,
                       letterSpacing: -0.1,
                     ),
                   ),
                 ),
-                if (isActive)
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: activeColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
               ],
             ),
           ),
@@ -204,10 +213,4 @@ class _SidebarNavItem extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SidebarItem {
-  final IconData icon;
-  final String label;
-  const _SidebarItem({required this.icon, required this.label});
 }

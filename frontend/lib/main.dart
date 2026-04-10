@@ -204,7 +204,6 @@ List<Map<String, dynamic>> getPages(BuildContext context) {
     {"widget": const HomePage(), "title": l10n.pageTitleHome},
     {"widget": const LecturesPage(), "title": l10n.pageTitleLectures},
     {"widget": const NewsPage(), "title": l10n.pageTitleNews},
-    {"widget": const PePage(), "title": l10n.pePageTitle},
   ];
 }
 // prze†łumaczyć date w today Lectures
@@ -235,6 +234,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+            icon: Icon(
+              LucideIcons.settings,
+              color: AppColor.onBackgroundVariant,
+            ),
+          ),
+        ],
         centerTitle: true,
         forceMaterialTransparency: true,
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
@@ -248,7 +262,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: CustomSidebar(
-        currentIndex: _currentIndex,
+        onPeTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PePage()),
+          );
+        },
+        onSettingsTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
+          );
+        },
+      ),
+      bottomNavigationBar: CustomNavigationBar(
+        index: _currentIndex,
         onChange: (newIndex) {
           setState(() {
             _currentIndex = newIndex;
@@ -257,13 +287,6 @@ class _MyHomePageState extends State<MyHomePage> {
             newIndex,
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
-          );
-        },
-        onSettingsTap: () {
-          HapticFeedback.selectionClick();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SettingsPage()),
           );
         },
       ),
