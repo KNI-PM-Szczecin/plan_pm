@@ -236,21 +236,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              HapticFeedback.selectionClick();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-            icon: Icon(
-              LucideIcons.settings,
-              color: AppColor.onBackgroundVariant,
-            ),
-          ),
-        ],
         centerTitle: true,
         forceMaterialTransparency: true,
         shape: Border(bottom: BorderSide(color: AppColor.outline)),

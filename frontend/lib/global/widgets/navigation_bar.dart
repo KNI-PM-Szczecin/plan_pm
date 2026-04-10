@@ -31,7 +31,9 @@ class CustomSidebar extends StatelessWidget {
           color: AppColor.surface,
           border: Border(
             right: BorderSide(
-              color: isDark ? Colors.white.withAlpha(18) : Colors.black.withAlpha(18),
+              color: isDark
+                  ? Colors.white.withAlpha(18)
+                  : Colors.black.withAlpha(18),
               width: 1,
             ),
           ),
@@ -49,14 +51,11 @@ class CustomSidebar extends StatelessWidget {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColor.primary,
+                        color: Color.lerp(AppColor.primary, Colors.white, 0.25)!,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(
-                        LucideIcons.graduationCap,
-                        color: Colors.white,
-                        size: 18,
-                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Image.asset('assets/logo_light.png'),
                     ),
                     const SizedBox(width: 12),
                     Text(
@@ -114,7 +113,9 @@ class CustomSidebar extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Divider(
-                  color: isDark ? Colors.white.withAlpha(20) : Colors.black.withAlpha(18),
+                  color: isDark
+                      ? Colors.white.withAlpha(20)
+                      : Colors.black.withAlpha(18),
                   thickness: 1,
                   height: 1,
                 ),
