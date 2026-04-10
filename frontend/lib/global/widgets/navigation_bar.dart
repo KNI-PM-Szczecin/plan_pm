@@ -8,10 +8,14 @@ class CustomSidebar extends StatelessWidget {
   const CustomSidebar({
     super.key,
     required this.onPeTap,
+    required this.onStudentIdTap,
+    required this.onVirtualUniversityTap,
     required this.onSettingsTap,
   });
 
   final VoidCallback onPeTap;
+  final VoidCallback onStudentIdTap;
+  final VoidCallback onVirtualUniversityTap;
   final VoidCallback onSettingsTap;
 
   @override
@@ -74,13 +78,33 @@ class CustomSidebar extends StatelessWidget {
               // ── Nav items ────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _SidebarNavItem(
-                  icon: LucideIcons.activity,
-                  label: l10n.pePageTitle,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    onPeTap();
-                  },
+                child: Column(
+                  children: [
+                    _SidebarNavItem(
+                      icon: LucideIcons.activity,
+                      label: l10n.pePageTitle,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        onPeTap();
+                      },
+                    ),
+                    _SidebarNavItem(
+                      icon: LucideIcons.creditCard,
+                      label: l10n.studentIdPageTitle,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        onStudentIdTap();
+                      },
+                    ),
+                    _SidebarNavItem(
+                      icon: LucideIcons.landmark,
+                      label: l10n.virtualUniversityPageTitle,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        onVirtualUniversityTap();
+                      },
+                    ),
+                  ],
                 ),
               ),
 

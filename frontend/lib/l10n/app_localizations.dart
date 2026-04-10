@@ -730,6 +730,54 @@ abstract class AppLocalizations {
   /// **'Nie udało się otworzyć strony zapisów.'**
   String get pePageUrlError;
 
+  /// No description provided for @studentIdPageTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Legitymacja studencka'**
+  String get studentIdPageTitle;
+
+  /// No description provided for @studentIdPageDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.'**
+  String get studentIdPageDescription;
+
+  /// No description provided for @studentIdPageButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejdź do wyrobienia'**
+  String get studentIdPageButton;
+
+  /// No description provided for @studentIdPageUrlError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć strony legitymacji.'**
+  String get studentIdPageUrlError;
+
+  /// No description provided for @virtualUniversityPageTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wirtualna uczelnia'**
+  String get virtualUniversityPageTitle;
+
+  /// No description provided for @virtualUniversityPageDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.'**
+  String get virtualUniversityPageDescription;
+
+  /// No description provided for @virtualUniversityPageButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz portal'**
+  String get virtualUniversityPageButton;
+
+  /// No description provided for @virtualUniversityPageUrlError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć portalu Wirtualnej Uczelni.'**
+  String get virtualUniversityPageUrlError;
+
   /// input_page.dart - Label for the degree level selector.
   ///
   /// In pl, this message translates to:
