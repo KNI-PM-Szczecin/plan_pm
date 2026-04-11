@@ -110,10 +110,7 @@ class BackendService {
         final id = json["id"] as String;
         final url = Supabase.instance.client.storage
             .from("Files")
-            .getPublicUrl(
-              "News/$id.png",
-              transform: const TransformOptions(width: 800),
-            );
+            .getPublicUrl("News/$id.png");
 
         return NewsModel(
           id: json["id"] as String,

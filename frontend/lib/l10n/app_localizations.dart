@@ -802,6 +802,12 @@ abstract class AppLocalizations {
   /// **'Ojej! Coś poszło nie tak.'**
   String get unexpectedError;
 
+  /// Opis wyświetlany gdy żądanie sieciowe zawiedzie.
+  ///
+  /// In pl, this message translates to:
+  /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
+  String get networkErrorDescription;
+
   /// settings_page.dart - Header for the appearance/theme section.
   ///
   /// In pl, this message translates to:

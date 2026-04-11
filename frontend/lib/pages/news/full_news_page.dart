@@ -72,8 +72,7 @@ class FullNewsPage extends StatelessWidget {
                     cacheManager: newsCacheManager,
                     placeholder: (context, url) =>
                         const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(LucideIcons.eggFried),
+                    errorWidget: (context, url, error) => const SizedBox.shrink(),
                   ),
 
                 Padding(

@@ -197,8 +197,8 @@ class GroupSelectionPage extends StatelessWidget {
                   if (snapshot.hasError) {
                     return GenericNoResource(
                       label: l10n.unexpectedError,
-                      icon: LucideIcons.bug,
-                      description: snapshot.error.toString(),
+                      icon: LucideIcons.wifiOff,
+                      description: l10n.networkErrorDescription,
                     );
                   }
                   if (snapshot.data == null) {
