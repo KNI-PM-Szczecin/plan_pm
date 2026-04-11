@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final newsCacheManager = CacheManager(
+  Config(
+    'news_images',
+    stalePeriod: const Duration(days: 30),
+    maxNrOfCacheObjects: 50,
+  ),
+);
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
   static const String _key = 'theme_mode';

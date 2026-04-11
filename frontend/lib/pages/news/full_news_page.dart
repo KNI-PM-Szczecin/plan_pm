@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class FullNewsPage extends StatelessWidget {
@@ -68,6 +69,7 @@ class FullNewsPage extends StatelessWidget {
                     width: double.infinity,
                     height: 300,
                     imageUrl: imageUrl!,
+                    cacheManager: newsCacheManager,
                     placeholder: (context, url) =>
                         const CircularProgressIndicator(),
                     errorWidget: (context, url, error) =>

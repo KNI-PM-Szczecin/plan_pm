@@ -1,0 +1,30 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: "Z255Y5V6G6",
+      issuer_id: "47310c6d-17f5-4320-b46c-d996c1093361",
+      key_filepath: "~/.appstoreconnect/private_keys/AuthKey_Z255Y5V6G6.p8",
+    )
+
+    # Read version + build number from pubspec.yaml
+    pubspec = YAML.load_file("../../pubspec.yaml")
+    version_full = pubspec["version"]              # e.g. "1.0.7+17"
+    version_name = version_full.split("+").first   # "1.0.7"
+    build_number = version_full.split("+").last    # "17"
+
+    increment_version_number(
+      version_number: version_name,
+      xcodeproj: "Runner.xcodeproj",
+    )
+    increment_build_number(
+      build_number: build_number,
+      xcodeproj: "Runner.xcodeproj",
+    )
+
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    upload_to_testflight(api_key: api_key)
+  end
+end

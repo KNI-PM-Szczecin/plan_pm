@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/news/full_news_page.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -57,6 +58,7 @@ class NewsCard extends StatelessWidget {
             if (imageUrl != null)
               CachedNetworkImage(
                 imageUrl: imageUrl!,
+                cacheManager: newsCacheManager,
                 imageBuilder: (context, imageProvider) => Ink.image(
                   image: imageProvider,
                   fit: BoxFit.cover,
@@ -65,7 +67,6 @@ class NewsCard extends StatelessWidget {
                 ),
                 placeholder: (context, url) =>
                     Skeleton.leaf(child: SizedBox(height: 150)),
-                // Container(),
                 errorWidget: (context, url, error) => const SizedBox.shrink(),
               ),
             Padding(

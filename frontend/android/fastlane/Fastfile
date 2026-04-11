@@ -1,0 +1,31 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    # Build signed AAB via Flutter (from the frontend root)
+    sh("cd ../../ && flutter build appbundle --release")
+
+    upload_to_play_store(
+      track: "production",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  desc "Promote internal build to production"
+  lane :promote do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

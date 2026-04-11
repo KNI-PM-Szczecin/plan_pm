@@ -90,7 +90,18 @@ python news_tool/app.py
 ### Full pipeline
 
 ```bash
-python main.py
+python main.py                          # default: HTTP scrapper, 10 workers
+python main.py --workers 20             # increase parallelism
+python main.py --old-scrapper           # use Selenium scrapper (fallback, ~7x slower)
+python main.py --old-scrapper --workers 3
+```
+
+### Re-upload without re-scraping
+
+If `output/parser.json` is already up to date, skip the scraping steps:
+
+```bash
+python uploadparsetodb.py
 ```
 
 ### Individual steps
@@ -131,6 +142,21 @@ Create a `.env` file in the `backend/` directory:
 SUPABASE_URL=https://<project>.supabase.co
 SUPABASE_KEY=<anon_key>
 SUPABASE_SERVICE_KEY=<service_role_key>   # required for json2db clear_db and news_tool uploads
+
+# Optional – test database (used when .env_mode contains "test")
+TEST_SUPABASE_URL=https://<test-project>.supabase.co
+TEST_SUPABASE_KEY=<test_anon_key>
+TEST_SUPABASE_SERVICE_KEY=<test_service_role_key>
+TEST_DB_URL=postgresql://...              # for direct DB access in slow tests
+```
+
+### Switching between production and test database
+
+The file `.env_mode` controls which credentials are used:
+
+```bash
+echo "test" > .env_mode   # use TEST_SUPABASE_* credentials
+echo "prod" > .env_mode   # use SUPABASE_* credentials (default)
 ```
 
 ---
