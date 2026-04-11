@@ -363,6 +363,34 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
 
   @override
+  String get studentIdPageTitle => 'Legitymacja studencka';
+
+  @override
+  String get studentIdPageDescription =>
+      'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.';
+
+  @override
+  String get studentIdPageButton => 'Przejdź do wyrobienia';
+
+  @override
+  String get studentIdPageUrlError =>
+      'Nie udało się otworzyć strony legitymacji.';
+
+  @override
+  String get virtualUniversityPageTitle => 'Wirtualna uczelnia';
+
+  @override
+  String get virtualUniversityPageDescription =>
+      'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.';
+
+  @override
+  String get virtualUniversityPageButton => 'Otwórz portal';
+
+  @override
+  String get virtualUniversityPageUrlError =>
+      'Nie udało się otworzyć portalu Wirtualnej Uczelni.';
+
+  @override
   String get degreeLevelLabel => 'Stopień studiów';
 
   @override

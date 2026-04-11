@@ -439,6 +439,14 @@
   "pePageDescription": "Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.",
   "pePageButton": "Przejdź do zapisów",
   "pePageUrlError": "Nie udało się otworzyć strony zapisów.",
+  "studentIdPageTitle": "Legitymacja studencka",
+  "studentIdPageDescription": "Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.",
+  "studentIdPageButton": "Przejdź do wyrobienia",
+  "studentIdPageUrlError": "Nie udało się otworzyć strony legitymacji.",
+  "virtualUniversityPageTitle": "Wirtualna uczelnia",
+  "virtualUniversityPageDescription": "Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.",
+  "virtualUniversityPageButton": "Otwórz portal",
+  "virtualUniversityPageUrlError": "Nie udało się otworzyć portalu Wirtualnej Uczelni.",
   "degreeLevelLabel": "Stopień studiów",
   "@degreeLevelLabel": {
     "description": "input_page.dart - Label for the degree level selector."

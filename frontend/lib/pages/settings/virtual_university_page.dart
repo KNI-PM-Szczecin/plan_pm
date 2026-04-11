@@ -5,28 +5,28 @@ import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PePage extends StatelessWidget {
-  const PePage({super.key});
+class VirtualUniversityPage extends StatelessWidget {
+  const VirtualUniversityPage({super.key});
 
-  final String _peUrl = "https://wf-zajecia.am.szczecin.pl/login";
+  final String _url = "https://wu.pm.szczecin.pl";
 
   Future<void> _launchUrl(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    final Uri url = Uri.parse(_peUrl);
+    final Uri uri = Uri.parse(_url);
 
     try {
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(l10n.pePageUrlError)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.virtualUniversityPageUrlError)),
+          );
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("${l10n.pePageUrlError}: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("${l10n.virtualUniversityPageUrlError}: $e")),
+        );
       }
     }
   }
@@ -48,7 +48,7 @@ class PePage extends StatelessWidget {
           ),
         ),
         title: Text(
-          l10n.pePageTitle,
+          l10n.virtualUniversityPageTitle,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: AppColor.onBackground,
@@ -71,14 +71,14 @@ class PePage extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  LucideIcons.dumbbell,
+                  LucideIcons.landmark,
                   size: 64,
                   color: AppColor.primary,
                 ),
               ),
               const SizedBox(height: 24),
               Text(
-                l10n.pePageTitle,
+                l10n.virtualUniversityPageTitle,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class PePage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                l10n.pePageDescription,
+                l10n.virtualUniversityPageDescription,
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColor.onBackgroundVariant,
@@ -112,7 +112,7 @@ class PePage extends StatelessWidget {
                     _launchUrl(context);
                   },
                   child: Text(
-                    l10n.pePageButton,
+                    l10n.virtualUniversityPageButton,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

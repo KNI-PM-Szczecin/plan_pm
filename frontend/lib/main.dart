@@ -8,6 +8,9 @@ import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
+import 'package:plan_pm/pages/settings/pe_page.dart';
+import 'package:plan_pm/pages/settings/student_id_page.dart';
+import 'package:plan_pm/pages/settings/virtual_university_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
@@ -221,21 +224,18 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: AppColor.background,
       appBar: AppBar(
         backgroundColor: AppColor.background,
-        actions: <Widget>[
-          IconButton(
+        leading: Builder(
+          builder: (context) => IconButton(
             onPressed: () {
               HapticFeedback.selectionClick();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
+              Scaffold.of(context).openDrawer();
             },
             icon: Icon(
-              LucideIcons.settings,
+              LucideIcons.menu,
               color: AppColor.onBackgroundVariant,
             ),
           ),
-        ],
+        ),
         centerTitle: true,
         forceMaterialTransparency: true,
         shape: Border(bottom: BorderSide(color: AppColor.outline)),
@@ -247,6 +247,36 @@ class _MyHomePageState extends State<MyHomePage> {
             color: AppColor.onBackground,
           ),
         ),
+      ),
+      drawer: CustomSidebar(
+        onPeTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PePage()),
+          );
+        },
+        onStudentIdTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StudentIdPage()),
+          );
+        },
+        onVirtualUniversityTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const VirtualUniversityPage()),
+          );
+        },
+        onSettingsTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
+          );
+        },
       ),
       bottomNavigationBar: CustomNavigationBar(
         index: _currentIndex,

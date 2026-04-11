@@ -373,6 +373,34 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
 
   @override
+  String get studentIdPageTitle => 'Студентський квиток';
+
+  @override
+  String get studentIdPageDescription =>
+      'Оформлення або поновлення студентського квитка здійснюється через університетський акаунт. Пам\'ятайте, що квиток дійсний протягом семестру.';
+
+  @override
+  String get studentIdPageButton => 'Перейти до оформлення';
+
+  @override
+  String get studentIdPageUrlError =>
+      'Не вдалося відкрити сторінку студентського квитка.';
+
+  @override
+  String get virtualUniversityPageTitle => 'Віртуальний університет';
+
+  @override
+  String get virtualUniversityPageDescription =>
+      'Перевіряйте оцінки, особисті дані та вирішуйте університетські справи через портал Віртуального університету.';
+
+  @override
+  String get virtualUniversityPageButton => 'Відкрити портал';
+
+  @override
+  String get virtualUniversityPageUrlError =>
+      'Не вдалося відкрити портал Віртуального університету.';
+
+  @override
   String get degreeLevelLabel => 'Ступінь навчання';
 
   @override
