@@ -17,6 +17,9 @@ ENV_MODE_FILE.write_text(f"{mode}\n")
 ENV_CONFIG_DART.write_text(
     "// Managed by scripts/switch_env.py — do not edit manually\n"
     f"const bool kUseTestDb = {str(mode == 'test').lower()};\n"
+    "\n"
+    "// Set to true to simulate Supabase errors (all requests will fail)\n"
+    "const bool kSimulateNetworkErrors = false;\n"
 )
 
 print(f"Przestawiono na: {mode}")
