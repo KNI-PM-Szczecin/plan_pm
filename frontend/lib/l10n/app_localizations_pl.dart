@@ -403,6 +403,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';
 
   @override
+  String get networkErrorDescription =>
+      'Sprawdź połączenie z internetem i spróbuj ponownie.';
+
+  @override
   String get appearanceHeader => 'Wygląd';
 
   @override

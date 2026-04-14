@@ -1,5 +1,41 @@
+import 'package:file/file.dart' hide FileSystem;
+import 'package:file/local.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// Stores cached images in Application Support instead of tmp/,
+// so iOS does not evict them under memory pressure.
+class _PersistentFileSystem implements FileSystem {
+  static const _key = 'news_images';
+  static const _localFs = LocalFileSystem();
+  late final Future<Directory> _dir = _initDir();
+
+  static Future<Directory> _initDir() async {
+    final base = await getApplicationSupportDirectory();
+    final dir = _localFs.directory(p.join(base.path, _key));
+    await dir.create(recursive: true);
+    return dir;
+  }
+
+  @override
+  Future<File> createFile(String name) async {
+    final dir = await _dir;
+    if (!(await dir.exists())) await _initDir();
+    return dir.childFile(name);
+  }
+}
+
+final newsCacheManager = CacheManager(
+  Config(
+    'news_images',
+    stalePeriod: const Duration(days: 30),
+    maxNrOfCacheObjects: 50,
+    fileSystem: _PersistentFileSystem(),
+  ),
+);
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
   static const String _key = 'theme_mode';

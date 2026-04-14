@@ -463,6 +463,10 @@
   "@unexpectedError": {
     "description": "Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek."
   },
+  "networkErrorDescription": "Sprawdź połączenie z internetem i spróbuj ponownie.",
+  "@networkErrorDescription": {
+    "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
+  },
   "appearanceHeader": "Wygląd",
   "@appearanceHeader": {
     "description": "settings_page.dart - Header for the appearance/theme section."

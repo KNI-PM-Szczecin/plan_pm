@@ -413,6 +413,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get unexpectedError => 'Упс! Щось пішло не так.';
 
   @override
+  String get networkErrorDescription =>
+      'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
+
+  @override
   String get appearanceHeader => 'Зовнішній вигляд';
 
   @override

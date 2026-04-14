@@ -246,8 +246,8 @@ class _InputPageState extends State<InputPage> {
                     if (snapshot.hasError) {
                       return GenericNoResource(
                         label: l10n.unexpectedError,
-                        icon: LucideIcons.bug,
-                        description: snapshot.error.toString(),
+                        icon: LucideIcons.wifiOff,
+                        description: l10n.networkErrorDescription,
                       );
                     }
                     if (snapshot.connectionState != ConnectionState.done) {

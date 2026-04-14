@@ -406,6 +406,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unexpectedError => 'Oops! Something went wrong.';
 
   @override
+  String get networkErrorDescription =>
+      'Check your internet connection and try again.';
+
+  @override
   String get appearanceHeader => 'Appearance';
 
   @override
