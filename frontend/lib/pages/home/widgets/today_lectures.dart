@@ -149,9 +149,12 @@ class TodayLecturesState extends State<TodayLectures> {
                   itemCount: groups.keys.length,
                   itemBuilder: (context, index) {
                     final lectures = groups[groups.keys.toList()[index]];
+                    final now = DateTime.now();
                     final lecturesWidgets = lectures!.map((lecture) {
+                      final bool isToday = DateUtils.isSameDay(lecture.date, now);
                       return Lecture(
                         idx: idx++,
+                        isProgressable: isToday,
                         name: lecture.name,
                         timeFrom: lecture.startTime,
                         timeTo: lecture.endTime,

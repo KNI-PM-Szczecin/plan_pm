@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -158,6 +159,7 @@ class Lecture extends StatefulWidget {
     required this.group,
     required this.duration,
     this.notes,
+    this.isProgressable = false,
   });
 
   final int idx;
@@ -169,6 +171,8 @@ class Lecture extends StatefulWidget {
   final String group;
   final String duration;
   final String? notes;
+  final bool isProgressable;
+
 
   @override
   State<Lecture> createState() => _LectureState();
@@ -176,6 +180,66 @@ class Lecture extends StatefulWidget {
 
 class _LectureState extends State<Lecture> {
   bool expanded = false;
+  double _progress = 0.0;
+  Timer? _timer;
+
+@override
+  void initState() {
+    super.initState();
+
+    if (widget.isProgressable) {
+      _calculateProgress();
+
+      _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+        if (mounted) {
+          _calculateProgress();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _calculateProgress() {
+    if (!widget.isProgressable) return;
+    
+    final now = DateTime.now();
+    DateTime parseTime(String time) {
+      final parts = time.split(':');
+      final hour = int.tryParse(parts[0]) ?? 0;
+      final minute = int.tryParse(parts[1]) ?? 0;
+      return DateTime(
+        now.year,
+        now.month,
+        now.day,
+        hour,
+        minute,
+      );
+    }
+
+    final startTime = parseTime(widget.timeFrom);
+    final endTime = parseTime(widget.timeTo);
+
+    if (now.isBefore(startTime)) {
+      setState(() => _progress = 0.0);
+    } else if (now.isAfter(endTime)) {
+      setState(() => _progress = 1.0);
+      _timer?.cancel();
+    } else {
+      final totalMinutes = endTime.difference(startTime).inMinutes;
+      final elapsedMinutes = now.difference(startTime).inMinutes;
+      if (totalMinutes > 0) {
+        setState(() {
+          _progress = (elapsedMinutes / totalMinutes).clamp(0.0, 1.0);
+        });
+      }
+    }
+  }
+
   void switchExpanded() {
     setState(() {
       HapticFeedback.lightImpact();
@@ -192,16 +256,21 @@ class _LectureState extends State<Lecture> {
     Gradient? cardGradient;
     Color? cardColor;
     Color textColor = AppColor.onPrimary;
+    Color grayColor = Colors.grey.shade800;
 
     if (style == EventColorStyle.monochrome) {
       cardColor = AppColor.primary;
+      grayColor = Colors.grey.shade800;
     } else if (style == EventColorStyle.pastel) {
       cardGradient = pastelGradients[widget.idx % pastelGradients.length];
-      textColor = Colors.black87; // Pastel colors are light
+      textColor = Colors.black87;
+      grayColor = Colors.grey.shade300; 
     } else if (style == EventColorStyle.vibrant) {
       cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
+      grayColor = Colors.grey.shade800; 
     } else {
       cardGradient = defaultGradients[widget.idx % defaultGradients.length];
+      grayColor = Colors.grey.shade800; 
     }
 
     return Card(
@@ -216,69 +285,93 @@ class _LectureState extends State<Lecture> {
                 color: cardColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: InkWell(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                onTap: switchExpanded,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: textColor,
-                              ),
+                child: Stack(
+                  children: [
+                    if (widget.isProgressable && _progress > 0.0)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: TweenAnimationBuilder<double>(
+                              duration: const Duration(milliseconds: 800),
+                              curve: Curves.easeOutCubic,
+                              tween: Tween<double>(begin: _progress, end: _progress),
+                              builder: (context, value, child) {
+                                return FractionallySizedBox(
+                                  heightFactor: value,
+                                  widthFactor: 1.0,
+                                  child: Container(
+                                    color: grayColor,
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                          AnimatedRotation(
-                            turns: expanded ? 0.5 : 0.0,
-                            duration: const Duration(milliseconds: 100),
-                            curve: Curves.easeInOut,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                LucideIcons.chevronDown,
-                                color: textColor,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      Row(
-                        spacing: 5,
-                        children: [
-                          Icon(LucideIcons.clock, size: 16, color: textColor),
-                          Text(
-                            "${widget.timeFrom} - ${widget.timeTo}",
-                            style: TextStyle(color: textColor),
-                          ),
-                          SizedBox(width: 5),
-                          Icon(LucideIcons.mapPin, size: 16, color: textColor),
-                          Expanded(
-                            child: Text(
-                              // Ten kod jest po to, zeby nie dodawać spacji przed przecinkiem jezeli są więcej niz dwie sale.
-                              // Przed: ' , ' Po: ', '
-                              // Ludzie nie stawiajcie spacji przed przecinkiem!!!!!!!!
-                              widget.location != null
-                                  ? widget.location!.split(" , ").length == 1
-                                        ? widget.location!
-                                        : widget.location!
-                                              .split(" , ")
-                                              .join(", ")
-                                  : l10n.roomNaN,
-                              style: TextStyle(color: textColor),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: switchExpanded,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                ),
+                                AnimatedRotation(
+                                  turns: expanded ? 0.5 : 0.0,
+                                  duration: const Duration(milliseconds: 100),
+                                  curve: Curves.easeInOut,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      LucideIcons.chevronDown,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                            Row(
+                              spacing: 5,
+                              children: [
+                                Icon(LucideIcons.clock, size: 16, color: textColor),
+                                Text(
+                                  "${widget.timeFrom} - ${widget.timeTo}",
+                                  style: TextStyle(color: textColor),
+                                ),
+                                const SizedBox(width: 5),
+                                Icon(LucideIcons.mapPin, size: 16, color: textColor),
+                                Expanded(
+                                  child: Text(
+                                    widget.location != null
+                                        ? widget.location!.split(" , ").length == 1
+                                            ? widget.location!
+                                            : widget.location!.split(" , ").join(", ")
+                                        : l10n.roomNaN,
+                                    style: TextStyle(color: textColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
