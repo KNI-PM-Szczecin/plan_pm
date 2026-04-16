@@ -7,8 +7,15 @@ import 'package:plan_pm/service/cache_service.dart';
 
 import 'package:plan_pm/global/logger.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<TodayLecturesState> _todayLecturesKey = GlobalKey<TodayLecturesState>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +26,9 @@ class HomePage extends StatelessWidget {
         final CacheService cacheService = CacheService();
         await cacheService.syncLectures();
         await cacheService.syncNews();
+        
+        // Zmuszamy TodayLectures do zresetowania swojego Future i przeliczenia czasu na 'teraz'
+        _todayLecturesKey.currentState?.refreshLectures();
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
@@ -32,7 +42,7 @@ class HomePage extends StatelessWidget {
                 title: l10n.newsSectionLabel,
                 child: NewsBuilder(limit: 1),
               ),
-              TodayLectures(),
+              TodayLectures(key: _todayLecturesKey),
             ],
           ),
         ),

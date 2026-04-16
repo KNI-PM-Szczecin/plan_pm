@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
@@ -16,10 +17,20 @@ List<LectureModel> getClosestLectures(
   DateTime referenceTime, {
   int count = 3,
 }) {
-  // Filter out past lectures
+  // Keep upcoming lectures and lectures that already started but have not yet ended.
   final filtered = lectures.where((lecture) {
-    final minutesDiff = lecture.date.difference(referenceTime).inMinutes;
-    return minutesDiff >= 0;
+    final endTimeParts = lecture.endTime.split(':');
+    final endHour = int.tryParse(endTimeParts[0]) ?? 0;
+    final endMinute = int.tryParse(endTimeParts[1]) ?? 0;
+    final lectureEnd = DateTime(
+      lecture.date.year,
+      lecture.date.month,
+      lecture.date.day,
+      endHour,
+      endMinute,
+    );
+
+    return !lectureEnd.isBefore(referenceTime);
   }).toList();
 
   // Sort those lectures by date from oldest to newest
@@ -34,21 +45,52 @@ class TodayLectures extends StatefulWidget {
   const TodayLectures({super.key});
 
   @override
-  State<TodayLectures> createState() => _TodayLecturesState();
+  State<TodayLectures> createState() => TodayLecturesState();
 }
 
-class _TodayLecturesState extends State<TodayLectures> {
-  DateTime currentDate = DateTime.now();
+class TodayLecturesState extends State<TodayLectures> {
+  late Future<List<LectureModel>> _lecturesFuture;
+  late DateTime currentDate;
+  // late Timer _timer; // Zakomentowany timer
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+    // Zakomentowany timer - odświeżanie tylko przez pull-to-refresh
+    // _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+    //   if (mounted) {
+    //     refreshLectures();
+    //   }
+    // });
+  }
+
+  // @override
+  // void dispose() {
+  //   _timer.cancel();
+  //   super.dispose();
+  // }
+
+  void refreshLectures() {
+    setState(() {
+      _fetchData();
+    });
+  }
+
+  void _fetchData() {
+    currentDate = DateTime.now();
+    _lecturesFuture = DatabaseService.instance.fetchLectures();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     int idx = 0;
-    final databaseService = DatabaseService.instance;
+
     return HomeSection(
       title: l10n.recentLecture,
       child: FutureBuilder<List<LectureModel>>(
-        future: databaseService.fetchLectures(),
+        future: _lecturesFuture, // Używamy zmiennej stanu z zainicjowanym zapytaniem
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return GenericNoResource(
