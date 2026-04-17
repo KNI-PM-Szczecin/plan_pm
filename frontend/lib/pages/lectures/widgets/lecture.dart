@@ -249,12 +249,14 @@ class _LectureState extends State<Lecture> {
     Gradient? cardGradient;
     Color? cardColor;
     Color textColor = AppColor.onPrimary;
+    Color progressBarFillColor = Colors.white.withOpacity(0.85);
 
     if (style == EventColorStyle.monochrome) {
       cardColor = AppColor.primary;
     } else if (style == EventColorStyle.pastel) {
       cardGradient = pastelGradients[widget.idx % pastelGradients.length];
       textColor = Colors.black87;
+      progressBarFillColor = textColor.withOpacity(0.50);
     } else if (style == EventColorStyle.vibrant) {
       cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
     } else {
@@ -313,7 +315,7 @@ class _LectureState extends State<Lecture> {
                                     widthFactor: value,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.85),
+                                        color: progressBarFillColor,
                                         borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(12),
                                           topRight: Radius.circular(4),
