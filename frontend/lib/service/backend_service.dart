@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 // import 'dart:developer' as developer;
+import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/api/models/news_model.dart';
 import 'package:plan_pm/global/student.dart';
@@ -124,6 +125,17 @@ class BackendService {
       return news;
     }
     return [];
+  }
+
+  Future<AnnouncementModel?> fetchAnnouncement() async {
+    final response = await Supabase.instance.client
+        .from('app_announcements')
+        .select()
+        .eq('active', true)
+        .order('created_at', ascending: false)
+        .limit(1);
+    if (response.isEmpty) return null;
+    return AnnouncementModel.fromJson(response.first);
   }
 
   Future<Map<String, Map<String, List<String>>>> fetchStructure() async {

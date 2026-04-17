@@ -1,0 +1,38 @@
+name: Version bump check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  version-check:
+    name: Verify pubspec.yaml version is bumped
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR version
+        id: pr
+        run: |
+          VERSION=$(grep '^version:' frontend/pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get main version
+        id: main
+        run: |
+          VERSION=$(git show origin/main:frontend/pubspec.yaml | grep '^version:' | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        run: |
+          PR="${{ steps.pr.outputs.version }}"
+          MAIN="${{ steps.main.outputs.version }}"
+          echo "main: $MAIN"
+          echo "PR:   $PR"
+          if [ "$PR" = "$MAIN" ]; then
+            echo "❌ Version not bumped. Update version in frontend/pubspec.yaml before merging."
+            exit 1
+          fi
+          echo "✅ Version bumped: $MAIN → $PR"

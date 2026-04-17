@@ -162,5 +162,8 @@
   "debugModeUnlocked": "Debug mode unlocked!",
   "debugTapsRemaining": "{count} more taps to unlock debug",
   "infoSection": "Information",
-  "readMore": "Read more"
+  "readMore": "Read more",
+  "announcementDismiss": "Got it",
+  "announcementUpdate": "Update",
+  "announcementSkip": "Skip"
 }

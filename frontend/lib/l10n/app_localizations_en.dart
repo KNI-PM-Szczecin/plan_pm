@@ -410,6 +410,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Check your internet connection and try again.';
 
   @override
+  String get announcementDismiss => 'Got it';
+
+  @override
+  String get announcementUpdate => 'Update';
+
+  @override
+  String get announcementSkip => 'Skip';
+
+  @override
   String get appearanceHeader => 'Appearance';
 
   @override

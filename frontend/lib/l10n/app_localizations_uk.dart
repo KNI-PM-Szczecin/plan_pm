@@ -417,6 +417,15 @@ class AppLocalizationsUk extends AppLocalizations {
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
 
   @override
+  String get announcementDismiss => 'Зрозуміло';
+
+  @override
+  String get announcementUpdate => 'Оновити';
+
+  @override
+  String get announcementSkip => 'Пропустити';
+
+  @override
   String get appearanceHeader => 'Зовнішній вигляд';
 
   @override

@@ -467,6 +467,9 @@
   "@networkErrorDescription": {
     "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
   },
+  "announcementDismiss": "Rozumiem",
+  "announcementUpdate": "Aktualizuj",
+  "announcementSkip": "Pomiń",
   "appearanceHeader": "Wygląd",
   "@appearanceHeader": {
     "description": "settings_page.dart - Header for the appearance/theme section."

@@ -407,6 +407,15 @@ class AppLocalizationsPl extends AppLocalizations {
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
 
   @override
+  String get announcementDismiss => 'Rozumiem';
+
+  @override
+  String get announcementUpdate => 'Aktualizuj';
+
+  @override
+  String get announcementSkip => 'Pomiń';
+
+  @override
   String get appearanceHeader => 'Wygląd';
 
   @override

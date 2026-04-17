@@ -20,6 +20,12 @@ ENV_CONFIG_DART.write_text(
     "\n"
     "// Set to true to simulate Supabase errors (all requests will fail)\n"
     "const bool kSimulateNetworkErrors = false;\n"
+    "\n"
+    "// Set to true to always show the announcement dialog (for UI development)\n"
+    "const bool kDebugAnnouncement = false;\n"
+    "\n"
+    "// Type of announcement to preview: 'info', 'warning', 'update'\n"
+    "const String kDebugAnnouncementType = 'update';\n"
 )
 
 print(f"Przestawiono na: {mode}")

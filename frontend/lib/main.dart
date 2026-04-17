@@ -25,6 +25,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/logger.dart';
+import 'package:plan_pm/api/models/announcement_model.dart';
+
+import 'package:plan_pm/global/widgets/announcement_dialog.dart';
+import 'package:plan_pm/service/backend_service.dart';
 
 // Funkcja odpowiada za inicjalizację aplikacji na wejściu - robi wszystkie rzeczy, a następnie zdejmuje splashScreen
 Future<Widget> appInitialization() async {
@@ -216,6 +220,51 @@ class _MyHomePageState extends State<MyHomePage> {
   final PreloadPageController _preloadPageController = PreloadPageController(
     initialPage: 0,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAnnouncement());
+  }
+
+  Future<void> _checkAnnouncement() async {
+    final AnnouncementModel? announcement;
+
+    if (kDebugAnnouncement) {
+      announcement = AnnouncementModel(
+        id: 'debug',
+        title: switch (kDebugAnnouncementType) {
+          'warning' => 'Uwaga!',
+          'update' => 'Dostępna aktualizacja!',
+          _ => 'Komunikat systemowy',
+        },
+        message: switch (kDebugAnnouncementType) {
+          'warning' => 'Trwają prace serwisowe dla kierunku Mechatronika. Przepraszamy za utrudnienia.',
+          'update' => 'Wprowadziliśmy nowe funkcje i poprawiliśmy wydajność. Zaktualizuj aplikację do najnowszej wersji, aby działała jeszcze lepiej.',
+          _ => 'Mamy dla Ciebie ważną informację. Sprawdź szczegóły poniżej.',
+        },
+        type: kDebugAnnouncementType,
+        storeUrl: 'https://example.com',
+      );
+    } else {
+      announcement = await BackendService().fetchAnnouncement();
+      if (announcement == null) return;
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('dismissed_announcement') == announcement.id) return;
+    }
+
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AnnouncementDialog(announcement: announcement!),
+    );
+
+    if (!kDebugAnnouncement) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('dismissed_announcement', announcement.id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
