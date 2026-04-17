@@ -173,7 +173,6 @@ class Lecture extends StatefulWidget {
   final String? notes;
   final bool isProgressable;
 
-
   @override
   State<Lecture> createState() => _LectureState();
 }
@@ -183,7 +182,7 @@ class _LectureState extends State<Lecture> {
   double _progress = 0.0;
   Timer? _timer;
 
-@override
+  @override
   void initState() {
     super.initState();
 
@@ -206,19 +205,13 @@ class _LectureState extends State<Lecture> {
 
   void _calculateProgress() {
     if (!widget.isProgressable) return;
-    
+
     final now = DateTime.now();
     DateTime parseTime(String time) {
       final parts = time.split(':');
       final hour = int.tryParse(parts[0]) ?? 0;
       final minute = int.tryParse(parts[1]) ?? 0;
-      return DateTime(
-        now.year,
-        now.month,
-        now.day,
-        hour,
-        minute,
-      );
+      return DateTime(now.year, now.month, now.day, hour, minute);
     }
 
     final startTime = parseTime(widget.timeFrom);
@@ -256,22 +249,22 @@ class _LectureState extends State<Lecture> {
     Gradient? cardGradient;
     Color? cardColor;
     Color textColor = AppColor.onPrimary;
-    Color grayColor = Colors.grey.shade800;
 
     if (style == EventColorStyle.monochrome) {
       cardColor = AppColor.primary;
-      grayColor = Colors.grey.shade800;
     } else if (style == EventColorStyle.pastel) {
       cardGradient = pastelGradients[widget.idx % pastelGradients.length];
       textColor = Colors.black87;
-      grayColor = Colors.grey.shade300; 
     } else if (style == EventColorStyle.vibrant) {
       cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
-      grayColor = Colors.grey.shade800; 
     } else {
       cardGradient = defaultGradients[widget.idx % defaultGradients.length];
-      grayColor = Colors.grey.shade800; 
     }
+
+    bool isInProgress = widget.isProgressable && _progress > 0.0 && _progress < 1.0;
+
+    FontWeight titleWeight = isInProgress ? FontWeight.w900 : FontWeight.bold;
+    FontWeight subTextWeight = isInProgress ? FontWeight.bold : FontWeight.normal;
 
     return Card(
       color: AppColor.surface,
@@ -289,26 +282,50 @@ class _LectureState extends State<Lecture> {
                 borderRadius: BorderRadius.circular(12),
                 child: Stack(
                   children: [
-                    if (widget.isProgressable && _progress > 0.0)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: TweenAnimationBuilder<double>(
-                              duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeOutCubic,
-                              tween: Tween<double>(begin: _progress, end: _progress),
-                              builder: (context, value, child) {
-                                return FractionallySizedBox(
-                                  heightFactor: value,
-                                  widthFactor: 1.0,
-                                  child: Container(
-                                    color: grayColor,
-                                  ),
-                                );
-                              },
+                    if (isInProgress)
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 5, // Grubość paska
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(12),
+                                  bottomRight: Radius.circular(12),
+                                ),
+                              ),
                             ),
-                          ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TweenAnimationBuilder<double>(
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutCubic,
+                                tween: Tween<double>(
+                                  begin: _progress,
+                                  end: _progress,
+                                ),
+                                builder: (context, value, child) {
+                                  return FractionallySizedBox(
+                                    widthFactor: value,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.85),
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(12),
+                                          topRight: Radius.circular(4),
+                                          bottomRight: Radius.circular(4),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     InkWell(
@@ -325,7 +342,7 @@ class _LectureState extends State<Lecture> {
                                   child: Text(
                                     widget.name,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: titleWeight,
                                       fontSize: 20,
                                       color: textColor,
                                     ),
@@ -348,21 +365,40 @@ class _LectureState extends State<Lecture> {
                             Row(
                               spacing: 5,
                               children: [
-                                Icon(LucideIcons.clock, size: 16, color: textColor),
+                                Icon(
+                                  LucideIcons.clock,
+                                  size: 16,
+                                  color: textColor,
+                                ),
                                 Text(
                                   "${widget.timeFrom} - ${widget.timeTo}",
-                                  style: TextStyle(color: textColor),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontWeight: subTextWeight,
+                                  ),
                                 ),
                                 const SizedBox(width: 5),
-                                Icon(LucideIcons.mapPin, size: 16, color: textColor),
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  size: 16,
+                                  color: textColor,
+                                ),
                                 Expanded(
                                   child: Text(
                                     widget.location != null
-                                        ? widget.location!.split(" , ").length == 1
-                                            ? widget.location!
-                                            : widget.location!.split(" , ").join(", ")
+                                        ? widget.location!
+                                                      .split(" , ")
+                                                      .length ==
+                                                  1
+                                              ? widget.location!
+                                              : widget.location!
+                                                    .split(" , ")
+                                                    .join(", ")
                                         : l10n.roomNaN,
-                                    style: TextStyle(color: textColor),
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontWeight: subTextWeight,
+                                    ),
                                   ),
                                 ),
                               ],
