@@ -26,9 +26,9 @@ class _HomePageState extends State<HomePage> {
         final CacheService cacheService = CacheService();
         await cacheService.syncLectures();
         await cacheService.syncNews();
-        
+
         // Zmuszamy TodayLectures do zresetowania swojego Future i przeliczenia czasu na 'teraz'
-        _todayLecturesKey.currentState?.refreshLectures();
+        await _todayLecturesKey.currentState?.refreshLectures();
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
