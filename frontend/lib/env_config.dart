@@ -11,4 +11,4 @@ const bool kDebugAnnouncement = false;
 const String kDebugAnnouncementType = 'update';
 
 // Set to true to always show the "What's new" dialog (for UI development)
-const bool kDebugWhatsNew = true;
+const bool kDebugWhatsNew = false;

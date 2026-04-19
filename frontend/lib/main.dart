@@ -368,6 +368,18 @@ class _MyHomePageState extends State<MyHomePage> {
             MaterialPageRoute(builder: (context) => const SettingsPage()),
           );
         },
+        onWhatsNewTap: () async {
+          Navigator.of(context).pop();
+          final info = await PackageInfo.fromPlatform();
+          final version = info.version;
+          final changes = kChangelog[version] ?? kChangelog.values.last;
+          if (!context.mounted) return;
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => WhatsNewDialog(version: version, changes: changes),
+          );
+        },
       ),
       bottomNavigationBar: CustomNavigationBar(
         index: _currentIndex,

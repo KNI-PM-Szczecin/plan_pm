@@ -11,12 +11,14 @@ class CustomSidebar extends StatelessWidget {
     required this.onStudentIdTap,
     required this.onVirtualUniversityTap,
     required this.onSettingsTap,
+    required this.onWhatsNewTap,
   });
 
   final VoidCallback onPeTap;
   final VoidCallback onStudentIdTap;
   final VoidCallback onVirtualUniversityTap;
   final VoidCallback onSettingsTap;
+  final VoidCallback onWhatsNewTap;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class CustomSidebar extends StatelessWidget {
 
               const Spacer(),
 
-              // ── Divider + Settings ───────────────────────────────────
+              // ── Divider + What's new + Settings ─────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Divider(
@@ -121,6 +123,17 @@ class CustomSidebar extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: _SidebarNavItem(
+                  icon: LucideIcons.sparkles,
+                  label: l10n.whatsNewTitle,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    onWhatsNewTap();
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: _SidebarNavItem(

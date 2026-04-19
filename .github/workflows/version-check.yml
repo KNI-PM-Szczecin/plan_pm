@@ -2,7 +2,7 @@ name: Version bump check
 
 on:
   pull_request:
-    branches: [main]
+    branches: [production]
 
 jobs:
   version-check:
@@ -19,10 +19,10 @@ jobs:
           VERSION=$(grep '^version:' frontend/pubspec.yaml | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Get main version
+      - name: Get production version
         id: main
         run: |
-          VERSION=$(git show origin/main:frontend/pubspec.yaml | grep '^version:' | awk '{print $2}')
+          VERSION=$(git show origin/production:frontend/pubspec.yaml | grep '^version:' | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Compare versions
