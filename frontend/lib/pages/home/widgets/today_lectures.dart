@@ -50,26 +50,12 @@ class TodayLectures extends StatefulWidget {
 class TodayLecturesState extends State<TodayLectures> {
   late Future<List<LectureModel>> _lecturesFuture;
   late DateTime currentDate;
-  // late Timer _timer; // Zakomentowany timer
 
   @override
   void initState() {
     super.initState();
     _fetchData();
-    // Zakomentowany timer - odświeżanie tylko przez pull-to-refresh
-    // _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
-    //   if (mounted) {
-    //     refreshLectures();
-    //   }
-    // });
   }
-
-  // @override
-  // void dispose() {
-  //   _timer.cancel();
-  //   super.dispose();
-  // }
-
   void refreshLectures() {
     setState(() {
       _fetchData();
