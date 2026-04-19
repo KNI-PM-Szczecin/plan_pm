@@ -35,4 +35,9 @@ jobs:
             echo "❌ Version not bumped. Update version in frontend/pubspec.yaml before merging."
             exit 1
           fi
+          LOWEST=$(printf '%s\n%s\n' "$MAIN" "$PR" | sort -V | head -n1)
+          if [ "$LOWEST" != "$MAIN" ]; then
+            echo "❌ Version must be greater than the current main version. Found $MAIN → $PR"
+            exit 1
+          fi
           echo "✅ Version bumped: $MAIN → $PR"
