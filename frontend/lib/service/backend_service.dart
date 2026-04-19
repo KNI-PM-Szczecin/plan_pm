@@ -129,10 +129,10 @@ class BackendService {
 
   Future<AnnouncementModel?> fetchAnnouncement() async {
     final response = await Supabase.instance.client
-        .from('app_announcements')
+        .from("app_announcements")
         .select()
-        .eq('active', true)
-        .order('created_at', ascending: false)
+        .eq("active", true)
+        .order("created_at", ascending: false)
         .limit(1);
     if (response.isEmpty) return null;
     return AnnouncementModel.fromJson(response.first);

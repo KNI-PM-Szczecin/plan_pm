@@ -70,16 +70,19 @@ class AnnouncementDialog extends StatelessWidget {
             const SizedBox(height: 28),
             _GradientButton(
               gradient: _gradient,
-              label: isUpdate ? l10n.announcementUpdate : l10n.announcementDismiss,
+              label: (isUpdate && announcement.storeUrl != null)
+                  ? l10n.announcementUpdate
+                  : l10n.announcementDismiss,
               onTap: () async {
                 if (isUpdate && announcement.storeUrl != null) {
-                  await launchUrl(
-                    Uri.parse(announcement.storeUrl!),
-                    mode: LaunchMode.externalApplication,
-                  );
-                } else {
-                  Navigator.of(context).pop();
+                  try {
+                    await launchUrl(
+                      Uri.parse(announcement.storeUrl!),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } catch (_) {}
                 }
+                if (context.mounted) Navigator.of(context).pop();
               },
             ),
             if (isUpdate) ...[

@@ -166,5 +166,7 @@
   "readMore": "Читати далі",
   "announcementDismiss": "Зрозуміло",
   "announcementUpdate": "Оновити",
-  "announcementSkip": "Пропустити"
+  "announcementSkip": "Пропустити",
+  "whatsNewTitle": "Що нового",
+  "whatsNewGotIt": "Чудово!"
 }

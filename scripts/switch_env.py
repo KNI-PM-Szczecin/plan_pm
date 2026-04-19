@@ -26,6 +26,9 @@ ENV_CONFIG_DART.write_text(
     "\n"
     "// Type of announcement to preview: 'info', 'warning', 'update'\n"
     "const String kDebugAnnouncementType = 'update';\n"
+    "\n"
+    "// Set to true to always show the \"What's new\" dialog (for UI development)\n"
+    "const bool kDebugWhatsNew = false;\n"
 )
 
 print(f"Przestawiono na: {mode}")

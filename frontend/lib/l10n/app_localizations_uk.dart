@@ -533,4 +533,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get readMore => 'Читати далі';
+
+  @override
+  String get whatsNewTitle => 'Що нового';
+
+  @override
+  String get whatsNewGotIt => 'Чудово!';
 }

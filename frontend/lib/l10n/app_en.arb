@@ -165,5 +165,7 @@
   "readMore": "Read more",
   "announcementDismiss": "Got it",
   "announcementUpdate": "Update",
-  "announcementSkip": "Skip"
+  "announcementSkip": "Skip",
+  "whatsNewTitle": "What's new",
+  "whatsNewGotIt": "Got it!"
 }

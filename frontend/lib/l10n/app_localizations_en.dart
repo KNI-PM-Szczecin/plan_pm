@@ -525,4 +525,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readMore => 'Read more';
+
+  @override
+  String get whatsNewTitle => 'What\'s new';
+
+  @override
+  String get whatsNewGotIt => 'Got it!';
 }

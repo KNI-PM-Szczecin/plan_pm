@@ -9,3 +9,6 @@ const bool kDebugAnnouncement = false;
 
 // Type of announcement to preview: 'info', 'warning', 'update'
 const String kDebugAnnouncementType = 'update';
+
+// Set to true to always show the "What's new" dialog (for UI development)
+const bool kDebugWhatsNew = true;

@@ -523,4 +523,10 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get readMore => 'Czytaj dalej';
+
+  @override
+  String get whatsNewTitle => 'Co nowego';
+
+  @override
+  String get whatsNewGotIt => 'Super!';
 }

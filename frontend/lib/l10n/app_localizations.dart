@@ -1035,6 +1035,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Czytaj dalej'**
   String get readMore;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co nowego'**
+  String get whatsNewTitle;
+
+  /// No description provided for @whatsNewGotIt.
+  ///
+  /// In pl, this message translates to:
+  /// **'Super!'**
+  String get whatsNewGotIt;
 }
 
 class _AppLocalizationsDelegate
