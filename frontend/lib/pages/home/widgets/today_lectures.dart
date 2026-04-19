@@ -41,22 +41,32 @@ List<LectureModel> getClosestLectures(
 }
 
 class TodayLectures extends StatefulWidget {
-  const TodayLectures({super.key});
+  final ValueNotifier<int>? refreshNotifier;
+  
+  const TodayLectures({super.key, this.refreshNotifier});
 
   @override
-  State<TodayLectures> createState() => TodayLecturesState();
+  State<TodayLectures> createState() => _TodayLecturesState();
 }
 
-class TodayLecturesState extends State<TodayLectures> {
+class _TodayLecturesState extends State<TodayLectures> {
   late Future<List<LectureModel>> _lecturesFuture;
   late DateTime currentDate;
 
   @override
   void initState() {
     super.initState();
+    widget.refreshNotifier?.addListener(_refreshLectures);
     _fetchData();
   }
-  void refreshLectures() {
+
+  @override
+  void dispose() {
+    widget.refreshNotifier?.removeListener(_refreshLectures);
+    super.dispose();
+  }
+
+  void _refreshLectures() {
     setState(() {
       _fetchData();
     });

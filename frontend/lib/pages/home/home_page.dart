@@ -15,7 +15,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey<TodayLecturesState> _todayLecturesKey = GlobalKey<TodayLecturesState>();
+  final ValueNotifier<int> _refreshNotifier = ValueNotifier<int>(0);
+
+  @override
+  void dispose() {
+    _refreshNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +33,8 @@ class _HomePageState extends State<HomePage> {
         await cacheService.syncLectures();
         await cacheService.syncNews();
 
-        // Zmuszamy TodayLectures do zresetowania swojego Future i przeliczenia czasu na 'teraz'
-        await _todayLecturesKey.currentState?.refreshLectures();
+        // Notify TodayLectures to reset its Future and recalculate time to 'now'
+        _refreshNotifier.value++;
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
@@ -42,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                 title: l10n.newsSectionLabel,
                 child: NewsBuilder(limit: 1),
               ),
-              TodayLectures(key: _todayLecturesKey),
+            TodayLectures(refreshNotifier: _refreshNotifier),
             ],
           ),
         ),
