@@ -180,6 +180,7 @@ class Lecture extends StatefulWidget {
 class _LectureState extends State<Lecture> {
   bool expanded = false;
   double _progress = 0.0;
+  bool _isInProgress = false;
   Timer? _timer;
 
   @override
@@ -218,9 +219,15 @@ class _LectureState extends State<Lecture> {
     final endTime = parseTime(widget.timeTo);
 
     if (now.isBefore(startTime)) {
-      setState(() => _progress = 0.0);
+      setState(() {
+        _progress = 0.0;
+        _isInProgress = false;
+      });
     } else if (now.isAfter(endTime)) {
-      setState(() => _progress = 1.0);
+      setState(() {
+        _progress = 1.0;
+        _isInProgress = false;
+      });
       _timer?.cancel();
     } else {
       final totalMinutes = endTime.difference(startTime).inMinutes;
@@ -228,6 +235,7 @@ class _LectureState extends State<Lecture> {
       if (totalMinutes > 0) {
         setState(() {
           _progress = (elapsedMinutes / totalMinutes).clamp(0.0, 1.0);
+          _isInProgress = true;
         });
       }
     }
@@ -263,7 +271,7 @@ class _LectureState extends State<Lecture> {
       cardGradient = defaultGradients[widget.idx % defaultGradients.length];
     }
 
-    bool isInProgress = widget.isProgressable && _progress > 0.0 && _progress < 1.0;
+    bool isInProgress = widget.isProgressable && _isInProgress;
 
     FontWeight titleWeight = isInProgress ? FontWeight.w900 : FontWeight.bold;
     FontWeight subTextWeight = isInProgress ? FontWeight.bold : FontWeight.normal;
@@ -307,7 +315,7 @@ class _LectureState extends State<Lecture> {
                                 duration: const Duration(milliseconds: 800),
                                 curve: Curves.easeOutCubic,
                                 tween: Tween<double>(
-                                  begin: _progress,
+                                  begin: 0.0,
                                   end: _progress,
                                 ),
                                 builder: (context, value, child) {
