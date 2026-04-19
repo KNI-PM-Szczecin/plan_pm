@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/widgets/gradient_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,6 +27,7 @@ class AnnouncementDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isUpdate = announcement.type == 'update';
+    final hasUrl = announcement.storeUrl != null;
 
     return Dialog(
       backgroundColor: AppColor.surface,
@@ -68,13 +70,13 @@ class AnnouncementDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 28),
-            _GradientButton(
+            GradientButton(
               gradient: _gradient,
-              label: (isUpdate && announcement.storeUrl != null)
+              label: (isUpdate && hasUrl)
                   ? l10n.announcementUpdate
                   : l10n.announcementDismiss,
               onTap: () async {
-                if (isUpdate && announcement.storeUrl != null) {
+                if (isUpdate && hasUrl) {
                   try {
                     await launchUrl(
                       Uri.parse(announcement.storeUrl!),
@@ -85,7 +87,7 @@ class AnnouncementDialog extends StatelessWidget {
                 if (context.mounted) Navigator.of(context).pop();
               },
             ),
-            if (isUpdate) ...[
+            if (isUpdate && hasUrl) ...[
               const SizedBox(height: 4),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -96,49 +98,6 @@ class AnnouncementDialog extends StatelessWidget {
               ),
             ],
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GradientButton extends StatelessWidget {
-  const _GradientButton({
-    required this.gradient,
-    required this.label,
-    required this.onTap,
-  });
-
-  final LinearGradient gradient;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: onTap,
-            child: Center(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );

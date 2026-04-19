@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/widgets/gradient_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class WhatsNewDialog extends StatelessWidget {
@@ -78,7 +79,7 @@ class WhatsNewDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            _GradientButton(
+            GradientButton(
               gradient: _gradient,
               label: l10n.whatsNewGotIt,
               onTap: () => Navigator.of(context).pop(),
@@ -125,49 +126,6 @@ class _ChangeItem extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _GradientButton extends StatelessWidget {
-  const _GradientButton({
-    required this.gradient,
-    required this.label,
-    required this.onTap,
-  });
-
-  final LinearGradient gradient;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: onTap,
-            child: Center(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

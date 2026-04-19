@@ -22,7 +22,8 @@ jobs:
       - name: Get production version
         id: main
         run: |
-          VERSION=$(git show origin/production:frontend/pubspec.yaml | grep '^version:' | awk '{print $2}')
+          git fetch origin ${{ github.base_ref }}
+          VERSION=$(git show origin/${{ github.base_ref }}:frontend/pubspec.yaml | grep '^version:' | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Compare versions
@@ -37,7 +38,7 @@ jobs:
           fi
           LOWEST=$(printf '%s\n%s\n' "$MAIN" "$PR" | sort -V | head -n1)
           if [ "$LOWEST" != "$MAIN" ]; then
-            echo "❌ Version must be greater than the current main version. Found $MAIN → $PR"
+            echo "❌ Version must be greater than the current production version. Found $MAIN → $PR"
             exit 1
           fi
           echo "✅ Version bumped: $MAIN → $PR"
