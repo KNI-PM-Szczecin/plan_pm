@@ -187,13 +187,13 @@ class _LectureState extends State<Lecture> {
     super.initState();
 
     if (widget.isProgressable) {
-      _calculateProgress();
-
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         if (mounted) {
           _calculateProgress();
         }
       });
+
+      _calculateProgress();
     }
   }
 
