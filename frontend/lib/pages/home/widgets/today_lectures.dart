@@ -16,10 +16,20 @@ List<LectureModel> getClosestLectures(
   DateTime referenceTime, {
   int count = 3,
 }) {
-  // Filter out past lectures
+  // Keep upcoming lectures and lectures that already started but have not yet ended.
   final filtered = lectures.where((lecture) {
-    final minutesDiff = lecture.date.difference(referenceTime).inMinutes;
-    return minutesDiff >= 0;
+    final endTimeParts = lecture.endTime.split(':');
+    final endHour = int.tryParse(endTimeParts[0]) ?? 0;
+    final endMinute = int.tryParse(endTimeParts[1]) ?? 0;
+    final lectureEnd = DateTime(
+      lecture.date.year,
+      lecture.date.month,
+      lecture.date.day,
+      endHour,
+      endMinute,
+    );
+
+    return !lectureEnd.isBefore(referenceTime);
   }).toList();
 
   // Sort those lectures by date from oldest to newest
@@ -31,24 +41,51 @@ List<LectureModel> getClosestLectures(
 }
 
 class TodayLectures extends StatefulWidget {
-  const TodayLectures({super.key});
+  final ValueNotifier<int>? refreshNotifier;
+  
+  const TodayLectures({super.key, this.refreshNotifier});
 
   @override
   State<TodayLectures> createState() => _TodayLecturesState();
 }
 
 class _TodayLecturesState extends State<TodayLectures> {
-  DateTime currentDate = DateTime.now();
+  late Future<List<LectureModel>> _lecturesFuture;
+  late DateTime currentDate;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.refreshNotifier?.addListener(_refreshLectures);
+    _fetchData();
+  }
+
+  @override
+  void dispose() {
+    widget.refreshNotifier?.removeListener(_refreshLectures);
+    super.dispose();
+  }
+
+  void _refreshLectures() {
+    setState(() {
+      _fetchData();
+    });
+  }
+
+  void _fetchData() {
+    currentDate = DateTime.now();
+    _lecturesFuture = DatabaseService.instance.fetchLectures();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     int idx = 0;
-    final databaseService = DatabaseService.instance;
+
     return HomeSection(
       title: l10n.recentLecture,
       child: FutureBuilder<List<LectureModel>>(
-        future: databaseService.fetchLectures(),
+        future: _lecturesFuture, // Używamy zmiennej stanu z zainicjowanym zapytaniem
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return GenericNoResource(
@@ -107,9 +144,12 @@ class _TodayLecturesState extends State<TodayLectures> {
                   itemCount: groups.keys.length,
                   itemBuilder: (context, index) {
                     final lectures = groups[groups.keys.toList()[index]];
+                    final now = DateTime.now();
                     final lecturesWidgets = lectures!.map((lecture) {
+                      final bool isToday = DateUtils.isSameDay(lecture.date, now);
                       return Lecture(
                         idx: idx++,
+                        isProgressable: isToday,
                         name: lecture.name,
                         timeFrom: lecture.startTime,
                         timeTo: lecture.endTime,

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
+import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
 import 'package:plan_pm/global/extensions.dart';
 import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/service/backend_service.dart';
@@ -343,6 +344,37 @@ void main() {
         expect(model.date.month, 3);
         expect(model.date.day, 23);
       });
+    });
+  });
+
+  group('getClosestLectures', () {
+    test('zachowuje zajęcie rozpoczęte i trwające dalej', () {
+      final lecture = LectureModel.fromJson(baseLectureJson(
+        startTime: '2026-03-23T08:00:00',
+        endTime: '2026-03-23T09:30:00',
+      ));
+
+      final result = getClosestLectures(
+        [lecture],
+        DateTime(2026, 3, 23, 8, 1),
+      );
+
+      expect(result, hasLength(1));
+      expect(result.first, lecture);
+    });
+
+    test('usuwa zajęcie zakończone przed referencyjnym czasem', () {
+      final lecture = LectureModel.fromJson(baseLectureJson(
+        startTime: '2026-03-23T08:00:00',
+        endTime: '2026-03-23T09:30:00',
+      ));
+
+      final result = getClosestLectures(
+        [lecture],
+        DateTime(2026, 3, 23, 9, 31),
+      );
+
+      expect(result, isEmpty);
     });
   });
 
