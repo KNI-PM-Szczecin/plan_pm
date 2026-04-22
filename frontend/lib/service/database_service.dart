@@ -94,7 +94,7 @@ class DatabaseService {
   }) async {
     final db = await database;
     final Map<String, dynamic> values = {
-      if (id != null) _lecturesIdColumnName: id,
+      _lecturesIdColumnName: ?id,
       _lecturesNameColumnName: name,
       _lecturesStartTimeColumnName: startTime,
       _lecturesEndTimeColumnName: endTime,
@@ -157,7 +157,7 @@ class DatabaseService {
   }) async {
     final db = await database;
     final Map<String, dynamic> values = {
-      if (id != null) _newsIdColumnName: id,
+      _newsIdColumnName: ?id,
       _newsTitleColumnName: title,
       _newsCreatedAtColumnName: createdAt.toUtc().millisecondsSinceEpoch,
       _newsImageUrlColumnName: imageUrl,
