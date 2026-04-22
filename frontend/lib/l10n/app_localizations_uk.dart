@@ -417,6 +417,15 @@ class AppLocalizationsUk extends AppLocalizations {
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
 
   @override
+  String get announcementDismiss => 'Зрозуміло';
+
+  @override
+  String get announcementUpdate => 'Оновити';
+
+  @override
+  String get announcementSkip => 'Пропустити';
+
+  @override
   String get appearanceHeader => 'Зовнішній вигляд';
 
   @override
@@ -524,4 +533,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get readMore => 'Читати далі';
+
+  @override
+  String get whatsNewTitle => 'Що нового';
+
+  @override
+  String get whatsNewGotIt => 'Чудово!';
 }

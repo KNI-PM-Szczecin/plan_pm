@@ -25,6 +25,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/logger.dart';
+import 'package:plan_pm/api/models/announcement_model.dart';
+
+import 'package:plan_pm/global/widgets/announcement_dialog.dart';
+import 'package:plan_pm/global/widgets/whats_new_dialog.dart';
+import 'package:plan_pm/service/backend_service.dart';
+import 'package:plan_pm/changelog.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 // Funkcja odpowiada za inicjalizację aplikacji na wejściu - robi wszystkie rzeczy, a następnie zdejmuje splashScreen
 Future<Widget> appInitialization() async {
@@ -218,6 +225,90 @@ class _MyHomePageState extends State<MyHomePage> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkWhatsNew();
+      await _checkAnnouncement();
+    });
+  }
+
+  Future<void> _checkWhatsNew() async {
+    final info = await PackageInfo.fromPlatform();
+    final version = info.version;
+    final changes = kChangelog[version] ?? kChangelog.values.last;
+
+    if (kDebugWhatsNew) {
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => WhatsNewDialog(version: version, changes: changes),
+      );
+      return;
+    }
+
+    if (kChangelog[version] == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final lastSeen = prefs.getString('last_whats_new_version');
+
+    if (lastSeen == null) {
+      await prefs.setString('last_whats_new_version', version);
+      return;
+    }
+    if (lastSeen == version) return;
+
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => WhatsNewDialog(version: version, changes: changes),
+    );
+
+    await prefs.setString('last_whats_new_version', version);
+  }
+
+  Future<void> _checkAnnouncement() async {
+    final AnnouncementModel? announcement;
+
+    if (kDebugAnnouncement) {
+      announcement = AnnouncementModel(
+        id: 'debug',
+        title: switch (kDebugAnnouncementType) {
+          'warning' => 'Uwaga!',
+          'update' => 'Dostępna aktualizacja!',
+          _ => 'Komunikat systemowy',
+        },
+        message: switch (kDebugAnnouncementType) {
+          'warning' => 'Trwają prace serwisowe dla kierunku Mechatronika. Przepraszamy za utrudnienia.',
+          'update' => 'Wprowadziliśmy nowe funkcje i poprawiliśmy wydajność. Zaktualizuj aplikację do najnowszej wersji, aby działała jeszcze lepiej.',
+          _ => 'Mamy dla Ciebie ważną informację. Sprawdź szczegóły poniżej.',
+        },
+        type: kDebugAnnouncementType,
+        storeUrl: 'https://example.com',
+      );
+    } else {
+      announcement = await BackendService().fetchAnnouncement();
+      if (announcement == null) return;
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('dismissed_announcement') == announcement.id) return;
+    }
+
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AnnouncementDialog(announcement: announcement!),
+    );
+
+    if (!kDebugAnnouncement) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('dismissed_announcement', announcement.id);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final pages = getPages(context);
     return Scaffold(
@@ -275,6 +366,18 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SettingsPage()),
+          );
+        },
+        onWhatsNewTap: () async {
+          Navigator.of(context).pop();
+          final info = await PackageInfo.fromPlatform();
+          final version = info.version;
+          final changes = kChangelog[version] ?? kChangelog.values.last;
+          if (!context.mounted) return;
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => WhatsNewDialog(version: version, changes: changes),
           );
         },
       ),

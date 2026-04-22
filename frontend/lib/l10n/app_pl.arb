@@ -467,6 +467,9 @@
   "@networkErrorDescription": {
     "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
   },
+  "announcementDismiss": "Rozumiem",
+  "announcementUpdate": "Aktualizuj",
+  "announcementSkip": "Pomiń",
   "appearanceHeader": "Wygląd",
   "@appearanceHeader": {
     "description": "settings_page.dart - Header for the appearance/theme section."
@@ -557,5 +560,7 @@
   "readMore": "Czytaj dalej",
   "@readMore": {
     "description": "news_card.dart - Read more label shown at the bottom of news card preview."
-  }
+  },
+  "whatsNewTitle": "Co nowego",
+  "whatsNewGotIt": "Super!"
 }

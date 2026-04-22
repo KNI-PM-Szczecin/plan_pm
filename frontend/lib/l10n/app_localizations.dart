@@ -808,6 +808,24 @@ abstract class AppLocalizations {
   /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
   String get networkErrorDescription;
 
+  /// No description provided for @announcementDismiss.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozumiem'**
+  String get announcementDismiss;
+
+  /// No description provided for @announcementUpdate.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aktualizuj'**
+  String get announcementUpdate;
+
+  /// No description provided for @announcementSkip.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pomiń'**
+  String get announcementSkip;
+
   /// settings_page.dart - Header for the appearance/theme section.
   ///
   /// In pl, this message translates to:
@@ -1017,6 +1035,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Czytaj dalej'**
   String get readMore;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co nowego'**
+  String get whatsNewTitle;
+
+  /// No description provided for @whatsNewGotIt.
+  ///
+  /// In pl, this message translates to:
+  /// **'Super!'**
+  String get whatsNewGotIt;
 }
 
 class _AppLocalizationsDelegate

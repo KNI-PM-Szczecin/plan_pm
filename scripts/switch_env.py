@@ -17,6 +17,18 @@ ENV_MODE_FILE.write_text(f"{mode}\n")
 ENV_CONFIG_DART.write_text(
     "// Managed by scripts/switch_env.py — do not edit manually\n"
     f"const bool kUseTestDb = {str(mode == 'test').lower()};\n"
+    "\n"
+    "// Set to true to simulate Supabase errors (all requests will fail)\n"
+    "const bool kSimulateNetworkErrors = false;\n"
+    "\n"
+    "// Set to true to always show the announcement dialog (for UI development)\n"
+    "const bool kDebugAnnouncement = false;\n"
+    "\n"
+    "// Type of announcement to preview: 'info', 'warning', 'update'\n"
+    "const String kDebugAnnouncementType = 'update';\n"
+    "\n"
+    "// Set to true to always show the \"What's new\" dialog (for UI development)\n"
+    "const bool kDebugWhatsNew = false;\n"
 )
 
 print(f"Przestawiono na: {mode}")

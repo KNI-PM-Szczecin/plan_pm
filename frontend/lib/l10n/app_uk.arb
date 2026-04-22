@@ -163,5 +163,10 @@
   "debugModeUnlocked": "Режим налагодження розблоковано!",
   "debugTapsRemaining": "Ще {count} натискань для розблокування",
   "infoSection": "Інформація",
-  "readMore": "Читати далі"
+  "readMore": "Читати далі",
+  "announcementDismiss": "Зрозуміло",
+  "announcementUpdate": "Оновити",
+  "announcementSkip": "Пропустити",
+  "whatsNewTitle": "Що нового",
+  "whatsNewGotIt": "Чудово!"
 }

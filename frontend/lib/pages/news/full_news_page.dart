@@ -65,13 +65,22 @@ class FullNewsPage extends StatelessWidget {
               children: [
                 if (imageUrl != null)
                   CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 300,
                     imageUrl: imageUrl!,
                     cacheManager: newsCacheManager,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
+                    imageBuilder: (context, imageProvider) => SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: Image(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    ),
+                    placeholder: (context, url) => const SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
                     errorWidget: (context, url, error) => const SizedBox.shrink(),
                   ),
 

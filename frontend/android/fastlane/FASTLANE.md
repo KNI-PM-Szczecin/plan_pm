@@ -22,9 +22,8 @@ package_name("com.piotrwittig.plan_pm")
 
 | Lane | Komenda | Co robi |
 |---|---|---|
-| `test` | `fastlane test` | Uruchamia testy Gradle |
-| `beta` | `fastlane beta` | Buduje release APK + wysyła do Crashlytics |
-| `deploy` | `fastlane deploy` | Buduje release APK + wysyła do Google Play |
+| `deploy` | `fastlane deploy` | Buduje release AAB + wysyła do Google Play |
+| `promote` | `fastlane promote` | Promuje istniejące wydanie między trackami w Google Play |
 
 ## Typowy flow wdrożenia
 
