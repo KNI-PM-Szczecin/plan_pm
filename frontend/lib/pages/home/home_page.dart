@@ -41,6 +41,12 @@ class _HomePageState extends State<HomePage> {
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+          bottom:
+              kBottomNavigationBarHeight +
+              MediaQuery.of(context).padding.bottom,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(

@@ -8,8 +8,13 @@ class NewsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top,
+        bottom:
+            kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10),
         child: Column(children: [NewsBuilder()]),
       ),
     );

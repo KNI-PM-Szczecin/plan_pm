@@ -117,6 +117,7 @@ class _TodayLecturesState extends State<TodayLectures> {
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
+                  padding: EdgeInsets.zero,
                   itemCount: groups.keys.length,
                   itemBuilder: (context, index) {
                     final lectures = groups[groups.keys.toList()[index]];

@@ -48,7 +48,12 @@ class _LecturesPageState extends State<LecturesPage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top,
+            left: 10,
+            right: 10,
+            bottom: 4,
+          ),
           child: DaySelection(
             currentDate: currentDate,
             defaultSelected: selectedDay,
@@ -131,6 +136,9 @@ class _LecturesPageState extends State<LecturesPage> {
                         enabled:
                             snapshot.connectionState == ConnectionState.waiting,
                         child: ListView.separated(
+                          padding: EdgeInsets.only(
+                            bottom: kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom,
+                          ),
                           itemCount: lectures.length,
                           separatorBuilder: (context, index) {
                             return SizedBox(height: 5);
