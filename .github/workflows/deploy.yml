@@ -19,6 +19,10 @@ jobs:
         working-directory: frontend
         run: flutter pub get
 
+      - name: Install CocoaPods dependencies
+        working-directory: frontend/ios
+        run: pod install
+
       - name: Decode certificate
         working-directory: frontend/ios
         run: |
@@ -58,6 +62,12 @@ jobs:
         with:
           channel: stable
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: frontend/android
+
       - name: Install Flutter dependencies
         working-directory: frontend
         run: flutter pub get
@@ -66,12 +76,6 @@ jobs:
         working-directory: frontend/android
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > upload-keystore.jks
-
-      - name: Install Ruby dependencies
-        working-directory: frontend/android
-        run: |
-          sudo gem install bundler
-          bundle install
 
       - name: Run Fastlane deploy
         working-directory: frontend/android
