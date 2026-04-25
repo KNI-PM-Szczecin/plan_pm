@@ -19,6 +19,24 @@ jobs:
         working-directory: frontend
         run: flutter pub get
 
+      - name: Generate secrets.dart
+        env:
+          SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_PROD_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
+        run: |
+          cat > frontend/lib/secrets.dart << EOF
+          import 'env_config.dart';
+
+          class Secrets {
+            static const String supabaseUrl = kSimulateNetworkErrors
+                ? "http://localhost:9999"
+                : "$SUPABASE_PROD_URL";
+            static const String supabaseAnonKey = kSimulateNetworkErrors
+                ? "invalid_key"
+                : "$SUPABASE_PROD_ANON_KEY";
+          }
+          EOF
+
       - name: Install CocoaPods dependencies
         working-directory: frontend/ios
         run: pod install
@@ -71,6 +89,24 @@ jobs:
       - name: Install Flutter dependencies
         working-directory: frontend
         run: flutter pub get
+
+      - name: Generate secrets.dart
+        env:
+          SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
+          SUPABASE_PROD_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
+        run: |
+          cat > frontend/lib/secrets.dart << EOF
+          import 'env_config.dart';
+
+          class Secrets {
+            static const String supabaseUrl = kSimulateNetworkErrors
+                ? "http://localhost:9999"
+                : "$SUPABASE_PROD_URL";
+            static const String supabaseAnonKey = kSimulateNetworkErrors
+                ? "invalid_key"
+                : "$SUPABASE_PROD_ANON_KEY";
+          }
+          EOF
 
       - name: Decode keystore
         working-directory: frontend/android
