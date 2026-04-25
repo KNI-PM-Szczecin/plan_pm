@@ -24,18 +24,17 @@ jobs:
           SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
           SUPABASE_PROD_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
         run: |
-          cat > frontend/lib/secrets.dart << EOF
-          import 'env_config.dart';
-
-          class Secrets {
-            static const String supabaseUrl = kSimulateNetworkErrors
-                ? "http://localhost:9999"
-                : "$SUPABASE_PROD_URL";
-            static const String supabaseAnonKey = kSimulateNetworkErrors
-                ? "invalid_key"
-                : "$SUPABASE_PROD_ANON_KEY";
-          }
-          EOF
+          {
+            printf "import 'env_config.dart';\n\n"
+            printf "class Secrets {\n"
+            printf "  static const String supabaseUrl = kSimulateNetworkErrors\n"
+            printf "      ? \"http://localhost:9999\"\n"
+            printf "      : \"%s\";\n" "$SUPABASE_PROD_URL"
+            printf "  static const String supabaseAnonKey = kSimulateNetworkErrors\n"
+            printf "      ? \"invalid_key\"\n"
+            printf "      : \"%s\";\n" "$SUPABASE_PROD_ANON_KEY"
+            printf "}\n"
+          } > frontend/lib/secrets.dart
 
       - name: Install CocoaPods dependencies
         working-directory: frontend/ios
@@ -95,18 +94,17 @@ jobs:
           SUPABASE_PROD_URL: ${{ secrets.SUPABASE_PROD_URL }}
           SUPABASE_PROD_ANON_KEY: ${{ secrets.SUPABASE_PROD_ANON_KEY }}
         run: |
-          cat > frontend/lib/secrets.dart << EOF
-          import 'env_config.dart';
-
-          class Secrets {
-            static const String supabaseUrl = kSimulateNetworkErrors
-                ? "http://localhost:9999"
-                : "$SUPABASE_PROD_URL";
-            static const String supabaseAnonKey = kSimulateNetworkErrors
-                ? "invalid_key"
-                : "$SUPABASE_PROD_ANON_KEY";
-          }
-          EOF
+          {
+            printf "import 'env_config.dart';\n\n"
+            printf "class Secrets {\n"
+            printf "  static const String supabaseUrl = kSimulateNetworkErrors\n"
+            printf "      ? \"http://localhost:9999\"\n"
+            printf "      : \"%s\";\n" "$SUPABASE_PROD_URL"
+            printf "  static const String supabaseAnonKey = kSimulateNetworkErrors\n"
+            printf "      ? \"invalid_key\"\n"
+            printf "      : \"%s\";\n" "$SUPABASE_PROD_ANON_KEY"
+            printf "}\n"
+          } > frontend/lib/secrets.dart
 
       - name: Decode keystore
         working-directory: frontend/android
