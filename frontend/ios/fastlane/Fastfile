@@ -6,14 +6,44 @@ platform :ios do
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
-      key_filepath: "~/.appstoreconnect/private_keys/AuthKey_#{ENV["APP_STORE_KEY_ID"]}.p8",
+      key_content: ENV["APP_STORE_PRIVATE_KEY"],
     )
+
+    # Install certificate and provisioning profile in CI
+    if ENV["CI"]
+      keychain_name = "ci_keychain"
+      keychain_password = "ci_temp"
+
+      create_keychain(
+        name: keychain_name,
+        password: keychain_password,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+      )
+
+      import_certificate(
+        certificate_path: "certificate.p12",
+        certificate_password: ENV["IOS_CERTIFICATE_PASSWORD"],
+        keychain_name: keychain_name,
+        keychain_password: keychain_password,
+      )
+
+      install_provisioning_profile(path: "profile.mobileprovision")
+
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: "Runner.xcodeproj",
+        code_sign_identity: "Apple Distribution",
+        profile_name: "iOS Team Store Provisioning Profile: com.piotrwittig.planpm",
+      )
+    end
 
     # Read version + build number from pubspec.yaml
     pubspec = YAML.load_file("../../pubspec.yaml")
-    version_full = pubspec["version"]              # e.g. "1.0.7+17"
-    version_name = version_full.split("+").first   # "1.0.7"
-    build_number = version_full.split("+").last    # "17"
+    version_full = pubspec["version"]
+    version_name = version_full.split("+").first
+    build_number = version_full.split("+").last
 
     increment_version_number(
       version_number: version_name,

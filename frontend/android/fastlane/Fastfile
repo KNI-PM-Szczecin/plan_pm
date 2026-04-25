@@ -3,12 +3,21 @@ default_platform(:android)
 platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    # Build signed AAB via Flutter (from the frontend root)
+    # Write key.properties from env vars for release signing
+    key_props = [
+      "storePassword=#{ENV["ANDROID_KEYSTORE_PASSWORD"]}",
+      "keyPassword=#{ENV["ANDROID_KEY_PASSWORD"]}",
+      "keyAlias=#{ENV["ANDROID_KEY_ALIAS"]}",
+      "storeFile=../upload-keystore.jks",
+    ].join("\n")
+    File.write("../../android/key.properties", key_props)
+
     sh("cd ../../ && flutter build appbundle --release")
 
     upload_to_play_store(
       track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"],
       skip_upload_apk: true,
       skip_upload_metadata: true,
       skip_upload_images: true,
@@ -21,6 +30,7 @@ platform :android do
     upload_to_play_store(
       track: "internal",
       track_promote_to: "production",
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"],
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,

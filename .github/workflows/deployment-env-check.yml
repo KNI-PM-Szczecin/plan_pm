@@ -1,0 +1,35 @@
+name: Deployment env check
+
+on:
+  pull_request:
+    branches: [deployment]
+
+jobs:
+  deployment-env-check:
+    name: deployment-env-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check no debug flags are enabled
+        run: |
+          FILE="frontend/lib/env_config.dart"
+          FAILED=0
+
+          check() {
+            local KEY=$1
+            local VAL=$(grep "^const bool $KEY" "$FILE" | grep -o 'true\|false')
+            if [ "$VAL" = "true" ]; then
+              echo "❌ $KEY is set to true — must be false before deploying"
+              FAILED=1
+            else
+              echo "✅ $KEY = false"
+            fi
+          }
+
+          check kUseTestDb
+          check kSimulateNetworkErrors
+          check kDebugAnnouncement
+          check kDebugWhatsNew
+
+          [ $FAILED -eq 0 ] || exit 1
