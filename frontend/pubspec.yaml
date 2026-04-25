@@ -90,6 +90,7 @@ flutter:
     - assets/lotties/
     - assets/
     - fonts/
+    - CHANGELOG.md
 
 flutter_launcher_icons:
   image_path: "assets/logo.png"

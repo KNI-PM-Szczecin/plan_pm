@@ -236,7 +236,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _checkWhatsNew() async {
     final info = await PackageInfo.fromPlatform();
     final version = info.version;
-    final changes = kChangelog[version] ?? kChangelog.values.last;
+    if (!mounted) return;
+    final locale = Localizations.localeOf(context);
+    final changes = await loadChangelogForLocale(version, locale);
 
     if (kDebugWhatsNew) {
       if (!mounted) return;
@@ -248,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    if (kChangelog[version] == null) return;
+    if (changes.isEmpty) return;
 
     final prefs = await SharedPreferences.getInstance();
     final lastSeen = prefs.getString('last_whats_new_version');
@@ -372,7 +374,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.of(context).pop();
           final info = await PackageInfo.fromPlatform();
           final version = info.version;
-          final changes = kChangelog[version] ?? kChangelog.values.last;
+          if (!context.mounted) return;
+          final locale = Localizations.localeOf(context);
+          final changes = await loadChangelogForLocale(version, locale);
           if (!context.mounted) return;
           showDialog(
             context: context,

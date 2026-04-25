@@ -1,5 +1,13 @@
 default_platform(:ios)
 
+def read_changelog_locale(version, locale)
+  changelog = File.read("../../CHANGELOG.md")
+  version_match = changelog.match(/^## #{Regexp.escape(version)}\n(.*?)(?=\n^## |\z)/m)
+  return "Bug fixes and improvements" unless version_match
+  locale_match = version_match[1].match(/^### #{Regexp.escape(locale)}\n(.*?)(?=\n^### |\z)/m)
+  locale_match ? locale_match[1].strip : "Bug fixes and improvements"
+end
+
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
@@ -56,6 +64,15 @@ platform :ios do
     )
 
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-    upload_to_testflight(api_key: api_key)
+
+    changelog = [
+      read_changelog_locale(version_name, "pl-PL"),
+      read_changelog_locale(version_name, "en-US"),
+    ].join("\n\n")
+
+    upload_to_testflight(
+      api_key: api_key,
+      changelog: changelog,
+    )
   end
 end
