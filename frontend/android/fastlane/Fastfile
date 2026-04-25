@@ -1,5 +1,13 @@
 default_platform(:android)
 
+def read_changelog_locale(version, locale)
+  changelog = File.read("../../CHANGELOG.md")
+  version_match = changelog.match(/^## #{Regexp.escape(version)}\n(.*?)(?=\n^## |\z)/m)
+  return "Bug fixes and improvements" unless version_match
+  locale_match = version_match[1].match(/^### #{Regexp.escape(locale)}\n(.*?)(?=\n^### |\z)/m)
+  locale_match ? locale_match[1].strip : "Bug fixes and improvements"
+end
+
 platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
@@ -14,6 +22,9 @@ platform :android do
 
     sh("cd ../../ && flutter build appbundle --release")
 
+    pubspec = YAML.load_file("../../pubspec.yaml")
+    version_name = pubspec["version"].split("+").first
+
     upload_to_play_store(
       track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
@@ -22,6 +33,10 @@ platform :android do
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
+      release_notes: {
+        "pl-PL" => read_changelog_locale(version_name, "pl-PL"),
+        "en-US" => read_changelog_locale(version_name, "en-US"),
+      },
     )
   end
 

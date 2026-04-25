@@ -1,0 +1,22 @@
+name: Changelog check
+
+on:
+  pull_request:
+    branches: [deployment]
+
+jobs:
+  changelog-check:
+    name: changelog-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check CHANGELOG entry for version
+        run: |
+          VERSION=$(grep '^version:' frontend/pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          if ! grep -q "^## $VERSION" frontend/CHANGELOG.md; then
+            echo "❌ Brak wpisu w CHANGELOG.md dla wersji $VERSION"
+            echo "   Dodaj sekcję '## $VERSION' do frontend/CHANGELOG.md"
+            exit 1
+          fi
+          echo "✅ CHANGELOG.md zawiera wpis dla wersji $VERSION"

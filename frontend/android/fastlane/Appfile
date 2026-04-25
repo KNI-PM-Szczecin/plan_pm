@@ -1,2 +1,3 @@
-json_key_file(ENV["SUPPLY_JSON_KEY"] || File.expand_path("../planpm_deploy_key.json", __dir__)) # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file_path = File.expand_path("../planpm_deploy_key.json", __dir__)
+json_key_file(json_key_file_path) if File.exist?(json_key_file_path)
 package_name("com.piotrwittig.plan_pm") # e.g. com.krausefx.app
