@@ -70,7 +70,7 @@ jobs:
       - name: Install Ruby dependencies
         working-directory: frontend/android
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
 
       - name: Run Fastlane deploy

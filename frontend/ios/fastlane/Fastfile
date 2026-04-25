@@ -29,7 +29,8 @@ platform :ios do
         keychain_password: keychain_password,
       )
 
-      profile_uuid = install_provisioning_profile(path: "profile.mobileprovision")
+      profile_path = install_provisioning_profile(path: "profile.mobileprovision")
+      profile_uuid = File.basename(profile_path, ".mobileprovision")
 
       update_code_signing_settings(
         use_automatic_signing: false,
