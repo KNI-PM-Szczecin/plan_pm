@@ -29,13 +29,13 @@ platform :ios do
         keychain_password: keychain_password,
       )
 
-      install_provisioning_profile(path: "profile.mobileprovision")
+      profile_uuid = install_provisioning_profile(path: "profile.mobileprovision")
 
       update_code_signing_settings(
         use_automatic_signing: false,
         path: "Runner.xcodeproj",
         code_sign_identity: "Apple Distribution",
-        profile_name: "iOS Team Store Provisioning Profile: com.piotrwittig.planpm",
+        profile_uuid: profile_uuid,
       )
     end
 

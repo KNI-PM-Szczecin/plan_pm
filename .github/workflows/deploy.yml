@@ -69,7 +69,9 @@ jobs:
 
       - name: Install Ruby dependencies
         working-directory: frontend/android
-        run: bundle install
+        run: |
+          gem install bundler
+          bundle install
 
       - name: Run Fastlane deploy
         working-directory: frontend/android
