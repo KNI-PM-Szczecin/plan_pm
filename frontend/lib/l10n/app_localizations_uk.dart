@@ -272,6 +272,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get lengthLabel => 'Тривалість';
 
   @override
+  String get additionalInformation => 'ДОДАТКОВА ІНФОРМАЦІЯ';
+
+  @override
   String get notesLabel => 'Нотатки';
 
   @override

@@ -7,6 +7,9 @@ import 'package:plan_pm/global/notifiers.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
+// Palety gradientów dla kart zajęć — indeks zajęcia % długość listy = deterministyczny kolor.
+// Trzy warianty odpowiadają ustawieniu EventColorStyle w notifierze.
+
 List<LinearGradient> defaultGradients = [
   LinearGradient(
     begin: Alignment.bottomLeft,
@@ -136,6 +139,8 @@ List<LinearGradient> vibrantGradients = [
   ),
 ];
 
+// Skraca pełną nazwę grupy do pierwszego członu przed "/".
+// Np. "WI-S-AI-N-1/WI-S-AI-N-2" → "WI-S-AI-N-1, WI-S-AI-N-2"
 String longToShort(String long) {
   final pieces = long
       .split(",")
@@ -147,10 +152,12 @@ String longToShort(String long) {
   return pieces;
 }
 
+// Karta pojedynczego zajęcia na liście planu.
+// Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
 class Lecture extends StatefulWidget {
   const Lecture({
     super.key,
-    required this.idx,
+    required this.idx, // pozycja na liście — decyduje o kolorze gradientu
     required this.name,
     required this.timeFrom,
     required this.timeTo,
@@ -159,7 +166,7 @@ class Lecture extends StatefulWidget {
     required this.group,
     required this.duration,
     this.notes,
-    this.isProgressable = false,
+    this.isProgressable = false, // true tylko dla zajęć z dzisiejszego dnia
   });
 
   final int idx;
@@ -179,14 +186,15 @@ class Lecture extends StatefulWidget {
 
 class _LectureState extends State<Lecture> {
   bool expanded = false;
-  double _progress = 0.0;
-  bool _isInProgress = false;
+  double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
+  bool _isInProgress = false; // czy zajęcia aktualnie trwają
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
+    // Pasek postępu odświeżany co minutę — tylko dla dzisiejszych zajęć.
     if (widget.isProgressable) {
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         if (mounted) {
@@ -204,6 +212,8 @@ class _LectureState extends State<Lecture> {
     super.dispose();
   }
 
+  // Przelicza _progress i _isInProgress na podstawie aktualnego czasu.
+  // Timer jest anulowany gdy zajęcia się skończą — nie ma sensu dalej liczyć.
   void _calculateProgress() {
     if (!widget.isProgressable) return;
 
@@ -219,17 +229,20 @@ class _LectureState extends State<Lecture> {
     final endTime = parseTime(widget.timeTo);
 
     if (now.isBefore(startTime)) {
+      // Zajęcia jeszcze się nie zaczęły
       setState(() {
         _progress = 0.0;
         _isInProgress = false;
       });
     } else if (now.isAfter(endTime)) {
+      // Zajęcia już się skończyły — pasek pełny, timer niepotrzebny
       setState(() {
         _progress = 1.0;
         _isInProgress = false;
       });
       _timer?.cancel();
     } else {
+      // Zajęcia trwają — oblicz ile czasu minęło
       final totalMinutes = endTime.difference(startTime).inMinutes;
       final elapsedMinutes = now.difference(startTime).inMinutes;
       if (totalMinutes > 0) {
@@ -248,103 +261,66 @@ class _LectureState extends State<Lecture> {
     });
   }
 
-  //
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    // Dobierz gradient/kolor i kolor tekstu na podstawie ustawienia stylu kolorów.
+    // Pastel używa ciemnego tekstu bo jasne tło słabo kontrastuje z białym.
     final style = eventColorStyleNotifier.value;
     Gradient? cardGradient;
     Color? cardColor;
     Color textColor = AppColor.onPrimary;
-    Color progressBarFillColor = Colors.white.withOpacity(0.85);
+    Color progressBarFillColor = Colors.white.withValues(alpha: 0.85);
 
-    if (style == EventColorStyle.monochrome) {
-      cardColor = AppColor.primary;
-    } else if (style == EventColorStyle.pastel) {
-      cardGradient = pastelGradients[widget.idx % pastelGradients.length];
-      textColor = Colors.black87;
-      progressBarFillColor = textColor.withOpacity(0.50);
-    } else if (style == EventColorStyle.vibrant) {
-      cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
-    } else {
-      cardGradient = defaultGradients[widget.idx % defaultGradients.length];
+    switch (style) {
+      case EventColorStyle.monochrome:
+        cardColor = AppColor.primary;
+      case EventColorStyle.pastel:
+        cardGradient = pastelGradients[widget.idx % pastelGradients.length];
+        textColor = Colors.black87;
+        progressBarFillColor = textColor.withValues(alpha: 0.50);
+      case EventColorStyle.vibrant:
+        cardGradient = vibrantGradients[widget.idx % vibrantGradients.length];
+      default:
+        cardGradient = defaultGradients[widget.idx % defaultGradients.length];
     }
 
     bool isInProgress = widget.isProgressable && _isInProgress;
 
+    // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
     FontWeight titleWeight = isInProgress ? FontWeight.w900 : FontWeight.bold;
-    FontWeight subTextWeight = isInProgress ? FontWeight.bold : FontWeight.normal;
+    FontWeight subTextWeight = isInProgress
+        ? FontWeight.bold
+        : FontWeight.normal;
 
-    return Card(
-      color: AppColor.surface,
-      child: Column(
-        children: [
-          Material(
+    // Jeden gradient obejmuje całą kartę (górna + rozwijana sekcja).
+    // ClipRRect przycina całą kartę i ripple InkWell do zaokrąglonych rogów.
+    // Jeden wspólny Material + InkWell — ripple maluje się na jednej powierzchni
+    // przez całą wysokość karty, niezależnie od tego gdzie użytkownik tapnie.
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(gradient: cardGradient, color: cardColor),
+          child: Material(
             color: Colors.transparent,
-            child: Ink(
-              decoration: BoxDecoration(
-                gradient: cardGradient,
-                color: cardColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Stack(
-                  children: [
-                    if (isInProgress)
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 5, // Grubość paska
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.25),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  bottomRight: Radius.circular(12),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: TweenAnimationBuilder<double>(
-                                duration: const Duration(milliseconds: 800),
-                                curve: Curves.easeOutCubic,
-                                tween: Tween<double>(
-                                  begin: 0.0,
-                                  end: _progress,
-                                ),
-                                builder: (context, value, child) {
-                                  return FractionallySizedBox(
-                                    widthFactor: value,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: progressBarFillColor,
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(12),
-                                          topRight: Radius.circular(4),
-                                          bottomRight: Radius.circular(4),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: switchExpanded,
-                      child: Padding(
+            child: InkWell(
+              radius: 250.0,
+              onTap: switchExpanded,
+              splashColor: Colors.white.withValues(alpha: 0.2),
+              highlightColor: Colors.white.withValues(alpha: 0.08),
+              child: Column(
+                children: [
+                  // Górna część — tytuł, godzina, sala + opcjonalny pasek postępu
+                  Stack(
+                    children: [
+                      Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
+                            // Wiersz: nazwa zajęć + strzałka rozwijania
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -372,6 +348,7 @@ class _LectureState extends State<Lecture> {
                                 ),
                               ],
                             ),
+                            // Wiersz: godzina + sala
                             Row(
                               spacing: 5,
                               children: [
@@ -393,6 +370,8 @@ class _LectureState extends State<Lecture> {
                                   size: 16,
                                   color: textColor,
                                 ),
+                                // Sala — separator z bazy to " , " (spacja-przecinek-spacja),
+                                // normalizowany do standardowego ", "
                                 Expanded(
                                   child: Text(
                                     widget.location != null
@@ -416,70 +395,143 @@ class _LectureState extends State<Lecture> {
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                      // Pasek postępu na dole górnej sekcji — widoczny tylko gdy zajęcia trwają
+                      if (isInProgress)
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 5,
+                          child: Stack(
+                            children: [
+                              // Tło paska (półprzezroczyste)
+                              Container(
+                                color: Colors.white.withValues(alpha: 0.25),
+                              ),
+                              // Wypełnienie paska animowane przy każdej zmianie _progress
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TweenAnimationBuilder<double>(
+                                  duration: const Duration(milliseconds: 800),
+                                  curve: Curves.easeOutCubic,
+                                  tween: Tween<double>(
+                                    begin: 0.0,
+                                    end: _progress,
+                                  ),
+                                  builder: (context, value, child) {
+                                    return FractionallySizedBox(
+                                      widthFactor: value,
+                                      child: Container(
+                                        color: progressBarFillColor,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                  // Rozwijana sekcja szczegółów
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeInOut,
+                    child: expanded
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 12,
+                              left: 12,
+                              right: 12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(
+                                  color: Color.fromARGB(80, 228, 227, 227),
+                                ),
+                                const SizedBox(height: 2),
+                                // left: 4 wyrównuje ikonę do lewej krawędzi górnej sekcji (padding 16 vs 12)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4),
+                                  child: Row(
+                                    spacing: 5,
+                                    children: [
+                                      Icon(
+                                        LucideIcons.calendar,
+                                        size: 16,
+                                        color: textColor,
+                                      ),
+                                      Text(
+                                        "${l10n.lengthLabel}: ${widget.duration}",
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontWeight: subTextWeight,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                // Nagłówek sekcji dodatkowych szczegółów
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4),
+                                  child: Text(
+                                    l10n.additionalInformation,
+                                    style: TextStyle(
+                                      color: textColor.withValues(alpha: 0.70),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                // Ramka z pozostałymi szczegółami zajęcia
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.28),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      if (widget.professor != null)
+                                        DescriptionItem(
+                                          icon: LucideIcons.user,
+                                          color: Colors.blue,
+                                          name: l10n.professorLabel,
+                                          content:
+                                              widget.professor ??
+                                              l10n.professorNaN,
+                                        ),
+                                      DescriptionItem(
+                                        icon: LucideIcons.bookLock,
+                                        color: Colors.green,
+                                        name: l10n.groupLabel,
+                                        content: longToShort(widget.group),
+                                      ),
+                                      if (widget.notes != null)
+                                        DescriptionItem(
+                                          icon: LucideIcons.stickyNote,
+                                          color: Colors.yellow,
+                                          name: l10n.notesLabel,
+                                          content:
+                                              widget.notes ??
+                                              l10n.emptyNotesLabel,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
               ),
             ),
           ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child: expanded
-                ? Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.surface,
-                      boxShadow: [BoxShadow()],
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                    child: GestureDetector(
-                      onTap: switchExpanded,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          spacing: 10,
-                          children: [
-                            widget.professor != null
-                                ? DescriptionItem(
-                                    icon: LucideIcons.user,
-                                    color: Colors.blue,
-                                    name: l10n.professorLabel,
-                                    content:
-                                        widget.professor ?? l10n.professorNaN,
-                                  )
-                                : Container(),
-                            DescriptionItem(
-                              icon: LucideIcons.bookLock,
-                              color: Colors.green,
-                              name: l10n.groupLabel,
-                              content: longToShort(widget.group),
-                            ),
-                            DescriptionItem(
-                              icon: LucideIcons.clock,
-                              color: Colors.purple,
-                              name: l10n.lengthLabel,
-                              content: widget.duration,
-                            ),
-                            widget.notes != null
-                                ? DescriptionItem(
-                                    icon: LucideIcons.stickyNote,
-                                    color: Colors.yellow,
-                                    name: l10n.notesLabel,
-                                    content:
-                                        widget.notes ?? l10n.emptyNotesLabel,
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
+        ),
       ),
     );
   }

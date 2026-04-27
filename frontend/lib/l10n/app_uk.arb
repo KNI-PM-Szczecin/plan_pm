@@ -83,6 +83,7 @@
   },
   "groupLabel": "Група",
   "lengthLabel": "Тривалість",
+  "additionalInformation": "ДОДАТКОВА ІНФОРМАЦІЯ",
   "notesLabel": "Нотатки",
   "emptyNotesLabel": "Пусто",
   "pageTitleSettings": "Налаштування",

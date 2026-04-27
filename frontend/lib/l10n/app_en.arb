@@ -94,6 +94,7 @@
   "professorLabel": "Professor",
   "groupLabel": "Group",
   "lengthLabel": "Duration",
+  "additionalInformation": "ADDITIONAL INFORMATION",
   "notesLabel": "Notes",
   "emptyNotesLabel": "Empty",
   "newsSectionLabel": "Recent news",

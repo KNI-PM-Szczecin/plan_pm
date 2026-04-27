@@ -586,6 +586,12 @@ abstract class AppLocalizations {
   /// **'Czas trwania'**
   String get lengthLabel;
 
+  /// No description provided for @additionalInformation.
+  ///
+  /// In pl, this message translates to:
+  /// **'INFORMACJE DODATKOWE'**
+  String get additionalInformation;
+
   /// lecture.dart - Label for the lecture wiget notes header.
   ///
   /// In pl, this message translates to:
