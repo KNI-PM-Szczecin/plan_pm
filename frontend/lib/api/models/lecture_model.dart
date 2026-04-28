@@ -30,57 +30,31 @@ class LectureModel {
   });
 
   factory LectureModel.fromJson(Map<String, dynamic> json) {
-    List<dynamic> teachersObject = json["teachersclasses"];
-    String? professors;
-    if (teachersObject.isEmpty) {
-      professors = null;
-    } else {
-      professors = teachersObject
-          .map((t) {
-            final teacher = t["teachers"];
-            if (teacher == null) return null;
-            return "${teacher["title"] ?? ""} ${teacher["fullName"] ?? ""}"
-                .trim();
-          })
-          .whereType<String>()
-          .where((name) => name.isNotEmpty)
-          .join(", ");
-    }
-
-    DateTime timeFrom = DateTime.parse(json["startTime"]);
-    DateTime timeTo = DateTime.parse(json["endTime"]);
+    DateTime timeFrom = DateTime.parse(json["start_time"]);
+    DateTime timeTo = DateTime.parse(json["end_time"]);
     int duration = timeTo.difference(timeFrom).inMinutes;
+
+    String? roomName = json["room_name"] as String?;
+    String? buildingName = json["building_name"] as String?;
     String? location;
-    String? building;
-    String? notes = json["notes"];
-    if (json["rooms"] == null) {
-      location = null;
-      building = null;
-    } else {
-      if (json["rooms"]["building"] == null) {
-        location = null;
-        building = null;
-      } else {
-        if (json["rooms"]["building"]["name"] == null) {
-          location = null;
-          building = null;
-        } else {
-          location =
-              "${json["rooms"]["building"]["name"]} ${json["rooms"]["name"]}";
-          building = json["rooms"]["building"]["name"];
-        }
-      }
+
+    if (buildingName != null && roomName != null) {
+      location = "$buildingName $roomName";
+    } else if (roomName != null) {
+      location = roomName;
     }
 
     return LectureModel(
-      id: json["id"] as String,
+      id: json["id"].toString(),
       name: json["subject"] as String,
       startTime: DateFormat.Hm().format(timeFrom).toString(),
       endTime: DateFormat.Hm().format(timeTo).toString(),
       room: location,
-      building: building,
+      building: buildingName,
       group: json["group"] as String,
-      professor: professors,
+      
+      professor: json["professors"] as String?, 
+      
       date: DateTime(
         timeFrom.year,
         timeFrom.month,
@@ -90,7 +64,7 @@ class LectureModel {
       ),
       duration: "$duration min",
       location: location,
-      notes: notes,
+      notes: json["notes"] as String?,
     );
   }
 
