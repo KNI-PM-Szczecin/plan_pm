@@ -532,4 +532,80 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get whatsNewGotIt => 'Super!';
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}min';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get roleSelectionTitle => 'Jak chcesz korzystać z PlanPM?';
+
+  @override
+  String get roleSelectionSubtitle =>
+      'Wybierz rolę, która najlepiej opisuje Twoje potrzeby';
+
+  @override
+  String get roleStudentButton => 'Jestem studentem';
+
+  @override
+  String get roleLecturerButton => 'Jestem wykładowcą';
+
+  @override
+  String get lecturerSelectionTitle => 'Wybierz prowadzącego';
+
+  @override
+  String get lecturerSelectionSubtitle =>
+      'Wpisz imię, nazwisko lub nazwę przedmiotu';
+
+  @override
+  String get lecturerSearchNoResults => 'Brak wyników';
+
+  @override
+  String get lecturerLabel => 'Wykładowca';
+
+  @override
+  String get roleSectionTitle => 'Rola';
+
+  @override
+  String get roleStudentViewTitle => 'Widok studenta';
+
+  @override
+  String get roleStudentViewSubtitle => 'Przełącz na plan studenta';
+
+  @override
+  String get roleCurrentlyActive => 'Aktualnie aktywny';
+
+  @override
+  String get roleLecturerViewTitle => 'Widok wykładowcy';
+
+  @override
+  String get roleLecturerViewSubtitle => 'Przełącz na widok wykładowcy';
+
+  @override
+  String get debugRoleSelector => 'Wybór roli';
+
+  @override
+  String get debugClearCache => 'Wyczyść cache';
+
+  @override
+  String get debugCacheCleared => 'Cache wyczyszczony';
+
+  @override
+  String get debugSevenDayMode => 'Tryb 7-dniowy';
+
+  @override
+  String get newsLoading => 'Ładowanie aktualności';
+
+  @override
+  String get newsNoDataDescription =>
+      'Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.';
+
+  @override
+  String get searchHint => 'Szukaj...';
 }

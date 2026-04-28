@@ -2,8 +2,12 @@ import 'package:intl/intl.dart';
 // import 'dart:developer' as developer;
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
+import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/api/models/news_model.dart';
+import 'package:plan_pm/global/app_mode.dart';
+import 'package:plan_pm/global/lecturer.dart';
 import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/service/database_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/logger.dart';
@@ -32,13 +36,17 @@ class BackendService {
   BackendService._internal();
 
   Future<List<LectureModel>> fetchLectures() async {
+    if (AppModeManager.current == AppMode.lecturer) {
+      return _fetchLecturesForLecturer();
+    }
+    return _fetchLecturesForStudent();
+  }
+
+  Future<List<LectureModel>> _fetchLecturesForStudent() async {
     if (Student.specialisation == null) {
       AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
     final List<String> selectedGroups = Student.selectedGroups ?? [];
-
-    // final today = filterDate;
-    // final tomorrow = filterDate.add(Duration(days: 1));
 
     var query = Supabase.instance.client
         .from("classes")
@@ -48,7 +56,7 @@ class BackendService {
         subject,
         startTime,
         endTime,
-        programs!inner(name, programType, year),
+        programs!inner(name, programType, year, degreeLevel),
         teachersclasses(teachers(fullName, title)),
         rooms:room(
           name,
@@ -68,14 +76,41 @@ class BackendService {
     }
 
     final response = await query;
+    final lectures = response.map((json) => LectureModel.fromJson(json)).toList();
+    lectures.sort((a, b) => a.date.compareTo(b.date));
+    return lectures;
+  }
 
-    final data = response;
+  Future<List<LectureModel>> _fetchLecturesForLecturer() async {
+    final teacherClasses = await Supabase.instance.client
+        .from("teachersclasses")
+        .select("classes")
+        .eq("teachers", Lecturer.id!);
 
-    // messToText(data);
-    // developer.log(data.toString());
+    final classIds = teacherClasses
+        .map((r) => r["classes"] as String)
+        .toList();
 
-    // print(data);
-    final lectures = data.map((json) => LectureModel.fromJson(json)).toList();
+    if (classIds.isEmpty) return [];
+
+    final response = await Supabase.instance.client
+        .from("classes")
+        .select('''
+        id,
+        group,
+        subject,
+        startTime,
+        endTime,
+        programs(name, programType, year, degreeLevel),
+        teachersclasses(teachers(fullName, title)),
+        rooms:room(
+          name,
+          building:building(name)
+        )
+      ''')
+        .inFilter("id", classIds);
+
+final lectures = response.map((json) => LectureModel.fromJson(json)).toList();
     lectures.sort((a, b) => a.date.compareTo(b.date));
     return lectures;
   }
@@ -98,6 +133,14 @@ class BackendService {
     }
     List<String> data = uniqueGroups.toList()..sort();
     return data;
+  }
+
+  Future<List<LecturerItem>> fetchTeachers() async {
+    final response = await Supabase.instance.client
+        .from("teachers")
+        .select("id, fullName, title")
+        .order("fullName", ascending: true);
+    return response.map((json) => LecturerItem.fromJson(json)).toList();
   }
 
   Future<List<NewsModel>> fetchNews({int limit = 20}) async {
@@ -136,6 +179,13 @@ class BackendService {
         .limit(1);
     if (response.isEmpty) return null;
     return AnnouncementModel.fromJson(response.first);
+  }
+
+  Future<void> clearCache() async {
+    final db = DatabaseService.instance;
+    await db.clearLectures();
+    await db.clearNews();
+    AppLogger.i("[BACKEND-SERVICE] Cache cleared");
   }
 
   Future<Map<String, Map<String, List<String>>>> fetchStructure() async {

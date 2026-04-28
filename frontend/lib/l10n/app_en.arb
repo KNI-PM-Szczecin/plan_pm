@@ -168,5 +168,39 @@
   "announcementUpdate": "Update",
   "announcementSkip": "Skip",
   "whatsNewTitle": "What's new",
-  "whatsNewGotIt": "Got it!"
+  "whatsNewGotIt": "Got it!",
+  "durationHoursMinutes": "{hours}h {minutes}min",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "roleSelectionTitle": "How do you want to use PlanPM?",
+  "roleSelectionSubtitle": "Choose the role that best describes your needs",
+  "roleStudentButton": "I'm a student",
+  "roleLecturerButton": "I'm a lecturer",
+  "lecturerSelectionTitle": "Select lecturer",
+  "lecturerSelectionSubtitle": "Enter name, surname or subject name",
+  "lecturerSearchNoResults": "No results",
+  "lecturerLabel": "Lecturer",
+  "roleSectionTitle": "Role",
+  "roleStudentViewTitle": "Student View",
+  "roleStudentViewSubtitle": "Switch to student schedule",
+  "roleCurrentlyActive": "Currently active",
+  "roleLecturerViewTitle": "Lecturer View",
+  "roleLecturerViewSubtitle": "Switch to manage classes",
+  "debugRoleSelector": "Role Selector",
+  "debugClearCache": "Clear cache",
+  "debugCacheCleared": "Cache cleared",
+  "debugSevenDayMode": "7-day mode",
+  "newsLoading": "Loading news",
+  "newsNoDataDescription": "No new messages. Check back later for updates.",
+  "searchHint": "Search..."
 }

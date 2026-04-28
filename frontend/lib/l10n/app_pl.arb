@@ -563,5 +563,39 @@
     "description": "news_card.dart - Read more label shown at the bottom of news card preview."
   },
   "whatsNewTitle": "Co nowego",
-  "whatsNewGotIt": "Super!"
+  "whatsNewGotIt": "Super!",
+  "durationHoursMinutes": "{hours}h {minutes}min",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "roleSelectionTitle": "Jak chcesz korzystać z PlanPM?",
+  "roleSelectionSubtitle": "Wybierz rolę, która najlepiej opisuje Twoje potrzeby",
+  "roleStudentButton": "Jestem studentem",
+  "roleLecturerButton": "Jestem wykładowcą",
+  "lecturerSelectionTitle": "Wybierz prowadzącego",
+  "lecturerSelectionSubtitle": "Wpisz imię, nazwisko lub nazwę przedmiotu",
+  "lecturerSearchNoResults": "Brak wyników",
+  "lecturerLabel": "Wykładowca",
+  "roleSectionTitle": "Rola",
+  "roleStudentViewTitle": "Widok studenta",
+  "roleStudentViewSubtitle": "Przełącz na plan studenta",
+  "roleCurrentlyActive": "Aktualnie aktywny",
+  "roleLecturerViewTitle": "Widok wykładowcy",
+  "roleLecturerViewSubtitle": "Przełącz na widok wykładowcy",
+  "debugRoleSelector": "Wybór roli",
+  "debugClearCache": "Wyczyść cache",
+  "debugCacheCleared": "Cache wyczyszczony",
+  "debugSevenDayMode": "Tryb 7-dniowy",
+  "newsLoading": "Ładowanie aktualności",
+  "newsNoDataDescription": "Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.",
+  "searchHint": "Szukaj..."
 }

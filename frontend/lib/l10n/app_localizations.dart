@@ -1053,6 +1053,144 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Super!'**
   String get whatsNewGotIt;
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{hours}h {minutes}min'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @roleSelectionTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jak chcesz korzystać z PlanPM?'**
+  String get roleSelectionTitle;
+
+  /// No description provided for @roleSelectionSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz rolę, która najlepiej opisuje Twoje potrzeby'**
+  String get roleSelectionSubtitle;
+
+  /// No description provided for @roleStudentButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jestem studentem'**
+  String get roleStudentButton;
+
+  /// No description provided for @roleLecturerButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jestem wykładowcą'**
+  String get roleLecturerButton;
+
+  /// No description provided for @lecturerSelectionTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz prowadzącego'**
+  String get lecturerSelectionTitle;
+
+  /// No description provided for @lecturerSelectionSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wpisz imię, nazwisko lub nazwę przedmiotu'**
+  String get lecturerSelectionSubtitle;
+
+  /// No description provided for @lecturerSearchNoResults.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak wyników'**
+  String get lecturerSearchNoResults;
+
+  /// No description provided for @lecturerLabel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wykładowca'**
+  String get lecturerLabel;
+
+  /// No description provided for @roleSectionTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rola'**
+  String get roleSectionTitle;
+
+  /// No description provided for @roleStudentViewTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Widok studenta'**
+  String get roleStudentViewTitle;
+
+  /// No description provided for @roleStudentViewSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przełącz na plan studenta'**
+  String get roleStudentViewSubtitle;
+
+  /// No description provided for @roleCurrentlyActive.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aktualnie aktywny'**
+  String get roleCurrentlyActive;
+
+  /// No description provided for @roleLecturerViewTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Widok wykładowcy'**
+  String get roleLecturerViewTitle;
+
+  /// No description provided for @roleLecturerViewSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przełącz na widok wykładowcy'**
+  String get roleLecturerViewSubtitle;
+
+  /// No description provided for @debugRoleSelector.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybór roli'**
+  String get debugRoleSelector;
+
+  /// No description provided for @debugClearCache.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyczyść cache'**
+  String get debugClearCache;
+
+  /// No description provided for @debugCacheCleared.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cache wyczyszczony'**
+  String get debugCacheCleared;
+
+  /// No description provided for @debugSevenDayMode.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb 7-dniowy'**
+  String get debugSevenDayMode;
+
+  /// No description provided for @newsLoading.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ładowanie aktualności'**
+  String get newsLoading;
+
+  /// No description provided for @newsNoDataDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.'**
+  String get newsNoDataDescription;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szukaj...'**
+  String get searchHint;
 }
 
 class _AppLocalizationsDelegate

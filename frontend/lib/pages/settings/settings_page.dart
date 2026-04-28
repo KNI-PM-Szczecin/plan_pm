@@ -3,17 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/pages/feedback/feedback_page.dart';
+import 'package:plan_pm/global/app_mode.dart';
 import 'package:plan_pm/pages/settings/widgets/group_info.dart';
+import 'package:plan_pm/pages/settings/widgets/lecturer_info.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
+import 'package:plan_pm/pages/settings/widgets/role_info.dart';
 import 'package:plan_pm/pages/settings/widgets/student_info.dart';
 import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/settings/language_page.dart';
+import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/pages/settings/about_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/service/backend_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -75,8 +80,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  StudentInfo(),
-                  GroupInfo(),
+                  const RoleInfo(),
+                  AppModeManager.current == AppMode.lecturer
+                      ? const LecturerInfo()
+                      : const StudentInfo(),
+                  if (AppModeManager.current == AppMode.student) const GroupInfo(),
                   MenuSection(
                     title: l10n.personalizationHeader,
                     child: Column(
@@ -130,6 +138,31 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Column(
                         children: [
                           MenuButton(
+                            title: l10n.debugRoleSelector,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RoleSelectionPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          Divider(height: 1, color: AppColor.outline),
+                          MenuButton(
+                            title: l10n.debugClearCache,
+                            onTap: () async {
+                              HapticFeedback.lightImpact();
+                              await BackendService().clearCache();
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(l10n.debugCacheCleared)),
+                              );
+                            },
+                          ),
+                          Divider(height: 1, color: AppColor.outline),
+                          MenuButton(
                             title: l10n.debugReturnToWelcome,
                             onTap: () {
                               HapticFeedback.lightImpact();
@@ -148,7 +181,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Tryb 7-dniowy", style: TextStyle(color: AppColor.onSurface)),
+                                  Text(l10n.debugSevenDayMode, style: TextStyle(color: AppColor.onSurface)),
                                   Transform.scale(
                                     scale: 0.8,
                                     child: Switch(

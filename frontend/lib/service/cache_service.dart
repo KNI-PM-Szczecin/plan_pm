@@ -36,6 +36,9 @@ class CacheService {
         group: lecture.group,
         duration: lecture.duration,
         date: lecture.date,
+        programName: lecture.programName,
+        year: lecture.year,
+        degreeLevel: lecture.degreeLevel,
       );
     }
   }

@@ -4,7 +4,10 @@ import 'package:plan_pm/global/notifiers.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/app_mode.dart';
+import 'package:plan_pm/global/lecturer.dart';
 import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
@@ -38,11 +41,35 @@ Future<Widget> appInitialization() async {
   AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  // Jezeli nie ma flagi skip_welcome to znaczy, ze uzytkownik jest pierwszy raz w apce
   if (!prefs.containsKey("skip_welcome")) {
     return const WelcomePage();
   }
 
+  await AppModeManager.loadFromPrefs();
+
+  if (AppModeManager.current == AppMode.lecturer) {
+    Lecturer.id = prefs.getString('lecturer_id');
+    Lecturer.name = prefs.getString('lecturer_name');
+    Lecturer.title = prefs.getString('lecturer_title');
+
+    if (Lecturer.id == null || Lecturer.name == null) {
+      return const RoleSelectionPage();
+    }
+
+    sevenDayModeNotifier.value = true;
+
+    try {
+      final cacheService = CacheService();
+      await cacheService.syncLectures();
+      await cacheService.syncNews();
+    } catch (error) {
+      AppLogger.e("[APP-INIT] Caching error", error);
+    }
+
+    return const MyHomePage(title: "Strona główna");
+  }
+
+  // Student path
   Student.course = prefs.getString("course");
   Student.degreeCourse = prefs.getString("degree_course");
   Student.faculty = prefs.getString("faculty");
@@ -60,7 +87,6 @@ Future<Widget> appInitialization() async {
   Student.degreeLevel = prefs.getString("degree_level");
   Student.selectedGroups = prefs.getStringList("groups");
 
-  // Sprawdź czy student ma wszystkie mozliwe wypełnione dane
   final bool allFieldsArePresent =
       Student.course != null &&
       Student.degreeCourse != null &&
@@ -69,7 +95,6 @@ Future<Widget> appInitialization() async {
       Student.studyMode != null &&
       Student.selectedGroups != null;
 
-  // Jezeli uzytkownik nie ma danych o kierunku to przenieś go do InputPage
   if (!allFieldsArePresent) {
     return const InputPage();
   }
@@ -178,6 +203,9 @@ class App extends StatelessWidget {
                 Locale('pl'), // Polish
                 Locale('uk'), // Ukrainian
               ],
+              routes: {
+                '/home': (_) => const MyHomePage(title: 'Strona główna'),
+              },
               home: FutureBuilder<Widget>(
                 future: appInitialization(),
                 builder: (context, AsyncSnapshot<Widget> screen) {
@@ -215,8 +243,6 @@ List<Map<String, dynamic>> getPages(BuildContext context) {
     {"widget": const NewsPage(), "title": l10n.pageTitleNews},
   ];
 }
-// prze†łumaczyć date w today Lectures
-// przetlumaczyc date w dayselection
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
@@ -283,8 +309,10 @@ class _MyHomePageState extends State<MyHomePage> {
           _ => 'Komunikat systemowy',
         },
         message: switch (kDebugAnnouncementType) {
-          'warning' => 'Trwają prace serwisowe dla kierunku Mechatronika. Przepraszamy za utrudnienia.',
-          'update' => 'Wprowadziliśmy nowe funkcje i poprawiliśmy wydajność. Zaktualizuj aplikację do najnowszej wersji, aby działała jeszcze lepiej.',
+          'warning' =>
+            'Trwają prace serwisowe dla kierunku Mechatronika. Przepraszamy za utrudnienia.',
+          'update' =>
+            'Wprowadziliśmy nowe funkcje i poprawiliśmy wydajność. Zaktualizuj aplikację do najnowszej wersji, aby działała jeszcze lepiej.',
           _ => 'Mamy dla Ciebie ważną informację. Sprawdź szczegóły poniżej.',
         },
         type: kDebugAnnouncementType,
@@ -323,10 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
               HapticFeedback.selectionClick();
               Scaffold.of(context).openDrawer();
             },
-            icon: Icon(
-              LucideIcons.menu,
-              color: AppColor.onBackgroundVariant,
-            ),
+            icon: Icon(LucideIcons.menu, color: AppColor.onBackgroundVariant),
           ),
         ),
         centerTitle: true,
@@ -360,7 +385,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.of(context).pop();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const VirtualUniversityPage()),
+            MaterialPageRoute(
+              builder: (context) => const VirtualUniversityPage(),
+            ),
           );
         },
         onSettingsTap: () {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:plan_pm/global/app_mode.dart';
 import 'package:plan_pm/global/colors.dart';
 import 'package:plan_pm/global/notifiers.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
@@ -139,6 +140,18 @@ List<LinearGradient> vibrantGradients = [
   ),
 ];
 
+// Parsuje string "X min" z modelu i formatuje go jako "Xh Ymin" lub "Y min".
+// Jeśli format jest nieznany, zwraca oryginalny string.
+String formatDuration(String raw, AppLocalizations l10n) {
+  final match = RegExp(r'^(\d+)\s*min$').firstMatch(raw.trim());
+  if (match == null) return raw;
+  final total = int.parse(match.group(1)!);
+  final hours = total ~/ 60;
+  final minutes = total % 60;
+  if (hours > 0) return l10n.durationHoursMinutes(hours, minutes);
+  return l10n.durationMinutes(minutes);
+}
+
 // Skraca pełną nazwę grupy do pierwszego członu przed "/".
 // Np. "WI-S-AI-N-1/WI-S-AI-N-2" → "WI-S-AI-N-1, WI-S-AI-N-2"
 String longToShort(String long) {
@@ -167,6 +180,9 @@ class Lecture extends StatefulWidget {
     required this.duration,
     this.notes,
     this.isProgressable = false, // true tylko dla zajęć z dzisiejszego dnia
+    this.programName,
+    this.year,
+    this.degreeLevel,
   });
 
   final int idx;
@@ -179,6 +195,9 @@ class Lecture extends StatefulWidget {
   final String duration;
   final String? notes;
   final bool isProgressable;
+  final String? programName;
+  final int? year;
+  final String? degreeLevel;
 
   @override
   State<Lecture> createState() => _LectureState();
@@ -463,7 +482,7 @@ class _LectureState extends State<Lecture> {
                                         color: textColor,
                                       ),
                                       Text(
-                                        "${l10n.lengthLabel}: ${widget.duration}",
+                                        "${l10n.lengthLabel}: ${formatDuration(widget.duration, l10n)}",
                                         style: TextStyle(
                                           color: textColor,
                                           fontWeight: subTextWeight,
@@ -478,8 +497,8 @@ class _LectureState extends State<Lecture> {
                                   padding: const EdgeInsets.only(left: 4),
                                   child: Text(
                                     l10n.additionalInformation,
-                                    style: TextStyle(
-                                      color: textColor.withValues(alpha: 0.70),
+                                    style: const TextStyle(
+                                      color: Color(0xB3FFFFFF),
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 1.5,
@@ -493,34 +512,73 @@ class _LectureState extends State<Lecture> {
                                     color: Colors.black.withValues(alpha: 0.28),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Column(
-                                    children: [
-                                      if (widget.professor != null)
-                                        DescriptionItem(
-                                          icon: LucideIcons.user,
-                                          color: Colors.blue,
-                                          name: l10n.professorLabel,
-                                          content:
-                                              widget.professor ??
-                                              l10n.professorNaN,
+                                  child:
+                                      AppModeManager.current == AppMode.lecturer
+                                      ? Column(
+                                          children: [
+                                            DescriptionItem(
+                                              icon: LucideIcons.users,
+                                              color: Colors.green,
+                                              name: l10n.groupLabel,
+                                              content: longToShort(
+                                                widget.group,
+                                              ),
+                                            ),
+                                            if (widget.year != null)
+                                              DescriptionItem(
+                                                icon: LucideIcons.graduationCap,
+                                                color: Colors.blue,
+                                                name: l10n.yearLabel,
+                                                content: l10n.studyYear(
+                                                  widget.year!,
+                                                ),
+                                              ),
+                                            if (widget.degreeLevel != null)
+                                              DescriptionItem(
+                                                icon: LucideIcons.award,
+                                                color: Colors.orange,
+                                                name: l10n.degreeLevelLabel,
+                                                content: widget.degreeLevel!,
+                                              ),
+                                            if (widget.programName != null)
+                                              DescriptionItem(
+                                                icon: LucideIcons.bookOpen,
+                                                color: Colors.purple,
+                                                name: l10n.fieldLabel,
+                                                content: widget.programName!,
+                                              ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            if (widget.professor != null)
+                                              DescriptionItem(
+                                                icon: LucideIcons.user,
+                                                color: Colors.blue,
+                                                name: l10n.professorLabel,
+                                                content:
+                                                    widget.professor ??
+                                                    l10n.professorNaN,
+                                              ),
+                                            DescriptionItem(
+                                              icon: LucideIcons.bookLock,
+                                              color: Colors.green,
+                                              name: l10n.groupLabel,
+                                              content: longToShort(
+                                                widget.group,
+                                              ),
+                                            ),
+                                            if (widget.notes != null)
+                                              DescriptionItem(
+                                                icon: LucideIcons.stickyNote,
+                                                color: Colors.yellow,
+                                                name: l10n.notesLabel,
+                                                content:
+                                                    widget.notes ??
+                                                    l10n.emptyNotesLabel,
+                                              ),
+                                          ],
                                         ),
-                                      DescriptionItem(
-                                        icon: LucideIcons.bookLock,
-                                        color: Colors.green,
-                                        name: l10n.groupLabel,
-                                        content: longToShort(widget.group),
-                                      ),
-                                      if (widget.notes != null)
-                                        DescriptionItem(
-                                          icon: LucideIcons.stickyNote,
-                                          color: Colors.yellow,
-                                          name: l10n.notesLabel,
-                                          content:
-                                              widget.notes ??
-                                              l10n.emptyNotesLabel,
-                                        ),
-                                    ],
-                                  ),
                                 ),
                               ],
                             ),

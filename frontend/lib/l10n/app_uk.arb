@@ -169,5 +169,39 @@
   "announcementUpdate": "Оновити",
   "announcementSkip": "Пропустити",
   "whatsNewTitle": "Що нового",
-  "whatsNewGotIt": "Чудово!"
+  "whatsNewGotIt": "Чудово!",
+  "durationHoursMinutes": "{hours}г {minutes}хв",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "durationMinutes": "{minutes} хв",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "roleSelectionTitle": "Як хочете використовувати PlanPM?",
+  "roleSelectionSubtitle": "Оберіть роль, яка найкраще описує ваші потреби",
+  "roleStudentButton": "Я студент",
+  "roleLecturerButton": "Я викладач",
+  "lecturerSelectionTitle": "Виберіть викладача",
+  "lecturerSelectionSubtitle": "Введіть ім'я, прізвище або назву предмету",
+  "lecturerSearchNoResults": "Немає результатів",
+  "lecturerLabel": "Викладач",
+  "roleSectionTitle": "Роль",
+  "roleStudentViewTitle": "Перегляд студента",
+  "roleStudentViewSubtitle": "Переключитися на розклад студента",
+  "roleCurrentlyActive": "Зараз активний",
+  "roleLecturerViewTitle": "Перегляд викладача",
+  "roleLecturerViewSubtitle": "Переключитися на перегляд викладача",
+  "debugRoleSelector": "Вибір ролі",
+  "debugClearCache": "Очистити кеш",
+  "debugCacheCleared": "Кеш очищено",
+  "debugSevenDayMode": "Режим 7 днів",
+  "newsLoading": "Завантаження новин",
+  "newsNoDataDescription": "Немає нових повідомлень. Перевірте пізніше для оновлень.",
+  "searchHint": "Пошук..."
 }

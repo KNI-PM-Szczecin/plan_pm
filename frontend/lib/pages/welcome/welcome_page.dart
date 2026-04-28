@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/pages/welcome/input_page.dart';
+import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,7 +98,7 @@ class WelcomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const InputPage(),
+                            builder: (context) => const RoleSelectionPage(),
                           ),
                         );
                       }

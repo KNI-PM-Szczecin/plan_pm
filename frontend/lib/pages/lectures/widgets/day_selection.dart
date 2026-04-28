@@ -17,7 +17,6 @@ int daysForward(StudyMode? mode, int weekday, bool sevenDay) {
 }
 
 int daysBackward(StudyMode? mode, int weekday, bool sevenDay) {
-  if (sevenDay && weekday == DateTime.monday) return 6;
   if (sevenDay) return 1;
   if (mode == StudyMode.stationary && weekday == DateTime.monday) return 3;
   if (mode == StudyMode.notStationary && weekday == DateTime.friday) return 5;

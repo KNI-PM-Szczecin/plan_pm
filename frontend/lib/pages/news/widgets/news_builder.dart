@@ -27,14 +27,13 @@ class NewsBuilder extends StatelessWidget {
           );
         }
         if (snapshot.connectionState != ConnectionState.done) {
-          return GenericLoading(label: "Ładowanie aktualności");
+          return GenericLoading(label: l10n.newsLoading);
         }
         if (snapshot.data != null && snapshot.data!.isEmpty) {
           return GenericNoResource(
-            label: "Brak aktualności",
+            label: l10n.noNews,
             icon: LucideIcons.calendarX,
-            description:
-                "Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.",
+            description: l10n.newsNoDataDescription,
           );
         }
         final List<NewsModel> data = snapshot.data!;

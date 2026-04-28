@@ -13,6 +13,9 @@ class LectureModel {
   final String duration;
   final DateTime date;
   final String? notes;
+  final String? programName;
+  final int? year;
+  final String? degreeLevel;
 
   LectureModel({
     required this.id,
@@ -27,6 +30,9 @@ class LectureModel {
     this.room,
     this.building,
     this.notes,
+    this.programName,
+    this.year,
+    this.degreeLevel,
   });
 
   factory LectureModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +78,11 @@ class LectureModel {
       }
     }
 
+    final programs = json["programs"];
+    final String? programName = programs?["name"] as String?;
+    final int? year = programs?["year"] as int?;
+    final String? degreeLevel = programs?["degreeLevel"] as String?;
+
     return LectureModel(
       id: json["id"] as String,
       name: json["subject"] as String,
@@ -91,6 +102,9 @@ class LectureModel {
       duration: "$duration min",
       location: location,
       notes: notes,
+      programName: programName,
+      year: year,
+      degreeLevel: degreeLevel,
     );
   }
 

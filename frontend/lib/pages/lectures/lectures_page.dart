@@ -149,6 +149,9 @@ class _LecturesPageState extends State<LecturesPage> {
                               professor: lecture.professor,
                               group: lecture.group,
                               duration: lecture.duration,
+                              programName: lecture.programName,
+                              year: lecture.year,
+                              degreeLevel: lecture.degreeLevel,
                             );
                           },
                         ),

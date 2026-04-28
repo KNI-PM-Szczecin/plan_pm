@@ -9,7 +9,7 @@ class DatabaseService {
 
   DatabaseService._constructor();
 
-  final int dbVersion = 1;
+  final int dbVersion = 2;
   // Lectures
   final String _lecturesTableName = "lectures";
   final String _lecturesIdColumnName = "id";
@@ -24,6 +24,9 @@ class DatabaseService {
   final String _lecturesDurationColumnName = "duration";
   final String _lecturesDateColumnName = "date";
   final String _lecturesNotesColumnName = "notes";
+  final String _lecturesProgramNameColumnName = "program_name";
+  final String _lecturesYearColumnName = "year";
+  final String _lecturesDegreeLevelColumnName = "degree_level";
   // News
   final String _newsTableName = "news";
   final String _newsIdColumnName = "id";
@@ -46,6 +49,13 @@ class DatabaseService {
     final database = await openDatabase(
       databasePath,
       version: dbVersion,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesProgramNameColumnName TEXT');
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesYearColumnName INTEGER');
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesDegreeLevelColumnName TEXT');
+        }
+      },
       onCreate: (db, version) {
         db.execute('''
         CREATE TABLE $_lecturesTableName (
@@ -60,7 +70,10 @@ class DatabaseService {
           $_lecturesGroupColumnName TEXT,
           $_lecturesDurationColumnName TEXT,
           $_lecturesDateColumnName INTEGER,
-          $_lecturesNotesColumnName TEXT
+          $_lecturesNotesColumnName TEXT,
+          $_lecturesProgramNameColumnName TEXT,
+          $_lecturesYearColumnName INTEGER,
+          $_lecturesDegreeLevelColumnName TEXT
         );
         ''');
         db.execute('''
@@ -91,6 +104,9 @@ class DatabaseService {
     required String duration,
     required DateTime date,
     String? notes,
+    String? programName,
+    int? year,
+    String? degreeLevel,
   }) async {
     final db = await database;
     final Map<String, dynamic> values = {
@@ -106,6 +122,9 @@ class DatabaseService {
       _lecturesDurationColumnName: duration,
       _lecturesDateColumnName: date.toUtc().millisecondsSinceEpoch,
       _lecturesNotesColumnName: notes,
+      _lecturesProgramNameColumnName: programName,
+      _lecturesYearColumnName: year,
+      _lecturesDegreeLevelColumnName: degreeLevel,
     };
     return await db.insert(
       _lecturesTableName,
@@ -142,6 +161,9 @@ class DatabaseService {
         group: lecture["group_name"] as String,
         professor: lecture["professor"] as String?,
         date: date,
+        programName: lecture[_lecturesProgramNameColumnName] as String?,
+        year: lecture[_lecturesYearColumnName] as int?,
+        degreeLevel: lecture[_lecturesDegreeLevelColumnName] as String?,
       );
     }).toList();
     return lectures;
