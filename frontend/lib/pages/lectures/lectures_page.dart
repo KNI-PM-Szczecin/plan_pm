@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/app_mode.dart';
 import 'package:plan_pm/global/student.dart';
 import 'package:plan_pm/global/widgets/generic_loading.dart';
 import 'package:plan_pm/global/widgets/generic_no_resource.dart';
@@ -38,7 +39,11 @@ class _LecturesPageState extends State<LecturesPage> {
   @override
   void initState() {
     super.initState();
-    currentDate = adjustInitialDate(Student.studyMode, now);
+    // Wykładowca nie ma trybu zaocznego — używamy logiki stacjonarnej (pomijamy tylko weekend).
+    final mode = AppModeManager.current == AppMode.lecturer
+        ? StudyMode.stationary
+        : Student.studyMode;
+    currentDate = adjustInitialDate(mode, now);
   }
 
   late int selectedDay = currentDate.weekday - 1;
