@@ -213,15 +213,13 @@ class _LectureState extends State<Lecture> {
   void initState() {
     super.initState();
 
-    // Pasek postępu odświeżany co minutę — tylko dla dzisiejszych zajęć.
     if (widget.isProgressable) {
+      // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState
+      // nie gwarantuje przebudowy w każdej wersji Fluttera.
+      _computeProgress();
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
-        if (mounted) {
-          _calculateProgress();
-        }
+        if (mounted) setState(_computeProgress);
       });
-
-      _calculateProgress();
     }
   }
 
@@ -231,11 +229,9 @@ class _LectureState extends State<Lecture> {
     super.dispose();
   }
 
-  // Przelicza _progress i _isInProgress na podstawie aktualnego czasu.
-  // Timer jest anulowany gdy zajęcia się skończą — nie ma sensu dalej liczyć.
-  void _calculateProgress() {
-    if (!widget.isProgressable) return;
-
+  // Aktualizuje _progress i _isInProgress. Wywoływana bezpośrednio (initState)
+  // lub wewnątrz setState (timer) — nie wywołuje setState sama z siebie.
+  void _computeProgress() {
     final now = DateTime.now();
     DateTime parseTime(String time) {
       final parts = time.split(':');
@@ -248,27 +244,18 @@ class _LectureState extends State<Lecture> {
     final endTime = parseTime(widget.timeTo);
 
     if (now.isBefore(startTime)) {
-      // Zajęcia jeszcze się nie zaczęły
-      setState(() {
-        _progress = 0.0;
-        _isInProgress = false;
-      });
+      _progress = 0.0;
+      _isInProgress = false;
     } else if (now.isAfter(endTime)) {
-      // Zajęcia już się skończyły — pasek pełny, timer niepotrzebny
-      setState(() {
-        _progress = 1.0;
-        _isInProgress = false;
-      });
+      _progress = 1.0;
+      _isInProgress = false;
       _timer?.cancel();
     } else {
-      // Zajęcia trwają — oblicz ile czasu minęło
       final totalMinutes = endTime.difference(startTime).inMinutes;
       final elapsedMinutes = now.difference(startTime).inMinutes;
       if (totalMinutes > 0) {
-        setState(() {
-          _progress = (elapsedMinutes / totalMinutes).clamp(0.0, 1.0);
-          _isInProgress = true;
-        });
+        _progress = (elapsedMinutes / totalMinutes).clamp(0.0, 1.0);
+        _isInProgress = true;
       }
     }
   }
@@ -326,7 +313,7 @@ class _LectureState extends State<Lecture> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              radius: 250.0,
+              radius: 300.0,
               onTap: switchExpanded,
               splashColor: Colors.white.withValues(alpha: 0.2),
               highlightColor: Colors.white.withValues(alpha: 0.08),
