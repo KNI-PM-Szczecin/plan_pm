@@ -142,6 +142,7 @@ class _LecturesPageState extends State<LecturesPage> {
                             final lecture = lectures[index];
                             return Lecture(
                               idx: index,
+                              isProgressable: DateUtils.isSameDay(lecture.date, DateTime.now()),
                               name: lecture.name,
                               timeFrom: lecture.startTime,
                               timeTo: lecture.endTime,

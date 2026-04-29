@@ -157,6 +157,9 @@ class _TodayLecturesState extends State<TodayLectures> {
                         professor: lecture.professor,
                         group: lecture.group,
                         duration: lecture.duration,
+                        programName: lecture.programName,
+                        year: lecture.year,
+                        degreeLevel: lecture.degreeLevel,
                       );
                     }).toList();
 
