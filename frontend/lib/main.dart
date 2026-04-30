@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/app_mode.dart';
-import 'package:plan_pm/global/lecturer.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/models/lecturer.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
+import 'package:plan_pm/global/widgets/sidebar.dart';
 import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
-import 'package:plan_pm/pages/settings/pe_page.dart';
-import 'package:plan_pm/pages/settings/student_id_page.dart';
-import 'package:plan_pm/pages/settings/virtual_university_page.dart';
+import 'package:plan_pm/global/pages/external_link_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
@@ -27,7 +26,7 @@ import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:plan_pm/global/logger.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 
 import 'package:plan_pm/global/widgets/announcement_dialog.dart';
@@ -366,27 +365,52 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      drawer: CustomSidebar(
+      drawer: Sidebar(
         onPeTap: () {
           Navigator.of(context).pop();
+          final l10n = AppLocalizations.of(context)!;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const PePage()),
+            MaterialPageRoute(
+              builder: (context) => ExternalLinkPage(
+                url: 'https://wf-zajecia.am.szczecin.pl/login',
+                icon: LucideIcons.dumbbell,
+                title: l10n.pePageTitle,
+                description: l10n.pePageDescription,
+                buttonLabel: l10n.pePageButton,
+              ),
+            ),
           );
         },
         onStudentIdTap: () {
           Navigator.of(context).pop();
+          final l10n = AppLocalizations.of(context)!;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const StudentIdPage()),
+            MaterialPageRoute(
+              builder: (context) => ExternalLinkPage(
+                url: 'https://mlegitymacja.am.szczecin.pl',
+                icon: LucideIcons.creditCard,
+                title: l10n.studentIdPageTitle,
+                description: l10n.studentIdPageDescription,
+                buttonLabel: l10n.studentIdPageButton,
+              ),
+            ),
           );
         },
         onVirtualUniversityTap: () {
           Navigator.of(context).pop();
+          final l10n = AppLocalizations.of(context)!;
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const VirtualUniversityPage(),
+              builder: (context) => ExternalLinkPage(
+                url: 'https://wu.pm.szczecin.pl',
+                icon: LucideIcons.landmark,
+                title: l10n.virtualUniversityPageTitle,
+                description: l10n.virtualUniversityPageDescription,
+                buttonLabel: l10n.virtualUniversityPageButton,
+              ),
             ),
           );
         },

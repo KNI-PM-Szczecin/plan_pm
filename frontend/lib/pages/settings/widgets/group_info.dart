@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/themed_outline_button.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/pages/settings/widgets/themed_outline_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/app_mode.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 

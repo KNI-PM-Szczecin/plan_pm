@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 
 class MenuSection extends StatelessWidget {
   const MenuSection({super.key, required this.title, this.action, this.child});

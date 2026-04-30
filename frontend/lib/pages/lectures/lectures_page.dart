@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/app_mode.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/generic_loading.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/global/widgets/states/generic_loading.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
 import 'package:plan_pm/service/database_service.dart';
@@ -14,12 +14,14 @@ import 'package:plan_pm/l10n/app_localizations.dart';
 
 DateTime adjustInitialDate(StudyMode? mode, DateTime now) {
   if (mode == StudyMode.stationary) {
-    if (now.weekday == DateTime.saturday) return now.add(const Duration(days: 2));
+    if (now.weekday == DateTime.saturday)
+      return now.add(const Duration(days: 2));
     if (now.weekday == DateTime.sunday) return now.add(const Duration(days: 1));
     return now;
   }
   // notStationary
-  if (now.weekday < DateTime.friday) return now.add(Duration(days: DateTime.friday - now.weekday));
+  if (now.weekday < DateTime.friday)
+    return now.add(Duration(days: DateTime.friday - now.weekday));
   return now;
 }
 
@@ -147,7 +149,10 @@ class _LecturesPageState extends State<LecturesPage> {
                             final lecture = lectures[index];
                             return Lecture(
                               idx: index,
-                              isProgressable: DateUtils.isSameDay(lecture.date, DateTime.now()),
+                              isProgressable: DateUtils.isSameDay(
+                                lecture.date,
+                                DateTime.now(),
+                              ),
                               name: lecture.name,
                               timeFrom: lecture.startTime,
                               timeTo: lecture.endTime,

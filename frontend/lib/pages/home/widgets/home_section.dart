@@ -1,5 +1,8 @@
+// Sekcja strony głównej z tytułem i zawartością.
+// Prosty wrapper — tytuł pogrubiony nad dowolnym widżetem dzieckiem.
+// Używany w [HomePage] (sekcja newsów) i [TodayLectures] (sekcja zajęć).
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 
 class HomeSection extends StatelessWidget {
   const HomeSection({super.key, required this.title, this.child});

@@ -1,3 +1,6 @@
+// Przycisk pełnej szerokości z gradientowym tłem.
+// Używany wewnętrznie przez [AnnouncementDialog] i [WhatsNewDialog]
+// do renderowania przycisków akcji (zamknij / przejdź do sklepu / dalej).
 import 'package:flutter/material.dart';
 
 class GradientButton extends StatelessWidget {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
-import 'package:plan_pm/global/app_mode.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/lecturer.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/cache_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,7 +65,10 @@ class RoleSelectionPage extends StatelessWidget {
                 label: Text(l10n.roleStudentButton),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 54),
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -88,7 +91,10 @@ class RoleSelectionPage extends StatelessWidget {
                           await prefs.setString('lecturer_id', selected.id);
                           await prefs.setString('lecturer_name', selected.name);
                           if (selected.title != null) {
-                            await prefs.setString('lecturer_title', selected.title!);
+                            await prefs.setString(
+                              'lecturer_title',
+                              selected.title!,
+                            );
                           } else {
                             await prefs.remove('lecturer_title');
                           }
@@ -102,10 +108,9 @@ class RoleSelectionPage extends StatelessWidget {
                           await cacheService.syncLectures();
 
                           if (!context.mounted) return;
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/home',
-                            (_) => false,
-                          );
+                          Navigator.of(
+                            context,
+                          ).pushNamedAndRemoveUntil('/home', (_) => false);
                         },
                       ),
                     ),
@@ -117,7 +122,10 @@ class RoleSelectionPage extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 54),
                   backgroundColor: AppColor.surface,
                   foregroundColor: AppColor.onSurface,
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

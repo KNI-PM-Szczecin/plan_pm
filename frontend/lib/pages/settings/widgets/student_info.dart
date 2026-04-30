@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/themed_outline_button.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/pages/settings/widgets/info_text.dart';
+import 'package:plan_pm/pages/settings/widgets/themed_outline_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -60,39 +61,3 @@ class StudentInfo extends StatelessWidget {
   }
 }
 
-class InfoText extends StatelessWidget {
-  const InfoText({super.key, required this.title, required this.content});
-
-  final String title;
-  final String? content;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 14, color: AppColor.onSurfaceVariant),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: Text(
-              content ?? l10n.dataNaN,
-              softWrap: true,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColor.onSurface,
-              ),
-              textAlign: TextAlign.start,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

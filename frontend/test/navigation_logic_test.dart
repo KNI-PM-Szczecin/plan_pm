@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 

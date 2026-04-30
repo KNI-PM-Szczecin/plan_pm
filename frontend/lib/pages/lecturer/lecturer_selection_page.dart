@@ -1,8 +1,10 @@
+// Strona wyboru wykładowcy — wyświetla przefiltrowaną listę wykładowców z wyszukiwarką.
+// Przyjmuje gotową listę [LecturerItem] z zewnątrz i zwraca wybrany element przez [onContinue].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_search_field.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_tile.dart';

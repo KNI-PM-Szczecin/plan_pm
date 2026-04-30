@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/extensions.dart';
-import 'package:plan_pm/global/notifiers.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/utils/extensions.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 List<String> daysShort = [];

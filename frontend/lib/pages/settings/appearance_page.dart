@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/pages/settings/widgets/setting_switch_tile.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class AppearancePage extends StatelessWidget {
@@ -14,27 +16,7 @@ class AppearancePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        title: Text(
-          l10n.appearanceHeader,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      appBar: StandardAppBar(title: l10n.appearanceHeader),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -69,21 +51,21 @@ class AppearancePage extends StatelessWidget {
                             children: [
                               _ThemeCard(
                                 title: l10n.themeLight,
-                                imageAsset: 'assets/light_theme.png',
+                                imageAsset: 'assets/theme_light.png',
                                 isSelected: currentMode == ThemeMode.light,
                                 onTap: () => _selectTheme(ThemeMode.light),
                               ),
                               const SizedBox(width: 12),
                               _ThemeCard(
                                 title: l10n.themeDark,
-                                imageAsset: 'assets/dark_theme.png',
+                                imageAsset: 'assets/theme_dark.png',
                                 isSelected: currentMode == ThemeMode.dark,
                                 onTap: () => _selectTheme(ThemeMode.dark),
                               ),
                               const SizedBox(width: 12),
                               _ThemeCard(
                                 title: l10n.themeSystem,
-                                imageAsset: 'assets/mixed_theme.png',
+                                imageAsset: 'assets/theme_mixed.png',
                                 isSelected: currentMode == ThemeMode.system,
                                 onTap: () => _selectTheme(ThemeMode.system),
                               ),
@@ -133,11 +115,9 @@ class AppearancePage extends StatelessWidget {
                           ValueListenableBuilder<bool>(
                             valueListenable: amoledModeNotifier,
                             builder: (context, isAmoled, _) {
-                              return SwitchListTile(
-                                contentPadding: EdgeInsets.zero,
-                                activeThumbColor: AppColor.primary,
-                                title: Text(l10n.amoledModeTitle, style: TextStyle(color: AppColor.onSurface, fontWeight: FontWeight.w600)),
-                                subtitle: Text(l10n.amoledModeDesc, style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13)),
+                              return SettingSwitchTile(
+                                label: l10n.amoledModeTitle,
+                                subtitle: l10n.amoledModeDesc,
                                 value: isAmoled,
                                 onChanged: (val) {
                                   HapticFeedback.selectionClick();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/news_model.dart';
-import 'package:plan_pm/global/widgets/generic_loading.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/global/widgets/states/generic_loading.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-import 'package:plan_pm/pages/home/widgets/news_card.dart';
+import 'package:plan_pm/pages/news/widgets/news_card.dart';
 import 'package:plan_pm/service/database_service.dart';
 
 class NewsBuilder extends StatelessWidget {

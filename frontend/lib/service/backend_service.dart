@@ -4,13 +4,13 @@ import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/api/models/news_model.dart';
-import 'package:plan_pm/global/app_mode.dart';
-import 'package:plan_pm/global/lecturer.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/models/lecturer.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:plan_pm/global/logger.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
@@ -76,7 +76,9 @@ class BackendService {
     }
 
     final response = await query;
-    final lectures = response.map((json) => LectureModel.fromJson(json)).toList();
+    final lectures = response
+        .map((json) => LectureModel.fromJson(json))
+        .toList();
     lectures.sort((a, b) => a.date.compareTo(b.date));
     return lectures;
   }
@@ -87,9 +89,7 @@ class BackendService {
         .select("classes")
         .eq("teachers", Lecturer.id!);
 
-    final classIds = teacherClasses
-        .map((r) => r["classes"] as String)
-        .toList();
+    final classIds = teacherClasses.map((r) => r["classes"] as String).toList();
 
     if (classIds.isEmpty) return [];
 
@@ -110,7 +110,9 @@ class BackendService {
       ''')
         .inFilter("id", classIds);
 
-final lectures = response.map((json) => LectureModel.fromJson(json)).toList();
+    final lectures = response
+        .map((json) => LectureModel.fromJson(json))
+        .toList();
     lectures.sort((a, b) => a.date.compareTo(b.date));
     return lectures;
   }

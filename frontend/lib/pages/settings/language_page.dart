@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/pages/settings/widgets/selection_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class LanguagePage extends StatelessWidget {
@@ -14,27 +16,7 @@ class LanguagePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        title: Text(
-          l10n.languageHeader,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      appBar: StandardAppBar(title: l10n.languageHeader),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -64,36 +46,32 @@ class LanguagePage extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _LanguageCard(
-                            title: l10n.languageSystem,
-                            emojiFlag: '🌐',
+                          SelectionCard(
+                            leading: Icon(LucideIcons.laptop, color: AppColor.onSurfaceVariant, size: 24),
+                            label: l10n.languageSystem,
                             isSelected: currentLocale == null,
                             onTap: () => _selectLanguage(null),
-                            showFlag: false,
                           ),
                           const SizedBox(height: 12),
-                          _LanguageCard(
-                            title: l10n.languagePolish,
-                            emojiFlag: '🇵🇱',
+                          SelectionCard(
+                            leading: Text('🇵🇱', style: TextStyle(fontSize: 24)),
+                            label: l10n.languagePolish,
                             isSelected: currentLocale?.languageCode == 'pl',
                             onTap: () => _selectLanguage(const Locale('pl')),
-                            showFlag: true,
                           ),
                           const SizedBox(height: 12),
-                          _LanguageCard(
-                            title: l10n.languageEnglish,
-                            emojiFlag: '🇬🇧',
+                          SelectionCard(
+                            leading: Text('🇬🇧', style: TextStyle(fontSize: 24)),
+                            label: l10n.languageEnglish,
                             isSelected: currentLocale?.languageCode == 'en',
                             onTap: () => _selectLanguage(const Locale('en')),
-                            showFlag: true,
                           ),
                           const SizedBox(height: 12),
-                          _LanguageCard(
-                            title: l10n.languageUkrainian,
-                            emojiFlag: '🇺🇦',
+                          SelectionCard(
+                            leading: Text('🇺🇦', style: TextStyle(fontSize: 24)),
+                            label: l10n.languageUkrainian,
                             isSelected: currentLocale?.languageCode == 'uk',
                             onTap: () => _selectLanguage(const Locale('uk')),
-                            showFlag: true,
                           ),
                           const SizedBox(height: 24),
                           Divider(color: AppColor.outline, height: 1),
@@ -155,87 +133,3 @@ class LanguagePage extends StatelessWidget {
   }
 }
 
-class _LanguageCard extends StatefulWidget {
-  final String title;
-  final String emojiFlag;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final bool showFlag;
-
-  const _LanguageCard({
-    required this.title,
-    required this.emojiFlag,
-    required this.isSelected,
-    required this.onTap,
-    this.showFlag = true,
-  });
-
-  @override
-  State<_LanguageCard> createState() => _LanguageCardState();
-}
-
-class _LanguageCardState extends State<_LanguageCard> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.98 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: widget.isSelected
-                ? AppColor.primary.withAlpha(25)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: widget.isSelected ? AppColor.primary : AppColor.outline,
-              width: 1.5,
-            ),
-          ),
-          child: Row(
-            children: [
-              if (widget.showFlag) ...[
-                Text(
-                  widget.emojiFlag,
-                  style: const TextStyle(fontSize: 24),
-                ),
-                const SizedBox(width: 16),
-              ] else ...[
-                Icon(
-                  LucideIcons.laptop, // 'System' icon
-                  color: widget.isSelected ? AppColor.primary : AppColor.onSurfaceVariant,
-                  size: 24,
-                ),
-                const SizedBox(width: 16),
-              ],
-              Expanded(
-                child: Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: widget.isSelected ? AppColor.primary : AppColor.onSurface,
-                    fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              if (widget.isSelected)
-                Icon(
-                  LucideIcons.checkCircle2,
-                  color: AppColor.primary,
-                  size: 22,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

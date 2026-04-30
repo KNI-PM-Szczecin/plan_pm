@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/generic_loading.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/global/widgets/states/generic_loading.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/main.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/pages/welcome/widgets/button_switch.dart';
@@ -64,34 +65,19 @@ class _InputPageState extends State<InputPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const WelcomePage()),
-              );
-            }
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        backgroundColor: AppColor.background,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-        title: Text(
-          l10n.studySettings,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
+      appBar: StandardAppBar(
+        title: l10n.studySettings,
+        onBack: () {
+          HapticFeedback.lightImpact();
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomePage()),
+            );
+          }
+        },
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,

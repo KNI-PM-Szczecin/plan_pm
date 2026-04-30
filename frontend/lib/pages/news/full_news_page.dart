@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class FullNewsPage extends StatelessWidget {
@@ -27,27 +27,7 @@ class FullNewsPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        backgroundColor: AppColor.background,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-        title: Text(
-          l10n.details,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-      ),
+      appBar: StandardAppBar(title: l10n.details),
       body: SafeArea(
         child: SingleChildScrollView(
         child: Padding(

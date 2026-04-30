@@ -1,48 +1,23 @@
+// Widżet zajęć na dziś — pobiera zajęcia z SQLite i wyświetla najbliższe
+// (maksymalnie 3) pogrupowane po dniu. Obsługuje pull-to-refresh przez
+// [refreshNotifier]. Logika filtrowania wydzielona do [lecture_filters.dart].
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/widgets/generic_loading.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/states/generic_loading.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:collection/collection.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-
-List<LectureModel> getClosestLectures(
-  List<LectureModel> lectures,
-  DateTime referenceTime, {
-  int count = 3,
-}) {
-  // Keep upcoming lectures and lectures that already started but have not yet ended.
-  final filtered = lectures.where((lecture) {
-    final endTimeParts = lecture.endTime.split(':');
-    final endHour = int.tryParse(endTimeParts[0]) ?? 0;
-    final endMinute = int.tryParse(endTimeParts[1]) ?? 0;
-    final lectureEnd = DateTime(
-      lecture.date.year,
-      lecture.date.month,
-      lecture.date.day,
-      endHour,
-      endMinute,
-    );
-
-    return !lectureEnd.isBefore(referenceTime);
-  }).toList();
-
-  // Sort those lectures by date from oldest to newest
-  filtered.sort((a, b) {
-    return a.date.compareTo(b.date);
-  });
-  // Take {count} from those lectures
-  return filtered.take(count).toList();
-}
+import 'package:plan_pm/pages/home/utils/lecture_filters.dart';
 
 class TodayLectures extends StatefulWidget {
   final ValueNotifier<int>? refreshNotifier;
-  
+
   const TodayLectures({super.key, this.refreshNotifier});
 
   @override
@@ -85,7 +60,8 @@ class _TodayLecturesState extends State<TodayLectures> {
     return HomeSection(
       title: l10n.recentLecture,
       child: FutureBuilder<List<LectureModel>>(
-        future: _lecturesFuture, // Używamy zmiennej stanu z zainicjowanym zapytaniem
+        future:
+            _lecturesFuture, // Używamy zmiennej stanu z zainicjowanym zapytaniem
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return GenericNoResource(
@@ -146,7 +122,10 @@ class _TodayLecturesState extends State<TodayLectures> {
                     final lectures = groups[groups.keys.toList()[index]];
                     final now = DateTime.now();
                     final lecturesWidgets = lectures!.map((lecture) {
-                      final bool isToday = DateUtils.isSameDay(lecture.date, now);
+                      final bool isToday = DateUtils.isSameDay(
+                        lecture.date,
+                        now,
+                      );
                       return Lecture(
                         idx: idx++,
                         isProgressable: isToday,

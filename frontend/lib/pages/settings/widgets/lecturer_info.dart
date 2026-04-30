@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/lecturer.dart';
-import 'package:plan_pm/global/widgets/themed_outline_button.dart';
+import 'package:plan_pm/global/models/lecturer.dart';
+import 'package:plan_pm/pages/settings/widgets/themed_outline_button.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
-import 'package:plan_pm/pages/settings/widgets/student_info.dart';
+import 'package:plan_pm/pages/settings/widgets/info_text.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -43,10 +43,7 @@ class LecturerInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InfoText(
-            title: l10n.lecturerLabel,
-            content: Lecturer.displayName,
-          ),
+          InfoText(title: l10n.lecturerLabel, content: Lecturer.displayName),
           const SizedBox(height: 5),
         ],
       ),

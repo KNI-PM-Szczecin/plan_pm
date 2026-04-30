@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/pages/feedback/feedback_page.dart';
-import 'package:plan_pm/global/app_mode.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/pages/external_link_page.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/pages/settings/widgets/setting_switch_tile.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/pages/settings/widgets/group_info.dart';
 import 'package:plan_pm/pages/settings/widgets/lecturer_info.dart';
 import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
@@ -17,7 +19,7 @@ import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/pages/settings/about_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:plan_pm/global/notifiers.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/backend_service.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -49,27 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        title: Text(
-          l10n.pageTitleSettings,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      appBar: StandardAppBar(title: l10n.pageTitleSettings),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -126,7 +108,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FeedbackPage(),
+                            builder: (context) => ExternalLinkPage(
+                              url: 'https://forms.gle/E8sLgZ1X49kaX5jA6',
+                              icon: LucideIcons.messageSquare,
+                              title: l10n.sendFeedbackButton,
+                              description: l10n.feedbackPageDescription,
+                              buttonLabel: l10n.sendFeedbackButton,
+                            ),
                           ),
                         );
                       },
@@ -178,18 +166,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             valueListenable: sevenDayModeNotifier,
                             builder: (context, value, child) => Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(l10n.debugSevenDayMode, style: TextStyle(color: AppColor.onSurface)),
-                                  Transform.scale(
-                                    scale: 0.8,
-                                    child: Switch(
-                                      value: value,
-                                      onChanged: (_) => SevenDayModeNotifier.toggle(),
-                                    ),
-                                  ),
-                                ],
+                              child: SettingSwitchTile(
+                                label: l10n.debugSevenDayMode,
+                                value: value,
+                                onChanged: (_) => SevenDayModeNotifier.toggle(),
                               ),
                             ),
                           ),
