@@ -24,7 +24,13 @@ class SettingSwitchTile extends StatelessWidget {
       activeThumbColor: AppColor.primary,
       title: Text(label, style: TextStyle(color: AppColor.onSurface)),
       subtitle: subtitle != null
-          ? Text(subtitle!, style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13))
+          ? Text(
+              subtitle!,
+              style: TextStyle(
+                color: AppColor.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            )
           : null,
       value: value,
       onChanged: onChanged,

@@ -1,14 +1,14 @@
-// Managed by scripts/switch_env.py — do not edit manually
+// Zarządzane przez scripts/switch_env.py — nie edytować ręcznie
 const bool kUseTestDb = false;
 
-// Set to true to simulate Supabase errors (all requests will fail)
+// Ustaw na true aby symulować błędy Supabase (wszystkie requesty będą kończyć się błędem)
 const bool kSimulateNetworkErrors = false;
 
-// Set to true to always show the announcement dialog (for UI development)
+// Ustaw na true aby zawsze wyświetlać dialog ogłoszenia (do pracy nad UI)
 const bool kDebugAnnouncement = false;
 
-// Type of announcement to preview: 'info', 'warning', 'update'
+// Typ ogłoszenia do podglądu: 'info', 'warning', 'update'
 const String kDebugAnnouncementType = 'update';
 
-// Set to true to always show the "What's new" dialog (for UI development)
+// Ustaw na true aby zawsze wyświetlać dialog "Co nowego" (do pracy nad UI)
 const bool kDebugWhatsNew = false;

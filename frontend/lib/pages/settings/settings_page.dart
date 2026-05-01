@@ -1,17 +1,19 @@
+// Główna strona ustawień — rola, dane akademickie, personalizacja, feedback, debug, informacje.
+// Sekcja debug pojawia się tylko po odblokowaniu easter-egga w [AboutPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/pages/external_link_page.dart';
 import 'package:plan_pm/global/widgets/standard_app_bar.dart';
-import 'package:plan_pm/pages/settings/widgets/setting_switch_tile.dart';
+import 'package:plan_pm/pages/settings/widgets/controls/setting_switch_tile.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
-import 'package:plan_pm/pages/settings/widgets/group_info.dart';
-import 'package:plan_pm/pages/settings/widgets/lecturer_info.dart';
-import 'package:plan_pm/pages/settings/widgets/menu_button.dart';
-import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
-import 'package:plan_pm/pages/settings/widgets/role_info.dart';
-import 'package:plan_pm/pages/settings/widgets/student_info.dart';
+import 'package:plan_pm/pages/settings/widgets/info/group_info.dart';
+import 'package:plan_pm/pages/settings/widgets/info/lecturer_info.dart';
+import 'package:plan_pm/pages/settings/widgets/menu/menu_button.dart';
+import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
+import 'package:plan_pm/pages/settings/widgets/info/role_info.dart';
+import 'package:plan_pm/pages/settings/widgets/info/student_info.dart';
 import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/settings/language_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
@@ -66,7 +68,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   AppModeManager.current == AppMode.lecturer
                       ? const LecturerInfo()
                       : const StudentInfo(),
-                  if (AppModeManager.current == AppMode.student) const GroupInfo(),
+                  if (AppModeManager.current == AppMode.student)
+                    const GroupInfo(),
                   MenuSection(
                     title: l10n.personalizationHeader,
                     child: Column(
@@ -132,7 +135,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const RoleSelectionPage(),
+                                  builder: (context) =>
+                                      const RoleSelectionPage(),
                                 ),
                               );
                             },
@@ -145,7 +149,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               await BackendService().clearCache();
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(l10n.debugCacheCleared)),
+                                SnackBar(
+                                  content: Text(l10n.debugCacheCleared),
+                                ),
                               );
                             },
                           ),
@@ -165,7 +171,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           ValueListenableBuilder<bool>(
                             valueListenable: sevenDayModeNotifier,
                             builder: (context, value, child) => Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               child: SettingSwitchTile(
                                 label: l10n.debugSevenDayMode,
                                 value: value,

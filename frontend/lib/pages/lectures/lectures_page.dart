@@ -1,3 +1,5 @@
+// Strona planu zajęć — selekcja dnia tygodnia i lista zajęć z bazy lokalnej.
+// Logika dat startowych i narzędzia wydzielone do [lecture_utils.dart].
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
@@ -6,24 +8,12 @@ import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/states/generic_loading.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-
-DateTime adjustInitialDate(StudyMode? mode, DateTime now) {
-  if (mode == StudyMode.stationary) {
-    if (now.weekday == DateTime.saturday)
-      return now.add(const Duration(days: 2));
-    if (now.weekday == DateTime.sunday) return now.add(const Duration(days: 1));
-    return now;
-  }
-  // notStationary
-  if (now.weekday < DateTime.friday)
-    return now.add(Duration(days: DateTime.friday - now.weekday));
-  return now;
-}
 
 class LecturesPage extends StatefulWidget {
   const LecturesPage({super.key});

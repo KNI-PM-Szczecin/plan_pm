@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/pages/lectures/lectures_page.dart';
-import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
+import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 
 // Znana data – poniedziałek 23 marca 2026
 final monday = DateTime(2026, 3, 23);

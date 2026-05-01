@@ -1,12 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// Karta wiadomości na liście — okładka, typ, tytuł i skrócony opis z linkiem "czytaj więcej".
+// Po tapnięciu otwiera [FullNewsPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/notifiers/notifiers.dart';
-import 'package:plan_pm/l10n/app_localizations.dart';
-import 'package:plan_pm/pages/news/full_news_page.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/pages/news/full_news_page.dart';
+import 'package:plan_pm/pages/news/widgets/news_cover_image.dart';
+import 'package:plan_pm/pages/news/widgets/news_html_style.dart';
+import 'package:plan_pm/pages/news/widgets/news_meta_row.dart';
+import 'package:plan_pm/l10n/app_localizations.dart';
 
 class NewsCard extends StatelessWidget {
   const NewsCard({
@@ -55,45 +57,14 @@ class NewsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (imageUrl != null)
-              CachedNetworkImage(
-                imageUrl: imageUrl!,
-                cacheManager: newsCacheManager,
-                imageBuilder: (context, imageProvider) => Ink.image(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 150,
-                ),
-                placeholder: (context, url) =>
-                    Skeleton.leaf(child: SizedBox(height: 150)),
-                errorWidget: (context, url, error) => const SizedBox.shrink(),
-              ),
+            if (imageUrl != null) NewsCoverImage(imageUrl: imageUrl!),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
-                    spacing: 5,
-                    children: [
-                      Text(
-                        messageType,
-                        style: TextStyle(color: AppColor.onSurfaceVariant),
-                      ),
-                      Text(
-                        "•",
-                        style: TextStyle(color: AppColor.onSurfaceVariant),
-                      ),
-                      Text(
-                        l10n.daysAgo(
-                          DateTime.now().difference(timestamp).inDays,
-                        ),
-                        style: TextStyle(color: AppColor.onSurfaceVariant),
-                      ),
-                    ],
-                  ),
+                  NewsMetaRow(messageType: messageType, timestamp: timestamp),
                   Text(
                     title,
                     style: TextStyle(
@@ -106,26 +77,7 @@ class NewsCard extends StatelessWidget {
                     data: description.length > 45
                         ? "${description.substring(0, 45)}..."
                         : description,
-                    style: {
-                      "body": Style(
-                        margin: Margins.zero,
-                        padding: HtmlPaddings.zero,
-                      ),
-                      "p": Style(
-                        margin: Margins.zero,
-                        padding: HtmlPaddings.zero,
-                        fontSize: FontSize.medium,
-                        color: AppColor.onSurfaceVariant,
-                      ),
-                      "a": Style(
-                        color: Colors.blue,
-                        textDecoration: TextDecoration.underline,
-                      ),
-                      "h1": Style(
-                        fontSize: FontSize.xxLarge,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    },
+                    style: newsHtmlStyle,
                   ),
                   Text(
                     l10n.readMore,

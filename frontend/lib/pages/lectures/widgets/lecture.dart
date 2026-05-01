@@ -1,3 +1,6 @@
+// Karta pojedynczego zajęcia na liście planu.
+// Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
+// Gradienty, formatowanie czasu i skracanie grup wydzielone do [lecture_utils.dart].
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,165 +8,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-
-// Palety gradientów dla kart zajęć — indeks zajęcia % długość listy = deterministyczny kolor.
-// Trzy warianty odpowiadają ustawieniu EventColorStyle w notifierze.
-
-List<LinearGradient> defaultGradients = [
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6)], // blue-500 → purple-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF14B8A6), Color(0xFF06B6D4)], // teal-500 → cyan-500
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFF59E0B), Color(0xFFEF4444)], // amber-500 → red-500
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFEC4899), Color(0xFF8B5CF6)], // pink-500 → purple-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFF43F5E), Color(0xFFFB923C)], // rose-500 → orange-400
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF6EE7B7), Color(0xFF3B82F6)], // green-300 → blue-500
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFA855F7), Color(0xFF6366F1)], // fuchsia-500 → indigo-500
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFFB7185), Color(0xFFFACC15)], // red-400 → yellow-400
-  ),
-];
-
-List<LinearGradient> pastelGradients = [
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF93C5FD), Color(0xFFC4B5FD)], // blue-300 → purple-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF5EEAD4), Color(0xFF67E8F9)], // teal-300 → cyan-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFFCD34D), Color(0xFFFCA5A5)], // amber-300 → red-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFF9A8D4), Color(0xFFC4B5FD)], // pink-300 → purple-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFFDA4AF), Color(0xFFFDBA74)], // rose-300 → orange-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF86EFAC), Color(0xFF93C5FD)], // green-300 → blue-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFD8B4FE), Color(0xFFA5B4FC)], // fuchsia-300 → indigo-300
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFFDA4AF), Color(0xFFFDE047)], // red-300 → yellow-300
-  ),
-];
-
-List<LinearGradient> vibrantGradients = [
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF2563EB), Color(0xFF7E22CE)], // blue-600 → purple-700
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF0D9488), Color(0xFF0891B2)], // teal-600 → cyan-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFD97706), Color(0xFFDC2626)], // amber-600 → red-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFDB2777), Color(0xFF7E22CE)], // pink-600 → purple-700
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFE11D48), Color(0xFFEA580C)], // rose-600 → orange-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF059669), Color(0xFF2563EB)], // green-600 → blue-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFF9333EA), Color(0xFF4F46E5)], // fuchsia-600 → indigo-600
-  ),
-  LinearGradient(
-    begin: Alignment.bottomLeft,
-    end: Alignment.topRight,
-    colors: [Color(0xFFE11D48), Color(0xFFCA8A04)], // red-600 → yellow-600
-  ),
-];
-
-// Parsuje string "X min" z modelu i formatuje go jako "Xh Ymin" lub "Y min".
-// Jeśli format jest nieznany, zwraca oryginalny string.
-String formatDuration(String raw, AppLocalizations l10n) {
-  final match = RegExp(r'^(\d+)\s*min$').firstMatch(raw.trim());
-  if (match == null) return raw;
-  final total = int.parse(match.group(1)!);
-  final hours = total ~/ 60;
-  final minutes = total % 60;
-  if (hours > 0) return l10n.durationHoursMinutes(hours, minutes);
-  return l10n.durationMinutes(minutes);
-}
-
-// Skraca pełną nazwę grupy do pierwszego członu przed "/".
-// Np. "WI-S-AI-N-1/WI-S-AI-N-2" → "WI-S-AI-N-1, WI-S-AI-N-2"
-String longToShort(String long) {
-  final pieces = long
-      .split(",")
-      .map((piece) => piece.split("/")[0])
-      .toString()
-      .replaceAll("(", "")
-      .replaceAll(")", "");
-
-  return pieces;
-}
 
 // Karta pojedynczego zajęcia na liście planu.
 // Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
@@ -229,35 +76,13 @@ class _LectureState extends State<Lecture> {
     super.dispose();
   }
 
-  // Aktualizuje _progress i _isInProgress. Wywoływana bezpośrednio (initState)
-  // lub wewnątrz setState (timer) — nie wywołuje setState sama z siebie.
+  // Pobiera wynik z czystej funkcji i zapisuje do stanu widgetu.
+  // Wywołana bezpośrednio (initState) lub wewnątrz setState (timer).
   void _computeProgress() {
-    final now = DateTime.now();
-    DateTime parseTime(String time) {
-      final parts = time.split(':');
-      final hour = int.tryParse(parts[0]) ?? 0;
-      final minute = int.tryParse(parts[1]) ?? 0;
-      return DateTime(now.year, now.month, now.day, hour, minute);
-    }
-
-    final startTime = parseTime(widget.timeFrom);
-    final endTime = parseTime(widget.timeTo);
-
-    if (now.isBefore(startTime)) {
-      _progress = 0.0;
-      _isInProgress = false;
-    } else if (now.isAfter(endTime)) {
-      _progress = 1.0;
-      _isInProgress = false;
-      _timer?.cancel();
-    } else {
-      final totalMinutes = endTime.difference(startTime).inMinutes;
-      final elapsedMinutes = now.difference(startTime).inMinutes;
-      if (totalMinutes > 0) {
-        _progress = (elapsedMinutes / totalMinutes).clamp(0.0, 1.0);
-        _isInProgress = true;
-      }
-    }
+    final r = computeLectureProgress(widget.timeFrom, widget.timeTo, DateTime.now());
+    _progress = r.progress;
+    _isInProgress = r.isInProgress;
+    if (_progress >= 1.0) _timer?.cancel();
   }
 
   void switchExpanded() {
@@ -295,7 +120,7 @@ class _LectureState extends State<Lecture> {
     bool isInProgress = widget.isProgressable && _isInProgress;
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
-    FontWeight titleWeight = isInProgress ? FontWeight.w900 : FontWeight.bold;
+    FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
     FontWeight subTextWeight = isInProgress
         ? FontWeight.bold
         : FontWeight.normal;

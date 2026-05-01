@@ -1,3 +1,5 @@
+// Onboarding carousel — 4 slajdy z animacjami Lottie przedstawiające funkcje aplikacji.
+// Po ostatnim slajdzie zapisuje "skip_welcome" i przechodzi do [RoleSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -6,8 +8,22 @@ import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  // PageController musi być w state — tworzenie go w build() resetuje pozycję przy każdym rebuildie.
+  late final PageController _controller = PageController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +59,6 @@ class WelcomePage extends StatelessWidget {
         "colorLight": Colors.green,
       },
     ];
-    final PageController controller = PageController();
 
     return Scaffold(
       backgroundColor: AppColor.background,
@@ -51,7 +66,7 @@ class WelcomePage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: SafeArea(
           child: PageView.builder(
-            controller: controller,
+            controller: _controller,
             itemCount: stages.length,
             itemBuilder: (context, index) {
               return Column(
@@ -80,10 +95,10 @@ class WelcomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FilledButton(
                     style: FilledButton.styleFrom(
-                      minimumSize: Size(300, 50.0),
+                      minimumSize: const Size(300, 50.0),
                       backgroundColor: theme.brightness == Brightness.dark
                           ? stages[index]["color"].withAlpha(100)
                           : stages[index]["colorLight"],
@@ -102,8 +117,8 @@ class WelcomePage extends StatelessWidget {
                           ),
                         );
                       }
-                      controller.nextPage(
-                        duration: Duration(milliseconds: 250),
+                      _controller.nextPage(
+                        duration: const Duration(milliseconds: 250),
                         curve: Curves.easeIn,
                       );
                     },

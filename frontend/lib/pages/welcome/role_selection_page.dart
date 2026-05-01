@@ -1,3 +1,6 @@
+// Wybór roli przy onboardingu — Student lub Wykładowca.
+// Ścieżka studenta: ustawia tryb → [InputPage].
+// Ścieżka wykładowcy: pobiera listę, persystuje dane, synchronizuje zajęcia → home.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -8,6 +11,7 @@ import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
+import 'package:plan_pm/pages/welcome/widgets/role_illustration.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -29,7 +33,7 @@ class RoleSelectionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              _RoleIllustration(),
+              const RoleIllustration(),
               const SizedBox(height: 40),
               Text(
                 l10n.roleSelectionTitle,
@@ -104,8 +108,7 @@ class RoleSelectionPage extends StatelessWidget {
                           sevenDayModeNotifier.value = true;
 
                           await DatabaseService.instance.clearLectures();
-                          final cacheService = CacheService();
-                          await cacheService.syncLectures();
+                          await CacheService().syncLectures();
 
                           if (!context.mounted) return;
                           Navigator.of(
@@ -137,85 +140,4 @@ class RoleSelectionPage extends StatelessWidget {
   }
 }
 
-class _RoleIllustration extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 220,
-      height: 200,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E3A5F),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // karta z tyłu (lekko obrócona w prawo)
-          Transform.translate(
-            offset: const Offset(20, -8),
-            child: Transform.rotate(
-              angle: 0.12,
-              child: _RoleCard(icon: LucideIcons.bookOpen),
-            ),
-          ),
-          // karta z przodu (lekko obrócona w lewo)
-          Transform.translate(
-            offset: const Offset(-18, 8),
-            child: Transform.rotate(
-              angle: -0.08,
-              child: _RoleCard(icon: LucideIcons.graduationCap),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
-class _RoleCard extends StatelessWidget {
-  const _RoleCard({required this.icon});
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 88,
-      height: 110,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: const Color(0xFF3B82F6), size: 30),
-          const SizedBox(height: 12),
-          Container(
-            width: 50,
-            height: 6,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            width: 38,
-            height: 6,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

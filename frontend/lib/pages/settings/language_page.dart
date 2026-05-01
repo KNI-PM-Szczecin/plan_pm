@@ -1,10 +1,11 @@
+// Strona wyboru języka aplikacji — system, polski, angielski, ukraiński.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/widgets/standard_app_bar.dart';
-import 'package:plan_pm/pages/settings/widgets/selection_card.dart';
+import 'package:plan_pm/pages/settings/widgets/controls/selection_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class LanguagePage extends StatelessWidget {
@@ -47,28 +48,41 @@ class LanguagePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SelectionCard(
-                            leading: Icon(LucideIcons.laptop, color: AppColor.onSurfaceVariant, size: 24),
+                            leading: Icon(
+                              LucideIcons.laptop,
+                              color: AppColor.onSurfaceVariant,
+                              size: 24,
+                            ),
                             label: l10n.languageSystem,
                             isSelected: currentLocale == null,
                             onTap: () => _selectLanguage(null),
                           ),
                           const SizedBox(height: 12),
                           SelectionCard(
-                            leading: Text('🇵🇱', style: TextStyle(fontSize: 24)),
+                            leading: Text(
+                              '🇵🇱',
+                              style: TextStyle(fontSize: 24),
+                            ),
                             label: l10n.languagePolish,
                             isSelected: currentLocale?.languageCode == 'pl',
                             onTap: () => _selectLanguage(const Locale('pl')),
                           ),
                           const SizedBox(height: 12),
                           SelectionCard(
-                            leading: Text('🇬🇧', style: TextStyle(fontSize: 24)),
+                            leading: Text(
+                              '🇬🇧',
+                              style: TextStyle(fontSize: 24),
+                            ),
                             label: l10n.languageEnglish,
                             isSelected: currentLocale?.languageCode == 'en',
                             onTap: () => _selectLanguage(const Locale('en')),
                           ),
                           const SizedBox(height: 12),
                           SelectionCard(
-                            leading: Text('🇺🇦', style: TextStyle(fontSize: 24)),
+                            leading: Text(
+                              '🇺🇦',
+                              style: TextStyle(fontSize: 24),
+                            ),
                             label: l10n.languageUkrainian,
                             isSelected: currentLocale?.languageCode == 'uk',
                             onTap: () => _selectLanguage(const Locale('uk')),
@@ -106,7 +120,7 @@ class LanguagePage extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       );
                     },
@@ -132,4 +146,3 @@ class LanguagePage extends StatelessWidget {
     return l10n.languageSystem;
   }
 }
-

@@ -39,7 +39,9 @@ class _SelectionCardState extends State<SelectionCard> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: widget.isSelected ? AppColor.primary.withAlpha(25) : Colors.transparent,
+            color: widget.isSelected
+                ? AppColor.primary.withAlpha(25)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: widget.isSelected ? AppColor.primary : AppColor.outline,
@@ -54,8 +56,12 @@ class _SelectionCardState extends State<SelectionCard> {
                 child: Text(
                   widget.label,
                   style: TextStyle(
-                    color: widget.isSelected ? AppColor.primary : AppColor.onSurface,
-                    fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: widget.isSelected
+                        ? AppColor.primary
+                        : AppColor.onSurface,
+                    fontWeight: widget.isSelected
+                        ? FontWeight.w600
+                        : FontWeight.w500,
                     fontSize: 16,
                   ),
                 ),

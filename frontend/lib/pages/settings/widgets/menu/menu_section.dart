@@ -1,3 +1,4 @@
+// Sekcja menu z tytułem, opcjonalnymi przyciskami akcji i zawartością w obramowanym kontenerze.
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 

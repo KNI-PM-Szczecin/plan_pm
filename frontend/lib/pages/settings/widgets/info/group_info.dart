@@ -1,10 +1,12 @@
+// Karta z wybranymi grupami studenta wyświetlanymi jako chipy.
+// Przycisk "Zmień grupy" otwiera [GroupSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/pages/settings/widgets/themed_outline_button.dart';
-import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
+import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';
+import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -17,21 +19,18 @@ class GroupInfo extends StatelessWidget {
     return MenuSection(
       title: l10n.selectedGroupsHeader,
       action: [
-        SizedBox(
-          height: 35,
-          child: ThemedOutlineButton(
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const GroupSelectionPage(),
-                ),
-              );
-            },
-            label: l10n.changeGroupsButton,
-            icon: LucideIcons.edit3,
-          ),
+        ThemedOutlineButton(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GroupSelectionPage(),
+              ),
+            );
+          },
+          label: l10n.changeGroupsButton,
+          icon: LucideIcons.edit3,
         ),
       ],
       child: Column(
@@ -89,7 +88,7 @@ class GroupInfo extends StatelessWidget {
                           ),
                         ],
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
               ],
             ),
           ),

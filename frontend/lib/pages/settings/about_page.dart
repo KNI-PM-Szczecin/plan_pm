@@ -1,3 +1,5 @@
+// Strona "O aplikacji" — wersja, logo KNI, link do repozytorium.
+// Easter egg: 7 tapnięć w wersję odblokowuje sekcję debug w [SettingsPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';

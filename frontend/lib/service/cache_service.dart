@@ -1,3 +1,5 @@
+// Synchronizuje dane z backendu do lokalnego SQLite ([DatabaseService]).
+// Singleton — jedna instancja przez cały cykl życia aplikacji.
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/utils/logger.dart';
@@ -8,9 +10,8 @@ class CacheService {
   static final CacheService _cacheService = CacheService._internal();
 
   CacheService._internal();
-  factory CacheService() {
-    return _cacheService;
-  }
+  factory CacheService() => _cacheService;
+
   final BackendService _backendService = BackendService();
 
   Future<void> syncLectures() async {
@@ -26,11 +27,11 @@ class CacheService {
       lectures = _mergeLectures(lectures);
     }
 
-    final DatabaseService databaseService = DatabaseService.instance;
-    await databaseService.clearLectures();
+    final db = DatabaseService.instance;
+    await db.clearLectures();
 
     for (var lecture in lectures) {
-      await databaseService.addLecture(
+      await db.addLecture(
         name: lecture.name,
         startTime: lecture.startTime,
         endTime: lecture.endTime,
@@ -48,6 +49,10 @@ class CacheService {
     }
   }
 
+  // Scala zajęcia wykładowcy które mają ten sam slot czasowy (ta sama data + godzina).
+  // Jeden wykładowca prowadzi to samo zajęcie dla kilku grup jednocześnie — backend zwraca
+  // osobny wiersz na każdą grupę, a ta metoda łączy je w jeden wpis z połączonymi kodami
+  // grup (np. "L01,L02") i nazwami programów.
   List<LectureModel> _mergeLectures(List<LectureModel> lectures) {
     final Map<String, List<LectureModel>> slots = {};
     for (final l in lectures) {
@@ -108,11 +113,11 @@ class CacheService {
       AppLogger.w("[CACHE-SERVICE] No news found. Maybe the internet is down?");
       return;
     }
-    final DatabaseService databaseService = DatabaseService.instance;
-    await databaseService.clearNews();
+    final db = DatabaseService.instance;
+    await db.clearNews();
 
     for (var singleNews in news) {
-      await databaseService.addNews(
+      await db.addNews(
         createdAt: singleNews.createdAt,
         title: singleNews.title,
         imageUrl: singleNews.imageUrl,

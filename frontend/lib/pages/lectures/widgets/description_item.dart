@@ -1,3 +1,4 @@
+// Wiersz szczegółu zajęcia w rozwijanej sekcji karty [Lecture] — kolorowa ikona, etykieta i wartość.
 import 'package:flutter/material.dart';
 
 class DescriptionItem extends StatelessWidget {

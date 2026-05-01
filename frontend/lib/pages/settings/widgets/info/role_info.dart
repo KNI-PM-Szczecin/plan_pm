@@ -1,3 +1,6 @@
+// Przełącznik roli użytkownika (Student / Wykładowca).
+// Zmiana na wykładowcę wymaga wyboru osoby, zapisu do SharedPreferences i synchronizacji zajęć.
+// [_RoleTile] to lokalny widżet kafelka — 2 użycia w jednym pliku, nie warto wynosić.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -8,7 +11,7 @@ import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
-import 'package:plan_pm/pages/settings/widgets/menu_section.dart';
+import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -84,7 +87,9 @@ class _RoleInfoState extends State<RoleInfo> {
           _RoleTile(
             icon: LucideIcons.graduationCap,
             title: l10n.roleStudentViewTitle,
-            subtitle: isLecturer ? l10n.roleStudentViewSubtitle : l10n.roleCurrentlyActive,
+            subtitle: isLecturer
+                ? l10n.roleStudentViewSubtitle
+                : l10n.roleCurrentlyActive,
             isActive: !isLecturer,
             onTap: isLecturer ? _switchToStudent : null,
           ),
@@ -92,7 +97,9 @@ class _RoleInfoState extends State<RoleInfo> {
           _RoleTile(
             icon: LucideIcons.briefcase,
             title: l10n.roleLecturerViewTitle,
-            subtitle: isLecturer ? l10n.roleCurrentlyActive : l10n.roleLecturerViewSubtitle,
+            subtitle: isLecturer
+                ? l10n.roleCurrentlyActive
+                : l10n.roleLecturerViewSubtitle,
             isActive: isLecturer,
             onTap: isLecturer ? null : _switchToLecturer,
           ),
