@@ -146,20 +146,21 @@ class BackendService {
   }
 
   Future<List<NewsModel>> fetchNews({int limit = 20}) async {
-    final response = await Supabase.instance.client
-        .from("news")
-        .select()
-        .limit(limit);
-    final data = response;
-    if (data.isNotEmpty) {
-      final news = data.map((json) {
+    AppLogger.d("[BACKEND-SERVICE] fetchNews — wysyłam zapytanie (limit=$limit)");
+    try {
+      final response = await Supabase.instance.client
+          .from("news")
+          .select()
+          .limit(limit);
+      AppLogger.d("[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy");
+      if (response.isEmpty) return [];
+      return response.map((json) {
         final id = json["id"] as String;
         final url = Supabase.instance.client.storage
             .from("Files")
             .getPublicUrl("News/$id.png");
-
         return NewsModel(
-          id: json["id"] as String,
+          id: id,
           createdAt: DateTime.parse(json["created_at"]),
           title: json["title"] as String,
           content: json["content"] as String,
@@ -167,9 +168,10 @@ class BackendService {
           imageUrl: url,
         );
       }).toList();
-      return news;
+    } catch (e, st) {
+      AppLogger.e("[BACKEND-SERVICE] fetchNews — błąd zapytania", e, st);
+      rethrow;
     }
-    return [];
   }
 
   Future<AnnouncementModel?> fetchAnnouncement() async {

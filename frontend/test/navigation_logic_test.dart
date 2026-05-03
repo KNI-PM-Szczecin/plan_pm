@@ -49,14 +49,11 @@ void main() {
 
   group('daysBackward', () {
     group('tryb 7-dniowy', () {
-      test('poniedziałek → -6 (do niedzieli)', () {
-        expect(daysBackward(StudyMode.stationary, monday.weekday, true), 6);
-        expect(daysBackward(null, monday.weekday, true), 6);
-      });
-
-      test('pozostałe dni → -1', () {
-        for (final date in [tuesday, wednesday, thursday, friday, saturday, sunday]) {
+      test('każdy dzień wraca 1', () {
+        for (final date in [monday, tuesday, wednesday, thursday, friday, saturday, sunday]) {
           expect(daysBackward(StudyMode.stationary, date.weekday, true), 1);
+          expect(daysBackward(StudyMode.notStationary, date.weekday, true), 1);
+          expect(daysBackward(null, date.weekday, true), 1);
         }
       });
     });

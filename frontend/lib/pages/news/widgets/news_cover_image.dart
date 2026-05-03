@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class NewsCoverImage extends StatelessWidget {
@@ -24,7 +25,10 @@ class NewsCoverImage extends StatelessWidget {
       ),
       placeholder: (context, url) =>
           Skeleton.leaf(child: SizedBox(height: height)),
-      errorWidget: (context, url, error) => const SizedBox.shrink(),
+      errorWidget: (context, url, error) {
+        AppLogger.w("[NEWS-CACHE] Nie udało się załadować obrazu: $url", error);
+        return const SizedBox.shrink();
+      },
     );
   }
 }

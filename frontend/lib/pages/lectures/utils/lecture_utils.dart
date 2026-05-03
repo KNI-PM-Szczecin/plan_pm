@@ -96,12 +96,13 @@ String formatDuration(String raw, AppLocalizations l10n) {
 // Skraca pełną sygnaturę grupy do kodu przed pierwszym "/" i deduplikuje.
 // "L01/WI-S-AI-N/2024" → "L01", "L01,L02" → "L01, L02".
 String longToShort(String long) {
-  return long
-      .split(",")
-      .map((piece) => piece.split("/")[0])
-      .toString()
-      .replaceAll("(", "")
-      .replaceAll(")", "");
+  final codes = <String>[];
+  for (final piece in long.split(',')) {
+    final code = piece.split('/').first.trim();
+    if (code.isEmpty || codes.contains(code)) continue;
+    codes.add(code);
+  }
+  return codes.join(', ');
 }
 
 // Krótkie nazwy dni tygodnia — wypełniane przez DaySelection z kontekstu lokalizacji.

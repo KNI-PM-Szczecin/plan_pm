@@ -3,6 +3,7 @@ import 'package:file/local.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 
 // Cache manager dla obrazków newsów z persystencją do Application Support.
 // Standardowy CacheManager zapisuje w tmp/ — iOS może usunąć te pliki pod presją
@@ -24,7 +25,13 @@ class _PersistentFileSystem implements FileSystem {
   Future<File> createFile(String name) async {
     final dir = await _dir;
     if (!(await dir.exists())) await _initDir();
-    return dir.childFile(name);
+    final file = dir.childFile(name);
+    if (await file.exists()) {
+      AppLogger.d("[NEWS-CACHE] Cache hit — obraz już na dysku: $name");
+    } else {
+      AppLogger.i("[NEWS-CACHE] Nowy obraz — pobieranie z sieci: $name");
+    }
+    return file;
   }
 }
 
