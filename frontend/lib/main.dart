@@ -75,11 +75,14 @@ Future<Widget> appInitialization() async {
   }
 
   try {
-    final cacheService = CacheService();
-    await cacheService.syncLectures();
-    await cacheService.syncNews();
+    await CacheService().syncLectures();
   } catch (error) {
-    AppLogger.e("[APP-INIT] Caching error", error);
+    AppLogger.e("[APP-INIT] syncLectures error", error);
+  }
+  try {
+    await CacheService().syncNews();
+  } catch (error) {
+    AppLogger.e("[APP-INIT] syncNews error", error);
   }
 
   return const MyHomePage(title: "Strona główna");

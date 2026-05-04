@@ -101,41 +101,42 @@ class BackendService {
   }
 
   Future<List<NewsModel>> fetchNews({int limit = 20}) async {
-    final response = await Supabase.instance.client
-        .from("news")
-        .select()
-        .limit(limit);
-    final data = response;
-    if (data.isNotEmpty) {
-      final news = data.map((json) {
-        final id = json["id"] as String;
-        final url = Supabase.instance.client.storage
-            .from("Files")
-            .getPublicUrl("News/$id.png");
-
+    try {
+      final response = await Supabase.instance.client
+          .from("news")
+          .select()
+          .limit(limit);
+      if (response.isEmpty) return [];
+      return response.map((json) {
         return NewsModel(
           id: json["id"] as String,
           createdAt: DateTime.parse(json["created_at"]),
           title: json["title"] as String,
           content: json["content"] as String,
           messageType: json["message_type"] as String,
-          imageUrl: url,
+          imageUrl: json["image_url"] as String?,
         );
       }).toList();
-      return news;
+    } catch (e, st) {
+      AppLogger.e("[BACKEND-SERVICE] fetchNews — błąd zapytania", e, st);
+      rethrow;
     }
-    return [];
   }
 
   Future<AnnouncementModel?> fetchAnnouncement() async {
-    final response = await Supabase.instance.client
-        .from("app_announcements")
-        .select()
-        .eq("active", true)
-        .order("created_at", ascending: false)
-        .limit(1);
-    if (response.isEmpty) return null;
-    return AnnouncementModel.fromJson(response.first);
+    try {
+      final response = await Supabase.instance.client
+          .from("app_announcements")
+          .select()
+          .eq("active", true)
+          .order("created_at", ascending: false)
+          .limit(1);
+      if (response.isEmpty) return null;
+      return AnnouncementModel.fromJson(response.first);
+    } catch (e) {
+      AppLogger.w("[BACKEND-SERVICE] fetchAnnouncement — pominięto", e);
+      return null;
+    }
   }
 
   Future<Map<String, Map<String, List<String>>>> fetchStructure() async {
