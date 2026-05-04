@@ -1,9 +1,14 @@
+// Dialog wyświetlany przy starcie aplikacji gdy pojawi się nowe ogłoszenie systemowe.
+// Wygląd zależy od [AnnouncementModel.type]: 'info' i 'warning' pokazują tylko
+// przycisk zamknięcia, 'update' dodatkowo przycisk otwierający [storeUrl]
+// w App Store / Play Store. Wywoływany wyłącznie z main.dart podczas inicjalizacji.
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/gradient_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementDialog extends StatelessWidget {
@@ -82,7 +87,9 @@ class AnnouncementDialog extends StatelessWidget {
                       Uri.parse(announcement.storeUrl!),
                       mode: LaunchMode.externalApplication,
                     );
-                  } catch (_) {}
+                  } catch (e) {
+                    AppLogger.w("[ANNOUNCEMENT] Nie udało się otworzyć linku w sklepie", e);
+                  }
                 }
                 if (context.mounted) Navigator.of(context).pop();
               },

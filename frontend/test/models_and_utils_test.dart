@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
-import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
-import 'package:plan_pm/global/extensions.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/pages/home/utils/lecture_filters.dart';
+import 'package:plan_pm/global/utils/extensions.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/service/backend_service.dart';
 
 // ────────────────────────────────────────────────────────────
@@ -18,26 +18,25 @@ Map<String, dynamic> baseLectureJson({
   List<Map<String, dynamic>> teachers = const [],
   Map<String, dynamic>? rooms,
   String? notes,
-}) =>
-    {
-      "id": id,
-      "subject": subject,
-      "startTime": startTime,
-      "endTime": endTime,
-      "group": group,
-      "teachersclasses": teachers,
-      "rooms": rooms,
-      "notes": notes,
-    };
+}) => {
+  "id": id,
+  "subject": subject,
+  "startTime": startTime,
+  "endTime": endTime,
+  "group": group,
+  "teachersclasses": teachers,
+  "rooms": rooms,
+  "notes": notes,
+};
 
 Map<String, dynamic> teacherEntry(String title, String fullName) => {
-      "teachers": {"title": title, "fullName": fullName},
-    };
+  "teachers": {"title": title, "fullName": fullName},
+};
 
 Map<String, dynamic> roomEntry(String buildingName, String roomName) => {
-      "name": roomName,
-      "building": {"name": buildingName},
-    };
+  "name": roomName,
+  "building": {"name": buildingName},
+};
 
 // ────────────────────────────────────────────────────────────
 // Tests
@@ -161,11 +160,17 @@ void main() {
       });
 
       test('N → notStationary', () {
-        expect(StudyModeExtension.fromProgramType('N'), StudyMode.notStationary);
+        expect(
+          StudyModeExtension.fromProgramType('N'),
+          StudyMode.notStationary,
+        );
       });
 
       test('nieznana wartość → notStationary', () {
-        expect(StudyModeExtension.fromProgramType('X'), StudyMode.notStationary);
+        expect(
+          StudyModeExtension.fromProgramType('X'),
+          StudyMode.notStationary,
+        );
         expect(StudyModeExtension.fromProgramType(''), StudyMode.notStationary);
       });
     });
@@ -182,19 +187,21 @@ void main() {
   group('LectureModel.fromJson', () {
     group('wykładowcy', () {
       test('jeden wykładowca z tytułem', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          teachers: [teacherEntry('dr', 'Jan Kowalski')],
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(teachers: [teacherEntry('dr', 'Jan Kowalski')]),
+        );
         expect(model.professor, 'dr Jan Kowalski');
       });
 
       test('wielu wykładowców → rozdzieleni przecinkiem', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          teachers: [
-            teacherEntry('dr', 'Jan Kowalski'),
-            teacherEntry('prof.', 'Anna Nowak'),
-          ],
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            teachers: [
+              teacherEntry('dr', 'Jan Kowalski'),
+              teacherEntry('prof.', 'Anna Nowak'),
+            ],
+          ),
+        );
         expect(model.professor, 'dr Jan Kowalski, prof. Anna Nowak');
       });
 
@@ -204,31 +211,41 @@ void main() {
       });
 
       test('wykładowca z null teachers → filtrowany', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          teachers: [
-            {"teachers": null},
-            teacherEntry('dr', 'Jan Kowalski'),
-          ],
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            teachers: [
+              {"teachers": null},
+              teacherEntry('dr', 'Jan Kowalski'),
+            ],
+          ),
+        );
         expect(model.professor, 'dr Jan Kowalski');
       });
 
       test('wykładowca z pustym tytułem i imieniem → filtrowany', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          teachers: [
-            {"teachers": {"title": null, "fullName": null}},
-            teacherEntry('dr', 'Anna Nowak'),
-          ],
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            teachers: [
+              {
+                "teachers": {"title": null, "fullName": null},
+              },
+              teacherEntry('dr', 'Anna Nowak'),
+            ],
+          ),
+        );
         expect(model.professor, 'dr Anna Nowak');
       });
 
       test('wykładowca bez tytułu (null) → samo imię', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          teachers: [
-            {"teachers": {"title": null, "fullName": "Jan Kowalski"}},
-          ],
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            teachers: [
+              {
+                "teachers": {"title": null, "fullName": "Jan Kowalski"},
+              },
+            ],
+          ),
+        );
         expect(model.professor, 'Jan Kowalski');
       });
     });
@@ -251,7 +268,10 @@ void main() {
       test('rooms.building.name null → location i building null', () {
         final model = LectureModel.fromJson(
           baseLectureJson(
-            rooms: {"name": "101", "building": {"name": null}},
+            rooms: {
+              "name": "101",
+              "building": {"name": null},
+            },
           ),
         );
         expect(model.location, isNull);
@@ -269,45 +289,55 @@ void main() {
 
     group('czas trwania', () {
       test('90 minut', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T08:00:00',
-          endTime: '2026-03-23T09:30:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T08:00:00',
+            endTime: '2026-03-23T09:30:00',
+          ),
+        );
         expect(model.duration, '90 min');
       });
 
       test('45 minut', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T10:00:00',
-          endTime: '2026-03-23T10:45:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T10:00:00',
+            endTime: '2026-03-23T10:45:00',
+          ),
+        );
         expect(model.duration, '45 min');
       });
 
       test('120 minut', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T12:00:00',
-          endTime: '2026-03-23T14:00:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T12:00:00',
+            endTime: '2026-03-23T14:00:00',
+          ),
+        );
         expect(model.duration, '120 min');
       });
     });
 
     group('formatowanie godziny', () {
       test('godzina poranna z zerem', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T08:30:00',
-          endTime: '2026-03-23T09:00:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T08:30:00',
+            endTime: '2026-03-23T09:00:00',
+          ),
+        );
         expect(model.startTime, '08:30');
         expect(model.endTime, '09:00');
       });
 
       test('godzina popołudniowa', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T13:45:00',
-          endTime: '2026-03-23T15:15:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T13:45:00',
+            endTime: '2026-03-23T15:15:00',
+          ),
+        );
         expect(model.startTime, '13:45');
         expect(model.endTime, '15:15');
       });
@@ -315,11 +345,9 @@ void main() {
 
     group('pozostałe pola', () {
       test('id, name, group są poprawnie mapowane', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          id: 'xyz',
-          subject: 'Fizyka',
-          group: 'GR2',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(id: 'xyz', subject: 'Fizyka', group: 'GR2'),
+        );
         expect(model.id, 'xyz');
         expect(model.name, 'Fizyka');
         expect(model.group, 'GR2');
@@ -331,15 +359,19 @@ void main() {
       });
 
       test('notes z wartością → zachowane', () {
-        final model = LectureModel.fromJson(baseLectureJson(notes: 'Sala zmieniona'));
+        final model = LectureModel.fromJson(
+          baseLectureJson(notes: 'Sala zmieniona'),
+        );
         expect(model.notes, 'Sala zmieniona');
       });
 
       test('date pochodzi z startTime', () {
-        final model = LectureModel.fromJson(baseLectureJson(
-          startTime: '2026-03-23T08:00:00',
-          endTime: '2026-03-23T09:30:00',
-        ));
+        final model = LectureModel.fromJson(
+          baseLectureJson(
+            startTime: '2026-03-23T08:00:00',
+            endTime: '2026-03-23T09:30:00',
+          ),
+        );
         expect(model.date.year, 2026);
         expect(model.date.month, 3);
         expect(model.date.day, 23);
@@ -349,30 +381,30 @@ void main() {
 
   group('getClosestLectures', () {
     test('zachowuje zajęcie rozpoczęte i trwające dalej', () {
-      final lecture = LectureModel.fromJson(baseLectureJson(
-        startTime: '2026-03-23T08:00:00',
-        endTime: '2026-03-23T09:30:00',
-      ));
-
-      final result = getClosestLectures(
-        [lecture],
-        DateTime(2026, 3, 23, 8, 1),
+      final lecture = LectureModel.fromJson(
+        baseLectureJson(
+          startTime: '2026-03-23T08:00:00',
+          endTime: '2026-03-23T09:30:00',
+        ),
       );
+
+      final result = getClosestLectures([lecture], DateTime(2026, 3, 23, 8, 1));
 
       expect(result, hasLength(1));
       expect(result.first, lecture);
     });
 
     test('usuwa zajęcie zakończone przed referencyjnym czasem', () {
-      final lecture = LectureModel.fromJson(baseLectureJson(
-        startTime: '2026-03-23T08:00:00',
-        endTime: '2026-03-23T09:30:00',
-      ));
-
-      final result = getClosestLectures(
-        [lecture],
-        DateTime(2026, 3, 23, 9, 31),
+      final lecture = LectureModel.fromJson(
+        baseLectureJson(
+          startTime: '2026-03-23T08:00:00',
+          endTime: '2026-03-23T09:30:00',
+        ),
       );
+
+      final result = getClosestLectures([
+        lecture,
+      ], DateTime(2026, 3, 23, 9, 31));
 
       expect(result, isEmpty);
     });
