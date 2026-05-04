@@ -4,6 +4,9 @@
 # Secrets
 .env
 
+# Claude Code
+.claude/
+
 # Miscellaneous
 *.class
 *.lock

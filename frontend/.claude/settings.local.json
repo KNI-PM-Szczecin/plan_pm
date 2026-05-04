@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(dart analyze lib/pages/settings/settings_page.dart lib/pages/settings/about_page.dart)",
-      "Bash(git -C /Users/piotrwittig/Coding/plan_pm ls-files backend/output/)"
-    ]
-  }
-}
