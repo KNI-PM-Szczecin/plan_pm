@@ -1,11 +1,15 @@
+// Strona "O aplikacji" — wersja, logo KNI, link do repozytorium.
+// Easter egg: 7 tapnięć w wersję odblokowuje sekcję debug w [SettingsPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 
 const String kDebugUnlockedKey = 'debug_unlocked';
 
@@ -37,7 +41,7 @@ class _AboutPageState extends State<AboutPage> {
         _version = "${info.version}+${info.buildNumber}";
       });
     } catch (e) {
-      // package_info_plus might not be working in dev / not installed
+      AppLogger.w("[ABOUT] Nie udało się odczytać wersji aplikacji", e);
     }
   }
 
@@ -100,27 +104,7 @@ class _AboutPageState extends State<AboutPage> {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        title: Text(
-          l10n.aboutApp,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      appBar: StandardAppBar(title: l10n.aboutApp),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {

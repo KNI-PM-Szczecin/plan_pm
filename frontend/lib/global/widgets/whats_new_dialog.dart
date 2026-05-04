@@ -1,6 +1,9 @@
+// Dialog "Co nowego" wyświetlany przy starcie po aktualizacji aplikacji.
+// Pokazuje listę zmian z aktualnej wersji zdefiniowaną w [changelog.dart].
+// Wywoływany wyłącznie z main.dart podczas inicjalizacji.
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/gradient_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 

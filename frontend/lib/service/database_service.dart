@@ -1,3 +1,5 @@
+// Lokalny cache SQLite — dwie tabele: lectures i news.
+// Singleton otwierający bazę przy pierwszym dostępie przez getter [database].
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/api/models/news_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,29 +11,34 @@ class DatabaseService {
 
   DatabaseService._constructor();
 
-  final int dbVersion = 1;
+  static const int dbVersion = 2;
+
   // Lectures
-  final String _lecturesTableName = "lectures";
-  final String _lecturesIdColumnName = "id";
-  final String _lecturesNameColumnName = "name";
-  final String _lecturesStartTimeColumnName = "start_time";
-  final String _lecturesEndTimeColumnName = "end_time";
-  final String _lecturesRoomColumnName = "room";
-  final String _lecturesBuildingColumnName = "building";
-  final String _lecturesLocationColumnName = "location";
-  final String _lecturesProfessorColumnName = "professor";
-  final String _lecturesGroupColumnName = "group_name";
-  final String _lecturesDurationColumnName = "duration";
-  final String _lecturesDateColumnName = "date";
-  final String _lecturesNotesColumnName = "notes";
+  static const String _lecturesTableName = "lectures";
+  static const String _lecturesIdColumnName = "id";
+  static const String _lecturesNameColumnName = "name";
+  static const String _lecturesStartTimeColumnName = "start_time";
+  static const String _lecturesEndTimeColumnName = "end_time";
+  static const String _lecturesRoomColumnName = "room";
+  static const String _lecturesBuildingColumnName = "building";
+  static const String _lecturesLocationColumnName = "location";
+  static const String _lecturesProfessorColumnName = "professor";
+  static const String _lecturesGroupColumnName = "group_name";
+  static const String _lecturesDurationColumnName = "duration";
+  static const String _lecturesDateColumnName = "date";
+  static const String _lecturesNotesColumnName = "notes";
+  static const String _lecturesProgramNameColumnName = "program_name";
+  static const String _lecturesYearColumnName = "year";
+  static const String _lecturesDegreeLevelColumnName = "degree_level";
+
   // News
-  final String _newsTableName = "news";
-  final String _newsIdColumnName = "id";
-  final String _newsCreatedAtColumnName = "created_at";
-  final String _newsImageUrlColumnName = "image_url";
-  final String _newsContentColumnName = "content";
-  final String _newsMessageTypeColumnName = "messageType";
-  final String _newsTitleColumnName = "title";
+  static const String _newsTableName = "news";
+  static const String _newsIdColumnName = "id";
+  static const String _newsCreatedAtColumnName = "created_at";
+  static const String _newsImageUrlColumnName = "image_url";
+  static const String _newsContentColumnName = "content";
+  static const String _newsMessageTypeColumnName = "messageType";
+  static const String _newsTitleColumnName = "title";
 
   Future<Database> get database async {
     if (_db != null) return _db!;
@@ -46,8 +53,15 @@ class DatabaseService {
     final database = await openDatabase(
       databasePath,
       version: dbVersion,
-      onCreate: (db, version) {
-        db.execute('''
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesProgramNameColumnName TEXT');
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesYearColumnName INTEGER');
+          await db.execute('ALTER TABLE $_lecturesTableName ADD COLUMN $_lecturesDegreeLevelColumnName TEXT');
+        }
+      },
+      onCreate: (db, version) async {
+        await db.execute('''
         CREATE TABLE $_lecturesTableName (
           $_lecturesIdColumnName INTEGER PRIMARY KEY AUTOINCREMENT,
           $_lecturesNameColumnName TEXT NOT NULL,
@@ -60,10 +74,13 @@ class DatabaseService {
           $_lecturesGroupColumnName TEXT,
           $_lecturesDurationColumnName TEXT,
           $_lecturesDateColumnName INTEGER,
-          $_lecturesNotesColumnName TEXT
+          $_lecturesNotesColumnName TEXT,
+          $_lecturesProgramNameColumnName TEXT,
+          $_lecturesYearColumnName INTEGER,
+          $_lecturesDegreeLevelColumnName TEXT
         );
         ''');
-        db.execute('''
+        await db.execute('''
         CREATE TABLE $_newsTableName(
           $_newsIdColumnName INTEGER PRIMARY KEY AUTOINCREMENT,
           $_newsCreatedAtColumnName INTEGER NOT NULL,
@@ -91,6 +108,9 @@ class DatabaseService {
     required String duration,
     required DateTime date,
     String? notes,
+    String? programName,
+    int? year,
+    String? degreeLevel,
   }) async {
     final db = await database;
     final Map<String, dynamic> values = {
@@ -106,6 +126,9 @@ class DatabaseService {
       _lecturesDurationColumnName: duration,
       _lecturesDateColumnName: date.toUtc().millisecondsSinceEpoch,
       _lecturesNotesColumnName: notes,
+      _lecturesProgramNameColumnName: programName,
+      _lecturesYearColumnName: year,
+      _lecturesDegreeLevelColumnName: degreeLevel,
     };
     return await db.insert(
       _lecturesTableName,
@@ -127,24 +150,28 @@ class DatabaseService {
   Future<List<LectureModel>> fetchLectures() async {
     final db = await database;
     final data = await db.query(_lecturesTableName);
-    final lectures = data.map((lecture) {
-      final date = DateTime.fromMillisecondsSinceEpoch(lecture["date"] as int);
+    return data.map((row) {
+      final date = DateTime.fromMillisecondsSinceEpoch(
+        row[_lecturesDateColumnName] as int,
+      );
       return LectureModel(
-        location: lecture["location"] as String?,
-        duration: lecture["duration"] as String,
-        notes: lecture["notes"] as String?,
-        id: lecture["id"].toString(),
-        name: lecture["name"] as String,
-        startTime: lecture["start_time"] as String,
-        endTime: lecture["end_time"] as String,
-        room: lecture["room"] as String?,
-        building: lecture["building"] as String?,
-        group: lecture["group_name"] as String,
-        professor: lecture["professor"] as String?,
+        id: row[_lecturesIdColumnName].toString(),
+        name: row[_lecturesNameColumnName] as String,
+        startTime: row[_lecturesStartTimeColumnName] as String,
+        endTime: row[_lecturesEndTimeColumnName] as String,
+        room: row[_lecturesRoomColumnName] as String?,
+        building: row[_lecturesBuildingColumnName] as String?,
+        location: row[_lecturesLocationColumnName] as String?,
+        professor: row[_lecturesProfessorColumnName] as String?,
+        group: row[_lecturesGroupColumnName] as String,
+        duration: row[_lecturesDurationColumnName] as String,
         date: date,
+        notes: row[_lecturesNotesColumnName] as String?,
+        programName: row[_lecturesProgramNameColumnName] as String?,
+        year: row[_lecturesYearColumnName] as int?,
+        degreeLevel: row[_lecturesDegreeLevelColumnName] as String?,
       );
     }).toList();
-    return lectures;
   }
 
   Future<int> addNews({
@@ -174,13 +201,14 @@ class DatabaseService {
   Future<List<NewsModel>> fetchNews({int limit = 5}) async {
     final db = await database;
     final data = await db.query(
-      limit: limit,
       _newsTableName,
       orderBy: '$_newsCreatedAtColumnName DESC',
+      limit: limit,
     );
-    final newsList = data.map((row) {
-      final createdAtMillis = row[_newsCreatedAtColumnName] as int;
-      final createdAt = DateTime.fromMillisecondsSinceEpoch(createdAtMillis);
+    return data.map((row) {
+      final createdAt = DateTime.fromMillisecondsSinceEpoch(
+        row[_newsCreatedAtColumnName] as int,
+      );
       return NewsModel(
         id: row[_newsIdColumnName].toString(),
         title: row[_newsTitleColumnName] as String,
@@ -190,6 +218,5 @@ class DatabaseService {
         messageType: row[_newsMessageTypeColumnName] as String? ?? '',
       );
     }).toList();
-    return newsList;
   }
 }

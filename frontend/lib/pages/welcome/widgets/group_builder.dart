@@ -1,7 +1,10 @@
+// Siatka przycisków grup pogrupowanych po pierwszej literze (A/C/L/inne).
+// Sortuje kategorie A→C→L→inne i grupy po numerze, potem alfabetycznie.
+// Zaznaczenie grupy odznacza pozostałe w tej samej kategorii (single-select per kategoria).
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class GroupBuilder extends StatefulWidget {

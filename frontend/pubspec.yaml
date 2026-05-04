@@ -92,14 +92,20 @@ flutter:
     - fonts/
     - CHANGELOG.md
 
+flutter_native_splash:
+  background_image: "assets/native_splash/background.png"
+  background_image_dark: "assets/native_splash/background_dark.png"
+  android: true
+  ios: true
+
 flutter_launcher_icons:
-  image_path: "assets/logo.png"
+  image_path: "assets/launcher_icons/logo.png"
   android: true
   ios: true
   remove_alpha_ios: true
-  adaptive_icon_foreground: "assets/logo_foreground.png"
+  adaptive_icon_foreground: "assets/launcher_icons/logo_foreground.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_monochrome: "assets/logo_monochrome.png"
+  adaptive_icon_monochrome: "assets/launcher_icons/logo_monochrome.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
