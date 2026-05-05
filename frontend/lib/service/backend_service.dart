@@ -135,20 +135,22 @@ class BackendService {
   }
 
   Future<List<Map<String, dynamic>>> fetchAllTeachers() async {
-  final response = await Supabase.instance.client
-      .from('v_teachers_search')
-      .select()
-      .order('full_name', ascending: true);
-  return List<Map<String, dynamic>>.from(response);
+    final response = await Supabase.instance.client
+        .from('v_teachers_search')
+        .select()
+        .order('full_name', ascending: true);
+    return List<Map<String, dynamic>>.from(response);
   }
 
   Future<List<LectureModel>> fetchTeacherLectures(String teacherId) async {
-  final response = await Supabase.instance.client
-      .from("v_teacher_lecture")
-      .select()
-      .eq("teacher_id", teacherId);
+    final response = await Supabase.instance.client
+        .from("v_teacher_lectures")
+        .select()
+        .eq("teacher_id", teacherId);
 
   final List<dynamic> data = response;
-  return data.map((json) => LectureModel.fromJson(json)).toList();
+  final lectures = data.map((json) => LectureModel.fromJson(json)).toList();
+  lectures.sort((a, b) => a.date.compareTo(b.date));
+  return lectures;
   }
 }
