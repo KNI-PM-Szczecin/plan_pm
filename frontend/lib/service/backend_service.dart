@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 // import 'dart:developer' as developer;
+import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
@@ -146,6 +147,25 @@ class BackendService {
   }
 
   Future<List<NewsModel>> fetchNews({int limit = 20}) async {
+    if (kDebugNews) {
+      return [
+        NewsModel(
+          id: 'debug-1',
+          createdAt: DateTime.now(),
+          title: 'Mock news — test obrazu',
+          content: 'To jest testowy news do weryfikacji ładowania zdjęć z ImgBB.',
+          messageType: 'info',
+          imageUrl: kDebugNewsImageUrl.isNotEmpty ? kDebugNewsImageUrl : null,
+        ),
+        NewsModel(
+          id: 'debug-2',
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+          title: 'Mock news — bez zdjęcia',
+          content: 'Ten news nie ma zdjęcia — sprawdza fallback.',
+          messageType: 'warning',
+        ),
+      ];
+    }
     AppLogger.d("[BACKEND-SERVICE] fetchNews — wysyłam zapytanie (limit=$limit)");
     try {
       final response = await Supabase.instance.client
@@ -155,17 +175,13 @@ class BackendService {
       AppLogger.d("[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy");
       if (response.isEmpty) return [];
       return response.map((json) {
-        final id = json["id"] as String;
-        final url = Supabase.instance.client.storage
-            .from("Files")
-            .getPublicUrl("News/$id.png");
         return NewsModel(
-          id: id,
+          id: json["id"] as String,
           createdAt: DateTime.parse(json["created_at"]),
           title: json["title"] as String,
           content: json["content"] as String,
           messageType: json["message_type"] as String,
-          imageUrl: url,
+          imageUrl: json["image_url"] as String?,
         );
       }).toList();
     } catch (e, st) {
@@ -175,14 +191,19 @@ class BackendService {
   }
 
   Future<AnnouncementModel?> fetchAnnouncement() async {
-    final response = await Supabase.instance.client
-        .from("app_announcements")
-        .select()
-        .eq("active", true)
-        .order("created_at", ascending: false)
-        .limit(1);
-    if (response.isEmpty) return null;
-    return AnnouncementModel.fromJson(response.first);
+    try {
+      final response = await Supabase.instance.client
+          .from("app_announcements")
+          .select()
+          .eq("active", true)
+          .order("created_at", ascending: false)
+          .limit(1);
+      if (response.isEmpty) return null;
+      return AnnouncementModel.fromJson(response.first);
+    } catch (e) {
+      AppLogger.w("[BACKEND-SERVICE] fetchAnnouncement — pominięto", e);
+      return null;
+    }
   }
 
   Future<void> clearCache() async {

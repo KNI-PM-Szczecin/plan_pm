@@ -36,9 +36,13 @@ Future<Widget> appInitialization() async {
 
     try {
       await CacheService().syncLectures();
+    } catch (error) {
+      AppLogger.e("[APP-INIT] syncLectures error", error);
+    }
+    try {
       await CacheService().syncNews();
     } catch (error) {
-      AppLogger.e("[APP-INIT] Caching error", error);
+      AppLogger.e("[APP-INIT] syncNews error", error);
     }
 
     return const MyHomePage(title: "Strona główna");
@@ -76,9 +80,13 @@ Future<Widget> appInitialization() async {
 
   try {
     await CacheService().syncLectures();
+  } catch (error) {
+    AppLogger.e("[APP-INIT] syncLectures error", error);
+  }
+  try {
     await CacheService().syncNews();
   } catch (error) {
-    AppLogger.e("[APP-INIT] Caching error", error);
+    AppLogger.e("[APP-INIT] syncNews error", error);
   }
 
   return const MyHomePage(title: "Strona główna");
