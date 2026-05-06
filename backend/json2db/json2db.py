@@ -20,6 +20,20 @@ load_dotenv()
 _env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
 _prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
 
+_PAGE_SIZE = 1000
+
+def _fetch_all(query_builder, page_size: int = _PAGE_SIZE) -> list:
+    """Fetch all rows from a Supabase query by paginating in chunks of page_size."""
+    rows = []
+    offset = 0
+    while True:
+        batch = query_builder.range(offset, offset + page_size - 1).execute()
+        rows.extend(batch.data)
+        if len(batch.data) < page_size:
+            break
+        offset += page_size
+    return rows
+
 class json2db:
     db: Any
     data: dict
@@ -145,14 +159,14 @@ class json2db:
         print("Loading classes")
 
         query = []
-        programs = self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel").limit(10000).execute()
-        programs_map = {v["id"] : [v["name"], v["academicYear"], v["language"], v["programType"], v["courseLength"], v["degreeLevel"]] for v in programs.data}
+        programs_data = _fetch_all(self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel"))
+        programs_map = {v["id"] : [v["name"], v["academicYear"], v["language"], v["programType"], v["courseLength"], v["degreeLevel"]] for v in programs_data}
 
-        buildings_response = self.db.table("building").select("id, name").limit(10000).execute()
-        buildings_map = {v["name"]: v["id"] for v in buildings_response.data}
+        buildings_data = _fetch_all(self.db.table("building").select("id, name"))
+        buildings_map = {v["name"]: v["id"] for v in buildings_data}
 
-        rooms = self.db.table("rooms").select("id, name, building").limit(10000).execute()
-        room_map = {(v["name"], v["building"]): v["id"] for v in rooms.data}
+        rooms_data = _fetch_all(self.db.table("rooms").select("id, name, building"))
+        room_map = {(v["name"], v["building"]): v["id"] for v in rooms_data}
 
         processed_class_keys = set()
 
@@ -213,15 +227,15 @@ class json2db:
     def load_teachers_classes(self):
         print("Loading teachers/classes")
 
-        classes_response = self.db.table("classes").select("id, subject, group, startTime").limit(100000).execute()
-        teachers_response = self.db.table("teachers").select("id, fullName").limit(10000).execute()
+        classes_data = _fetch_all(self.db.table("classes").select("id, subject, group, startTime"))
+        teachers_data = _fetch_all(self.db.table("teachers").select("id, fullName"))
 
         classes_map = {
-            (v["subject"], v["group"], v["startTime"]): v["id"] 
-            for v in classes_response.data
+            (v["subject"], v["group"], v["startTime"]): v["id"]
+            for v in classes_data
         }
 
-        teachers_map = {v["fullName"]: v["id"] for v in teachers_response.data}
+        teachers_map = {v["fullName"]: v["id"] for v in teachers_data}
 
         query = []
         added_links = set() 
