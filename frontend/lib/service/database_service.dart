@@ -213,7 +213,7 @@ class DatabaseService {
         id: row[_newsIdColumnName].toString(),
         title: row[_newsTitleColumnName] as String,
         createdAt: createdAt,
-        imageUrl: row[_newsImageUrlColumnName] as String? ?? '',
+        imageUrl: row[_newsImageUrlColumnName] as String?,
         content: row[_newsContentColumnName] as String? ?? '',
         messageType: row[_newsMessageTypeColumnName] as String? ?? '',
       );

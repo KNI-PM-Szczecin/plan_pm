@@ -1,6 +1,7 @@
 // Logika startowa aplikacji — odczytuje SharedPreferences i decyduje który widok pokazać.
 // Wywoływana raz przy starcie przez [App], przed zdjęciem splash screena.
 import 'package:flutter/widgets.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/models/student.dart';
@@ -11,11 +12,22 @@ import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/service/cache_service.dart';
+import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Widget> appInitialization() async {
   AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final info = await PackageInfo.fromPlatform();
+  final currentVersion = info.version;
+  final lastVersion = prefs.getString('last_app_version');
+  if (lastVersion != null && lastVersion != currentVersion) {
+    AppLogger.i("[APP-INIT] Version changed $lastVersion → $currentVersion, clearing cache");
+    await DatabaseService.instance.clearLectures();
+    await DatabaseService.instance.clearNews();
+  }
+  await prefs.setString('last_app_version', currentVersion);
 
   if (!prefs.containsKey("skip_welcome")) {
     return const WelcomePage();

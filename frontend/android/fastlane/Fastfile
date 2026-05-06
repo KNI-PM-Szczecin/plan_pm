@@ -1,3 +1,5 @@
+require 'fileutils'
+
 default_platform(:android)
 
 def read_changelog_locale(version, locale)
@@ -25,6 +27,17 @@ platform :android do
     pubspec = YAML.load_file("../../pubspec.yaml")
     version_name = pubspec["version"].split("+").first
 
+    # Play Store expects changelogs as files under metadata/android/<locale>/changelogs/<version_code>.txt
+    version_code = pubspec["version"].split("+").last
+    {
+      "pl-PL" => read_changelog_locale(version_name, "pl-PL"),
+      "en-US" => read_changelog_locale(version_name, "en-US"),
+    }.each do |locale, notes|
+      dir = "metadata/android/#{locale}/changelogs"
+      FileUtils.mkdir_p(dir)
+      File.write("#{dir}/#{version_code}.txt", notes)
+    end
+
     upload_to_play_store(
       track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
@@ -33,10 +46,6 @@ platform :android do
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
-      release_notes: {
-        "pl-PL" => read_changelog_locale(version_name, "pl-PL"),
-        "en-US" => read_changelog_locale(version_name, "en-US"),
-      },
     )
   end
 
