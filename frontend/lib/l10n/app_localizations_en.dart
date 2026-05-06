@@ -269,6 +269,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lengthLabel => 'Duration';
 
   @override
+  String get additionalInformation => 'ADDITIONAL INFORMATION';
+
+  @override
   String get notesLabel => 'Notes';
 
   @override
@@ -531,4 +534,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whatsNewGotIt => 'Got it!';
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}min';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get roleSelectionTitle => 'How do you want to use PlanPM?';
+
+  @override
+  String get roleSelectionSubtitle =>
+      'Choose the role that best describes your needs';
+
+  @override
+  String get roleStudentButton => 'I\'m a student';
+
+  @override
+  String get roleLecturerButton => 'I\'m a lecturer';
+
+  @override
+  String get lecturerSelectionTitle => 'Select lecturer';
+
+  @override
+  String get lecturerSelectionSubtitle => 'Enter name, surname or subject name';
+
+  @override
+  String get lecturerSearchNoResults => 'No results';
+
+  @override
+  String get lecturerLabel => 'Lecturer';
+
+  @override
+  String get roleSectionTitle => 'Role';
+
+  @override
+  String get roleStudentViewTitle => 'Student View';
+
+  @override
+  String get roleStudentViewSubtitle => 'Switch to student schedule';
+
+  @override
+  String get roleCurrentlyActive => 'Currently active';
+
+  @override
+  String get roleLecturerViewTitle => 'Lecturer View';
+
+  @override
+  String get roleLecturerViewSubtitle => 'Switch to manage classes';
+
+  @override
+  String get debugRoleSelector => 'Role Selector';
+
+  @override
+  String get debugClearCache => 'Clear cache';
+
+  @override
+  String get debugCacheCleared => 'Cache cleared';
+
+  @override
+  String get debugSevenDayMode => '7-day mode';
+
+  @override
+  String get newsLoading => 'Loading news';
+
+  @override
+  String get newsNoDataDescription =>
+      'No new messages. Check back later for updates.';
+
+  @override
+  String get searchHint => 'Search...';
 }

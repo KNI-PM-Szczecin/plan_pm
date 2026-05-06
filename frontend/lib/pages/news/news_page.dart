@@ -1,3 +1,4 @@
+// Strona wiadomości — przewijalna lista kart budowanych przez [NewsBuilder].
 import 'package:flutter/material.dart';
 import 'package:plan_pm/pages/news/widgets/news_builder.dart';
 

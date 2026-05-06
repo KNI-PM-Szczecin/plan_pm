@@ -1,14 +1,19 @@
+// Formularz danych akademickich studenta — wydział, kierunek, specjalizacja, rok, tryb, stopień.
+// Walidacja: wszystkie pola wymagane oprócz specjalizacji (opcjonalna dla roku ≤ 2).
+// Po zatwierdzeniu persystuje dane i przechodzi do [GroupSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/generic_loading.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
-import 'package:plan_pm/main.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/global/widgets/states/generic_loading.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
 import 'package:plan_pm/pages/welcome/widgets/button_switch.dart';
 import 'package:plan_pm/pages/welcome/widgets/dropdown_menu.dart';
+import 'package:plan_pm/pages/welcome/widgets/onboarding_action_bar.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/service/backend_service.dart';
@@ -41,12 +46,19 @@ class _InputPageState extends State<InputPage> {
 
   late Future<UniversityData> _futureUniversityStructure;
 
+  // Formularz jest gotowy gdy wybrano wydział, kierunek, rok (!=0), tryb i stopień.
+  // Specjalizacja jest opcjonalna — pojawia się jeśli backend ją zwraca.
+  bool get _canProceed =>
+      selectedFaculty.isNotEmpty &&
+      selectedDegreeCourse.isNotEmpty &&
+      selectedYear != 0 &&
+      selectedTerm != null &&
+      selectedDegreeLevel != null;
+
   @override
   void initState() {
     super.initState();
-    _futureUniversityStructure = _backendService.fetchStructure().then((data) {
-      return data;
-    });
+    _futureUniversityStructure = _backendService.fetchStructure();
   }
 
   @override
@@ -64,163 +76,84 @@ class _InputPageState extends State<InputPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const WelcomePage()),
-              );
-            }
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        backgroundColor: AppColor.background,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-        title: Text(
-          l10n.studySettings,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
+      appBar: StandardAppBar(
+        title: l10n.studySettings,
+        onBack: () {
+          HapticFeedback.lightImpact();
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomePage()),
+            );
+          }
+        },
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          spacing: 10,
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: AppColor.surface,
-                  ),
-
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColor.outline),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyHomePage(title: "Plan PM"),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      l10n.skipButton,
-                      style: TextStyle(color: AppColor.onSurface),
-                    ),
-                  ),
-                ),
-              ),
+      floatingActionButton: OnboardingActionBar(
+        skipLabel: l10n.skipButton,
+        onSkip: () {
+          HapticFeedback.lightImpact();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyHomePage(title: "Plan PM"),
             ),
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColor.primary,
-                    disabledBackgroundColor: AppColor.surface,
-                    foregroundColor: AppColor.onPrimary,
-                    disabledForegroundColor: AppColor.onSurface,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(16),
-                    ),
+          );
+        },
+        confirmLabel: l10n.groupSelection,
+        onConfirm: _canProceed
+            ? () async {
+                HapticFeedback.lightImpact();
+                Student.degreeCourse = selectedDegreeCourse.isNotEmpty
+                    ? selectedDegreeCourse
+                    : null;
+                Student.faculty = selectedFaculty.isNotEmpty
+                    ? selectedFaculty
+                    : null;
+                Student.specialisation = selectedSpecialisation.isNotEmpty
+                    ? selectedSpecialisation
+                    : null;
+                Student.studyMode = selectedTerm == 1
+                    ? StudyMode.stationary
+                    : StudyMode.notStationary;
+                Student.degreeLevel = selectedDegreeLevel == 1 ? "inż." : "mgr";
+                Student.year = selectedYear;
+
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                await prefs.setString("course", Student.course ?? "");
+                await prefs.setString("faculty", Student.faculty ?? "");
+                await prefs.setString(
+                  "degree_course",
+                  Student.degreeCourse ?? "",
+                );
+                await prefs.setString(
+                  "specialisation",
+                  Student.specialisation ?? "",
+                );
+                await prefs.setInt("year", selectedYear);
+                await prefs.setString(
+                  "study_mode",
+                  Student.studyMode?.programType ?? "S",
+                );
+                await prefs.setString(
+                  "degree_level",
+                  selectedDegreeLevel == 1 ? "inż." : "mgr",
+                );
+                await CacheService().syncNews();
+                await CacheService().syncLectures();
+                if (!context.mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupSelectionPage(),
                   ),
-                  onPressed:
-                      (selectedYear <= 2
-                          ? selectedFaculty != "" &&
-                                selectedDegreeCourse != "" &&
-                                selectedYear != 0 &&
-                                selectedTerm != null &&
-                                selectedDegreeLevel != null
-                          : selectedFaculty != "" &&
-                                selectedDegreeCourse != "" &&
-                                selectedYear >= 2 &&
-                                selectedTerm != null &&
-                                selectedDegreeLevel != null)
-                      ? () async {
-                          HapticFeedback.lightImpact();
-                          Student.degreeCourse = selectedDegreeCourse != ""
-                              ? selectedDegreeCourse
-                              : null;
-                          Student.faculty = selectedFaculty != ""
-                              ? selectedFaculty
-                              : null;
-                          Student.specialisation = selectedSpecialisation != ""
-                              ? selectedSpecialisation
-                              : null;
-                          Student.studyMode = selectedTerm == 1
-                              ? StudyMode.stationary
-                              : StudyMode.notStationary;
-                          Student.degreeLevel = selectedDegreeLevel == 1
-                              ? "inż."
-                              : "mgr";
-                          Student.year = selectedYear;
-
-                          final SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-
-                          await prefs.setString("course", Student.course ?? "");
-                          await prefs.setString(
-                            "faculty",
-                            Student.faculty ?? "",
-                          );
-                          await prefs.setString(
-                            "degree_course",
-                            Student.degreeCourse ?? "",
-                          );
-                          await prefs.setString(
-                            "specialisation",
-                            Student.specialisation ?? "",
-                          );
-                          await prefs.setInt("year", selectedYear);
-                          await prefs.setString(
-                            "study_mode",
-                            Student.studyMode?.programType ?? "S",
-                          );
-                          await prefs.setString(
-                            "degree_level",
-                            selectedDegreeLevel == 1 ? "inż." : "mgr",
-                          );
-                          final CacheService cacheService = CacheService();
-                          await cacheService.syncNews();
-                          await cacheService.syncLectures();
-                          if (!context.mounted) return;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GroupSelectionPage(),
-                            ),
-                          );
-                        }
-                      : null,
-                  child: Text(l10n.groupSelection),
-                ),
-              ),
-            ),
-          ],
-        ),
+                );
+              }
+            : null,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -265,12 +198,12 @@ class _InputPageState extends State<InputPage> {
                     final facultiesData = snapshot.data!;
                     final List<String> faculties = facultiesData.keys.toList();
 
-                    final List<String> degreeCourses = selectedFaculty != ""
+                    final List<String> degreeCourses = selectedFaculty.isNotEmpty
                         ? facultiesData[selectedFaculty]!.keys.toList()
                         : <String>[];
 
                     final List<String> specialisations =
-                        selectedDegreeCourse != ""
+                        selectedDegreeCourse.isNotEmpty
                         ? [
                             noSpecialisationOption,
                             ...facultiesData[selectedFaculty]![selectedDegreeCourse]!,
@@ -279,7 +212,7 @@ class _InputPageState extends State<InputPage> {
 
                     return Column(
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         FacultyDropDownMenu(
                           controller: facultyController,
                           label: l10n.facultyLabel,
@@ -300,16 +233,14 @@ class _InputPageState extends State<InputPage> {
                           },
                           selectedValue: selectedFaculty,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         FacultyDropDownMenu(
                           controller: degreeCourseController,
-                          enabled: selectedFaculty == "" ? false : true,
+                          enabled: selectedFaculty.isNotEmpty,
                           label: l10n.fieldLabel,
                           icon: LucideIcons.bookOpen,
                           hint: l10n.fieldHintText,
-                          itemList: selectedFaculty.isNotEmpty
-                              ? degreeCourses
-                              : [],
+                          itemList: degreeCourses,
                           selectedValue: selectedDegreeCourse,
                           onChanged: (value) {
                             HapticFeedback.lightImpact();
@@ -322,7 +253,7 @@ class _InputPageState extends State<InputPage> {
                             });
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         ButtonSwitch(
                           onValueChanged: (year) {
                             HapticFeedback.lightImpact();
@@ -337,13 +268,12 @@ class _InputPageState extends State<InputPage> {
                           icon: LucideIcons.graduationCap,
                           label: l10n.yearLabel,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         if (selectedFaculty.isNotEmpty &&
                             selectedDegreeCourse.isNotEmpty &&
                             specialisations.isNotEmpty)
                           FacultyDropDownMenu(
                             controller: specialisationController,
-                            enabled: true,
                             label: l10n.specialisationLabel,
                             icon: LucideIcons.glasses,
                             hint: l10n.specialisationHintText,
@@ -353,9 +283,7 @@ class _InputPageState extends State<InputPage> {
                               HapticFeedback.lightImpact();
                               setState(() {
                                 selectedSpecialisation =
-                                    value == noSpecialisationOption
-                                    ? ""
-                                    : value!;
+                                    value == noSpecialisationOption ? "" : value!;
                               });
                             },
                           )
@@ -374,7 +302,7 @@ class _InputPageState extends State<InputPage> {
                               ),
                             ),
                           ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ButtonSwitch(
                           onValueChanged: (degreeLevel) {
                             HapticFeedback.lightImpact();
@@ -390,7 +318,7 @@ class _InputPageState extends State<InputPage> {
                           icon: LucideIcons.award,
                           label: l10n.degreeLevelLabel,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ButtonSwitch(
                           onValueChanged: (term) {
                             HapticFeedback.lightImpact();
@@ -406,8 +334,7 @@ class _InputPageState extends State<InputPage> {
                           icon: LucideIcons.graduationCap,
                           label: l10n.typeLabel,
                         ),
-
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                       ],
                     );
                   },

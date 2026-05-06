@@ -1,6 +1,8 @@
+// Dropdown menu z obsługą stanu wyłączonego i zaznaczenia aktywnego elementu checkmarkiem.
+// Używany w [InputPage] dla wydziału, kierunku i specjalizacji.
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 
 class FacultyDropDownMenu extends StatefulWidget {
   const FacultyDropDownMenu({

@@ -1,19 +1,21 @@
+// Synchronizuje dane z backendu do lokalnego SQLite ([DatabaseService]).
+// Singleton — jedna instancja przez cały cykl życia aplikacji.
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/service/backend_service.dart';
+import 'package:plan_pm/service/cache_utils.dart';
 import 'package:plan_pm/service/database_service.dart';
-
-import 'package:plan_pm/global/logger.dart';
 
 class CacheService {
   static final CacheService _cacheService = CacheService._internal();
 
   CacheService._internal();
-  factory CacheService() {
-    return _cacheService;
-  }
+  factory CacheService() => _cacheService;
+
   final BackendService _backendService = BackendService();
 
   Future<void> syncLectures() async {
-    final lectures = await _backendService.fetchLectures();
+    var lectures = await _backendService.fetchLectures();
     if (lectures.isEmpty) {
       AppLogger.w(
         "[CACHE-SERVICE] No lectures found in database. Maybe the user mistyped his info?",
@@ -21,11 +23,15 @@ class CacheService {
       return;
     }
 
-    final DatabaseService databaseService = DatabaseService.instance;
-    await databaseService.clearLectures();
+    if (AppModeManager.current == AppMode.lecturer) {
+      lectures = mergeLectures(lectures);
+    }
+
+    final db = DatabaseService.instance;
+    await db.clearLectures();
 
     for (var lecture in lectures) {
-      await databaseService.addLecture(
+      await db.addLecture(
         name: lecture.name,
         startTime: lecture.startTime,
         endTime: lecture.endTime,
@@ -36,21 +42,24 @@ class CacheService {
         group: lecture.group,
         duration: lecture.duration,
         date: lecture.date,
+        programName: lecture.programName,
+        year: lecture.year,
+        degreeLevel: lecture.degreeLevel,
       );
     }
   }
 
   Future<void> syncNews() async {
+    AppLogger.i("[CACHE-SERVICE] syncNews — start");
     final news = await _backendService.fetchNews();
     if (news.isEmpty) {
-      AppLogger.w("[CACHE-SERVICE] No news found. Maybe the internet is down?");
+      AppLogger.w("[CACHE-SERVICE] syncNews — backend zwrócił 0 newsów");
       return;
     }
-    final DatabaseService databaseService = DatabaseService.instance;
-    await databaseService.clearNews();
-
+    final db = DatabaseService.instance;
+    await db.clearNews();
     for (var singleNews in news) {
-      await databaseService.addNews(
+      await db.addNews(
         createdAt: singleNews.createdAt,
         title: singleNews.title,
         imageUrl: singleNews.imageUrl,
@@ -58,5 +67,6 @@ class CacheService {
         messageType: singleNews.messageType,
       );
     }
+    AppLogger.i("[CACHE-SERVICE] syncNews — zapisano ${news.length} newsów do bazy");
   }
 }
