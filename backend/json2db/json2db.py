@@ -145,13 +145,13 @@ class json2db:
         print("Loading classes")
 
         query = []
-        programs = self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel").execute()
+        programs = self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel").limit(10000).execute()
         programs_map = {v["id"] : [v["name"], v["academicYear"], v["language"], v["programType"], v["courseLength"], v["degreeLevel"]] for v in programs.data}
 
-        buildings_response = self.db.table("building").select("id, name").execute()
+        buildings_response = self.db.table("building").select("id, name").limit(10000).execute()
         buildings_map = {v["name"]: v["id"] for v in buildings_response.data}
 
-        rooms = self.db.table("rooms").select("id, name, building").execute()
+        rooms = self.db.table("rooms").select("id, name, building").limit(10000).execute()
         room_map = {(v["name"], v["building"]): v["id"] for v in rooms.data}
 
         processed_class_keys = set()
@@ -213,8 +213,8 @@ class json2db:
     def load_teachers_classes(self):
         print("Loading teachers/classes")
 
-        classes_response = self.db.table("classes").select("id, subject, group, startTime").execute()
-        teachers_response = self.db.table("teachers").select("id, fullName").execute()
+        classes_response = self.db.table("classes").select("id, subject, group, startTime").limit(100000).execute()
+        teachers_response = self.db.table("teachers").select("id, fullName").limit(10000).execute()
 
         classes_map = {
             (v["subject"], v["group"], v["startTime"]): v["id"] 

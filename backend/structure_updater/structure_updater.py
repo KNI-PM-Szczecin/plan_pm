@@ -11,7 +11,7 @@ import requests
 from dotenv import load_dotenv
 from supabase import create_client
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 _env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
 _prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
@@ -216,15 +216,17 @@ def main() -> None:
 
     url = os.environ.get(f"{_prefix}SUPABASE_URL")
     key = os.environ.get(f"{_prefix}SUPABASE_KEY")
+    service_key = os.environ.get(f"{_prefix}SUPABASE_SERVICE_KEY")
     if not url or not key:
         logger.error("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych")
         print("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych.")
         return
 
     db = create_client(url, key)
+    admin_db = create_client(url, service_key) if service_key else db
 
     try:
-        clear_structure_tables(db)
+        clear_structure_tables(admin_db)
         logger.info("Wyczyszczono tabele struktury")
     except Exception as exc:
         logger.error(f"Błąd podczas czyszczenia tabel: {exc}")
