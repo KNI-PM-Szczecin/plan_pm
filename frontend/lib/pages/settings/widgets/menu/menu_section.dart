@@ -12,18 +12,18 @@ class MenuSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 5,
+      spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              title,
+              title.toUpperCase(),
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: AppColor.onBackground,
+                color: AppColor.onBackgroundVariant,
+                fontSize: 12,
+                letterSpacing: 0.5,
               ),
             ),
             ...?action,

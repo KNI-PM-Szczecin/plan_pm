@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -104,7 +104,7 @@ class _AboutPageState extends State<AboutPage> {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.aboutApp),
+      appBar: CustomAppBar(title: l10n.aboutApp),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {

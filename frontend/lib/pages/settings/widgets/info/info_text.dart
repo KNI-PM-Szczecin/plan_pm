@@ -13,25 +13,24 @@ class InfoText extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 5),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 14, color: AppColor.onSurfaceVariant),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 14, color: AppColor.onSurface),
+            ),
           ),
-          SizedBox(
-            width: double.infinity,
+          Expanded(
             child: Text(
               content ?? l10n.dataNaN,
-              softWrap: true,
+              textAlign: TextAlign.end,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColor.onSurface,
+                fontSize: 14,
+                color: AppColor.onSurfaceVariant,
               ),
-              textAlign: TextAlign.start,
             ),
           ),
         ],

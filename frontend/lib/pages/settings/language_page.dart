@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/selection_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -17,7 +17,7 @@ class LanguagePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.languageHeader),
+      appBar: CustomAppBar(title: l10n.languageHeader),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

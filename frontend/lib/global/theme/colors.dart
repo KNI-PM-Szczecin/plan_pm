@@ -21,7 +21,7 @@ class ColorThemes {
   static final Color lightOutline = Colors.black.withAlpha(30);
   static const int lightColorfulAlphaValue = 40;
 
-  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkBackground = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFE0E0E0);
   static final Color darkOnBackgroundVariant = Colors.white.withAlpha(150);
   static const Color darkSurface = Color(0xFF1E1E1E);
@@ -30,7 +30,7 @@ class ColorThemes {
   static const Color darkPrimary = Color(0xFF409CFF);
   static const Color darkOnPrimary = Colors.white;
   static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
-  static const Color darkOutline = Colors.transparent;
+  static final Color darkOutline = Colors.white.withAlpha(20);
   static const int darkColorfulAlphaValue = 150;
 }
 

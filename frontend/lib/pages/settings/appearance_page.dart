@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/pages/settings/utils/appearance_utils.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/setting_switch_tile.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/theme_card.dart';
@@ -19,7 +19,7 @@ class AppearancePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.appearanceHeader),
+      appBar: CustomAppBar(title: l10n.appearanceHeader),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

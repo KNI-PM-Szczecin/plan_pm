@@ -60,9 +60,8 @@ class GroupInfo extends StatelessWidget {
                             .map(
                               (g) => Container(
                                 decoration: BoxDecoration(
-                                  color: AppColor.background,
+                                  color: AppColor.primary.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: AppColor.outline),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -75,7 +74,10 @@ class GroupInfo extends StatelessWidget {
                                         .trim()
                                         .replaceAll("(", "")
                                         .replaceAll(")", ""),
-                                    style: TextStyle(color: AppColor.onSurface),
+                                    style: TextStyle(
+                                      color: AppColor.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),

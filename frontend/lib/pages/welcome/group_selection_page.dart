@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/widgets/group_builder.dart';
@@ -28,7 +28,7 @@ class GroupSelectionPage extends StatelessWidget {
     Student.selectedGroups = [];
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.groupSettings),
+      appBar: CustomAppBar(title: l10n.groupSettings),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: OnboardingActionBar(

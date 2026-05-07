@@ -19,9 +19,8 @@ class SettingSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SwitchListTile(
+    return ListTile(
       contentPadding: EdgeInsets.zero,
-      activeThumbColor: AppColor.primary,
       title: Text(label, style: TextStyle(color: AppColor.onSurface)),
       subtitle: subtitle != null
           ? Text(
@@ -32,8 +31,11 @@ class SettingSwitchTile extends StatelessWidget {
               ),
             )
           : null,
-      value: value,
-      onChanged: onChanged,
+      trailing: Switch.adaptive(
+        activeTrackColor: AppColor.primary,
+        value: value,
+        onChanged: onChanged,
+      ),
     );
   }
 }

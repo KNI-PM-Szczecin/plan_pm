@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/pages/external_link_page.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/utils/routing.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/setting_switch_tile.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/pages/settings/widgets/info/group_info.dart';
@@ -53,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.pageTitleSettings),
+      appBar: CustomAppBar(title: l10n.pageTitleSettings),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -76,12 +77,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       children: [
                         MenuButton(
                           title: l10n.appearanceHeader,
+                          leadingIcon: LucideIcons.paintbrush,
+                          leadingColor: const Color(0xFF8B5CF6),
                           onTap: () {
                             HapticFeedback.lightImpact();
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const AppearancePage(),
+                              appRoute(
+                                (context) => const AppearancePage(),
                               ),
                             );
                           },
@@ -89,12 +92,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         Divider(height: 1, color: AppColor.outline),
                         MenuButton(
                           title: l10n.languageHeader,
+                          leadingIcon: LucideIcons.globe,
+                          leadingColor: const Color(0xFF0884ff),
                           onTap: () {
                             HapticFeedback.lightImpact();
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const LanguagePage(),
+                              appRoute(
+                                (context) => const LanguagePage(),
                               ),
                             );
                           },
@@ -106,12 +111,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: l10n.feedbackHeader,
                     child: MenuButton(
                       title: l10n.sendFeedbackButton,
+                      leadingIcon: LucideIcons.messageSquare,
+                      leadingColor: const Color(0xFF10B981),
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ExternalLinkPage(
+                          appRoute(
+                            (context) => ExternalLinkPage(
                               url: 'https://forms.gle/E8sLgZ1X49kaX5jA6',
                               icon: LucideIcons.messageSquare,
                               title: l10n.sendFeedbackButton,
@@ -134,8 +141,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               HapticFeedback.lightImpact();
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
+                                appRoute(
+                                  (context) =>
                                       const RoleSelectionPage(),
                                 ),
                               );
@@ -162,8 +169,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               HapticFeedback.lightImpact();
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const WelcomePage(),
+                                appRoute(
+                                  (context) => const WelcomePage(),
                                 ),
                               );
                             },
@@ -189,12 +196,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: l10n.infoSection,
                     child: MenuButton(
                       title: l10n.aboutApp,
+                      leadingIcon: LucideIcons.info,
+                      leadingColor: const Color(0xFF6B7280),
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const AboutPage(),
+                          appRoute(
+                            (context) => const AboutPage(),
                           ),
                         ).then((_) => _loadDebugState());
                       },
