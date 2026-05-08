@@ -1,6 +1,8 @@
 // Pasek wyboru dnia tygodnia z nawigacją strzałkami i podświetleniem aktywnego dnia.
 // Reaguje na zmianę trybu 7-dniowego przez [sevenDayModeNotifier].
 // Logika nawigacji i gradienty wydzielone do [lecture_utils.dart].
+import 'dart:ui' show ImageFilter;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -145,11 +147,18 @@ class _DaySelectionState extends State<DaySelection> {
         ValueListenableBuilder<EventColorStyle>(
           valueListenable: eventColorStyleNotifier,
           builder: (context, style, _) {
-            return Container(
+            final isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+            final bar = Container(
               decoration: BoxDecoration(
-                border: Border.all(color: AppColor.outline),
+                border: Border.all(
+                  color: isIOS
+                      ? Colors.white.withValues(alpha: 0.18)
+                      : AppColor.outline,
+                ),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: AppColor.surface,
+                color: isIOS
+                    ? AppColor.surface.withValues(alpha: 0.65)
+                    : AppColor.surface,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -221,6 +230,14 @@ class _DaySelectionState extends State<DaySelection> {
                         ),
                       );
                     }).toList(),
+              ),
+            );
+            if (!isIOS) return bar;
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: bar,
               ),
             );
           },

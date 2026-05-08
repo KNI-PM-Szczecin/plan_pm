@@ -1,6 +1,5 @@
 // Główna powłoka nawigacyjna aplikacji — AppBar z hamburgerem, Sidebar, BottomBar i PageView.
-// Przy pierwszym renderze sprawdza dialog "Co nowego" i ogłoszenia systemowe.
-import 'dart:ui' show ImageFilter;
+// Sidebar używa AnimationController — treść przesuwa się w prawo, sidebar wsuwa się z lewej.
 
 import 'package:cupertino_native/cupertino_native.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
@@ -52,21 +51,44 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
-  bool _isDrawerOpen = false;
-  final PreloadPageController _preloadPageController = PreloadPageController(
-    initialPage: 0,
-  );
+  late final AnimationController _sidebarController;
+  late final Animation<Offset> _sidebarSlide;
+  late final Animation<Offset> _contentSlide;
+  final PreloadPageController _preloadPageController = PreloadPageController(initialPage: 0);
 
   @override
   void initState() {
     super.initState();
+    _sidebarController = AnimationController(
+      duration: const Duration(milliseconds: 280),
+      reverseDuration: const Duration(milliseconds: 220),
+      vsync: this,
+    );
+    _sidebarSlide = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut));
+    _contentSlide = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0.85, 0.0),
+    ).animate(CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _checkWhatsNew();
       await _checkAnnouncement();
     });
   }
+
+  @override
+  void dispose() {
+    _sidebarController.dispose();
+    _preloadPageController.dispose();
+    super.dispose();
+  }
+
+  void _openSidebar() => _sidebarController.forward();
+  void _closeSidebar() => _sidebarController.reverse();
 
   Future<void> _checkWhatsNew() async {
     final info = await PackageInfo.fromPlatform();
@@ -149,171 +171,224 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final pages = getPages(context);
-    return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        forceMaterialTransparency: true,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-        flexibleSpace: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(color: AppColor.background.withValues(alpha: 0.8)),
-          ),
-        ),
-        leading: Builder(
-          builder: (context) => AbsorbPointer(
-            absorbing: _isDrawerOpen,
-            child: defaultTargetPlatform == TargetPlatform.iOS
-                ? AnimatedOpacity(
-                    opacity: _isDrawerOpen ? 0.0 : 1.0,
-                    duration: const Duration(milliseconds: 50),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: CNButton.icon(
-                          icon: const CNSymbol('line.3.horizontal', size: 20),
-                          style: CNButtonStyle.glass,
-                          onPressed: () {
-                            HapticFeedback.selectionClick();
-                            Scaffold.of(context).openDrawer();
-                          },
+    final l10n = AppLocalizations.of(context)!;
+    final sidebarWidth = MediaQuery.of(context).size.width * 0.85;
+
+    return Stack(
+      children: [
+        // ── Main content (slides right when sidebar opens) ────────────
+        SlideTransition(
+          position: _contentSlide,
+          child: Scaffold(
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            backgroundColor: AppColor.background,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              forceMaterialTransparency: true,
+              shape: Border(bottom: BorderSide(color: AppColor.outline)),
+              flexibleSpace: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                onLongPress: () {},
+              ),
+              leading: Builder(
+                builder: (ctx) => defaultTargetPlatform == TargetPlatform.iOS
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: CNButton.icon(
+                            icon: const CNSymbol('line.3.horizontal', size: 20),
+                            style: CNButtonStyle.glass,
+                            onPressed: () {
+                              HapticFeedback.selectionClick();
+                              _openSidebar();
+                            },
+                          ),
                         ),
+                      )
+                    : IconButton(
+                        onPressed: () {
+                          HapticFeedback.selectionClick();
+                          _openSidebar();
+                        },
+                        icon: Icon(LucideIcons.menu, color: AppColor.onBackgroundVariant),
                       ),
-                    ),
-                  )
-                : IconButton(
-                    onPressed: () {
-                      HapticFeedback.selectionClick();
-                      Scaffold.of(context).openDrawer();
+              ),
+              centerTitle: true,
+              title: Text(
+                pages[_currentIndex]['title'],
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.onBackground,
+                ),
+              ),
+            ),
+            bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS
+                ? CNTabBar(
+                    tint: AppColor.primary,
+                    currentIndex: _currentIndex,
+                    onTap: (newIndex) {
+                      setState(() => _currentIndex = newIndex);
+                      _preloadPageController.animateToPage(
+                        newIndex,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                      );
                     },
-                    icon: Icon(LucideIcons.menu, color: AppColor.onBackgroundVariant),
+                    items: [
+                      CNTabBarItem(
+                        label: l10n.pageTitleHome,
+                        icon: const CNSymbol('house.fill'),
+                      ),
+                      CNTabBarItem(
+                        label: l10n.pageTitleLectures,
+                        icon: const CNSymbol('calendar'),
+                      ),
+                      CNTabBarItem(
+                        label: l10n.pageTitleNews,
+                        icon: const CNSymbol('newspaper'),
+                      ),
+                    ],
+                  )
+                : CustomNavigationBar(
+                    index: _currentIndex,
+                    onChange: (newIndex) {
+                      setState(() => _currentIndex = newIndex);
+                      _preloadPageController.animateToPage(
+                        newIndex,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                      );
+                    },
                   ),
-          ),
-        ),
-        centerTitle: true,
-        title: Text(
-          pages[_currentIndex]['title'],
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
-      ),
-      onDrawerChanged: (isOpen) => setState(() => _isDrawerOpen = isOpen),
-      drawer: Sidebar(
-        onPeTap: () {
-          Navigator.of(context).pop();
-          final l10n = AppLocalizations.of(context)!;
-          Navigator.push(
-            context,
-            _fadeRoute(ExternalLinkPage(
-              url: 'https://wf-zajecia.am.szczecin.pl/login',
-              icon: LucideIcons.dumbbell,
-              title: l10n.pePageTitle,
-              description: l10n.pePageDescription,
-              buttonLabel: l10n.pePageButton,
-            )),
-          );
-        },
-        onStudentIdTap: () {
-          Navigator.of(context).pop();
-          final l10n = AppLocalizations.of(context)!;
-          Navigator.push(
-            context,
-            _fadeRoute(ExternalLinkPage(
-              url: 'https://mlegitymacja.am.szczecin.pl',
-              icon: LucideIcons.creditCard,
-              title: l10n.studentIdPageTitle,
-              description: l10n.studentIdPageDescription,
-              buttonLabel: l10n.studentIdPageButton,
-            )),
-          );
-        },
-        onVirtualUniversityTap: () {
-          Navigator.of(context).pop();
-          final l10n = AppLocalizations.of(context)!;
-          Navigator.push(
-            context,
-            _fadeRoute(ExternalLinkPage(
-              url: 'https://wu.pm.szczecin.pl',
-              icon: LucideIcons.landmark,
-              title: l10n.virtualUniversityPageTitle,
-              description: l10n.virtualUniversityPageDescription,
-              buttonLabel: l10n.virtualUniversityPageButton,
-            )),
-          );
-        },
-        onSettingsTap: () {
-          Navigator.of(context).pop();
-          Navigator.push(context, _fadeRoute(const SettingsPage()));
-        },
-        onWhatsNewTap: () async {
-          Navigator.of(context).pop();
-          final info = await PackageInfo.fromPlatform();
-          final version = info.version;
-          if (!context.mounted) return;
-          final locale = Localizations.localeOf(context);
-          final changes = await loadChangelogForLocale(version, locale);
-          if (!context.mounted) return;
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => WhatsNewDialog(version: version, changes: changes),
-          );
-        },
-      ),
-      bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS
-          ? CNTabBar(
-              tint: AppColor.primary,
-              currentIndex: _currentIndex,
-              onTap: (newIndex) {
-                setState(() => _currentIndex = newIndex);
-                _preloadPageController.animateToPage(
-                  newIndex,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                );
-              },
-              items: [
-                CNTabBarItem(
-                  label: AppLocalizations.of(context)!.pageTitleHome,
-                  icon: const CNSymbol('house.fill'),
+            body: Stack(
+              children: [
+                PreloadPageView.builder(
+                  itemCount: pages.length,
+                  itemBuilder: (context, index) => pages[index]["widget"],
+                  preloadPagesCount: 2,
+                  onPageChanged: (value) {
+                    setState(() => _currentIndex = value);
+                  },
+                  controller: _preloadPageController,
                 ),
-                CNTabBarItem(
-                  label: AppLocalizations.of(context)!.pageTitleLectures,
-                  icon: const CNSymbol('calendar'),
-                ),
-                CNTabBarItem(
-                  label: AppLocalizations.of(context)!.pageTitleNews,
-                  icon: const CNSymbol('newspaper'),
+                // Full-screen swipe right to open sidebar (translucent so PageView still gets events)
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onHorizontalDragEnd: (details) {
+                      if ((details.primaryVelocity ?? 0) > 500) _openSidebar();
+                    },
+                  ),
                 ),
               ],
-            )
-          : CustomNavigationBar(
-              index: _currentIndex,
-              onChange: (newIndex) {
-                setState(() => _currentIndex = newIndex);
-                _preloadPageController.animateToPage(
-                  newIndex,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                );
-              },
             ),
-      body: PreloadPageView.builder(
-        itemCount: pages.length,
-        itemBuilder: (context, index) => pages[index]["widget"],
-        preloadPagesCount: 2,
-        onPageChanged: (value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
-        controller: _preloadPageController,
-      ),
+          ),
+        ),
+
+        // ── Scrim + Sidebar ───────────────────────────────────────────
+        AnimatedBuilder(
+          animation: _sidebarController,
+          builder: (_, _) {
+            if (_sidebarController.value == 0) return const SizedBox.shrink();
+            return Stack(
+              children: [
+                // Scrim — tap to close
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _closeSidebar,
+                  child: Container(
+                    color: Colors.black.withAlpha(
+                      (_sidebarController.value * 150).round(),
+                    ),
+                  ),
+                ),
+                // Sidebar with drag-to-close
+                SlideTransition(
+                  position: _sidebarSlide,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragUpdate: (details) {
+                      _sidebarController.value = (_sidebarController.value +
+                              details.delta.dx / sidebarWidth)
+                          .clamp(0.0, 1.0);
+                    },
+                    onHorizontalDragEnd: (details) {
+                      final v = details.primaryVelocity ?? 0;
+                      if (v < -500 || _sidebarController.value < 0.5) {
+                        _closeSidebar();
+                      } else {
+                        _openSidebar();
+                      }
+                    },
+                    child: Sidebar(
+                      onPeTap: () {
+                        _closeSidebar();
+                        Navigator.push(
+                          context,
+                          _fadeRoute(ExternalLinkPage(
+                            url: 'https://wf-zajecia.am.szczecin.pl/login',
+                            icon: LucideIcons.dumbbell,
+                            title: l10n.pePageTitle,
+                            description: l10n.pePageDescription,
+                            buttonLabel: l10n.pePageButton,
+                          )),
+                        );
+                      },
+                      onStudentIdTap: () {
+                        _closeSidebar();
+                        Navigator.push(
+                          context,
+                          _fadeRoute(ExternalLinkPage(
+                            url: 'https://mlegitymacja.am.szczecin.pl',
+                            icon: LucideIcons.creditCard,
+                            title: l10n.studentIdPageTitle,
+                            description: l10n.studentIdPageDescription,
+                            buttonLabel: l10n.studentIdPageButton,
+                          )),
+                        );
+                      },
+                      onVirtualUniversityTap: () {
+                        _closeSidebar();
+                        Navigator.push(
+                          context,
+                          _fadeRoute(ExternalLinkPage(
+                            url: 'https://wu.pm.szczecin.pl',
+                            icon: LucideIcons.landmark,
+                            title: l10n.virtualUniversityPageTitle,
+                            description: l10n.virtualUniversityPageDescription,
+                            buttonLabel: l10n.virtualUniversityPageButton,
+                          )),
+                        );
+                      },
+                      onSettingsTap: () {
+                        _closeSidebar();
+                        Navigator.push(context, _fadeRoute(const SettingsPage()));
+                      },
+                      onWhatsNewTap: () async {
+                        _closeSidebar();
+                        final info = await PackageInfo.fromPlatform();
+                        final version = info.version;
+                        if (!context.mounted) return;
+                        final locale = Localizations.localeOf(context);
+                        final changes = await loadChangelogForLocale(version, locale);
+                        if (!context.mounted) return;
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) =>
+                              WhatsNewDialog(version: version, changes: changes),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }

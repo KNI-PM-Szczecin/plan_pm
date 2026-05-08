@@ -1,6 +1,7 @@
 // Wiersz etykieta + wartość używany w kartach informacyjnych ([StudentInfo], [LecturerInfo]).
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class InfoText extends StatelessWidget {
@@ -20,7 +21,7 @@ class InfoText extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(fontSize: 14, color: AppColor.onSurface),
+              style: TextStyle(fontSize: AppTextSize.subhead, color: AppColor.onSurface),
             ),
           ),
           Expanded(
@@ -28,7 +29,7 @@ class InfoText extends StatelessWidget {
               content ?? l10n.dataNaN,
               textAlign: TextAlign.end,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: AppTextSize.subhead,
                 color: AppColor.onSurfaceVariant,
               ),
             ),

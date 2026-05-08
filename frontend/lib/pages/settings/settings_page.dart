@@ -177,16 +177,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           ValueListenableBuilder<bool>(
                             valueListenable: sevenDayModeNotifier,
-                            builder: (context, value, child) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
-                              ),
-                              child: SettingSwitchTile(
-                                label: l10n.debugSevenDayMode,
-                                value: value,
-                                onChanged: (_) => SevenDayModeNotifier.toggle(),
-                              ),
+                            builder: (context, value, child) => SettingSwitchTile(
+                              label: l10n.debugSevenDayMode,
+                              value: value,
+                              onChanged: (_) => SevenDayModeNotifier.toggle(),
                             ),
                           ),
                         ],

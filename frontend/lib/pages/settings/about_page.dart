@@ -216,7 +216,6 @@ class _AboutPageState extends State<AboutPage> {
                             decoration: BoxDecoration(
                               color: AppColor.surface,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColor.outline),
                             ),
                             child: Column(
                               children: [

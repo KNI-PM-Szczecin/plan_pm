@@ -24,7 +24,8 @@ class ColorThemes {
   static const Color darkBackground = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFE0E0E0);
   static final Color darkOnBackgroundVariant = Colors.white.withAlpha(150);
-  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkSurface = Color(0xFF1C1C1C);
+  static const Color darkSurfaceElevated = Color(0xFF2C2C2C);
   static const Color darkOnSurface = Color(0xFFE0E0E0);
   static final Color darkOnSurfaceVariant = Colors.white.withAlpha(100);
   static const Color darkPrimary = Color(0xFF409CFF);
@@ -65,6 +66,15 @@ class AppColor {
     return _brightness == Brightness.light
         ? ColorThemes.lightSurface
         : ColorThemes.darkSurface;
+  }
+
+  static Color get surfaceElevated {
+    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
+      return const Color(0xFF1C1C1C);
+    }
+    return _brightness == Brightness.light
+        ? const Color(0xFFF2F2F7)
+        : ColorThemes.darkSurfaceElevated;
   }
 
   static Color get onSurface => _brightness == Brightness.light

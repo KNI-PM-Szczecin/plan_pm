@@ -1,7 +1,10 @@
 // Wiersz z przełącznikiem używany w ustawieniach — etykieta po lewej, Switch po prawej.
 // Opcjonalny [subtitle] wyświetla szary opis pod etykietą.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 
 class SettingSwitchTile extends StatelessWidget {
   const SettingSwitchTile({
@@ -20,22 +23,27 @@ class SettingSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(label, style: TextStyle(color: AppColor.onSurface)),
+      title: Text(label, style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground)),
       subtitle: subtitle != null
           ? Text(
               subtitle!,
               style: TextStyle(
                 color: AppColor.onSurfaceVariant,
-                fontSize: 13,
+                fontSize: AppTextSize.footnote,
               ),
             )
           : null,
-      trailing: Switch.adaptive(
-        activeTrackColor: AppColor.primary,
-        value: value,
-        onChanged: onChanged,
-      ),
+      trailing: defaultTargetPlatform == TargetPlatform.iOS
+          ? CupertinoSwitch(
+              activeTrackColor: AppColor.primary,
+              value: value,
+              onChanged: onChanged,
+            )
+          : Switch(
+              activeTrackColor: AppColor.primary,
+              value: value,
+              onChanged: onChanged,
+            ),
     );
   }
 }

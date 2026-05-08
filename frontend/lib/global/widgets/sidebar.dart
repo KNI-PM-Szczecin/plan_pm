@@ -1,10 +1,10 @@
-// Boczny panel nawigacyjny aplikacji (drawer).
-// Zawiera skróty do PE, legitymacji, wirtualnego dziekanatu, ustawień
-// i "Co nowego". Montowany jako drawer głównego Scaffold w [main.dart].
+// Boczny panel nawigacyjny aplikacji.
+// Zawiera skróty do PE, legitymacji, wirtualnego dziekanatu, ustawień i "Co nowego".
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class Sidebar extends StatelessWidget {
@@ -26,58 +26,44 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Drawer(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColor.surface,
-          border: Border(
-            right: BorderSide(
-              color: isDark
-                  ? Colors.white.withAlpha(18)
-                  : Colors.black.withAlpha(18),
-              width: 1,
-            ),
-          ),
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.85,
+      decoration: BoxDecoration(
+        color: AppColor.surface,
+        border: Border(
+          right: BorderSide(color: AppColor.outline, width: 1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 24,
+            offset: const Offset(8, 0),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // ── Header ──────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Color.lerp(AppColor.primary, Colors.white, 0.25)!,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Image.asset('assets/logo_light.png'),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Plan PM',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.onBackground,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsets.fromLTRB(24, 36, 24, 8),
+                child: Text(
+                  'Plan PM',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: AppTextSize.title1,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.onBackground,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // ── Nav items ────────────────────────────────────────────
               Padding(
@@ -114,18 +100,7 @@ class Sidebar extends StatelessWidget {
 
               const Spacer(),
 
-              // ── Divider + What's new + Settings ─────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(
-                  color: isDark
-                      ? Colors.white.withAlpha(20)
-                      : Colors.black.withAlpha(18),
-                  thickness: 1,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(height: 8),
+              // ── What's new + Settings ────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: _SidebarNavItem(
@@ -193,7 +168,7 @@ class _SidebarNavItem extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      fontSize: 15,
+                      fontSize: AppTextSize.subhead,
                       fontWeight: FontWeight.w500,
                       color: color,
                       letterSpacing: -0.1,

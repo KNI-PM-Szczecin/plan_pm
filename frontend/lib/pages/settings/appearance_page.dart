@@ -30,7 +30,6 @@ class AppearancePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColor.surface,
                 borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(color: AppColor.outline),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 
 class MenuButton extends StatelessWidget {
   const MenuButton({
@@ -26,7 +27,7 @@ class MenuButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           child: Row(
             children: [
               if (leadingIcon != null) ...[
@@ -44,7 +45,7 @@ class MenuButton extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(color: AppColor.onSurface),
+                  style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground),
                   softWrap: true,
                 ),
               ),

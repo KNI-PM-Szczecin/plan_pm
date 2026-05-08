@@ -15,7 +15,7 @@ class NewsPage extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(children: [NewsBuilder()]),
+        child: NewsBuilder(),
       ),
     );
   }
