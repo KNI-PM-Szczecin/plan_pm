@@ -27,104 +27,89 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.85,
-      decoration: BoxDecoration(
-        color: AppColor.surface,
-        border: Border(
-          right: BorderSide(color: AppColor.outline, width: 1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(8, 0),
-          ),
-        ],
-      ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColor.background,
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Header ──────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 36, 24, 8),
-                child: Text(
-                  'Plan PM',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: AppTextSize.title1,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.onBackground,
-                    letterSpacing: -0.5,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Header ──────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 24),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColor.primary,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        child: Image.asset('assets/logo_light.png'),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Plan PM',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: AppTextSize.title2,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.onBackground,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
-
-              // ── Nav items ────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
+                // ── Main nav section ─────────────────────────────────────
+                _SidebarSection(
                   children: [
-                    _SidebarNavItem(
+                    _SidebarItem(
                       icon: LucideIcons.activity,
                       label: l10n.pePageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onPeTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onPeTap(); },
                     ),
-                    _SidebarNavItem(
+                    _SidebarDivider(),
+                    _SidebarItem(
                       icon: LucideIcons.creditCard,
                       label: l10n.studentIdPageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onStudentIdTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onStudentIdTap(); },
                     ),
-                    _SidebarNavItem(
+                    _SidebarDivider(),
+                    _SidebarItem(
                       icon: LucideIcons.landmark,
                       label: l10n.virtualUniversityPageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onVirtualUniversityTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onVirtualUniversityTap(); },
                     ),
                   ],
                 ),
-              ),
 
-              const Spacer(),
+                const Spacer(),
 
-              // ── What's new + Settings ────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _SidebarNavItem(
-                  icon: LucideIcons.sparkles,
-                  label: l10n.whatsNewTitle,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    onWhatsNewTap();
-                  },
+                // ── Footer section ───────────────────────────────────────
+                _SidebarSection(
+                  children: [
+                    _SidebarItem(
+                      icon: LucideIcons.sparkles,
+                      label: l10n.whatsNewTitle,
+                      onTap: () { HapticFeedback.lightImpact(); onWhatsNewTap(); },
+                    ),
+                    _SidebarDivider(),
+                    _SidebarItem(
+                      icon: LucideIcons.settings,
+                      label: l10n.pageTitleSettings,
+                      onTap: () { HapticFeedback.lightImpact(); onSettingsTap(); },
+                    ),
+                  ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _SidebarNavItem(
-                  icon: LucideIcons.settings,
-                  label: l10n.pageTitleSettings,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    onSettingsTap();
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -132,8 +117,38 @@ class Sidebar extends StatelessWidget {
   }
 }
 
-class _SidebarNavItem extends StatelessWidget {
-  const _SidebarNavItem({
+class _SidebarSection extends StatelessWidget {
+  const _SidebarSection({required this.children});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColor.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+}
+
+class _SidebarDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      indent: 52,
+      color: AppColor.outline,
+    );
+  }
+}
+
+class _SidebarItem extends StatelessWidget {
+  const _SidebarItem({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -145,38 +160,29 @@ class _SidebarNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColor.onBackgroundVariant;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          splashColor: AppColor.primary.withAlpha(30),
-          highlightColor: AppColor.primary.withAlpha(18),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-            child: Row(
-              children: [
-                Icon(icon, color: color, size: 20),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: AppTextSize.subhead,
-                      fontWeight: FontWeight.w500,
-                      color: color,
-                      letterSpacing: -0.1,
-                    ),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          child: Row(
+            children: [
+              Icon(icon, color: AppColor.onBackgroundVariant, size: 20),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: AppTextSize.body,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.onBackground,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
