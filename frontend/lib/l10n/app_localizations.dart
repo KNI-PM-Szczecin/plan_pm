@@ -478,6 +478,12 @@ abstract class AppLocalizations {
   /// **'Dane studenta'**
   String get academicInfoHeader;
 
+  /// No description provided for @lecturerInfoHeader.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dane wykładowcy'**
+  String get lecturerInfoHeader;
+
   /// student_info.dart - Label for the button to navigate to the input/edit page.
   ///
   /// In pl, this message translates to:

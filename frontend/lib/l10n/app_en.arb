@@ -63,6 +63,7 @@
   "selectedGroupsLabel": "Selected Groups",
   "noDataAvailable": "No data available",
   "academicInfoHeader": "Academic Information",
+  "lecturerInfoHeader": "Lecturer Information",
   "editButton": "Edit",
   "studyYear": "Year {year}",
   "studyModeLabel": "Study Mode",

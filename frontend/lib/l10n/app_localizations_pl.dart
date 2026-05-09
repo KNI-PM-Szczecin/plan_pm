@@ -208,6 +208,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get academicInfoHeader => 'Dane studenta';
 
   @override
+  String get lecturerInfoHeader => 'Dane wykładowcy';
+
+  @override
   String get editButton => 'Edytuj';
 
   @override

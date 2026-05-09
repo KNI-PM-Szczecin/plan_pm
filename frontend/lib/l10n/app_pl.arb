@@ -258,6 +258,7 @@
   "@academicInfoHeader": {
     "description": "student_info.dart - Header for the section displaying the user's academic details."
   },
+  "lecturerInfoHeader": "Dane wykładowcy",
   "editButton": "Edytuj",
   "@editButton": {
     "description": "student_info.dart - Label for the button to navigate to the input/edit page."

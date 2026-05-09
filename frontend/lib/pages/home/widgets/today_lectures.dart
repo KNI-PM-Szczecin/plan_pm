@@ -27,6 +27,7 @@ class TodayLectures extends StatefulWidget {
 class _TodayLecturesState extends State<TodayLectures> {
   late Future<List<LectureModel>> _lecturesFuture;
   late DateTime currentDate;
+  List<LectureModel>? _cachedData;
 
   @override
   void initState() {
@@ -63,17 +64,19 @@ class _TodayLecturesState extends State<TodayLectures> {
         future:
             _lecturesFuture, // Używamy zmiennej stanu z zainicjowanym zapytaniem
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
+          if (snapshot.hasData) _cachedData = snapshot.data;
+
+          if (snapshot.hasError && _cachedData == null) {
             return GenericNoResource(
               label: l10n.unexpectedError,
               icon: LucideIcons.bug,
               description: snapshot.error.toString(),
             );
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting && _cachedData == null) {
             return GenericLoading(label: l10n.lectureLoading);
           }
-          final unfilteredLectures = snapshot.data ?? [];
+          final unfilteredLectures = snapshot.data ?? _cachedData ?? [];
           if (unfilteredLectures.isEmpty) {
             return GenericNoResource(
               label: l10n.todayLecturesNaN,

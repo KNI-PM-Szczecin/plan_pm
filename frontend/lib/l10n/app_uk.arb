@@ -63,6 +63,7 @@
   "selectedGroupsLabel": "Вибрані групи",
   "noDataAvailable": "Дані недоступні",
   "academicInfoHeader": "Академічна інформація",
+  "lecturerInfoHeader": "Інформація про викладача",
   "editButton": "Редагувати",
   "studyYear": "{year} курс",
   "studyModeLabel": "Форма навчання",

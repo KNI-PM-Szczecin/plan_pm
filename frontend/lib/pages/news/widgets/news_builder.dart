@@ -8,36 +8,52 @@ import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/news/widgets/news_card.dart';
 import 'package:plan_pm/service/database_service.dart';
 
-class NewsBuilder extends StatelessWidget {
+class NewsBuilder extends StatefulWidget {
   const NewsBuilder({super.key, this.limit = 9999});
 
   final int? limit;
 
   @override
+  State<NewsBuilder> createState() => _NewsBuilderState();
+}
+
+class _NewsBuilderState extends State<NewsBuilder> {
+  late Future<List<NewsModel>> _future;
+  List<NewsModel>? _cached;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = DatabaseService.instance.fetchNews(limit: widget.limit!);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final databaseService = DatabaseService.instance;
     return FutureBuilder<List<NewsModel>>(
-      future: databaseService.fetchNews(limit: limit!),
+      future: _future,
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
+        if (snapshot.hasData) _cached = snapshot.data;
+
+        if (snapshot.hasError && _cached == null) {
           return GenericNoResource(
             label: l10n.unexpectedError,
             icon: LucideIcons.bug,
             description: snapshot.error.toString(),
           );
         }
-        if (snapshot.connectionState != ConnectionState.done) {
+        if (snapshot.connectionState != ConnectionState.done && _cached == null) {
           return GenericLoading(label: l10n.newsLoading);
         }
-        if (snapshot.data != null && snapshot.data!.isEmpty) {
+
+        final data = snapshot.data ?? _cached ?? [];
+        if (data.isEmpty) {
           return GenericNoResource(
             label: l10n.noNews,
             icon: LucideIcons.calendarX,
             description: l10n.newsNoDataDescription,
           );
         }
-        final List<NewsModel> data = snapshot.data!;
         return Column(
           children: data
               .map(

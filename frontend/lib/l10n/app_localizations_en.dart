@@ -213,6 +213,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get academicInfoHeader => 'Academic Information';
 
   @override
+  String get lecturerInfoHeader => 'Lecturer Information';
+
+  @override
   String get editButton => 'Edit';
 
   @override
