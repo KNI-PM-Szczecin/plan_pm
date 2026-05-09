@@ -1,8 +1,11 @@
 // Główna powłoka nawigacyjna aplikacji — AppBar z hamburgerem, Sidebar, BottomBar i PageView.
 // Sidebar używa AnimationController — treść przesuwa się w prawo, sidebar wsuwa się z lewej.
 
+import 'dart:ui' show ImageFilter;
+
 import 'package:cupertino_native/cupertino_native.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -26,7 +29,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 List<Map<String, dynamic>> getPages(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   return [
@@ -45,12 +47,15 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   late final AnimationController _sidebarController;
   late final Animation<Offset> _sidebarSlide;
   late final Animation<Offset> _contentSlide;
-  final PreloadPageController _preloadPageController = PreloadPageController(initialPage: 0);
+  final PreloadPageController _preloadPageController = PreloadPageController(
+    initialPage: 0,
+  );
 
   @override
   void initState() {
@@ -60,14 +65,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       reverseDuration: const Duration(milliseconds: 220),
       vsync: this,
     );
-    _sidebarSlide = Tween<Offset>(
-      begin: const Offset(-1.0, 0.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut));
-    _contentSlide = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.85, 0.0),
-    ).animate(CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut));
+    _sidebarSlide =
+        Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero).animate(
+          CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut),
+        );
+    _contentSlide =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0.85, 0.0)).animate(
+          CurvedAnimation(parent: _sidebarController, curve: Curves.easeOut),
+        );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _checkWhatsNew();
       await _checkAnnouncement();
@@ -181,10 +186,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               backgroundColor: Colors.transparent,
               forceMaterialTransparency: true,
               shape: Border(bottom: BorderSide(color: AppColor.outline)),
-              flexibleSpace: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {},
-                onLongPress: () {},
+              flexibleSpace: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    color: AppColor.background.withValues(alpha: 0.5),
+                  ),
+                ),
               ),
               leading: Builder(
                 builder: (ctx) => defaultTargetPlatform == TargetPlatform.iOS
@@ -206,7 +214,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           HapticFeedback.selectionClick();
                           _openSidebar();
                         },
-                        icon: Icon(LucideIcons.menu, color: AppColor.onBackgroundVariant),
+                        icon: Icon(
+                          LucideIcons.menu,
+                          color: AppColor.onBackgroundVariant,
+                        ),
                       ),
               ),
               centerTitle: true,
@@ -308,9 +319,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onHorizontalDragUpdate: (details) {
-                      _sidebarController.value = (_sidebarController.value +
-                              details.delta.dx / sidebarWidth)
-                          .clamp(0.0, 1.0);
+                      _sidebarController.value =
+                          (_sidebarController.value +
+                                  details.delta.dx / sidebarWidth)
+                              .clamp(0.0, 1.0);
                     },
                     onHorizontalDragEnd: (details) {
                       final v = details.primaryVelocity ?? 0;
@@ -325,44 +337,54 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          appRoute((_) => ExternalLinkPage(
-                            url: 'https://wf-zajecia.am.szczecin.pl/login',
-                            icon: LucideIcons.dumbbell,
-                            title: l10n.pePageTitle,
-                            description: l10n.pePageDescription,
-                            buttonLabel: l10n.pePageButton,
-                          )),
+                          appRoute(
+                            (_) => ExternalLinkPage(
+                              url: 'https://wf-zajecia.am.szczecin.pl/login',
+                              icon: LucideIcons.dumbbell,
+                              title: l10n.pePageTitle,
+                              description: l10n.pePageDescription,
+                              buttonLabel: l10n.pePageButton,
+                            ),
+                          ),
                         );
                       },
                       onStudentIdTap: () {
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          appRoute((_) => ExternalLinkPage(
-                            url: 'https://mlegitymacja.am.szczecin.pl',
-                            icon: LucideIcons.creditCard,
-                            title: l10n.studentIdPageTitle,
-                            description: l10n.studentIdPageDescription,
-                            buttonLabel: l10n.studentIdPageButton,
-                          )),
+                          appRoute(
+                            (_) => ExternalLinkPage(
+                              url: 'https://mlegitymacja.am.szczecin.pl',
+                              icon: LucideIcons.creditCard,
+                              title: l10n.studentIdPageTitle,
+                              description: l10n.studentIdPageDescription,
+                              buttonLabel: l10n.studentIdPageButton,
+                            ),
+                          ),
                         );
                       },
                       onVirtualUniversityTap: () {
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          appRoute((_) => ExternalLinkPage(
-                            url: 'https://wu.pm.szczecin.pl',
-                            icon: LucideIcons.landmark,
-                            title: l10n.virtualUniversityPageTitle,
-                            description: l10n.virtualUniversityPageDescription,
-                            buttonLabel: l10n.virtualUniversityPageButton,
-                          )),
+                          appRoute(
+                            (_) => ExternalLinkPage(
+                              url: 'https://wu.pm.szczecin.pl',
+                              icon: LucideIcons.landmark,
+                              title: l10n.virtualUniversityPageTitle,
+                              description:
+                                  l10n.virtualUniversityPageDescription,
+                              buttonLabel: l10n.virtualUniversityPageButton,
+                            ),
+                          ),
                         );
                       },
                       onSettingsTap: () {
                         _closeSidebar();
-                        Navigator.push(context, appRoute((_) => const SettingsPage()));
+                        Navigator.push(
+                          context,
+                          appRoute((_) => const SettingsPage()),
+                        );
                       },
                       onWhatsNewTap: () async {
                         _closeSidebar();
@@ -370,13 +392,18 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         final version = info.version;
                         if (!context.mounted) return;
                         final locale = Localizations.localeOf(context);
-                        final changes = await loadChangelogForLocale(version, locale);
+                        final changes = await loadChangelogForLocale(
+                          version,
+                          locale,
+                        );
                         if (!context.mounted) return;
                         showDialog(
                           context: context,
                           barrierDismissible: false,
-                          builder: (_) =>
-                              WhatsNewDialog(version: version, changes: changes),
+                          builder: (_) => WhatsNewDialog(
+                            version: version,
+                            changes: changes,
+                          ),
                         );
                       },
                     ),

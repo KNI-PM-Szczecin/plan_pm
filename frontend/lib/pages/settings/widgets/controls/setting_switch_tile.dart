@@ -22,28 +22,47 @@ class SettingSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(label, style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground)),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyle(
-                color: AppColor.onSurfaceVariant,
-                fontSize: AppTextSize.footnote,
-              ),
-            )
-          : null,
-      trailing: defaultTargetPlatform == TargetPlatform.iOS
-          ? CupertinoSwitch(
-              activeTrackColor: AppColor.primary,
-              value: value,
-              onChanged: onChanged,
-            )
-          : Switch(
-              activeTrackColor: AppColor.primary,
-              value: value,
-              onChanged: onChanged,
+    final rawSwitch = defaultTargetPlatform == TargetPlatform.iOS
+        ? CupertinoSwitch(
+            activeTrackColor: AppColor.primary,
+            value: value,
+            onChanged: onChanged,
+          )
+        : Switch(
+            activeTrackColor: AppColor.primary,
+            value: value,
+            onChanged: onChanged,
+          );
+
+    final switchWidget = SizedBox(
+      height: 28,
+      child: FittedBox(fit: BoxFit.contain, child: rawSwitch),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label, style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground)),
+                if (subtitle != null)
+                  Text(
+                    subtitle!,
+                    style: TextStyle(
+                      color: AppColor.onSurfaceVariant,
+                      fontSize: AppTextSize.footnote,
+                    ),
+                  ),
+              ],
             ),
+          ),
+          switchWidget,
+        ],
+      ),
     );
   }
 }

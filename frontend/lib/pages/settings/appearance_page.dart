@@ -23,30 +23,30 @@ class AppearancePage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: AppColor.surface,
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.appearanceHint,
-                    style: TextStyle(
-                      color: AppColor.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ValueListenableBuilder<ThemeMode>(
-                    valueListenable: themeNotifier,
-                    builder: (context, currentMode, _) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            child: ValueListenableBuilder<ThemeMode>(
+              valueListenable: themeNotifier,
+              builder: (context, currentMode, _) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Theme picker card ──────────────────────────────
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColor.surface,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
                         children: [
+                          Text(
+                            l10n.appearanceHint,
+                            style: TextStyle(
+                              color: AppColor.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -72,159 +72,180 @@ class AppearancePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-                          Divider(color: AppColor.outline, height: 1),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Icon(
-                                currentMode == ThemeMode.light
-                                    ? LucideIcons.sun
-                                    : (currentMode == ThemeMode.dark
-                                        ? LucideIcons.moon
-                                        : LucideIcons.monitor),
-                                color: AppColor.onSurfaceVariant,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: l10n.activeThemeLabel,
-                                      style: TextStyle(
-                                        color: AppColor.onSurfaceVariant,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: getThemeName(currentMode, l10n),
-                                      style: TextStyle(
-                                        color: AppColor.onSurface,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Active theme pill ──────────────────────────────
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColor.surface,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            currentMode == ThemeMode.light
+                                ? LucideIcons.sun
+                                : (currentMode == ThemeMode.dark
+                                    ? LucideIcons.moon
+                                    : LucideIcons.monitor),
+                            color: AppColor.onSurfaceVariant,
+                            size: 18,
                           ),
-                          const SizedBox(height: 24),
-                          Divider(color: AppColor.outline, height: 1),
-                          const SizedBox(height: 16),
-                          Text(
-                            l10n.accentColorTitle,
-                            style: TextStyle(
-                              color: AppColor.onSurfaceVariant,
-                              fontSize: 14,
+                          const SizedBox(width: 10),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: l10n.activeThemeLabel,
+                                  style: TextStyle(
+                                    color: AppColor.onSurfaceVariant,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: getThemeName(currentMode, l10n),
+                                  style: TextStyle(
+                                    color: AppColor.onSurface,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          ValueListenableBuilder<AppAccentColor>(
-                            valueListenable: accentColorNotifier,
-                            builder: (context, currentColor, _) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: AppAccentColor.values.map((color) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      HapticFeedback.selectionClick();
-                                      accentColorNotifier.setAccentColor(color);
-                                    },
-                                    child: Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        color: getAccentColorValue(
-                                          color,
-                                          Theme.of(context).brightness,
-                                        ),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: currentColor == color
-                                              ? AppColor.onSurface
-                                              : Colors.transparent,
-                                          width: 3,
-                                        ),
-                                      ),
-                                      child: currentColor == color
-                                          ? Icon(
-                                              LucideIcons.check,
-                                              color: Colors.white,
-                                              size: 22,
-                                            )
-                                          : null,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Accent Color (no container) ────────────────────
+                    Text(
+                      l10n.accentColorTitle,
+                      style: TextStyle(
+                        color: AppColor.onSurfaceVariant,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    ValueListenableBuilder<AppAccentColor>(
+                      valueListenable: accentColorNotifier,
+                      builder: (context, currentColor, _) {
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                          child: Row(
+                            key: ValueKey(currentColor),
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: AppAccentColor.values.map((color) {
+                              return GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  accentColorNotifier.setAccentColor(color);
+                                },
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: getAccentColorValue(
+                                      color,
+                                      Theme.of(context).brightness,
                                     ),
-                                  );
-                                }).toList(),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          Divider(color: AppColor.outline, height: 1),
-                          const SizedBox(height: 16),
-                          ValueListenableBuilder<EventColorStyle>(
-                            valueListenable: eventColorStyleNotifier,
-                            builder: (context, currentStyle, _) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    l10n.eventStyleTitle,
-                                    style: TextStyle(
-                                      color: AppColor.onSurfaceVariant,
-                                      fontSize: 14,
-                                    ),
+                                    shape: BoxShape.circle,
                                   ),
-                                  const SizedBox(height: 12),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.background,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: AppColor.outline,
-                                      ),
-                                    ),
-                                    child: RadioGroup<EventColorStyle>(
-                                      groupValue: currentStyle,
-                                      onChanged: (val) {
-                                        if (val != null) {
-                                          HapticFeedback.selectionClick();
-                                          eventColorStyleNotifier
-                                              .setEventStyle(val);
-                                        }
-                                      },
-                                      child: Column(
-                                        children:
-                                            EventColorStyle.values.map((style) {
-                                              return RadioListTile<
-                                                EventColorStyle
-                                              >(
-                                                activeColor: AppColor.primary,
-                                                title: Text(
-                                                  getEventStyleName(style, l10n),
-                                                  style: TextStyle(
-                                                    color: AppColor.onSurface,
+                                  child: currentColor == color
+                                      ? Icon(
+                                          LucideIcons.check,
+                                          color: Colors.white,
+                                          size: 22,
+                                        )
+                                      : null,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Event Style ────────────────────────────────────
+                    ValueListenableBuilder<EventColorStyle>(
+                      valueListenable: eventColorStyleNotifier,
+                      builder: (context, currentStyle, _) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.eventStyleTitle.toUpperCase(),
+                              style: TextStyle(
+                                color: AppColor.onSurfaceVariant,
+                                fontSize: 12,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColor.surface,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Column(
+                                  children: () {
+                                    final styles = EventColorStyle.values;
+                                    final List<Widget> rows = [];
+                                    for (int i = 0; i < styles.length; i++) {
+                                      final style = styles[i];
+                                      final isSelected = style == currentStyle;
+                                      if (i > 0) {
+                                        rows.add(Divider(height: 1, color: AppColor.outline, indent: 16, endIndent: 16));
+                                      }
+                                      rows.add(
+                                        InkWell(
+                                          onTap: () {
+                                            HapticFeedback.selectionClick();
+                                            eventColorStyleNotifier.setEventStyle(style);
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    getEventStyleName(style, l10n),
+                                                    style: TextStyle(color: AppColor.onSurface, fontSize: 16),
                                                   ),
                                                 ),
-                                                value: style,
-                                              );
-                                            }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
+                                                if (isSelected)
+                                                  Icon(LucideIcons.check, color: AppColor.primary, size: 20),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return rows;
+                                  }(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),

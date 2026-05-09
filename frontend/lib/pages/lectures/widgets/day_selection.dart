@@ -148,14 +148,12 @@ class _DaySelectionState extends State<DaySelection> {
           valueListenable: eventColorStyleNotifier,
           builder: (context, style, _) {
             final isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+            const outerRadius = 999.0;
+            const innerRadius = 999.0;
             final bar = Container(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: isIOS
-                      ? Colors.white.withValues(alpha: 0.18)
-                      : AppColor.outline,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderRadius: BorderRadius.circular(outerRadius),
                 color: isIOS
                     ? AppColor.surface.withValues(alpha: 0.65)
                     : AppColor.surface,
@@ -182,14 +180,14 @@ class _DaySelectionState extends State<DaySelection> {
                               color: isSelected
                                   ? selectedBgColor
                                   : Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(innerRadius),
                             ),
                             child: TextButton(
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 side: BorderSide.none,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(innerRadius),
                                 ),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
@@ -234,7 +232,7 @@ class _DaySelectionState extends State<DaySelection> {
             );
             if (!isIOS) return bar;
             return ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(outerRadius),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                 child: bar,

@@ -50,8 +50,8 @@ class _LecturesPageState extends State<LecturesPage> {
         Padding(
           padding: EdgeInsets.only(
             top: MediaQuery.of(context).padding.top,
-            left: 10,
-            right: 10,
+            left: 16,
+            right: 16,
             bottom: 4,
           ),
           child: DaySelection(

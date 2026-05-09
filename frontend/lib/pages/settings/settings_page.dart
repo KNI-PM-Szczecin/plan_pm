@@ -175,6 +175,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               );
                             },
                           ),
+                          Divider(height: 1, color: AppColor.outline),
                           ValueListenableBuilder<bool>(
                             valueListenable: sevenDayModeNotifier,
                             builder: (context, value, child) => SettingSwitchTile(
