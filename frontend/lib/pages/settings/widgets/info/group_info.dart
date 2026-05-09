@@ -37,18 +37,10 @@ class GroupInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.all(10),
             child: Column(
-              spacing: 5,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.selectedGroupsLabel,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColor.onSurfaceVariant,
-                  ),
-                ),
                 Wrap(
                   spacing: 6,
                   runSpacing: 4,
@@ -60,7 +52,9 @@ class GroupInfo extends StatelessWidget {
                             .map(
                               (g) => Container(
                                 decoration: BoxDecoration(
-                                  color: AppColor.primary.withValues(alpha: 0.15),
+                                  color: AppColor.primary.withValues(
+                                    alpha: 0.15,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Padding(
@@ -90,7 +84,6 @@ class GroupInfo extends StatelessWidget {
                           ),
                         ],
                 ),
-                const SizedBox(height: 5),
               ],
             ),
           ),

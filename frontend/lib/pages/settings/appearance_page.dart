@@ -211,7 +211,7 @@ class AppearancePage extends StatelessWidget {
                                         rows.add(Divider(height: 1, color: AppColor.outline, indent: 16, endIndent: 16));
                                       }
                                       rows.add(
-                                        InkWell(
+                                        GestureDetector(
                                           onTap: () {
                                             HapticFeedback.selectionClick();
                                             eventColorStyleNotifier.setEventStyle(style);
@@ -226,8 +226,16 @@ class AppearancePage extends StatelessWidget {
                                                     style: TextStyle(color: AppColor.onSurface, fontSize: 16),
                                                   ),
                                                 ),
-                                                if (isSelected)
-                                                  Icon(LucideIcons.check, color: AppColor.primary, size: 20),
+                                                AnimatedSwitcher(
+                                                  duration: const Duration(milliseconds: 200),
+                                                  transitionBuilder: (child, animation) => ScaleTransition(
+                                                    scale: animation,
+                                                    child: FadeTransition(opacity: animation, child: child),
+                                                  ),
+                                                  child: isSelected
+                                                      ? Icon(LucideIcons.check, key: const ValueKey('check'), color: AppColor.primary, size: 20)
+                                                      : const SizedBox(key: ValueKey('empty'), width: 20),
+                                                ),
                                               ],
                                             ),
                                           ),
