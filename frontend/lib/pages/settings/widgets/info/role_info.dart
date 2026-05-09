@@ -68,7 +68,9 @@ class _RoleInfoState extends State<RoleInfo> {
             await CacheService().syncLectures();
 
             if (!mounted) return;
-            Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/home', (_) => false);
           },
         ),
       ),
@@ -134,16 +136,16 @@ class _RoleTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: isActive
-                    ? AppColor.primary.withValues(alpha: 0.18)
-                    : AppColor.onSurface.withValues(alpha: 0.08),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: isActive ? AppColor.primary : AppColor.onSurfaceVariant,
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? AppColor.primary.withValues(alpha: 0.90)
+                      : AppColor.onSurface.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                child: Icon(icon, color: Colors.white, size: 18),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -168,11 +170,8 @@ class _RoleTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                isActive ? LucideIcons.check : LucideIcons.arrowLeftRight,
-                color: isActive ? AppColor.primary : AppColor.onSurfaceVariant,
-                size: 18,
-              ),
+              if (isActive)
+                Icon(LucideIcons.check, color: AppColor.primary, size: 18),
             ],
           ),
         ),

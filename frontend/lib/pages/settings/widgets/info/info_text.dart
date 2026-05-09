@@ -21,7 +21,7 @@ class InfoText extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(fontSize: AppTextSize.subhead, color: AppColor.onSurface),
+              style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onSurface),
             ),
           ),
           Expanded(
@@ -29,7 +29,7 @@ class InfoText extends StatelessWidget {
               content ?? l10n.dataNaN,
               textAlign: TextAlign.end,
               style: TextStyle(
-                fontSize: AppTextSize.subhead,
+                fontSize: AppTextSize.body,
                 color: AppColor.onSurfaceVariant,
               ),
             ),

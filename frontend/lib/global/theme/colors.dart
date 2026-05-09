@@ -1,10 +1,8 @@
-// System kolorów aplikacji obsługujący jasny/ciemny motyw oraz AMOLED i akcenty.
+// System kolorów aplikacji obsługujący jasny/ciemny motyw i akcenty.
 //
 // ColorThemes — statyczne stałe dla obu motywów (wartości bazowe).
-// AppColor — dynamiczne gettery odczytujące aktualny Brightness, amoledModeNotifier
-// i accentColorNotifier, zwracając właściwy kolor w danym kontekście.
-// Wywoływane przez każdy widżet używający kolorów — zamiast Theme.of(context),
-// co pozwala na zmianę motywu bez przebudowy drzewa widżetów.
+// AppColor — dynamiczne gettery odczytujące aktualny Brightness i accentColorNotifier,
+// zwracając właściwy kolor w danym kontekście.
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 
@@ -42,14 +40,9 @@ class AppColor {
     _brightness = brightness;
   }
 
-  static Color get background {
-    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
-      return Colors.black;
-    }
-    return _brightness == Brightness.light
-        ? ColorThemes.lightBackground
-        : ColorThemes.darkBackground;
-  }
+  static Color get background => _brightness == Brightness.light
+      ? ColorThemes.lightBackground
+      : ColorThemes.darkBackground;
 
   static Color get onBackground => _brightness == Brightness.light
       ? ColorThemes.lightOnBackground
@@ -59,23 +52,13 @@ class AppColor {
       ? ColorThemes.lightOnBackgroundVariant
       : ColorThemes.darkOnBackgroundVariant;
 
-  static Color get surface {
-    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
-      return const Color(0xFF090909);
-    }
-    return _brightness == Brightness.light
-        ? ColorThemes.lightSurface
-        : ColorThemes.darkSurface;
-  }
+  static Color get surface => _brightness == Brightness.light
+      ? ColorThemes.lightSurface
+      : ColorThemes.darkSurface;
 
-  static Color get surfaceElevated {
-    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
-      return const Color(0xFF1C1C1C);
-    }
-    return _brightness == Brightness.light
-        ? const Color(0xFFF2F2F7)
-        : ColorThemes.darkSurfaceElevated;
-  }
+  static Color get surfaceElevated => _brightness == Brightness.light
+      ? const Color(0xFFF2F2F7)
+      : ColorThemes.darkSurfaceElevated;
 
   static Color get onSurface => _brightness == Brightness.light
       ? ColorThemes.lightOnSurface

@@ -20,18 +20,12 @@ import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
+import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Route<T> _fadeRoute<T>(Widget page) => PageRouteBuilder<T>(
-  pageBuilder: (_, _, _) => page,
-  transitionsBuilder: (_, animation, _, child) => FadeTransition(
-    opacity: animation,
-    child: child,
-  ),
-);
 
 List<Map<String, dynamic>> getPages(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
@@ -176,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
     return Stack(
       children: [
-        // ── Main content (slides right when sidebar opens) ────────────
+        // ── Main content ─────────────────────────────────────────────
         SlideTransition(
           position: _contentSlide,
           child: Scaffold(
@@ -273,12 +267,16 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                   controller: _preloadPageController,
                 ),
-                // Full-screen swipe right to open sidebar (translucent so PageView still gets events)
-                Positioned.fill(
+                // Left-edge drag zone to open sidebar — does not compete with PageView swipes
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 30,
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onHorizontalDragEnd: (details) {
-                      if ((details.primaryVelocity ?? 0) > 500) _openSidebar();
+                      if ((details.primaryVelocity ?? 0) > 300) _openSidebar();
                     },
                   ),
                 ),
@@ -327,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          _fadeRoute(ExternalLinkPage(
+                          appRoute((_) => ExternalLinkPage(
                             url: 'https://wf-zajecia.am.szczecin.pl/login',
                             icon: LucideIcons.dumbbell,
                             title: l10n.pePageTitle,
@@ -340,7 +338,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          _fadeRoute(ExternalLinkPage(
+                          appRoute((_) => ExternalLinkPage(
                             url: 'https://mlegitymacja.am.szczecin.pl',
                             icon: LucideIcons.creditCard,
                             title: l10n.studentIdPageTitle,
@@ -353,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         _closeSidebar();
                         Navigator.push(
                           context,
-                          _fadeRoute(ExternalLinkPage(
+                          appRoute((_) => ExternalLinkPage(
                             url: 'https://wu.pm.szczecin.pl',
                             icon: LucideIcons.landmark,
                             title: l10n.virtualUniversityPageTitle,
@@ -364,7 +362,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                       },
                       onSettingsTap: () {
                         _closeSidebar();
-                        Navigator.push(context, _fadeRoute(const SettingsPage()));
+                        Navigator.push(context, appRoute((_) => const SettingsPage()));
                       },
                       onWhatsNewTap: () async {
                         _closeSidebar();

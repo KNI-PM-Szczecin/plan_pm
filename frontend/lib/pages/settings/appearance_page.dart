@@ -1,4 +1,4 @@
-// Strona ustawień wyglądu — motyw, tryb AMOLED, kolor akcentu, styl kolorów zajęć.
+// Strona ustawień wyglądu — motyw, kolor akcentu, styl kolorów zajęć.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -6,7 +6,6 @@ import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/pages/settings/utils/appearance_utils.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/setting_switch_tile.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/theme_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -112,23 +111,6 @@ class AppearancePage extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 24),
-                          Divider(color: AppColor.outline, height: 1),
-                          const SizedBox(height: 16),
-                          ValueListenableBuilder<bool>(
-                            valueListenable: amoledModeNotifier,
-                            builder: (context, isAmoled, _) {
-                              return SettingSwitchTile(
-                                label: l10n.amoledModeTitle,
-                                subtitle: l10n.amoledModeDesc,
-                                value: isAmoled,
-                                onChanged: (val) {
-                                  HapticFeedback.selectionClick();
-                                  amoledModeNotifier.setAmoledMode(val);
-                                },
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16),
                           Divider(color: AppColor.outline, height: 1),
                           const SizedBox(height: 16),
                           Text(

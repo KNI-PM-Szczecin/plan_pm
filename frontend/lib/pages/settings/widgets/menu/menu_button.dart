@@ -35,8 +35,10 @@ class MenuButton extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: leadingColor ?? AppColor.primary,
-                    borderRadius: BorderRadius.circular(7),
+                    color: (leadingColor ?? AppColor.primary).withValues(
+                      alpha: 0.85,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(leadingIcon, color: Colors.white, size: 18),
                 ),
@@ -45,11 +47,18 @@ class MenuButton extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground),
+                  style: TextStyle(
+                    fontSize: AppTextSize.body,
+                    color: AppColor.onBackground,
+                  ),
                   softWrap: true,
                 ),
               ),
-              Icon(LucideIcons.chevronRight, color: AppColor.onSurfaceVariant, size: 18),
+              Icon(
+                LucideIcons.chevronRight,
+                color: AppColor.onSurfaceVariant,
+                size: 18,
+              ),
             ],
           ),
         ),

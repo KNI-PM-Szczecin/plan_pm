@@ -20,7 +20,6 @@ class _AppRebuilderState extends State<AppRebuilder> {
     themeNotifier.addListener(_rebuildAll);
     localeNotifier.addListener(_rebuildAll);
     accentColorNotifier.addListener(_rebuildAll);
-    amoledModeNotifier.addListener(_rebuildAll);
     eventColorStyleNotifier.addListener(_rebuildAll);
   }
 
@@ -29,7 +28,6 @@ class _AppRebuilderState extends State<AppRebuilder> {
     themeNotifier.removeListener(_rebuildAll);
     localeNotifier.removeListener(_rebuildAll);
     accentColorNotifier.removeListener(_rebuildAll);
-    amoledModeNotifier.removeListener(_rebuildAll);
     eventColorStyleNotifier.removeListener(_rebuildAll);
     super.dispose();
   }
