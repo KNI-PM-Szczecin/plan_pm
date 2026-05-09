@@ -53,6 +53,24 @@ class _AboutPageState extends State<AboutPage> {
     });
   }
 
+  SnackBar _styledSnackBar({required Widget icon, required String text}) {
+    return SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: const Color(0xFF1C1C1E),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      elevation: 0,
+      content: Row(
+        children: [
+          icon,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 15)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _onVersionTap() async {
     if (_debugUnlocked) return;
     HapticFeedback.selectionClick();
@@ -69,20 +87,42 @@ class _AboutPageState extends State<AboutPage> {
       HapticFeedback.heavyImpact();
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.debugModeUnlocked)),
-        );
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(_styledSnackBar(
+            icon: const Icon(Icons.check_circle, color: Color(0xFF30D158), size: 22),
+            text: l10n.debugModeUnlocked,
+          ));
       }
     } else if (_tapCount >= 3) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
-          ..showSnackBar(
-            SnackBar(content: Text(l10n.debugTapsRemaining(7 - _tapCount))),
-          );
+          ..showSnackBar(_styledSnackBar(
+            icon: const Icon(Icons.mouse, color: Colors.white70, size: 22),
+            text: l10n.debugTapsRemaining(7 - _tapCount),
+          ));
       }
     }
+  }
+
+  Future<void> _disableDebug() async {
+    HapticFeedback.lightImpact();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_debugUnlockedKey, false);
+    if (!mounted) return;
+    setState(() {
+      _debugUnlocked = false;
+      _tapCount = 0;
+    });
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(_styledSnackBar(
+        icon: const Icon(Icons.do_not_disturb_on, color: Colors.redAccent, size: 22),
+        text: l10n.debugModeDisabled,
+      ));
   }
 
   Future<void> _launchRepo() async {
@@ -165,6 +205,20 @@ class _AboutPageState extends State<AboutPage> {
                               ),
                             ),
                           ),
+                          if (_debugUnlocked) ...[
+                            const SizedBox(height: 12),
+                            GestureDetector(
+                              onTap: _disableDebug,
+                              child: Text(
+                                l10n.debugModeDisable,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
 
                           const SizedBox(height: 16),
                           Padding(

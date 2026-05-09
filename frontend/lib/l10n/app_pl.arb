@@ -545,11 +545,13 @@
   "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
   "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",
   "debugReturnToWelcome": "Powrót do Welcome Screen",
-  "debugModeUnlocked": "Tryb debug odblokowany!",
+  "debugModeUnlocked": "Jesteś już deweloperem",
   "@debugModeUnlocked": {
     "description": "about_page.dart - Snackbar message shown when debug mode is unlocked after 7 taps."
   },
-  "debugTapsRemaining": "Jeszcze {count} tapnięć do odblokowania debug",
+  "debugTapsRemaining": "Zostało jeszcze {count} naciśnięć, aby zostać deweloperem",
+  "debugModeDisable": "Wyłącz tryb dewelopera",
+  "debugModeDisabled": "Tryb dewelopera wyłączony",
   "@debugTapsRemaining": {
     "description": "about_page.dart - Hint shown after 3+ taps on version number, showing remaining taps needed.",
     "placeholders": {
@@ -589,6 +591,8 @@
   "roleSectionTitle": "Rola",
   "roleStudentViewTitle": "Widok studenta",
   "roleStudentViewSubtitle": "Przełącz na plan studenta",
+  "roleViewingAsStudent": "Przeglądasz aktualnie plan jako student.",
+  "roleViewingAsLecturer": "Przeglądasz aktualnie plan jako wykładowca.",
   "roleCurrentlyActive": "Aktualnie aktywny",
   "roleLecturerViewTitle": "Widok wykładowcy",
   "roleLecturerViewSubtitle": "Przełącz na widok wykładowcy",
