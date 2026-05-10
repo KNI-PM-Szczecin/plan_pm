@@ -29,7 +29,7 @@ class ColorThemes {
   static const Color darkPrimary = Color(0xFF409CFF);
   static const Color darkOnPrimary = Colors.white;
   static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
-  static final Color darkOutline = Colors.white.withAlpha(20);
+  static final Color darkOutline = Colors.white.withAlpha(10);
   static const int darkColorfulAlphaValue = 150;
 }
 

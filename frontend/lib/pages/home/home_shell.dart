@@ -183,6 +183,9 @@ class _MyHomePageState extends State<MyHomePage>
             extendBodyBehindAppBar: true,
             backgroundColor: AppColor.background,
             appBar: AppBar(
+              systemOverlayStyle: Theme.of(context).brightness == Brightness.light
+                  ? SystemUiOverlayStyle.dark
+                  : SystemUiOverlayStyle.light,
               backgroundColor: Colors.transparent,
               forceMaterialTransparency: true,
               shape: Border(bottom: BorderSide(color: AppColor.outline)),

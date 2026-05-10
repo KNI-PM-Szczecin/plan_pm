@@ -9,9 +9,14 @@ import 'package:plan_pm/pages/news/widgets/news_card.dart';
 import 'package:plan_pm/service/database_service.dart';
 
 class NewsBuilder extends StatefulWidget {
-  const NewsBuilder({super.key, this.limit = 9999});
+  const NewsBuilder({
+    super.key,
+    this.limit = 9999,
+    this.descriptionColor,
+  });
 
   final int? limit;
+  final Color? descriptionColor;
 
   @override
   State<NewsBuilder> createState() => _NewsBuilderState();
@@ -63,6 +68,7 @@ class _NewsBuilderState extends State<NewsBuilder> {
                   description: news.content,
                   timestamp: news.createdAt,
                   imageUrl: news.imageUrl,
+                  descriptionColor: widget.descriptionColor,
                 ),
               )
               .toList(),

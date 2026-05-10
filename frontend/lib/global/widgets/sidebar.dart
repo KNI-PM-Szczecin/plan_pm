@@ -26,6 +26,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final brightness = Theme.of(context).brightness;
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.85,
@@ -50,7 +51,15 @@ class Sidebar extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.all(6),
-                        child: Image.asset('assets/logo_light.png'),
+                        child: Image.asset(
+                          'assets/logo_light.png',
+                          color: brightness == Brightness.light
+                              ? Colors.white
+                              : null,
+                          colorBlendMode: brightness == Brightness.light
+                              ? BlendMode.srcIn
+                              : null,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Text(

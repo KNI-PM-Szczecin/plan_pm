@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/back_button.dart';
 
@@ -24,7 +25,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
     return AppBar(
+      systemOverlayStyle: brightness == Brightness.light
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle.light,
       backgroundColor: AppColor.background,
       automaticallyImplyLeading: false,
       leading: leading ?? AppBackButton(onPressed: onBack),

@@ -2,6 +2,7 @@
 // [AppRebuilder] wymusza rebuild drzewa po zmianie motywu lub języka.
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemChrome, SystemUiOverlayStyle, Brightness;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:plan_pm/app_initialization.dart';
 import 'package:plan_pm/env_config.dart';
@@ -30,6 +31,18 @@ TextTheme _tightTextTheme(TextTheme base) => TextTheme(
   labelSmall: base.labelSmall?.copyWith(letterSpacing: -0.1),
 );
 
+SystemUiOverlayStyle _overlayStyleForBrightness(Brightness brightness) {
+  return brightness == Brightness.light
+      ? SystemUiOverlayStyle.dark
+      : SystemUiOverlayStyle.light;
+}
+
+AppBarTheme _appBarThemeForBrightness(Brightness brightness) {
+  return AppBarTheme(
+    systemOverlayStyle: _overlayStyleForBrightness(brightness),
+  );
+}
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -53,6 +66,7 @@ class App extends StatelessWidget {
                   seedColor: AppColor.primary,
                   brightness: Brightness.light,
                 ),
+                appBarTheme: _appBarThemeForBrightness(Brightness.light),
               ).copyWith(
                 textTheme: _tightTextTheme(
                   ThemeData(brightness: Brightness.light).textTheme,
@@ -65,6 +79,7 @@ class App extends StatelessWidget {
                   seedColor: AppColor.primary,
                   brightness: Brightness.dark,
                 ),
+                appBarTheme: _appBarThemeForBrightness(Brightness.dark),
               ).copyWith(
                 textTheme: _tightTextTheme(
                   ThemeData(brightness: Brightness.dark).textTheme,
@@ -75,6 +90,9 @@ class App extends StatelessWidget {
                   builder: (BuildContext innerContext) {
                     final brightness = Theme.of(innerContext).brightness;
                     AppColor.update(brightness);
+                    SystemChrome.setSystemUIOverlayStyle(
+                      _overlayStyleForBrightness(brightness),
+                    );
                     return KeyedSubtree(
                       key: ValueKey(brightness),
                       child: AppRebuilder(child: child!),

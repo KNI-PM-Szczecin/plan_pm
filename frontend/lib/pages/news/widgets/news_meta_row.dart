@@ -16,11 +16,16 @@ class NewsMetaRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Wrap(
-      spacing: 5,
+    return Row(
       children: [
-        Text(messageType, style: TextStyle(color: AppColor.onSurfaceVariant)),
-        Text("•", style: TextStyle(color: AppColor.onSurfaceVariant)),
+        Text(
+          messageType.toUpperCase(),
+          style: TextStyle(
+            color: AppColor.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const Spacer(),
         Text(
           l10n.daysAgo(DateTime.now().difference(timestamp).inDays),
           style: TextStyle(color: AppColor.onSurfaceVariant),

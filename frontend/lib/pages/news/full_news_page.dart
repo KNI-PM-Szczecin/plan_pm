@@ -39,9 +39,12 @@ class FullNewsPage extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: AppColor.outline, width: 1),
+                side: BorderSide(
+                  color: AppColor.outline.withValues(alpha: 0.18),
+                  width: 0.5,
+                ),
               ),
-              elevation: 1,
+              elevation: 0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

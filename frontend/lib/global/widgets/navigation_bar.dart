@@ -30,7 +30,7 @@ class CustomNavigationBar extends StatelessWidget {
             border: Border(top: BorderSide(color: AppColor.outline)),
           ),
           child: BottomNavigationBar(
-            backgroundColor: AppColor.background.withValues(alpha: 0.8),
+            backgroundColor: AppColor.background.withValues(alpha: 0.5),
             selectedItemColor: AppColor.primary,
             unselectedItemColor: AppColor.onBackgroundVariant,
             currentIndex: index,

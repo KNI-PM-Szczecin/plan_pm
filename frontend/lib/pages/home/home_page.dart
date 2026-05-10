@@ -2,6 +2,7 @@
 // Obsługuje pull-to-refresh: odświeża cache (zajęcia + newsy) i sygnalizuje
 // [TodayLectures] przez [_refreshNotifier] aby przebudował swój Future.
 import 'package:flutter/material.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
@@ -55,7 +56,10 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               HomeSection(
                 title: l10n.newsSectionLabel,
-                child: NewsBuilder(limit: 1),
+                child: NewsBuilder(
+                  limit: 1,
+                  descriptionColor: AppColor.onSurfaceVariant,
+                ),
               ),
               TodayLectures(refreshNotifier: _refreshNotifier),
             ],
