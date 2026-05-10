@@ -1,34 +1,22 @@
+// Wybór grup zajęciowych studenta — siatka przycisków pogrupowanych po typie (A/C/L/inne).
+// W każdej kategorii można wybrać dokładnie jedną grupę.
+// Po zapisaniu persystuje wybór i synchronizuje dane przez [CacheService].
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:plan_pm/global/colors.dart';
-import 'package:plan_pm/global/student.dart';
-import 'package:plan_pm/global/widgets/generic_no_resource.dart';
-import 'package:plan_pm/main.dart';
+import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/widgets/group_builder.dart';
+import 'package:plan_pm/pages/welcome/widgets/onboarding_action_bar.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_pm/service/cache_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-
-ButtonStyle buttonStyle = ButtonStyle(
-  shape: WidgetStatePropertyAll(
-    RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(12)),
-  ),
-);
-
-String longToShort(String long) {
-  final pieces = long
-      .split(",")
-      .map((piece) => piece.split("/")[0])
-      .toString()
-      .replaceAll("(", "")
-      .replaceAll(")", "");
-
-  return pieces;
-}
 
 class GroupSelectionPage extends StatelessWidget {
   const GroupSelectionPage({super.key});
@@ -40,110 +28,37 @@ class GroupSelectionPage extends StatelessWidget {
     Student.selectedGroups = [];
     return Scaffold(
       backgroundColor: AppColor.background,
+      appBar: StandardAppBar(title: l10n.groupSettings),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          spacing: 10,
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: AppColor.surface,
-                  ),
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColor.outline),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyHomePage(title: "Plan PM"),
-                        ),
-                        (r) => false,
-                      );
-                    },
-                    child: Text(
-                      l10n.skipButton,
-                      style: TextStyle(color: AppColor.onSurface),
-                    ),
-                  ),
-                ),
-              ),
+      floatingActionButton: OnboardingActionBar(
+        skipLabel: l10n.skipButton,
+        onSkip: () {
+          HapticFeedback.lightImpact();
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyHomePage(title: "Plan PM"),
             ),
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColor.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(16),
-                    ),
-                  ),
-                  onPressed: () async {
-                    HapticFeedback.lightImpact();
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    await prefs.setStringList(
-                      "groups",
-                      Student.selectedGroups ?? [],
-                    );
-
-                    final CacheService cacheService = CacheService();
-                    await cacheService.syncNews();
-                    await cacheService.syncLectures();
-
-                    if (!context.mounted) return;
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const MyHomePage(title: "Plan PM"),
-                      ),
-                      (r) => false,
-                    );
-                  },
-                  child: Text(
-                    l10n.save,
-                    style: TextStyle(color: AppColor.onPrimary),
-                  ),
-                ),
-              ),
+            (r) => false,
+          );
+        },
+        confirmLabel: l10n.save,
+        onConfirm: () async {
+          HapticFeedback.lightImpact();
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setStringList("groups", Student.selectedGroups ?? []);
+          await CacheService().syncNews();
+          await CacheService().syncLectures();
+          if (!context.mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyHomePage(title: "Plan PM"),
             ),
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            LucideIcons.chevronLeft,
-            color: AppColor.onBackgroundVariant,
-          ),
-        ),
-        backgroundColor: AppColor.background,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-        title: Text(
-          l10n.groupSettings,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColor.onBackground,
-          ),
-        ),
+            (r) => false,
+          );
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -169,8 +84,8 @@ class GroupSelectionPage extends StatelessWidget {
                       ),
                       child: DottedBorder(
                         options: RoundedRectDottedBorderOptions(
-                          radius: Radius.circular(12),
-                          dashPattern: [10, 5],
+                          radius: const Radius.circular(12),
+                          dashPattern: const [10, 5],
                           color: AppColor.outline,
                         ),
                         child: Padding(
@@ -194,15 +109,12 @@ class GroupSelectionPage extends StatelessWidget {
                       ),
                     );
                   }
-                  if (snapshot.hasError) {
+                  if (snapshot.hasError || snapshot.data == null) {
                     return GenericNoResource(
                       label: l10n.unexpectedError,
                       icon: LucideIcons.wifiOff,
                       description: l10n.networkErrorDescription,
                     );
-                  }
-                  if (snapshot.data == null) {
-                    return Center(child: Text("Null"));
                   }
                   final data = snapshot.data!;
 
@@ -210,13 +122,10 @@ class GroupSelectionPage extends StatelessWidget {
                       .map((g) {
                         final group = g.toString();
                         final first = group.split("/")[0];
-                        final shortName = first;
-                        final longName = group;
-                        final key = shortName.isNotEmpty ? shortName[0] : "";
-
+                        final key = first.isNotEmpty ? first[0] : "";
                         return {
                           key: [
-                            {"short": shortName, "long": longName},
+                            {"short": first, "long": group},
                           ],
                         };
                       })

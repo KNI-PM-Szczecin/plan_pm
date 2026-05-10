@@ -1,11 +1,17 @@
 import 'package:intl/intl.dart';
+// import 'dart:developer' as developer;
+import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
+import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/api/models/news_model.dart';
-import 'package:plan_pm/global/student.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/models/lecturer.dart';
+import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/service/database_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:plan_pm/global/logger.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
@@ -31,6 +37,13 @@ class BackendService {
   }
 
   Future<List<LectureModel>> fetchLectures() async {
+    if (AppModeManager.current == AppMode.lecturer) {
+      return _fetchLecturesForLecturer();
+    }
+    return _fetchLecturesForStudent();
+  }
+
+  Future<List<LectureModel>> _fetchLecturesForStudent() async {
     if (Student.specialisation == null) {
       AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
@@ -49,10 +62,19 @@ class BackendService {
     }
 
     final response = await query;
-
-    final lectures = response.map((json) => LectureModel.fromJson(json)).toList();
+    final lectures = response
+        .map((json) => LectureModel.fromJson(json))
+        .toList();
     lectures.sort((a, b) => a.date.compareTo(b.date));
     return lectures;
+  }
+
+  Future<List<LectureModel>> _fetchLecturesForLecturer() async {
+    if (Lecturer.id == null) {
+      AppLogger.w("Brak ID prowadzącego");
+      return [];
+    }
+    return fetchTeacherLectures(Lecturer.id!);
   }
 
   Future<List<String>> fetchGroups() async {
@@ -67,47 +89,80 @@ class BackendService {
     return response.map((row) => row["group"] as String).toList()..sort();
   }
 
-  Future<List<NewsModel>> fetchNews({int limit = 20}) async {
+  Future<List<LecturerItem>> fetchTeachers() async {
     final response = await Supabase.instance.client
-        .from("news")
-        .select()
-        .order("created_at", ascending: false) // Sortowanie od najnowszych
-        .limit(limit);
-        
-    final data = response;
-    
-    if (data.isNotEmpty) {
-      final news = data.map((json) {
-        final id = json["id"] as String;
-        final url = Supabase.instance.client.storage
-            .from("Files")
-            .getPublicUrl("News/$id.png");
+        .from("teachers")
+        .select("id, fullName, title")
+        .order("fullName", ascending: true);
+    return response.map((json) => LecturerItem.fromJson(json)).toList();
+  }
 
+  Future<List<NewsModel>> fetchNews({int limit = 20}) async {
+    if (kDebugNews) {
+      return [
+        NewsModel(
+          id: 'debug-1',
+          createdAt: DateTime.now(),
+          title: 'Mock news — test obrazu',
+          content: 'To jest testowy news do weryfikacji ładowania zdjęć z ImgBB.',
+          messageType: 'info',
+          imageUrl: kDebugNewsImageUrl.isNotEmpty ? kDebugNewsImageUrl : null,
+        ),
+        NewsModel(
+          id: 'debug-2',
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+          title: 'Mock news — bez zdjęcia',
+          content: 'Ten news nie ma zdjęcia — sprawdza fallback.',
+          messageType: 'warning',
+        ),
+      ];
+    }
+    AppLogger.d("[BACKEND-SERVICE] fetchNews — wysyłam zapytanie (limit=$limit)");
+    try {
+      final response = await Supabase.instance.client
+          .from("news")
+          .select()
+          .limit(limit);
+      AppLogger.d("[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy");
+      if (response.isEmpty) return [];
+      return response.map((json) {
+        final id = json["id"].toString();
         return NewsModel(
           id: id,
           createdAt: DateTime.parse(json["created_at"]),
           title: json["title"] as String,
           content: json["content"] as String,
           messageType: json["message_type"] as String,
-          imageUrl: url,
+          imageUrl: json["image_url"] as String?,
         );
       }).toList();
-      
-      return news;
+    } catch (e, st) {
+      AppLogger.e("[BACKEND-SERVICE] fetchNews — błąd zapytania", e, st);
+      rethrow;
     }
-    return [];
   }
 
   Future<AnnouncementModel?> fetchAnnouncement() async {
-    final response = await Supabase.instance.client
-        .from("app_announcements")
-        .select()
-        .eq("active", true)
-        .order("created_at", ascending: false)
-        .limit(1);
-        
-    if (response.isEmpty) return null;
-    return AnnouncementModel.fromJson(response.first);
+    try {
+      final response = await Supabase.instance.client
+          .from("app_announcements")
+          .select()
+          .eq("active", true)
+          .order("created_at", ascending: false)
+          .limit(1);
+      if (response.isEmpty) return null;
+      return AnnouncementModel.fromJson(response.first);
+    } catch (e) {
+      AppLogger.w("[BACKEND-SERVICE] fetchAnnouncement — pominięto", e);
+      return null;
+    }
+  }
+
+  Future<void> clearCache() async {
+    final db = DatabaseService.instance;
+    await db.clearLectures();
+    await db.clearNews();
+    AppLogger.i("[BACKEND-SERVICE] Cache cleared");
   }
 
   Future<Map<String, Map<String, List<String>>>> fetchStructure() async {

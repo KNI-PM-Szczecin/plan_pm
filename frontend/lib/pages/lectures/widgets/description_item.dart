@@ -1,5 +1,5 @@
+// Wiersz szczegółu zajęcia w rozwijanej sekcji karty [Lecture] — kolorowa ikona, etykieta i wartość.
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/colors.dart';
 
 class DescriptionItem extends StatelessWidget {
   const DescriptionItem({
@@ -16,41 +16,34 @@ class DescriptionItem extends StatelessWidget {
   final String content;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColor.outline),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          spacing: 10,
-          children: [
-            CircleAvatar(
-              backgroundColor: color.withAlpha(AppColor.colorfulAlphaValue),
-              child: Icon(icon, color: AppColor.onPrimaryVariant),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: TextStyle(color: AppColor.onBackgroundVariant),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        spacing: 10,
+        children: [
+          CircleAvatar(
+            backgroundColor: color,
+            child: Icon(icon, color: Colors.white),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(color: Color(0xB3FFFFFF)),
+                ),
+                Text(
+                  content,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  Text(
-                    content,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.onBackground,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

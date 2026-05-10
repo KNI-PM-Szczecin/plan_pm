@@ -12,3 +12,9 @@ const String kDebugAnnouncementType = 'update';
 
 // Set to true to always show the "What's new" dialog (for UI development)
 const bool kDebugWhatsNew = false;
+
+// Set to true to return mock news data (bypasses Supabase)
+const bool kDebugNews = false;
+
+// ImgBB URL to use for the mock news image (empty = no image)
+const String kDebugNewsImageUrl = "";

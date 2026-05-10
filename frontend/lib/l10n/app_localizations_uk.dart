@@ -272,6 +272,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get lengthLabel => 'Тривалість';
 
   @override
+  String get additionalInformation => 'ДОДАТКОВА ІНФОРМАЦІЯ';
+
+  @override
   String get notesLabel => 'Нотатки';
 
   @override
@@ -539,4 +542,80 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get whatsNewGotIt => 'Чудово!';
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hoursг $minutesхв';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes хв';
+  }
+
+  @override
+  String get roleSelectionTitle => 'Як хочете використовувати PlanPM?';
+
+  @override
+  String get roleSelectionSubtitle =>
+      'Оберіть роль, яка найкраще описує ваші потреби';
+
+  @override
+  String get roleStudentButton => 'Я студент';
+
+  @override
+  String get roleLecturerButton => 'Я викладач';
+
+  @override
+  String get lecturerSelectionTitle => 'Виберіть викладача';
+
+  @override
+  String get lecturerSelectionSubtitle =>
+      'Введіть ім\'я, прізвище або назву предмету';
+
+  @override
+  String get lecturerSearchNoResults => 'Немає результатів';
+
+  @override
+  String get lecturerLabel => 'Викладач';
+
+  @override
+  String get roleSectionTitle => 'Роль';
+
+  @override
+  String get roleStudentViewTitle => 'Перегляд студента';
+
+  @override
+  String get roleStudentViewSubtitle => 'Переключитися на розклад студента';
+
+  @override
+  String get roleCurrentlyActive => 'Зараз активний';
+
+  @override
+  String get roleLecturerViewTitle => 'Перегляд викладача';
+
+  @override
+  String get roleLecturerViewSubtitle => 'Переключитися на перегляд викладача';
+
+  @override
+  String get debugRoleSelector => 'Вибір ролі';
+
+  @override
+  String get debugClearCache => 'Очистити кеш';
+
+  @override
+  String get debugCacheCleared => 'Кеш очищено';
+
+  @override
+  String get debugSevenDayMode => 'Режим 7 днів';
+
+  @override
+  String get newsLoading => 'Завантаження новин';
+
+  @override
+  String get newsNoDataDescription =>
+      'Немає нових повідомлень. Перевірте пізніше для оновлень.';
+
+  @override
+  String get searchHint => 'Пошук...';
 }

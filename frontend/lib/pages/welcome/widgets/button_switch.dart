@@ -1,5 +1,7 @@
+// Przełącznik radio-button — jeden aktywny przycisk z grupy.
+// Wybrany element renderuje [FilledButton], pozostałe [OutlinedButton].
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/colors.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 
 class ButtonSwitch extends StatefulWidget {
   const ButtonSwitch({
