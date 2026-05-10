@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/selection_card.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class LanguagePage extends StatelessWidget {
@@ -15,128 +14,127 @@ class LanguagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final options = [
+      _LangOption(
+        leading: Icon(LucideIcons.monitor, color: AppColor.onSurfaceVariant, size: 22),
+        label: l10n.languageSystem,
+        locale: null,
+      ),
+      _LangOption(
+        leading: const Text('🇵🇱', style: TextStyle(fontSize: 22)),
+        label: l10n.languagePolish,
+        locale: const Locale('pl'),
+      ),
+      _LangOption(
+        leading: const Text('🇬🇧', style: TextStyle(fontSize: 22)),
+        label: l10n.languageEnglish,
+        locale: const Locale('en'),
+      ),
+      _LangOption(
+        leading: const Text('🇺🇦', style: TextStyle(fontSize: 22)),
+        label: l10n.languageUkrainian,
+        locale: const Locale('uk'),
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.languageHeader),
+      appBar: CustomAppBar(title: l10n.languageHeader),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: AppColor.surface,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(color: AppColor.outline),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.languageHint,
-                    style: TextStyle(
-                      color: AppColor.onSurfaceVariant,
-                      fontSize: 14,
+            child: ValueListenableBuilder<Locale?>(
+              valueListenable: localeNotifier,
+              builder: (context, currentLocale, _) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.languageHint.toUpperCase(),
+                      style: TextStyle(
+                        color: AppColor.onSurfaceVariant,
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  ValueListenableBuilder<Locale?>(
-                    valueListenable: localeNotifier,
-                    builder: (context, currentLocale, _) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SelectionCard(
-                            leading: Icon(
-                              LucideIcons.laptop,
-                              color: AppColor.onSurfaceVariant,
-                              size: 24,
-                            ),
-                            label: l10n.languageSystem,
-                            isSelected: currentLocale == null,
-                            onTap: () => _selectLanguage(null),
-                          ),
-                          const SizedBox(height: 12),
-                          SelectionCard(
-                            leading: Text(
-                              '🇵🇱',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                            label: l10n.languagePolish,
-                            isSelected: currentLocale?.languageCode == 'pl',
-                            onTap: () => _selectLanguage(const Locale('pl')),
-                          ),
-                          const SizedBox(height: 12),
-                          SelectionCard(
-                            leading: Text(
-                              '🇬🇧',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                            label: l10n.languageEnglish,
-                            isSelected: currentLocale?.languageCode == 'en',
-                            onTap: () => _selectLanguage(const Locale('en')),
-                          ),
-                          const SizedBox(height: 12),
-                          SelectionCard(
-                            leading: Text(
-                              '🇺🇦',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                            label: l10n.languageUkrainian,
-                            isSelected: currentLocale?.languageCode == 'uk',
-                            onTap: () => _selectLanguage(const Locale('uk')),
-                          ),
-                          const SizedBox(height: 24),
-                          Divider(color: AppColor.outline, height: 1),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Icon(
-                                LucideIcons.languages,
-                                color: AppColor.onSurfaceVariant,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: l10n.activeLanguageLabel,
-                                      style: TextStyle(
-                                        color: AppColor.onSurfaceVariant,
-                                        fontSize: 14,
-                                      ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColor.surface,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Column(
+                          children: () {
+                            final List<Widget> rows = [];
+                            for (int i = 0; i < options.length; i++) {
+                              final opt = options[i];
+                              final isSelected = opt.locale == null
+                                  ? currentLocale == null
+                                  : currentLocale?.languageCode == opt.locale!.languageCode;
+                              if (i > 0) {
+                                rows.add(Divider(height: 1, color: AppColor.outline, indent: 16, endIndent: 16));
+                              }
+                              rows.add(
+                                GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.selectionClick();
+                                    localeNotifier.setLocale(opt.locale);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 28, child: opt.leading),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            opt.label,
+                                            style: TextStyle(color: AppColor.onSurface, fontSize: 16),
+                                          ),
+                                        ),
+                                        AnimatedSwitcher(
+                                          duration: const Duration(milliseconds: 200),
+                                          transitionBuilder: (child, animation) => ScaleTransition(
+                                            scale: animation,
+                                            child: FadeTransition(opacity: animation, child: child),
+                                          ),
+                                          child: isSelected
+                                              ? Icon(LucideIcons.check, key: const ValueKey('check'), color: AppColor.primary, size: 20)
+                                              : const SizedBox(key: ValueKey('empty'), width: 20),
+                                        ),
+                                      ],
                                     ),
-                                    TextSpan(
-                                      text: _getLanguageName(currentLocale, l10n),
-                                      style: TextStyle(
-                                        color: AppColor.onSurface,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
+                              );
+                            }
+                            return rows;
+                          }(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Icon(LucideIcons.languages, color: AppColor.onSurfaceVariant, size: 18),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${l10n.activeLanguageLabel}${_getLanguageName(currentLocale, l10n)}',
+                          style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
       ),
     );
-  }
-
-  void _selectLanguage(Locale? locale) {
-    HapticFeedback.selectionClick();
-    localeNotifier.setLocale(locale);
   }
 
   String _getLanguageName(Locale? locale, AppLocalizations l10n) {
@@ -145,4 +143,11 @@ class LanguagePage extends StatelessWidget {
     if (locale?.languageCode == 'uk') return l10n.languageUkrainian;
     return l10n.languageSystem;
   }
+}
+
+class _LangOption {
+  final Widget leading;
+  final String label;
+  final Locale? locale;
+  const _LangOption({required this.leading, required this.label, required this.locale});
 }

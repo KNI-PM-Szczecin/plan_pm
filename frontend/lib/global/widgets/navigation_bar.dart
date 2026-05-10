@@ -1,5 +1,7 @@
 // Dolny pasek nawigacyjny z zakładkami: Strona główna, Plan, Aktualności.
 // Montowany jako bottomNavigationBar głównego Scaffold w [main.dart].
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -20,34 +22,39 @@ class CustomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: AppColor.outline)),
-      ),
-      child: BottomNavigationBar(
-        backgroundColor: AppColor.background,
-        selectedItemColor: AppColor.primary,
-        unselectedItemColor: AppColor.onBackgroundVariant,
-        currentIndex: index,
-        enableFeedback: false,
-        onTap: (i) {
-          HapticFeedback.lightImpact();
-          onChange(i);
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.home),
-            label: l10n.pageTitleHome,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: AppColor.outline)),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.calendar),
-            label: l10n.pageTitleLectures,
+          child: BottomNavigationBar(
+            backgroundColor: AppColor.background.withValues(alpha: 0.5),
+            selectedItemColor: AppColor.primary,
+            unselectedItemColor: AppColor.onBackgroundVariant,
+            currentIndex: index,
+            enableFeedback: false,
+            onTap: (i) {
+              HapticFeedback.lightImpact();
+              onChange(i);
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(LucideIcons.home),
+                label: l10n.pageTitleHome,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(LucideIcons.calendar),
+                label: l10n.pageTitleLectures,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(LucideIcons.newspaper),
+                label: l10n.pageTitleNews,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.newspaper),
-            label: l10n.pageTitleNews,
-          ),
-        ],
+        ),
       ),
     );
   }

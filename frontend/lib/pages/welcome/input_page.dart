@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/states/generic_loading.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
@@ -76,7 +76,7 @@ class _InputPageState extends State<InputPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(
+      appBar: CustomAppBar(
         title: l10n.studySettings,
         onBack: () {
           HapticFeedback.lightImpact();

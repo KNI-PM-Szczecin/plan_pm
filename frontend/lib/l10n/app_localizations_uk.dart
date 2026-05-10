@@ -216,6 +216,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get academicInfoHeader => 'Академічна інформація';
 
   @override
+  String get lecturerInfoHeader => 'Інформація про викладача';
+
+  @override
   String get editButton => 'Редагувати';
 
   @override

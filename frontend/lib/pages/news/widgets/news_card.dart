@@ -18,6 +18,7 @@ class NewsCard extends StatelessWidget {
     required this.description,
     required this.timestamp,
     this.imageUrl,
+    this.descriptionColor,
   });
 
   final String title;
@@ -25,6 +26,7 @@ class NewsCard extends StatelessWidget {
   final String description;
   final DateTime timestamp;
   final String? imageUrl;
+  final Color? descriptionColor;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +36,12 @@ class NewsCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppColor.outline, width: 1),
+        side: BorderSide(
+          color: AppColor.outline.withValues(alpha: 0.18),
+          width: 0.5,
+        ),
       ),
-      elevation: 1,
+      elevation: 0,
       child: InkWell(
         onTap: () {
           HapticFeedback.lightImpact();
@@ -77,12 +82,21 @@ class NewsCard extends StatelessWidget {
                     data: description.length > 45
                         ? "${description.substring(0, 45)}..."
                         : description,
-                    style: newsHtmlStyle,
+                    style: {
+                      ...newsHtmlStyle,
+                      "body": (newsHtmlStyle["body"] ?? Style()).copyWith(
+                        color: descriptionColor ?? AppColor.onSurfaceVariant,
+                      ),
+                      "p": (newsHtmlStyle["p"] ?? Style()).copyWith(
+                        color: descriptionColor ?? AppColor.onSurfaceVariant,
+                      ),
+                    },
                   ),
                   Text(
                     l10n.readMore,
                     style: TextStyle(
-                      color: AppColor.onSurfaceVariant,
+                      color: AppColor.primary,
+                      fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
                   ),
