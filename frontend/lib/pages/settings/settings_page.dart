@@ -78,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         MenuButton(
                           title: l10n.appearanceHeader,
                           leadingIcon: LucideIcons.paintbrush,
-                          leadingColor: const Color(0xFF8B5CF6),
+                          leadingColor: AppColor.decorativePurple,
                           onTap: () {
                             HapticFeedback.lightImpact();
                             Navigator.push(
@@ -93,7 +93,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         MenuButton(
                           title: l10n.languageHeader,
                           leadingIcon: LucideIcons.globe,
-                          leadingColor: const Color(0xFF0884ff),
+                          leadingColor: AppColor.decorativeBlue,
                           onTap: () {
                             HapticFeedback.lightImpact();
                             Navigator.push(
@@ -112,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: MenuButton(
                       title: l10n.sendFeedbackButton,
                       leadingIcon: LucideIcons.messageSquare,
-                      leadingColor: const Color(0xFF10B981),
+                      leadingColor: AppColor.decorativeGreen,
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
@@ -192,7 +192,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: MenuButton(
                       title: l10n.aboutApp,
                       leadingIcon: LucideIcons.info,
-                      leadingColor: const Color(0xFF6B7280),
+                      leadingColor: AppColor.neutral,
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(

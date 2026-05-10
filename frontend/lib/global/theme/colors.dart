@@ -31,6 +31,13 @@ class ColorThemes {
   static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
   static final Color darkOutline = Colors.white.withAlpha(10);
   static const int darkColorfulAlphaValue = 150;
+
+  static const Color success = Color(0xFF30D158);
+  static const Color destructive = Color(0xFFFF453A);
+  static const Color neutral = Color(0xFF6B7280);
+  static const Color decorativePurple = Color(0xFF8B5CF6);
+  static const Color decorativeBlue = Color(0xFF0884FF);
+  static const Color decorativeGreen = Color(0xFF10B981);
 }
 
 class AppColor {
@@ -110,6 +117,26 @@ class AppColor {
   static Color get onPrimaryVariant => _brightness == Brightness.light
       ? ColorThemes.lightOnPrimaryVariant
       : ColorThemes.darkOnPrimaryVariant;
+
+  static Color get inverseSurface => _brightness == Brightness.light
+      ? const Color(0xFF1C1C1E)
+      : Colors.white;
+
+  static Color get onInverseSurface => _brightness == Brightness.light
+      ? Colors.white
+      : Colors.black;
+
+  static Color get success => ColorThemes.success;
+
+  static Color get destructive => ColorThemes.destructive;
+
+  static Color get neutral => ColorThemes.neutral;
+
+  static Color get decorativePurple => ColorThemes.decorativePurple;
+
+  static Color get decorativeBlue => ColorThemes.decorativeBlue;
+
+  static Color get decorativeGreen => ColorThemes.decorativeGreen;
 
   static Color get outline => _brightness == Brightness.light
       ? ColorThemes.lightOutline

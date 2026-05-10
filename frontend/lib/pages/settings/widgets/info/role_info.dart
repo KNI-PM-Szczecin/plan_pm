@@ -8,6 +8,7 @@ import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
@@ -30,7 +31,7 @@ class _RoleInfoState extends State<RoleInfo> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const InputPage()),
+      appRoute((_) => const InputPage()),
     );
   }
 
@@ -40,8 +41,8 @@ class _RoleInfoState extends State<RoleInfo> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => LecturerSelectionPage(
+      appRoute(
+        (_) => LecturerSelectionPage(
           lecturers: lecturers,
           onContinue: (LecturerItem selected) async {
             Lecturer.id = selected.id;
@@ -78,8 +79,7 @@ class _RoleInfoState extends State<RoleInfo> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isLecturer = AppModeManager.current == AppMode.lecturer;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeTabColor = isDark ? const Color(0xFF3A3A3C) : Colors.white;
+    final activeTabColor = AppColor.surfaceElevated;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,9 +150,15 @@ class _Segment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(999),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          splashColor: AppColor.onSurface.withValues(alpha: 0.08),
+          highlightColor: AppColor.onSurface.withValues(alpha: 0.05),
+          child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -190,6 +196,7 @@ class _Segment extends StatelessWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

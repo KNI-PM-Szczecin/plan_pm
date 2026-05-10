@@ -54,76 +54,81 @@ class App extends StatelessWidget {
         return ValueListenableBuilder<ThemeMode>(
           valueListenable: themeNotifier,
           builder: (context, currentThemeMode, _) {
-            return MaterialApp(
-              locale: currentLocale,
-              themeMode: currentThemeMode,
-              title: 'Plan PM',
-              debugShowCheckedModeBanner: kUseTestDb,
-              theme: ThemeData(
-                fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
-                brightness: Brightness.light,
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: AppColor.primary,
-                  brightness: Brightness.light,
-                ),
-                appBarTheme: _appBarThemeForBrightness(Brightness.light),
-              ).copyWith(
-                textTheme: _tightTextTheme(
-                  ThemeData(brightness: Brightness.light).textTheme,
-                ),
-              ),
-              darkTheme: ThemeData(
-                fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
-                brightness: Brightness.dark,
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: AppColor.primary,
-                  brightness: Brightness.dark,
-                ),
-                appBarTheme: _appBarThemeForBrightness(Brightness.dark),
-              ).copyWith(
-                textTheme: _tightTextTheme(
-                  ThemeData(brightness: Brightness.dark).textTheme,
-                ),
-              ),
-              builder: (context, child) {
-                return Builder(
-                  builder: (BuildContext innerContext) {
-                    final brightness = Theme.of(innerContext).brightness;
-                    AppColor.update(brightness);
-                    SystemChrome.setSystemUIOverlayStyle(
-                      _overlayStyleForBrightness(brightness),
-                    );
-                    return KeyedSubtree(
-                      key: ValueKey(brightness),
-                      child: AppRebuilder(child: child!),
+            return ValueListenableBuilder<AppAccentColor>(
+              valueListenable: accentColorNotifier,
+              builder: (context, _, _) {
+                return MaterialApp(
+                  locale: currentLocale,
+                  themeMode: currentThemeMode,
+                  title: 'Plan PM',
+                  debugShowCheckedModeBanner: kUseTestDb,
+                  theme: ThemeData(
+                    fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
+                    brightness: Brightness.light,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: AppColor.primary,
+                      brightness: Brightness.light,
+                    ),
+                    appBarTheme: _appBarThemeForBrightness(Brightness.light),
+                  ).copyWith(
+                    textTheme: _tightTextTheme(
+                      ThemeData(brightness: Brightness.light).textTheme,
+                    ),
+                  ),
+                  darkTheme: ThemeData(
+                    fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
+                    brightness: Brightness.dark,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: AppColor.primary,
+                      brightness: Brightness.dark,
+                    ),
+                    appBarTheme: _appBarThemeForBrightness(Brightness.dark),
+                  ).copyWith(
+                    textTheme: _tightTextTheme(
+                      ThemeData(brightness: Brightness.dark).textTheme,
+                    ),
+                  ),
+                  builder: (context, child) {
+                    return Builder(
+                      builder: (BuildContext innerContext) {
+                        final brightness = Theme.of(innerContext).brightness;
+                        AppColor.update(brightness);
+                        SystemChrome.setSystemUIOverlayStyle(
+                          _overlayStyleForBrightness(brightness),
+                        );
+                        return KeyedSubtree(
+                          key: ValueKey(brightness),
+                          child: AppRebuilder(child: child!),
+                        );
+                      },
                     );
                   },
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: const [
+                    Locale('en'),
+                    Locale('pl'),
+                    Locale('uk'),
+                  ],
+                  routes: {
+                    '/home': (_) => const MyHomePage(title: 'Strona główna'),
+                  },
+                  home: FutureBuilder<Widget>(
+                    future: appInitialization(),
+                    builder: (context, AsyncSnapshot<Widget> screen) {
+                      if (screen.connectionState != ConnectionState.done) {
+                        return Container(color: AppColor.background);
+                      }
+                      FlutterNativeSplash.remove();
+                      return screen.data!;
+                    },
+                  ),
                 );
               },
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('en'),
-                Locale('pl'),
-                Locale('uk'),
-              ],
-              routes: {
-                '/home': (_) => const MyHomePage(title: 'Strona główna'),
-              },
-              home: FutureBuilder<Widget>(
-                future: appInitialization(),
-                builder: (context, AsyncSnapshot<Widget> screen) {
-                  if (screen.connectionState != ConnectionState.done) {
-                    return Container(color: AppColor.background);
-                  }
-                  FlutterNativeSplash.remove();
-                  return screen.data!;
-                },
-              ),
             );
           },
         );

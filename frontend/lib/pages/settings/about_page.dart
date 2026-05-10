@@ -37,6 +37,7 @@ class _AboutPageState extends State<AboutPage> {
   Future<void> _initPackageInfo() async {
     try {
       final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
       setState(() {
         _version = "${info.version}+${info.buildNumber}";
       });
@@ -56,15 +57,27 @@ class _AboutPageState extends State<AboutPage> {
   SnackBar _styledSnackBar({required Widget icon, required String text}) {
     return SnackBar(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: const Color(0xFF1C1C1E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      backgroundColor: AppColor.inverseSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(
+          color: AppColor.onInverseSurface.withValues(alpha: 0.12),
+          width: 1,
+        ),
+      ),
       elevation: 0,
       content: Row(
         children: [
           icon,
           const SizedBox(width: 12),
           Expanded(
-            child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 15)),
+            child: Text(
+              text,
+              style: TextStyle(
+                color: AppColor.onInverseSurface,
+                fontSize: 15,
+              ),
+            ),
           ),
         ],
       ),
@@ -90,7 +103,7 @@ class _AboutPageState extends State<AboutPage> {
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
           ..showSnackBar(_styledSnackBar(
-            icon: const Icon(Icons.check_circle, color: Color(0xFF30D158), size: 22),
+            icon: Icon(Icons.check_circle, color: AppColor.success, size: 22),
             text: l10n.debugModeUnlocked,
           ));
       }
@@ -100,7 +113,11 @@ class _AboutPageState extends State<AboutPage> {
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
           ..showSnackBar(_styledSnackBar(
-            icon: const Icon(Icons.mouse, color: Colors.white70, size: 22),
+            icon: Icon(
+              Icons.mouse,
+              color: AppColor.onInverseSurface.withValues(alpha: 0.7),
+              size: 22,
+            ),
             text: l10n.debugTapsRemaining(7 - _tapCount),
           ));
       }
@@ -120,7 +137,11 @@ class _AboutPageState extends State<AboutPage> {
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(_styledSnackBar(
-        icon: const Icon(Icons.do_not_disturb_on, color: Colors.redAccent, size: 22),
+        icon: Icon(
+          Icons.do_not_disturb_on,
+          color: AppColor.destructive,
+          size: 22,
+        ),
         text: l10n.debugModeDisabled,
       ));
   }
@@ -140,7 +161,6 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: AppColor.background,
@@ -278,7 +298,7 @@ class _AboutPageState extends State<AboutPage> {
                                   children: [
                                     Icon(
                                       LucideIcons.heart,
-                                      color: Colors.red,
+                                      color: AppColor.destructive,
                                       size: 20,
                                     ),
                                     const SizedBox(width: 8),
@@ -300,12 +320,8 @@ class _AboutPageState extends State<AboutPage> {
                                       _launchRepo();
                                     },
                                     style: FilledButton.styleFrom(
-                                      backgroundColor: isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      foregroundColor: isDark
-                                          ? Colors.black
-                                          : Colors.white,
+                                      backgroundColor: AppColor.inverseSurface,
+                                      foregroundColor: AppColor.onInverseSurface,
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 16,
                                       ),
