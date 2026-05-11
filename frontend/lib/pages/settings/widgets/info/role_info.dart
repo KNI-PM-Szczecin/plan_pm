@@ -62,6 +62,7 @@ class _RoleInfoState extends State<RoleInfo> {
 
             await DatabaseService.instance.clearLectures();
             await CacheService().syncLectures();
+            await CacheService().syncNews();
 
             if (!mounted) return;
             Navigator.of(
