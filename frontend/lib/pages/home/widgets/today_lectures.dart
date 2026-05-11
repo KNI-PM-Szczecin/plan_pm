@@ -56,7 +56,6 @@ class _TodayLecturesState extends State<TodayLectures> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    int idx = 0;
 
     return HomeSection(
       title: l10n.recentLecture,
@@ -102,6 +101,7 @@ class _TodayLecturesState extends State<TodayLectures> {
             );
           }
 
+          int idx = 0;
           // Group those lectures by date
           Map<DateTime, List<LectureModel>> groups = groupBy(
             lectures,

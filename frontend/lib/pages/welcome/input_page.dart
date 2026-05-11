@@ -23,7 +23,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 typedef UniversityData = Map<String, Map<String, List<String>>>;
 
 class InputPage extends StatefulWidget {
-  const InputPage({super.key});
+  const InputPage({super.key, this.isRoleSwitch = false});
+
+  final bool isRoleSwitch;
 
   @override
   State<InputPage> createState() => _InputPageState();
@@ -96,12 +98,16 @@ class _InputPageState extends State<InputPage> {
         skipLabel: l10n.skipButton,
         onSkip: () {
           HapticFeedback.lightImpact();
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MyHomePage(title: "Plan PM"),
-            ),
-          );
+          if (widget.isRoleSwitch) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MyHomePage(title: "Plan PM"),
+              ),
+            );
+          }
         },
         confirmLabel: l10n.groupSelection,
         onConfirm: _canProceed
@@ -149,7 +155,9 @@ class _InputPageState extends State<InputPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GroupSelectionPage(),
+                    builder: (context) => GroupSelectionPage(
+                      isRoleSwitch: widget.isRoleSwitch,
+                    ),
                   ),
                 );
               }

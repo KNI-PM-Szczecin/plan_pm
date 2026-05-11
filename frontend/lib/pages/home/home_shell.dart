@@ -189,13 +189,18 @@ class _MyHomePageState extends State<MyHomePage>
               backgroundColor: Colors.transparent,
               forceMaterialTransparency: true,
               shape: Border(bottom: BorderSide(color: AppColor.outline)),
-              flexibleSpace: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: Container(
-                    color: AppColor.background.withValues(alpha: 0.5),
-                  ),
-                ),
+              flexibleSpace: Builder(
+                builder: (context) {
+                  final isLight = Theme.of(context).brightness == Brightness.light;
+                  return ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: Container(
+                        color: AppColor.background.withValues(alpha: isLight ? 0.92 : 0.5),
+                      ),
+                    ),
+                  );
+                },
               ),
               leading: Builder(
                 builder: (ctx) => defaultTargetPlatform == TargetPlatform.iOS
