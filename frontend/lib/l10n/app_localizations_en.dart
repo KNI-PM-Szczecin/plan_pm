@@ -519,12 +519,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debugReturnToWelcome => 'Return to Welcome Screen';
 
   @override
-  String get debugModeUnlocked => 'Debug mode unlocked!';
+  String get debugModeUnlocked => 'You are now a developer';
 
   @override
   String debugTapsRemaining(int count) {
-    return '$count more taps to unlock debug';
+    return '$count more taps to become a developer';
   }
+
+  @override
+  String get debugModeDisable => 'Disable developer mode';
+
+  @override
+  String get debugModeDisabled => 'Developer mode disabled';
 
   @override
   String get infoSection => 'Information';
@@ -581,6 +587,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleStudentViewSubtitle => 'Switch to student schedule';
+
+  @override
+  String get roleViewingAsStudent =>
+      'You are currently viewing the schedule as a student.';
+
+  @override
+  String get roleViewingAsLecturer =>
+      'You are currently viewing the schedule as a lecturer.';
 
   @override
   String get roleCurrentlyActive => 'Currently active';

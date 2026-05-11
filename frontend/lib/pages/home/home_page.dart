@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return RefreshIndicator(
+      edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight,
       onRefresh: () async {
         AppLogger.d("Refreshing home page elements...");
         final CacheService cacheService = CacheService();

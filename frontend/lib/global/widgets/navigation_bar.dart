@@ -21,16 +21,17 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isLight = Theme.of(context).brightness == Brightness.light;
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: AppColor.outline)),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: AppColor.outline)),
+      ),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: BottomNavigationBar(
-            backgroundColor: AppColor.background.withValues(alpha: 0.5),
+            backgroundColor: AppColor.background.withValues(alpha: isLight ? 0.92 : 0.5),
             selectedItemColor: AppColor.primary,
             unselectedItemColor: AppColor.onBackgroundVariant,
             currentIndex: index,
@@ -59,3 +60,4 @@ class CustomNavigationBar extends StatelessWidget {
     );
   }
 }
+

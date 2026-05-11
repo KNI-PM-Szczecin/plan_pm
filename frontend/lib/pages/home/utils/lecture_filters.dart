@@ -21,7 +21,11 @@ List<LectureModel> getClosestLectures(
     );
     return !lectureEnd.isBefore(referenceTime);
   }).toList()
-    ..sort((a, b) => a.date.compareTo(b.date));
+    ..sort((a, b) {
+      final dateCompare = a.date.compareTo(b.date);
+      if (dateCompare != 0) return dateCompare;
+      return a.startTime.compareTo(b.startTime);
+    });
 
   return filtered.take(count).toList();
 }

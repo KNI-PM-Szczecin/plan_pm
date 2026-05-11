@@ -109,6 +109,7 @@ class RoleSelectionPage extends StatelessWidget {
 
                           await DatabaseService.instance.clearLectures();
                           await CacheService().syncLectures();
+                          await CacheService().syncNews();
 
                           if (!context.mounted) return;
                           Navigator.of(

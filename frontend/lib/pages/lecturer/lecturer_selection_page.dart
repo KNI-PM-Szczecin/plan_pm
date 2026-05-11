@@ -2,9 +2,9 @@
 // Przyjmuje gotową listę [LecturerItem] z zewnątrz i zwraca wybrany element przez [onContinue].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/back_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_search_field.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_tile.dart';
@@ -52,14 +52,8 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 24, 0),
-              child: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  LucideIcons.chevronLeft,
-                  color: AppColor.onBackgroundVariant,
-                ),
-              ),
+              padding: const EdgeInsets.only(top: 8),
+              child: SizedBox(width: 56, child: AppBackButton()),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),

@@ -26,12 +26,10 @@ class RoleInfo extends StatefulWidget {
 class _RoleInfoState extends State<RoleInfo> {
   Future<void> _switchToStudent() async {
     HapticFeedback.lightImpact();
-    await AppModeManager.setMode(AppMode.student);
-    sevenDayModeNotifier.value = false;
     if (!mounted) return;
     Navigator.push(
       context,
-      appRoute((_) => const InputPage()),
+      appRoute((_) => const InputPage(isRoleSwitch: true)),
     );
   }
 
@@ -64,6 +62,7 @@ class _RoleInfoState extends State<RoleInfo> {
 
             await DatabaseService.instance.clearLectures();
             await CacheService().syncLectures();
+            await CacheService().syncNews();
 
             if (!mounted) return;
             Navigator.of(
