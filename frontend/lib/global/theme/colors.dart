@@ -1,10 +1,8 @@
-// System kolorów aplikacji obsługujący jasny/ciemny motyw oraz AMOLED i akcenty.
+// System kolorów aplikacji obsługujący jasny/ciemny motyw i akcenty.
 //
 // ColorThemes — statyczne stałe dla obu motywów (wartości bazowe).
-// AppColor — dynamiczne gettery odczytujące aktualny Brightness, amoledModeNotifier
-// i accentColorNotifier, zwracając właściwy kolor w danym kontekście.
-// Wywoływane przez każdy widżet używający kolorów — zamiast Theme.of(context),
-// co pozwala na zmianę motywu bez przebudowy drzewa widżetów.
+// AppColor — dynamiczne gettery odczytujące aktualny Brightness i accentColorNotifier,
+// zwracając właściwy kolor w danym kontekście.
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 
@@ -21,17 +19,25 @@ class ColorThemes {
   static final Color lightOutline = Colors.black.withAlpha(30);
   static const int lightColorfulAlphaValue = 40;
 
-  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkBackground = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFE0E0E0);
   static final Color darkOnBackgroundVariant = Colors.white.withAlpha(150);
-  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkSurface = Color(0xFF1C1C1C);
+  static const Color darkSurfaceElevated = Color(0xFF2C2C2C);
   static const Color darkOnSurface = Color(0xFFE0E0E0);
   static final Color darkOnSurfaceVariant = Colors.white.withAlpha(100);
   static const Color darkPrimary = Color(0xFF409CFF);
   static const Color darkOnPrimary = Colors.white;
   static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
-  static const Color darkOutline = Colors.transparent;
+  static final Color darkOutline = Colors.white.withAlpha(10);
   static const int darkColorfulAlphaValue = 150;
+
+  static const Color success = Color(0xFF30D158);
+  static const Color destructive = Color(0xFFFF453A);
+  static const Color neutral = Color(0xFF6B7280);
+  static const Color decorativePurple = Color(0xFF8B5CF6);
+  static const Color decorativeBlue = Color(0xFF0884FF);
+  static const Color decorativeGreen = Color(0xFF10B981);
 }
 
 class AppColor {
@@ -41,14 +47,9 @@ class AppColor {
     _brightness = brightness;
   }
 
-  static Color get background {
-    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
-      return Colors.black;
-    }
-    return _brightness == Brightness.light
-        ? ColorThemes.lightBackground
-        : ColorThemes.darkBackground;
-  }
+  static Color get background => _brightness == Brightness.light
+      ? ColorThemes.lightBackground
+      : ColorThemes.darkBackground;
 
   static Color get onBackground => _brightness == Brightness.light
       ? ColorThemes.lightOnBackground
@@ -58,14 +59,13 @@ class AppColor {
       ? ColorThemes.lightOnBackgroundVariant
       : ColorThemes.darkOnBackgroundVariant;
 
-  static Color get surface {
-    if (_brightness == Brightness.dark && amoledModeNotifier.value) {
-      return const Color(0xFF090909);
-    }
-    return _brightness == Brightness.light
-        ? ColorThemes.lightSurface
-        : ColorThemes.darkSurface;
-  }
+  static Color get surface => _brightness == Brightness.light
+      ? ColorThemes.lightSurface
+      : ColorThemes.darkSurface;
+
+  static Color get surfaceElevated => _brightness == Brightness.light
+      ? const Color(0xFFF2F2F7)
+      : ColorThemes.darkSurfaceElevated;
 
   static Color get onSurface => _brightness == Brightness.light
       ? ColorThemes.lightOnSurface
@@ -117,6 +117,26 @@ class AppColor {
   static Color get onPrimaryVariant => _brightness == Brightness.light
       ? ColorThemes.lightOnPrimaryVariant
       : ColorThemes.darkOnPrimaryVariant;
+
+  static Color get inverseSurface => _brightness == Brightness.light
+      ? const Color(0xFF1C1C1E)
+      : Colors.white;
+
+  static Color get onInverseSurface => _brightness == Brightness.light
+      ? Colors.white
+      : Colors.black;
+
+  static Color get success => ColorThemes.success;
+
+  static Color get destructive => ColorThemes.destructive;
+
+  static Color get neutral => ColorThemes.neutral;
+
+  static Color get decorativePurple => ColorThemes.decorativePurple;
+
+  static Color get decorativeBlue => ColorThemes.decorativeBlue;
+
+  static Color get decorativeGreen => ColorThemes.decorativeGreen;
 
   static Color get outline => _brightness == Brightness.light
       ? ColorThemes.lightOutline

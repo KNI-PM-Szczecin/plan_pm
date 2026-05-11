@@ -1,6 +1,8 @@
 // Pasek wyboru dnia tygodnia z nawigacją strzałkami i podświetleniem aktywnego dnia.
 // Reaguje na zmianę trybu 7-dniowego przez [sevenDayModeNotifier].
 // Logika nawigacji i gradienty wydzielone do [lecture_utils.dart].
+import 'dart:ui' show ImageFilter;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -145,11 +147,16 @@ class _DaySelectionState extends State<DaySelection> {
         ValueListenableBuilder<EventColorStyle>(
           valueListenable: eventColorStyleNotifier,
           builder: (context, style, _) {
-            return Container(
+            final isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+            const outerRadius = 999.0;
+            const innerRadius = 999.0;
+            final bar = Container(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColor.outline),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: AppColor.surface,
+                borderRadius: BorderRadius.circular(outerRadius),
+                color: isIOS
+                    ? AppColor.surface.withValues(alpha: 0.65)
+                    : AppColor.surface,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -173,14 +180,14 @@ class _DaySelectionState extends State<DaySelection> {
                               color: isSelected
                                   ? selectedBgColor
                                   : Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(innerRadius),
                             ),
                             child: TextButton(
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 side: BorderSide.none,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(innerRadius),
                                 ),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
@@ -221,6 +228,14 @@ class _DaySelectionState extends State<DaySelection> {
                         ),
                       );
                     }).toList(),
+              ),
+            );
+            if (!isIOS) return bar;
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(outerRadius),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: bar,
               ),
             );
           },

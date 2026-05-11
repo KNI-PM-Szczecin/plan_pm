@@ -1,10 +1,10 @@
-// Boczny panel nawigacyjny aplikacji (drawer).
-// Zawiera skróty do PE, legitymacji, wirtualnego dziekanatu, ustawień
-// i "Co nowego". Montowany jako drawer głównego Scaffold w [main.dart].
+// Boczny panel nawigacyjny aplikacji.
+// Zawiera skróty do PE, legitymacji, wirtualnego dziekanatu, ustawień i "Co nowego".
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class Sidebar extends StatelessWidget {
@@ -26,130 +26,99 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final brightness = Theme.of(context).brightness;
 
-    return Drawer(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColor.surface,
-          border: Border(
-            right: BorderSide(
-              color: isDark
-                  ? Colors.white.withAlpha(18)
-                  : Colors.black.withAlpha(18),
-              width: 1,
-            ),
-          ),
-        ),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.85,
+      child: Material(
+        color: AppColor.background,
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Header ──────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Color.lerp(AppColor.primary, Colors.white, 0.25)!,
-                        borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Header ──────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 24),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColor.primary,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        child: Image.asset(
+                          'assets/logo_light.png',
+                          color: brightness == Brightness.light
+                              ? Colors.white
+                              : null,
+                          colorBlendMode: brightness == Brightness.light
+                              ? BlendMode.srcIn
+                              : null,
+                        ),
                       ),
-                      padding: const EdgeInsets.all(4),
-                      child: Image.asset('assets/logo_light.png'),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Plan PM',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.onBackground,
-                        letterSpacing: -0.3,
+                      const SizedBox(width: 12),
+                      Text(
+                        'Plan PM',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: AppTextSize.title2,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.onBackground,
+                          letterSpacing: -0.4,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-
-              // ── Nav items ────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
+                // ── Main nav section ─────────────────────────────────────
+                _SidebarSection(
                   children: [
-                    _SidebarNavItem(
+                    _SidebarItem(
                       icon: LucideIcons.activity,
                       label: l10n.pePageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onPeTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onPeTap(); },
                     ),
-                    _SidebarNavItem(
+                    _SidebarDivider(),
+                    _SidebarItem(
                       icon: LucideIcons.creditCard,
                       label: l10n.studentIdPageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onStudentIdTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onStudentIdTap(); },
                     ),
-                    _SidebarNavItem(
+                    _SidebarDivider(),
+                    _SidebarItem(
                       icon: LucideIcons.landmark,
                       label: l10n.virtualUniversityPageTitle,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        onVirtualUniversityTap();
-                      },
+                      onTap: () { HapticFeedback.lightImpact(); onVirtualUniversityTap(); },
                     ),
                   ],
                 ),
-              ),
 
-              const Spacer(),
+                const Spacer(),
 
-              // ── Divider + What's new + Settings ─────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(
-                  color: isDark
-                      ? Colors.white.withAlpha(20)
-                      : Colors.black.withAlpha(18),
-                  thickness: 1,
-                  height: 1,
+                // ── Footer section ───────────────────────────────────────
+                _SidebarSection(
+                  children: [
+                    _SidebarItem(
+                      icon: LucideIcons.sparkles,
+                      label: l10n.whatsNewTitle,
+                      onTap: () { HapticFeedback.lightImpact(); onWhatsNewTap(); },
+                    ),
+                    _SidebarDivider(),
+                    _SidebarItem(
+                      icon: LucideIcons.settings,
+                      label: l10n.pageTitleSettings,
+                      onTap: () { HapticFeedback.lightImpact(); onSettingsTap(); },
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _SidebarNavItem(
-                  icon: LucideIcons.sparkles,
-                  label: l10n.whatsNewTitle,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    onWhatsNewTap();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _SidebarNavItem(
-                  icon: LucideIcons.settings,
-                  label: l10n.pageTitleSettings,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    onSettingsTap();
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -157,8 +126,38 @@ class Sidebar extends StatelessWidget {
   }
 }
 
-class _SidebarNavItem extends StatelessWidget {
-  const _SidebarNavItem({
+class _SidebarSection extends StatelessWidget {
+  const _SidebarSection({required this.children});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColor.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+}
+
+class _SidebarDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      indent: 52,
+      color: AppColor.outline,
+    );
+  }
+}
+
+class _SidebarItem extends StatelessWidget {
+  const _SidebarItem({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -170,38 +169,29 @@ class _SidebarNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColor.onBackgroundVariant;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          splashColor: AppColor.primary.withAlpha(30),
-          highlightColor: AppColor.primary.withAlpha(18),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-            child: Row(
-              children: [
-                Icon(icon, color: color, size: 20),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: color,
-                      letterSpacing: -0.1,
-                    ),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          child: Row(
+            children: [
+              Icon(icon, color: AppColor.onBackgroundVariant, size: 20),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: AppTextSize.body,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.onBackground,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -62,7 +62,7 @@ class _LecturerInfoState extends State<LecturerInfo> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return MenuSection(
-      title: l10n.academicInfoHeader,
+      title: l10n.lecturerInfoHeader,
       action: [
         ThemedOutlineButton(
           onPressed: _editLecturer,

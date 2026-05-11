@@ -1,6 +1,4 @@
-// Przełącznik roli użytkownika (Student / Wykładowca).
-// Zmiana na wykładowcę wymaga wyboru osoby, zapisu do SharedPreferences i synchronizacji zajęć.
-// [_RoleTile] to lokalny widżet kafelka — 2 użycia w jednym pliku, nie warto wynosić.
+// Przełącznik roli użytkownika (Student / Wykładowca) — segmented control.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -10,8 +8,8 @@ import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
-import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -28,12 +26,10 @@ class RoleInfo extends StatefulWidget {
 class _RoleInfoState extends State<RoleInfo> {
   Future<void> _switchToStudent() async {
     HapticFeedback.lightImpact();
-    await AppModeManager.setMode(AppMode.student);
-    sevenDayModeNotifier.value = false;
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const InputPage()),
+      appRoute((_) => const InputPage(isRoleSwitch: true)),
     );
   }
 
@@ -43,8 +39,8 @@ class _RoleInfoState extends State<RoleInfo> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => LecturerSelectionPage(
+      appRoute(
+        (_) => LecturerSelectionPage(
           lecturers: lecturers,
           onContinue: (LecturerItem selected) async {
             Lecturer.id = selected.id;
@@ -66,9 +62,12 @@ class _RoleInfoState extends State<RoleInfo> {
 
             await DatabaseService.instance.clearLectures();
             await CacheService().syncLectures();
+            await CacheService().syncNews();
 
             if (!mounted) return;
-            Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/home', (_) => false);
           },
         ),
       ),
@@ -79,102 +78,124 @@ class _RoleInfoState extends State<RoleInfo> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isLecturer = AppModeManager.current == AppMode.lecturer;
+    final activeTabColor = AppColor.surfaceElevated;
 
-    return MenuSection(
-      title: l10n.roleSectionTitle,
-      child: Column(
-        children: [
-          _RoleTile(
-            icon: LucideIcons.graduationCap,
-            title: l10n.roleStudentViewTitle,
-            subtitle: isLecturer
-                ? l10n.roleStudentViewSubtitle
-                : l10n.roleCurrentlyActive,
-            isActive: !isLecturer,
-            onTap: isLecturer ? _switchToStudent : null,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.roleSectionTitle.toUpperCase(),
+          style: TextStyle(
+            color: AppColor.onBackgroundVariant,
+            fontSize: 12,
+            letterSpacing: 0.5,
           ),
-          Divider(height: 1, color: AppColor.outline),
-          _RoleTile(
-            icon: LucideIcons.briefcase,
-            title: l10n.roleLecturerViewTitle,
-            subtitle: isLecturer
-                ? l10n.roleCurrentlyActive
-                : l10n.roleLecturerViewSubtitle,
-            isActive: isLecturer,
-            onTap: isLecturer ? null : _switchToLecturer,
+        ),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: AppColor.surface,
+            borderRadius: BorderRadius.circular(999),
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              _Segment(
+                icon: LucideIcons.graduationCap,
+                label: l10n.roleStudentViewTitle,
+                isActive: !isLecturer,
+                activeTabColor: activeTabColor,
+                onTap: isLecturer ? _switchToStudent : null,
+              ),
+              _Segment(
+                icon: LucideIcons.briefcase,
+                label: l10n.roleLecturerViewTitle,
+                isActive: isLecturer,
+                activeTabColor: activeTabColor,
+                onTap: isLecturer ? null : _switchToLecturer,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            isLecturer ? l10n.roleViewingAsLecturer : l10n.roleViewingAsStudent,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColor.onSurfaceVariant, fontSize: 13),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _RoleTile extends StatelessWidget {
-  const _RoleTile({
+class _Segment extends StatelessWidget {
+  const _Segment({
     required this.icon,
-    required this.title,
-    required this.subtitle,
+    required this.label,
     required this.isActive,
+    required this.activeTabColor,
     this.onTap,
   });
 
   final IconData icon;
-  final String title;
-  final String subtitle;
+  final String label;
   final bool isActive;
+  final Color activeTabColor;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(999),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          splashColor: AppColor.onSurface.withValues(alpha: 0.08),
+          highlightColor: AppColor.onSurface.withValues(alpha: 0.05),
+          child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isActive ? activeTabColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: isActive
-                    ? AppColor.primary.withValues(alpha: 0.18)
-                    : AppColor.onSurface.withValues(alpha: 0.08),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: isActive ? AppColor.primary : AppColor.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: AppColor.onSurface,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: AppColor.onSurfaceVariant,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Icon(
-                isActive ? LucideIcons.check : LucideIcons.arrowLeftRight,
-                color: isActive ? AppColor.primary : AppColor.onSurfaceVariant,
+                icon,
                 size: 18,
+                color: isActive ? AppColor.primary : AppColor.onSurfaceVariant,
+              ),
+              const SizedBox(width: 7),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive
+                      ? AppColor.onSurface
+                      : AppColor.onSurfaceVariant,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                  fontSize: 15,
+                ),
               ),
             ],
           ),
+        ),
         ),
       ),
     );

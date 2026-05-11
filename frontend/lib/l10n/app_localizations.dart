@@ -478,6 +478,12 @@ abstract class AppLocalizations {
   /// **'Dane studenta'**
   String get academicInfoHeader;
 
+  /// No description provided for @lecturerInfoHeader.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dane wykładowcy'**
+  String get lecturerInfoHeader;
+
   /// student_info.dart - Label for the button to navigate to the input/edit page.
   ///
   /// In pl, this message translates to:
@@ -1021,14 +1027,26 @@ abstract class AppLocalizations {
   /// about_page.dart - Snackbar message shown when debug mode is unlocked after 7 taps.
   ///
   /// In pl, this message translates to:
-  /// **'Tryb debug odblokowany!'**
+  /// **'Jesteś już deweloperem'**
   String get debugModeUnlocked;
 
   /// about_page.dart - Hint shown after 3+ taps on version number, showing remaining taps needed.
   ///
   /// In pl, this message translates to:
-  /// **'Jeszcze {count} tapnięć do odblokowania debug'**
+  /// **'Zostało jeszcze {count} naciśnięć, aby zostać deweloperem'**
   String debugTapsRemaining(int count);
+
+  /// No description provided for @debugModeDisable.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyłącz tryb dewelopera'**
+  String get debugModeDisable;
+
+  /// No description provided for @debugModeDisabled.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb dewelopera wyłączony'**
+  String get debugModeDisabled;
 
   /// No description provided for @infoSection.
   ///
@@ -1131,6 +1149,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Przełącz na plan studenta'**
   String get roleStudentViewSubtitle;
+
+  /// No description provided for @roleViewingAsStudent.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przeglądasz aktualnie plan jako student.'**
+  String get roleViewingAsStudent;
+
+  /// No description provided for @roleViewingAsLecturer.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przeglądasz aktualnie plan jako wykładowca.'**
+  String get roleViewingAsLecturer;
 
   /// No description provided for @roleCurrentlyActive.
   ///

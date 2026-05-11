@@ -3,8 +3,8 @@
 // zamiast czterech identycznych stron.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ExternalLinkPage extends StatelessWidget {
@@ -31,19 +31,7 @@ class ExternalLinkPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: AppBar(
-        backgroundColor: AppColor.background,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(LucideIcons.chevronLeft, color: AppColor.onBackgroundVariant),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontWeight: FontWeight.w600, color: AppColor.onBackground),
-        ),
-        forceMaterialTransparency: true,
-        shape: Border(bottom: BorderSide(color: AppColor.outline)),
-      ),
+      appBar: CustomAppBar(title: title),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

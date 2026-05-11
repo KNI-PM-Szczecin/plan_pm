@@ -1,7 +1,10 @@
 // Wiersz z przełącznikiem używany w ustawieniach — etykieta po lewej, Switch po prawej.
 // Opcjonalny [subtitle] wyświetla szary opis pod etykietą.
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 
 class SettingSwitchTile extends StatelessWidget {
   const SettingSwitchTile({
@@ -19,21 +22,47 @@ class SettingSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SwitchListTile(
-      contentPadding: EdgeInsets.zero,
-      activeThumbColor: AppColor.primary,
-      title: Text(label, style: TextStyle(color: AppColor.onSurface)),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyle(
-                color: AppColor.onSurfaceVariant,
-                fontSize: 13,
-              ),
-            )
-          : null,
-      value: value,
-      onChanged: onChanged,
+    final rawSwitch = defaultTargetPlatform == TargetPlatform.iOS
+        ? CupertinoSwitch(
+            activeTrackColor: AppColor.primary,
+            value: value,
+            onChanged: onChanged,
+          )
+        : Switch(
+            activeTrackColor: AppColor.primary,
+            value: value,
+            onChanged: onChanged,
+          );
+
+    final switchWidget = SizedBox(
+      height: 28,
+      child: FittedBox(fit: BoxFit.contain, child: rawSwitch),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label, style: TextStyle(fontSize: AppTextSize.body, color: AppColor.onBackground)),
+                if (subtitle != null)
+                  Text(
+                    subtitle!,
+                    style: TextStyle(
+                      color: AppColor.onSurfaceVariant,
+                      fontSize: AppTextSize.footnote,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          switchWidget,
+        ],
+      ),
     );
   }
 }

@@ -208,6 +208,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get academicInfoHeader => 'Dane studenta';
 
   @override
+  String get lecturerInfoHeader => 'Dane wykładowcy';
+
+  @override
   String get editButton => 'Edytuj';
 
   @override
@@ -514,12 +517,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get debugReturnToWelcome => 'Powrót do Welcome Screen';
 
   @override
-  String get debugModeUnlocked => 'Tryb debug odblokowany!';
+  String get debugModeUnlocked => 'Jesteś już deweloperem';
 
   @override
   String debugTapsRemaining(int count) {
-    return 'Jeszcze $count tapnięć do odblokowania debug';
+    return 'Zostało jeszcze $count naciśnięć, aby zostać deweloperem';
   }
+
+  @override
+  String get debugModeDisable => 'Wyłącz tryb dewelopera';
+
+  @override
+  String get debugModeDisabled => 'Tryb dewelopera wyłączony';
 
   @override
   String get infoSection => 'Informacje';
@@ -577,6 +586,13 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get roleStudentViewSubtitle => 'Przełącz na plan studenta';
+
+  @override
+  String get roleViewingAsStudent => 'Przeglądasz aktualnie plan jako student.';
+
+  @override
+  String get roleViewingAsLecturer =>
+      'Przeglądasz aktualnie plan jako wykładowca.';
 
   @override
   String get roleCurrentlyActive => 'Aktualnie aktywny';

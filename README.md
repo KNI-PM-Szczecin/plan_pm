@@ -13,12 +13,45 @@
 
 ## Screenshots
 
-<p float="left">
-  <img src="screenshots/1.png" width="22%" />
-  <img src="screenshots/2.png" width="22%" />
-  <img src="screenshots/3.png" width="22%" />
-  <img src="screenshots/4.png" width="22%" />
-</p>
+### iOS
+
+<table>
+  <tr>
+    <td><img src="docs/pr-assets/liquid-glass/ios-01.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-02.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-03.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-04.png" width="220" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/pr-assets/liquid-glass/ios-05.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-06.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-07.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/ios-08.png" width="220" /></td>
+  </tr>
+</table>
+
+### Android
+
+<table>
+  <tr>
+    <td><img src="docs/pr-assets/liquid-glass/android-01.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-02.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-03.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-04.png" width="220" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/pr-assets/liquid-glass/android-05.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-06.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-07.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-08.png" width="220" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/pr-assets/liquid-glass/android-09.png" width="220" /></td>
+    <td><img src="docs/pr-assets/liquid-glass/android-10.png" width="220" /></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
 ---
 

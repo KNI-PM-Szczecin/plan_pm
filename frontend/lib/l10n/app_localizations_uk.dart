@@ -216,6 +216,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get academicInfoHeader => 'Академічна інформація';
 
   @override
+  String get lecturerInfoHeader => 'Інформація про викладача';
+
+  @override
   String get editButton => 'Редагувати';
 
   @override
@@ -524,12 +527,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get debugReturnToWelcome => 'Повернутися до Welcome Screen';
 
   @override
-  String get debugModeUnlocked => 'Режим налагодження розблоковано!';
+  String get debugModeUnlocked => 'Ви вже розробник';
 
   @override
   String debugTapsRemaining(int count) {
-    return 'Ще $count натискань для розблокування';
+    return 'Ще $count натискань, щоб стати розробником';
   }
+
+  @override
+  String get debugModeDisable => 'Вимкнути режим розробника';
+
+  @override
+  String get debugModeDisabled => 'Режим розробника вимкнено';
 
   @override
   String get infoSection => 'Інформація';
@@ -587,6 +596,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get roleStudentViewSubtitle => 'Переключитися на розклад студента';
+
+  @override
+  String get roleViewingAsStudent => 'Ви переглядаєте розклад як студент.';
+
+  @override
+  String get roleViewingAsLecturer => 'Ви переглядаєте розклад як викладач.';
 
   @override
   String get roleCurrentlyActive => 'Зараз активний';

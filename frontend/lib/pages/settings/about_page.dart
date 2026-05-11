@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,6 +37,7 @@ class _AboutPageState extends State<AboutPage> {
   Future<void> _initPackageInfo() async {
     try {
       final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
       setState(() {
         _version = "${info.version}+${info.buildNumber}";
       });
@@ -51,6 +52,36 @@ class _AboutPageState extends State<AboutPage> {
     setState(() {
       _debugUnlocked = prefs.getBool(_debugUnlockedKey) ?? false;
     });
+  }
+
+  SnackBar _styledSnackBar({required Widget icon, required String text}) {
+    return SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: AppColor.inverseSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(
+          color: AppColor.onInverseSurface.withValues(alpha: 0.12),
+          width: 1,
+        ),
+      ),
+      elevation: 0,
+      content: Row(
+        children: [
+          icon,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: AppColor.onInverseSurface,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _onVersionTap() async {
@@ -69,20 +100,50 @@ class _AboutPageState extends State<AboutPage> {
       HapticFeedback.heavyImpact();
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.debugModeUnlocked)),
-        );
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(_styledSnackBar(
+            icon: Icon(Icons.check_circle, color: AppColor.success, size: 22),
+            text: l10n.debugModeUnlocked,
+          ));
       }
     } else if (_tapCount >= 3) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
-          ..showSnackBar(
-            SnackBar(content: Text(l10n.debugTapsRemaining(7 - _tapCount))),
-          );
+          ..showSnackBar(_styledSnackBar(
+            icon: Icon(
+              Icons.mouse,
+              color: AppColor.onInverseSurface.withValues(alpha: 0.7),
+              size: 22,
+            ),
+            text: l10n.debugTapsRemaining(7 - _tapCount),
+          ));
       }
     }
+  }
+
+  Future<void> _disableDebug() async {
+    HapticFeedback.lightImpact();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_debugUnlockedKey, false);
+    if (!mounted) return;
+    setState(() {
+      _debugUnlocked = false;
+      _tapCount = 0;
+    });
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(_styledSnackBar(
+        icon: Icon(
+          Icons.do_not_disturb_on,
+          color: AppColor.destructive,
+          size: 22,
+        ),
+        text: l10n.debugModeDisabled,
+      ));
   }
 
   Future<void> _launchRepo() async {
@@ -100,11 +161,10 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.aboutApp),
+      appBar: CustomAppBar(title: l10n.aboutApp),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -165,6 +225,20 @@ class _AboutPageState extends State<AboutPage> {
                               ),
                             ),
                           ),
+                          if (_debugUnlocked) ...[
+                            const SizedBox(height: 12),
+                            GestureDetector(
+                              onTap: _disableDebug,
+                              child: Text(
+                                l10n.debugModeDisable,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
 
                           const SizedBox(height: 16),
                           Padding(
@@ -216,7 +290,6 @@ class _AboutPageState extends State<AboutPage> {
                             decoration: BoxDecoration(
                               color: AppColor.surface,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColor.outline),
                             ),
                             child: Column(
                               children: [
@@ -225,7 +298,7 @@ class _AboutPageState extends State<AboutPage> {
                                   children: [
                                     Icon(
                                       LucideIcons.heart,
-                                      color: Colors.red,
+                                      color: AppColor.destructive,
                                       size: 20,
                                     ),
                                     const SizedBox(width: 8),
@@ -247,12 +320,8 @@ class _AboutPageState extends State<AboutPage> {
                                       _launchRepo();
                                     },
                                     style: FilledButton.styleFrom(
-                                      backgroundColor: isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      foregroundColor: isDark
-                                          ? Colors.black
-                                          : Colors.white,
+                                      backgroundColor: AppColor.inverseSurface,
+                                      foregroundColor: AppColor.onInverseSurface,
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 16,
                                       ),

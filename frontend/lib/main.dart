@@ -31,9 +31,6 @@ Future<void> main() async {
   accentColorNotifier = AccentColorNotifier();
   await accentColorNotifier.loadFromPrefs();
 
-  amoledModeNotifier = AmoledModeNotifier();
-  await amoledModeNotifier.loadFromPrefs();
-
   eventColorStyleNotifier = EventColorStyleNotifier();
   await eventColorStyleNotifier.loadFromPrefs();
 

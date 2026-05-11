@@ -16,10 +16,16 @@ import 'package:plan_pm/global/utils/logger.dart';
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
 
+  factory BackendService() {
+    return _backendService;
+  }
+
+  BackendService._internal();
+
   void messToText(List<Map<String, dynamic>> response) {
     for (final value in response) {
       AppLogger.d(
-        "${value["group"]}|${DateFormat.EEEE().format(DateTime.parse(value["startTime"]))}|${value["startTime"]} - ${value["endTime"]}, Subject: ${value["subject"]}, ",
+        "${value["group"]}|${DateFormat.EEEE().format(DateTime.parse(value["start_time"]))}|${value["start_time"]} - ${value["end_time"]}, Subject: ${value["subject"]}, ",
       );
     }
   }
@@ -29,12 +35,6 @@ class BackendService {
       "yyyy-MM-dd",
     ).format(DateTime(datetime.year, datetime.month, datetime.day));
   }
-
-  factory BackendService() {
-    return _backendService;
-  }
-
-  BackendService._internal();
 
   Future<List<LectureModel>> fetchLectures() async {
     if (AppModeManager.current == AppMode.lecturer) {
@@ -47,30 +47,15 @@ class BackendService {
     if (Student.specialisation == null) {
       AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
+    
     final List<String> selectedGroups = Student.selectedGroups ?? [];
-
     var query = Supabase.instance.client
-        .from("classes")
-        .select('''
-        id,
-        group,
-        subject,
-        startTime,
-        endTime,
-        programs!inner(name, programType, year, degreeLevel),
-        teachersclasses(teachers(fullName, title)),
-        rooms:room(
-          name,
-          building:building(name)
-        )
-      ''')
-        .eq("programs.programType", Student.studyMode?.programType ?? "S")
-        .eq(
-          "programs.name",
-          Student.specialisation ?? Student.degreeCourse ?? "",
-        )
-        .eq("programs.year", Student.year ?? 0)
-        .eq("programs.degreeLevel", Student.degreeLevel ?? "");
+        .from("v_lectures")
+        .select()
+        .eq("program_type", Student.studyMode?.programType ?? "S")
+        .eq("program_name", Student.specialisation ?? Student.degreeCourse ?? "")
+        .eq("year", Student.year ?? 0)
+        .eq("degree_level", Student.degreeLevel ?? "");
 
     if (selectedGroups.isNotEmpty) {
       query = query.inFilter("group", selectedGroups);
@@ -85,57 +70,23 @@ class BackendService {
   }
 
   Future<List<LectureModel>> _fetchLecturesForLecturer() async {
-    final teacherClasses = await Supabase.instance.client
-        .from("teachersclasses")
-        .select("classes")
-        .eq("teachers", Lecturer.id!);
-
-    final classIds = teacherClasses.map((r) => r["classes"] as String).toList();
-
-    if (classIds.isEmpty) return [];
-
-    final response = await Supabase.instance.client
-        .from("classes")
-        .select('''
-        id,
-        group,
-        subject,
-        startTime,
-        endTime,
-        programs(name, programType, year, degreeLevel),
-        teachersclasses(teachers(fullName, title)),
-        rooms:room(
-          name,
-          building:building(name)
-        )
-      ''')
-        .inFilter("id", classIds);
-
-    final lectures = response
-        .map((json) => LectureModel.fromJson(json))
-        .toList();
-    lectures.sort((a, b) => a.date.compareTo(b.date));
-    return lectures;
+    if (Lecturer.id == null) {
+      AppLogger.w("Brak ID prowadzącego");
+      return [];
+    }
+    return fetchTeacherLectures(Lecturer.id!);
   }
 
   Future<List<String>> fetchGroups() async {
     final response = await Supabase.instance.client
-        .from("classes")
-        .select("group, programs!inner(name, programType, year, degreeLevel)")
-        .eq(
-          "programs.name",
-          Student.specialisation ?? Student.degreeCourse ?? "",
-        )
-        .eq("programs.programType", Student.studyMode?.programType ?? "S")
-        .eq("programs.year", Student.year ?? 0)
-        .eq("programs.degreeLevel", Student.degreeLevel ?? "");
+        .from("v_unique_groups")
+        .select("group")
+        .eq("program_name", Student.specialisation ?? Student.degreeCourse ?? "")
+        .eq("program_type", Student.studyMode?.programType ?? "S")
+        .eq("year", Student.year ?? 0)
+        .eq("degree_level", Student.degreeLevel ?? "");
 
-    final Set<String> uniqueGroups = {};
-    for (final row in response) {
-      uniqueGroups.add(row["group"] as String);
-    }
-    List<String> data = uniqueGroups.toList()..sort();
-    return data;
+    return response.map((row) => row["group"] as String).toList()..sort();
   }
 
   Future<List<LecturerItem>> fetchTeachers() async {
@@ -175,8 +126,9 @@ class BackendService {
       AppLogger.d("[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy");
       if (response.isEmpty) return [];
       return response.map((json) {
+        final id = json["id"].toString();
         return NewsModel(
-          id: json["id"] as String,
+          id: id,
           createdAt: DateTime.parse(json["created_at"]),
           title: json["title"] as String,
           content: json["content"] as String,
@@ -214,33 +166,46 @@ class BackendService {
   }
 
   Future<Map<String, Map<String, List<String>>>> fetchStructure() async {
-    // select f.name as faculty, d.name as degree_course, s.name as specialisation from faculties f join degree_courses d on f.id = d.faculty_id left join specialisations s on d.id = s.degree_course_id;
-    final response = await Supabase.instance.client.from('faculties').select('''
-          name,
-          degree_courses!inner(
-            name,
-            specialisations!left(
-              name
-            )
-          )
-        ''');
+    final response = await Supabase.instance.client
+        .from('v_academic_structure')
+        .select();
 
-    if (response.isNotEmpty) {
-      final data = response;
-      final Map<String, Map<String, List<String>>> facultiesMap = {
-        for (var faculty in data)
-          faculty["name"] as String: {
-            for (var degreeCourse in faculty["degree_courses"])
-              degreeCourse["name"] as String: [
-                for (var specialisation in degreeCourse["specialisations"])
-                  specialisation["name"] as String,
-              ],
-          },
-      };
-      // developer.log(facultiesMap.toString());
-      return facultiesMap;
+    final Map<String, Map<String, List<String>>> facultiesMap = {};
+
+    for (var row in response) {
+      final f = row['faculty_name'] as String;
+      final dc = row['degree_course_name'] as String;
+      final s = row['specialisation_name'] as String?; // Może być null
+
+      facultiesMap.putIfAbsent(f, () => {});
+      facultiesMap[f]!.putIfAbsent(dc, () => []);
+      
+      // Dodajemy specjalizację tylko jeśli istnieje i jeszcze jej nie ma na liście
+      if (s != null && !facultiesMap[f]![dc]!.contains(s)) {
+        facultiesMap[f]![dc]!.add(s);
+      }
     }
 
-    return {};
+    return facultiesMap;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllTeachers() async {
+    final response = await Supabase.instance.client
+        .from('v_teachers_search')
+        .select()
+        .order('full_name', ascending: true);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<LectureModel>> fetchTeacherLectures(String teacherId) async {
+    final response = await Supabase.instance.client
+        .from("v_teacher_lectures")
+        .select()
+        .eq("teacher_id", teacherId);
+
+  final List<dynamic> data = response;
+  final lectures = data.map((json) => LectureModel.fromJson(json)).toList();
+  lectures.sort((a, b) => a.date.compareTo(b.date));
+  return lectures;
   }
 }

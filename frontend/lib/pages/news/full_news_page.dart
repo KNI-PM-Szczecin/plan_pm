@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/news/widgets/news_cover_image.dart';
 import 'package:plan_pm/pages/news/widgets/news_html_style.dart';
@@ -29,7 +29,7 @@ class FullNewsPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.details),
+      appBar: CustomAppBar(title: l10n.details),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -39,9 +39,12 @@ class FullNewsPage extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: AppColor.outline, width: 1),
+                side: BorderSide(
+                  color: AppColor.outline.withValues(alpha: 0.18),
+                  width: 0.5,
+                ),
               ),
-              elevation: 1,
+              elevation: 0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

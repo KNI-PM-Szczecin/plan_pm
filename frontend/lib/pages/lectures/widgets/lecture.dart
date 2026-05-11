@@ -2,6 +2,8 @@
 // Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
 // Gradienty, formatowanie czasu i skracanie grup wydzielone do [lecture_utils.dart].
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -99,7 +101,7 @@ class _LectureState extends State<Lecture> {
     // Dobierz gradient/kolor i kolor tekstu na podstawie ustawienia stylu kolorów.
     // Pastel używa ciemnego tekstu bo jasne tło słabo kontrastuje z białym.
     final style = eventColorStyleNotifier.value;
-    Gradient? cardGradient;
+    LinearGradient? cardGradient;
     Color? cardColor;
     Color textColor = AppColor.onPrimary;
     Color progressBarFillColor = Colors.white.withValues(alpha: 0.85);
@@ -125,17 +127,29 @@ class _LectureState extends State<Lecture> {
         ? FontWeight.bold
         : FontWeight.normal;
 
-    // Jeden gradient obejmuje całą kartę (górna + rozwijana sekcja).
-    // ClipRRect przycina całą kartę i ripple InkWell do zaokrąglonych rogów.
-    // Jeden wspólny Material + InkWell — ripple maluje się na jednej powierzchni
-    // przez całą wysokość karty, niezależnie od tego gdzie użytkownik tapnie.
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(gradient: cardGradient, color: cardColor),
-          child: Material(
+    final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+
+    // iOS glass: tinted semi-transparent gradient + backdrop blur + specular border
+    final LinearGradient? iosGradient = isIOS && cardGradient != null
+        ? LinearGradient(
+            begin: cardGradient.begin,
+            end: cardGradient.end,
+            colors: cardGradient.colors
+                .map((c) => c.withValues(alpha: 0.90))
+                .toList(),
+          )
+        : null;
+    final Color? iosColor = isIOS ? cardColor?.withValues(alpha: 0.90) : null;
+
+    final cardContainer = Container(
+      decoration: BoxDecoration(
+        gradient: isIOS ? iosGradient : cardGradient,
+        color: isIOS ? iosColor : cardColor,
+        border: isIOS
+            ? Border.all(color: Colors.white.withValues(alpha: 0.25), width: 0.5)
+            : null,
+      ),
+      child: Material(
             color: Colors.transparent,
             child: InkWell(
               radius: 300.0,
@@ -401,7 +415,18 @@ class _LectureState extends State<Lecture> {
               ),
             ),
           ),
-        ),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
+        child: isIOS
+            ? BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: cardContainer,
+              )
+            : cardContainer,
       ),
     );
   }

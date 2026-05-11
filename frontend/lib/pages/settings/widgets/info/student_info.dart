@@ -59,7 +59,6 @@ class StudentInfo extends StatelessWidget {
             title: l10n.studyModeLabel,
             content: Student.studyMode?.displayName,
           ),
-          const SizedBox(height: 5),
         ],
       ),
     );

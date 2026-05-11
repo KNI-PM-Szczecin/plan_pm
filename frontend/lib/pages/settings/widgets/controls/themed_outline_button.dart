@@ -1,4 +1,4 @@
-// Przycisk z obramowaniem dopasowany do motywu — ikona + etykieta.
+// Przycisk tekstowy dopasowany do motywu — ikona + etykieta.
 // Używany w kartach informacyjnych jako przycisk akcji (edytuj, zmień grupy).
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
@@ -17,17 +17,14 @@ class ThemedOutlineButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton.icon(
+    return TextButton.icon(
       onPressed: onPressed,
-      label: Text(label),
-      icon: Icon(icon),
-      style: OutlinedButton.styleFrom(
-        backgroundColor: AppColor.surface,
-        foregroundColor: AppColor.onSurface,
-        side: BorderSide(color: AppColor.outline),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        minimumSize: const Size(0, 35),
-        maximumSize: const Size(double.infinity, 35),
+      icon: Icon(icon, size: 14),
+      label: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+      style: TextButton.styleFrom(
+        foregroundColor: AppColor.primary,
+        minimumSize: const Size(0, 28),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );

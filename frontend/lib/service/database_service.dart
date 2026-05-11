@@ -149,7 +149,10 @@ class DatabaseService {
 
   Future<List<LectureModel>> fetchLectures() async {
     final db = await database;
-    final data = await db.query(_lecturesTableName);
+    final data = await db.query(
+      _lecturesTableName,
+      orderBy: '$_lecturesDateColumnName ASC, $_lecturesStartTimeColumnName ASC',
+    );
     return data.map((row) {
       final date = DateTime.fromMillisecondsSinceEpoch(
         row[_lecturesDateColumnName] as int,

@@ -7,11 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/global/widgets/standard_app_bar.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/widgets/group_builder.dart';
 import 'package:plan_pm/pages/welcome/widgets/onboarding_action_bar.dart';
+import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -19,7 +21,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class GroupSelectionPage extends StatelessWidget {
-  const GroupSelectionPage({super.key});
+  const GroupSelectionPage({super.key, this.isRoleSwitch = false});
+
+  final bool isRoleSwitch;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +32,18 @@ class GroupSelectionPage extends StatelessWidget {
     Student.selectedGroups = [];
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: StandardAppBar(title: l10n.groupSettings),
+      appBar: CustomAppBar(title: l10n.groupSettings),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: OnboardingActionBar(
         skipLabel: l10n.skipButton,
-        onSkip: () {
+        onSkip: () async {
           HapticFeedback.lightImpact();
+          if (isRoleSwitch) {
+            await AppModeManager.setMode(AppMode.student);
+            sevenDayModeNotifier.value = false;
+          }
+          if (!context.mounted) return;
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -46,6 +55,10 @@ class GroupSelectionPage extends StatelessWidget {
         confirmLabel: l10n.save,
         onConfirm: () async {
           HapticFeedback.lightImpact();
+          if (isRoleSwitch) {
+            await AppModeManager.setMode(AppMode.student);
+            sevenDayModeNotifier.value = false;
+          }
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setStringList("groups", Student.selectedGroups ?? []);
           await CacheService().syncNews();

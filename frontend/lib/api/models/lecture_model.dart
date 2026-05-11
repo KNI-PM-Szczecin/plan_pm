@@ -97,65 +97,31 @@ class LectureModel {
   /// - [professor] łączy wszystkich prowadzących ze struktury teachersclasses
   ///   w jeden string. Puste tytuły są pomijane, żeby uniknąć zbędnych spacji.
   ///
-  /// - [location] to "budynek sala", np. "WChrobrego 176". Null jeśli którykolwiek
-  ///   z poziomów zagnieżdżenia (rooms → building → name) jest null w bazie.
+  /// - [location] to "budynek sala", np. "WChrobrego 176". Null jeśli brakuje danych o sali w bazie
   factory LectureModel.fromJson(Map<String, dynamic> json) {
-    List<dynamic> teachersObject = json["teachersclasses"];
-    String? professors;
-    if (teachersObject.isEmpty) {
-      professors = null;
-    } else {
-      professors = teachersObject
-          .map((t) {
-            final teacher = t["teachers"];
-            if (teacher == null) return null;
-            return "${teacher["title"] ?? ""} ${teacher["fullName"] ?? ""}"
-                .trim();
-          })
-          .whereType<String>()
-          .where((name) => name.isNotEmpty)
-          .join(", ");
-    }
-
-    DateTime timeFrom = DateTime.parse(json["startTime"]);
-    DateTime timeTo = DateTime.parse(json["endTime"]);
+    DateTime timeFrom = DateTime.parse(json["start_time"]);
+    DateTime timeTo = DateTime.parse(json["end_time"]);
     int duration = timeTo.difference(timeFrom).inMinutes;
-    String? location;
-    String? building;
-    String? notes = json["notes"];
-    if (json["rooms"] == null) {
-      location = null;
-      building = null;
-    } else {
-      if (json["rooms"]["building"] == null) {
-        location = null;
-        building = null;
-      } else {
-        if (json["rooms"]["building"]["name"] == null) {
-          location = null;
-          building = null;
-        } else {
-          location =
-              "${json["rooms"]["building"]["name"]} ${json["rooms"]["name"]}";
-          building = json["rooms"]["building"]["name"];
-        }
-      }
-    }
 
-    final programs = json["programs"];
-    final String? programName = programs?["name"] as String?;
-    final int? year = programs?["year"] as int?;
-    final String? degreeLevel = programs?["degreeLevel"] as String?;
+    String? roomName = json["room_name"] as String?;
+    String? buildingName = json["building_name"] as String?;
+    String? location;
+    
+    if (buildingName != null && roomName != null) {
+    location = "$buildingName $roomName";
+  } else if (roomName != null) {
+    location = roomName;
+  }
 
     return LectureModel(
-      id: json["id"] as String,
+      id: json["id"].toString(),
       name: json["subject"] as String,
       startTime: DateFormat.Hm().format(timeFrom).toString(),
       endTime: DateFormat.Hm().format(timeTo).toString(),
-      room: location,
-      building: building,
+      room: roomName,
+      building: buildingName,
       group: json["group"] as String,
-      professor: professors,
+      professor: json["professors"] as String?, 
       date: DateTime(
         timeFrom.year,
         timeFrom.month,
@@ -165,10 +131,10 @@ class LectureModel {
       ),
       duration: "$duration min",
       location: location,
-      notes: notes,
-      programName: programName,
-      year: year,
-      degreeLevel: degreeLevel,
+      notes: json["notes"] as String?,
+      programName: json["program_name"] as String?,
+      year: json["year"] as int?,
+      degreeLevel: json["degree_level"] as String?,
     );
   }
 

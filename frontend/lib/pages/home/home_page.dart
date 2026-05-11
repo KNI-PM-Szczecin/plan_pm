@@ -2,6 +2,7 @@
 // Obsługuje pull-to-refresh: odświeża cache (zajęcia + newsy) i sygnalizuje
 // [TodayLectures] przez [_refreshNotifier] aby przebudował swój Future.
 import 'package:flutter/material.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return RefreshIndicator(
+      edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight,
       onRefresh: () async {
         AppLogger.d("Refreshing home page elements...");
         final CacheService cacheService = CacheService();
@@ -41,6 +43,12 @@ class _HomePageState extends State<HomePage> {
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+          bottom:
+              kBottomNavigationBarHeight +
+              MediaQuery.of(context).padding.bottom,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -49,7 +57,10 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               HomeSection(
                 title: l10n.newsSectionLabel,
-                child: NewsBuilder(limit: 1),
+                child: NewsBuilder(
+                  limit: 1,
+                  descriptionColor: AppColor.onSurfaceVariant,
+                ),
               ),
               TodayLectures(refreshNotifier: _refreshNotifier),
             ],
