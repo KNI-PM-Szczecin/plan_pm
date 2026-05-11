@@ -2,23 +2,19 @@
 
 ### pl-PL
 
-- Nowy iOS-owy wygląd aplikacji z liquid glass navigation barem, przebudowanym sidebarem oraz odświeżonym układem ekranu głównego
-- Spójniejsze paski nawigacyjne i status bar w jasnym oraz ciemnym motywie
-- Przeprojektowane ekrany ustawień, wyglądu, języka oraz informacje o roli i grupie
-- Uspójnione karty aktualności i pełny widok newsa: subtelniejsze obramowania, lepsza czytelność i wyraźniejsze elementy interaktywne
-- Migracja części logiki danych do widoków SQL w Supabase oraz poprawki planu prowadzących i sortowania zajęć
-- Lepsze odświeżanie planu i aktualności dzięki mechanizmowi stale-while-revalidate
-- Aktualizacja backendowych zależności i poprawek bezpieczeństwa dla bibliotek Python
+- Nowy wygląd w stylu iOS z efektem szkła na pasku nawigacyjnym
+- Odświeżone ekrany ustawień, wyglądu i języka
+- Poprawiony układ i czytelność kart aktualności
+- Szybsze i płynniejsze odświeżanie planu zajęć i aktualności
+- Naprawiono kilka błędów interfejsu
 
 ### en-US
 
-- New iOS-style app polish with a liquid glass navigation bar, redesigned sidebar, and refreshed home shell layout
-- More consistent navigation bars and status bar behavior in both light and dark themes
-- Redesigned settings, appearance, language, and role/group info screens
-- Refined news cards and full news view with subtler borders, better readability, and clearer interactive elements
-- Migrated part of the data logic to Supabase SQL views and fixed lecturer schedule handling and lecture sorting
-- Improved schedule and news refresh flow with stale-while-revalidate behavior
-- Updated backend dependencies and security-related Python packages
+- New iOS-style look with glass effects on the navigation bar
+- Refreshed settings, appearance, and language screens
+- Improved news cards layout and readability
+- Faster and smoother schedule and news refresh
+- Several interface bug fixes
 
 ## 1.1.1
 
