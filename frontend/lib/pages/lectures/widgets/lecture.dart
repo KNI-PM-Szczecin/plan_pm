@@ -119,6 +119,18 @@ class _LectureState extends State<Lecture> {
         cardGradient = defaultGradients[widget.idx % defaultGradients.length];
     }
 
+    // Detekcja godzin rektorskich i nadpisanie kolorów na szaro
+    // final bool isRectorHours = widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false;
+
+    final bool isRectorHours = true;
+
+    if (isRectorHours) {
+      cardGradient = null;
+      cardColor = Colors.grey.shade700;
+      textColor = Colors.white;
+      progressBarFillColor = Colors.white.withValues(alpha: 0.50);
+    }
+
     bool isInProgress = widget.isProgressable && _isInProgress;
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
@@ -164,6 +176,7 @@ class _LectureState extends State<Lecture> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Wiersz: nazwa zajęć + strzałka rozwijania
                             Row(
@@ -193,6 +206,26 @@ class _LectureState extends State<Lecture> {
                                 ),
                               ],
                             ),
+                            if (isRectorHours)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4, bottom: 8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade800, // Mocny czerwony dla badge'a
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    "GODZINY REKTORSKIE",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             // Wiersz: godzina + sala
                             Row(
                               spacing: 5,
