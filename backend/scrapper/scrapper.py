@@ -136,7 +136,7 @@ class Scrapper:
                             "Sala": (cells[7].get_attribute('textContent') or "").strip(),
                             "Prowadzący": " ".join((cells[8].get_attribute('textContent') or "").strip().split()),
                             "Forma zaliczenia": (cells[9].get_attribute('textContent') or "").strip(),
-                            "Uwagi": (cells[10].get_attribute('textContent') or "").strip()
+                            "Uwagi": (cells[11].get_attribute('textContent') or "").strip()
                         }
                         schedule_data.append(entry)
             
