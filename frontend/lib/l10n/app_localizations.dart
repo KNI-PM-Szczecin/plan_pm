@@ -820,6 +820,18 @@ abstract class AppLocalizations {
   /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
   String get networkErrorDescription;
 
+  /// group_selection_page.dart - Title shown when no groups exist for the selected study settings.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak dostępnych grup'**
+  String get noGroupsAvailable;
+
+  /// group_selection_page.dart - Description shown when no groups exist for the selected study settings.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?'**
+  String get noGroupsAvailableDescription;
+
   /// No description provided for @announcementDismiss.
   ///
   /// In pl, this message translates to:

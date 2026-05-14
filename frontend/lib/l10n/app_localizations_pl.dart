@@ -413,6 +413,13 @@ class AppLocalizationsPl extends AppLocalizations {
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
 
   @override
+  String get noGroupsAvailable => 'Brak dostępnych grup';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?';
+
+  @override
   String get announcementDismiss => 'Rozumiem';
 
   @override

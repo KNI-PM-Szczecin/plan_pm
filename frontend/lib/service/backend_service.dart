@@ -78,6 +78,7 @@ class BackendService {
   }
 
   Future<List<String>> fetchGroups() async {
+    if (kDebugEmptyGroups) return [];
     final response = await Supabase.instance.client
         .from("v_unique_groups")
         .select("group")

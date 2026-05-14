@@ -131,6 +131,8 @@
   "degreeLevelMasters": "Магістерський",
   "unexpectedError": "Упс! Щось пішло не так.",
   "networkErrorDescription": "Перевірте з'єднання з інтернетом і спробуйте ще раз.",
+  "noGroupsAvailable": "Немає доступних груп",
+  "noGroupsAvailableDescription": "Для вашого плану не знайдено жодних груп. Ви впевнені, що хочете продовжити?",
   "appearanceHeader": "Зовнішній вигляд",
   "themeLight": "Світла",
   "themeDark": "Темна",

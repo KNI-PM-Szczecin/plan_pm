@@ -130,6 +130,13 @@ class GroupSelectionPage extends StatelessWidget {
                     );
                   }
                   final data = snapshot.data!;
+                  if (data.isEmpty) {
+                    return GenericNoResource(
+                      label: l10n.noGroupsAvailable,
+                      icon: LucideIcons.alertCircle,
+                      description: l10n.noGroupsAvailableDescription,
+                    );
+                  }
 
                   final groups = data
                       .map((g) {

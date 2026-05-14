@@ -469,6 +469,14 @@
   "@networkErrorDescription": {
     "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
   },
+  "noGroupsAvailable": "Brak dostępnych grup",
+  "@noGroupsAvailable": {
+    "description": "group_selection_page.dart - Title shown when no groups exist for the selected study settings."
+  },
+  "noGroupsAvailableDescription": "Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?",
+  "@noGroupsAvailableDescription": {
+    "description": "group_selection_page.dart - Description shown when no groups exist for the selected study settings."
+  },
   "announcementDismiss": "Rozumiem",
   "announcementUpdate": "Aktualizuj",
   "announcementSkip": "Pomiń",
