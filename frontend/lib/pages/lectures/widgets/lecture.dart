@@ -13,6 +13,7 @@ import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/pages/lectures/utils/diagonal_stripes_painter.dart';
 
 // Karta pojedynczego zajęcia na liście planu.
 // Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
@@ -57,12 +58,15 @@ class _LectureState extends State<Lecture> {
   double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
   bool _isInProgress = false; // czy zajęcia aktualnie trwają
   Timer? _timer;
+  late final bool isRectorHours;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.isProgressable) {
+    isRectorHours = widget.notes?.toLowerCase().contains('godziny rektorskie') ?? true;
+
+    if (widget.isProgressable && !isRectorHours) {
       // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState
       // nie gwarantuje przebudowy w każdej wersji Fluttera.
       _computeProgress();
@@ -120,18 +124,14 @@ class _LectureState extends State<Lecture> {
     }
 
     // Detekcja godzin rektorskich i nadpisanie kolorów na szaro
-    // final bool isRectorHours = widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false;
-
-    final bool isRectorHours = true;
-
     if (isRectorHours) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
       cardGradient = null;
-      cardColor = Colors.grey.shade700;
-      textColor = Colors.white;
-      progressBarFillColor = Colors.white.withValues(alpha: 0.50);
+      cardColor = isDarkMode ? Color.lerp(Colors.grey.shade900, Colors.black, 0.1) : Colors.grey.shade700;
+      textColor = isDarkMode ? AppColor.onPrimary.withValues(alpha: 0.7) : AppColor.onPrimary;
     }
 
-    bool isInProgress = widget.isProgressable && _isInProgress;
+    bool isInProgress = widget.isProgressable && _isInProgress && _progress > 0.0 && _progress < 1.0 && !isRectorHours;
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
     FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
@@ -161,7 +161,22 @@ class _LectureState extends State<Lecture> {
             ? Border.all(color: Colors.white.withValues(alpha: 0.25), width: 0.5)
             : null,
       ),
-      child: Material(
+      child: ClipRRect( // ClipRRect, żeby paski nie wychodziły poza zaokrąglone rogi
+        borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
+        child: Stack(
+          children: [
+            // --- TŁO Z PASKAMI DLA GODZIN REKTORSKICH ---
+            if (isRectorHours)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: DiagonalStripesPainter(
+                    color: Colors.white.withValues(alpha: 0.03), // Bardzo delikatne paski
+                    stripeWidth: 1.5,
+                    spacing: 12.0,
+                  ),
+                ),
+              ),
+          Material(
             color: Colors.transparent,
             child: InkWell(
               radius: 300.0,
@@ -178,6 +193,33 @@ class _LectureState extends State<Lecture> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Pastylka "Godziny rektorskie" nad tytułem zajęć — tylko dla zajęć z wykrytymi godzinami rektorskimi
+                            if (isRectorHours)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 2.0),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.1), // Półprzezroczyste tło pastylki
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(LucideIcons.info, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          "Godziny rektorskie",
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(alpha: 0.8),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                             // Wiersz: nazwa zajęć + strzałka rozwijania
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -188,7 +230,12 @@ class _LectureState extends State<Lecture> {
                                     style: TextStyle(
                                       fontWeight: titleWeight,
                                       fontSize: 20,
-                                      color: textColor,
+                                      // Automatycznie przyjmie biały dla zwykłych, a szarawy dla rektorskich
+                                      color: textColor, 
+                                      // Tylko to wymaga warunku:
+                                      decoration: isRectorHours ? TextDecoration.lineThrough : null,
+                                      decorationColor: textColor,
+                                      decorationThickness: 2.0,
                                     ),
                                   ),
                                 ),
@@ -206,26 +253,6 @@ class _LectureState extends State<Lecture> {
                                 ),
                               ],
                             ),
-                            if (isRectorHours)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4, bottom: 8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade800, // Mocny czerwony dla badge'a
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Text(
-                                    "GODZINY REKTORSKIE",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
                             // Wiersz: godzina + sala
                             Row(
                               spacing: 5,
@@ -252,16 +279,7 @@ class _LectureState extends State<Lecture> {
                                 // normalizowany do standardowego ", "
                                 Expanded(
                                   child: Text(
-                                    widget.location != null
-                                        ? widget.location!
-                                                      .split(" , ")
-                                                      .length ==
-                                                  1
-                                              ? widget.location!
-                                              : widget.location!
-                                                    .split(" , ")
-                                                    .join(", ")
-                                        : l10n.roomNaN,
+                                    widget.location?.replaceAll(" , ", ", ") ?? l10n.roomNaN,
                                     style: TextStyle(
                                       color: textColor,
                                       fontWeight: subTextWeight,
@@ -448,7 +466,11 @@ class _LectureState extends State<Lecture> {
               ),
             ),
           ),
+          ],
+        ),
+      ),
     );
+      
 
     return Padding(
       padding: const EdgeInsets.all(4),
