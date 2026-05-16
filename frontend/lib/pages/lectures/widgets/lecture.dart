@@ -15,6 +15,8 @@ import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lectures/utils/diagonal_stripes_painter.dart';
 
+import '../../../env_config.dart';
+
 // Karta pojedynczego zajęcia na liście planu.
 // Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
 class Lecture extends StatefulWidget {
@@ -58,13 +60,13 @@ class _LectureState extends State<Lecture> {
   double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
   bool _isInProgress = false; // czy zajęcia aktualnie trwają
   Timer? _timer;
-  late final bool isRectorHours;
+  late bool isRectorHours;
 
   @override
   void initState() {
     super.initState();
 
-    isRectorHours = widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false;
+    isRectorHours = kDebugRectorHours || widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false;
 
     if (widget.isProgressable && !isRectorHours) {
       // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState
@@ -73,6 +75,14 @@ class _LectureState extends State<Lecture> {
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         if (mounted) setState(_computeProgress);
       });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant Lecture oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.notes != widget.notes) {
+      isRectorHours = kDebugRectorHours || (widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false);
     }
   }
 
@@ -101,6 +111,7 @@ class _LectureState extends State<Lecture> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Dobierz gradient/kolor i kolor tekstu na podstawie ustawienia stylu kolorów.
     // Pastel używa ciemnego tekstu bo jasne tło słabo kontrastuje z białym.
@@ -125,9 +136,8 @@ class _LectureState extends State<Lecture> {
 
     // Detekcja godzin rektorskich i nadpisanie kolorów na szaro
     if (isRectorHours) {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
       cardGradient = null;
-      cardColor = isDarkMode ? Color.lerp(Colors.grey.shade900, Colors.black, 0.1) : Colors.grey.shade700;
+      cardColor = AppColor.rectorHoursBackground(Theme.of(context).brightness);
       textColor = isDarkMode ? AppColor.onPrimary.withValues(alpha: 0.7) : AppColor.onPrimary;
     }
 
@@ -135,9 +145,7 @@ class _LectureState extends State<Lecture> {
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
     FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
-    FontWeight subTextWeight = isInProgress
-        ? FontWeight.bold
-        : FontWeight.normal;
+    FontWeight subTextWeight = isInProgress ? FontWeight.bold : FontWeight.normal;
 
     final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -170,7 +178,9 @@ class _LectureState extends State<Lecture> {
               Positioned.fill(
                 child: CustomPaint(
                   painter: DiagonalStripesPainter(
-                    color: Colors.white.withValues(alpha: 0.03), // Bardzo delikatne paski
+                    color: isDarkMode 
+                      ? Colors.white.withValues(alpha: 0.03) 
+                      : Colors.black.withValues(alpha: 0.05),
                     stripeWidth: 1.5,
                     spacing: 12.0,
                   ),
@@ -200,7 +210,7 @@ class _LectureState extends State<Lecture> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.1), // Półprzezroczyste tło pastylki
+                                      color: AppColor.rectorHoursBadge, // Półprzezroczyste tło pastylki
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Row(
@@ -209,7 +219,7 @@ class _LectureState extends State<Lecture> {
                                         Icon(LucideIcons.info, size: 14, color: Colors.white.withValues(alpha: 0.8)),
                                         const SizedBox(width: 6),
                                         Text(
-                                          "Godziny rektorskie",
+                                          l10n.rectorHoursBadge,
                                           style: TextStyle(
                                             color: Colors.white.withValues(alpha: 0.8),
                                             fontSize: 12,
@@ -445,7 +455,7 @@ class _LectureState extends State<Lecture> {
                                                 widget.group,
                                               ),
                                             ),
-                                            if (widget.notes != null)
+                                            if (widget.notes != null && !isRectorHours)
                                               DescriptionItem(
                                                 icon: LucideIcons.stickyNote,
                                                 color: Colors.yellow,

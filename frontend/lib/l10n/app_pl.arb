@@ -345,6 +345,10 @@
   "@emptyNotesLabel": {
     "description": "lecture.dart - Label for the lecture wiget if there are no notes."
   },
+  "rectorHoursBadge": "Godziny rektorskie",
+  "@rectorHoursBadge": {
+    "description": "lecture.dart - Label for the lecture rector hours widget header."
+  },
   "newsSectionLabel": "Nowości z uczelni",
   "@newsSectionLabel": {
     "description": "news_page.dart - Label/header for the section showing university news."
