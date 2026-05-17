@@ -66,7 +66,7 @@ class _LectureState extends State<Lecture> {
   void initState() {
     super.initState();
 
-    isRectorHours = kDebugRectorHours || widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false;
+    isRectorHours = kDebugRectorHours || (widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false);
 
     if (widget.isProgressable && !isRectorHours) {
       // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState

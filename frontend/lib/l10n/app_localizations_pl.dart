@@ -276,6 +276,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get emptyNotesLabel => 'Puste';
 
   @override
+  String get rectorHoursBadge => 'Godziny rektorskie';
+
+  @override
   String get newsSectionLabel => 'Nowości z uczelni';
 
   @override

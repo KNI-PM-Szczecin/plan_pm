@@ -281,6 +281,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyNotesLabel => 'Empty';
 
   @override
+  String get rectorHoursBadge => 'Rector\'s hours';
+
+  @override
   String get newsSectionLabel => 'Recent news';
 
   @override

@@ -610,6 +610,12 @@ abstract class AppLocalizations {
   /// **'Puste'**
   String get emptyNotesLabel;
 
+  /// lecture.dart - Label for the lecture rector hours widget header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Godziny rektorskie'**
+  String get rectorHoursBadge;
+
   /// news_page.dart - Label/header for the section showing university news.
   ///
   /// In pl, this message translates to:
