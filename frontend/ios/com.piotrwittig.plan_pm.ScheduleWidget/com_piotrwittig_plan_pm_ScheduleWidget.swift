@@ -46,15 +46,28 @@ struct LectureCard: View {
                     .foregroundStyle(.white)
                     .lineLimit(1)
                 HStack(spacing: 10) {
-                    Label("\(lecture["start"] ?? "") - \(lecture["end"] ?? "")",
-                          systemImage: "clock")
+                    HStack(spacing: 4) {
+                        Image("ClockIcon")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 11, height: 11)
+                        Text("\(lecture["start"] ?? "") - \(lecture["end"] ?? "")")
+                    }
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.88))
+                    if let loc = lecture["location"], !loc.isEmpty {
+                        HStack(spacing: 4) {
+                            Image("MapPinIcon")
+                                .renderingMode(.template)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 11, height: 11)
+                            Text(loc)
+                                .lineLimit(1)
+                        }
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.white.opacity(0.88))
-                    if let loc = lecture["location"], !loc.isEmpty {
-                        Label(loc, systemImage: "mappin.and.ellipse")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.88))
-                            .lineLimit(1)
                     }
                 }
             }

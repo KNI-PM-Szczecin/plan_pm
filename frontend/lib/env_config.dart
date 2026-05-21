@@ -21,3 +21,6 @@ const String kDebugNewsImageUrl = "";
 
 // Set to true to force all lecture cards to display as rector hours
 const bool kDebugRectorHours = false;
+
+// Set to true to push fake lecture data to the home screen widget (bypasses real schedule)
+const bool kDebugWidget = false;
