@@ -60,6 +60,7 @@ dependencies:
   logger: ^2.6.2
   google_fonts: ^8.0.2
   cupertino_native: ^0.1.1
+  home_widget: ^0.9.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
@@ -97,6 +98,8 @@ flutter:
 flutter_native_splash:
   background_image: "assets/native_splash/background.png"
   background_image_dark: "assets/native_splash/background_dark.png"
+  image: "assets/logo_light.png"
+  image_dark: "assets/launcher_icons/logo_dark.png"
   android: true
   ios: true
 

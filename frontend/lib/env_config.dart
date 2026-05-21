@@ -18,3 +18,6 @@ const bool kDebugNews = false;
 
 // ImgBB URL to use for the mock news image (empty = no image)
 const String kDebugNewsImageUrl = "";
+
+// Set to true to force all lecture cards to display as rector hours
+const bool kDebugRectorHours = false;

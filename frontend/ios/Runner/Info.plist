@@ -47,6 +47,8 @@
 				</array>
 			</dict>
 		</dict>
+		<key>HomeWidgetAppGroupName</key>
+		<string>group.com.piotrwittig.plan_pm</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
