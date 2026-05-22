@@ -18,3 +18,6 @@ const bool kDebugNews = false;
 
 // ImgBB URL to use for the mock news image (empty = no image)
 const String kDebugNewsImageUrl = "";
+
+// Set to true to always show the rector hours banner (for UI development)
+const bool kDebugRectorHours = false;
