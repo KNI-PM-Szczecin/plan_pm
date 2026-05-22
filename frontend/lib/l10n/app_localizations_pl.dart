@@ -279,6 +279,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get rectorHoursBadge => 'Godziny rektorskie';
 
   @override
+  String get rectorDayBadge => 'Dzień rektorski';
+
+  @override
+  String get canceledClassBadge => 'Zajęcia odwołane';
+
+  @override
   String get newsSectionLabel => 'Nowości z uczelni';
 
   @override

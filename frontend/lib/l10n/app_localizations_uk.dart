@@ -284,7 +284,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get emptyNotesLabel => 'Пусто';
 
   @override
-  String get rectorHoursBadge => 'Години ректора';
+  String get rectorHoursBadge => 'Ректорські години';
+
+  @override
+  String get rectorDayBadge => 'Ректорський день';
+
+  @override
+  String get canceledClassBadge => 'Заняття скасовано';
 
   @override
   String get newsSectionLabel => 'Останні новини';

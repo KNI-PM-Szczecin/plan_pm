@@ -99,6 +99,8 @@
   "notesLabel": "Notes",
   "emptyNotesLabel": "Empty",
   "rectorHoursBadge": "Rector's hours",
+  "rectorDayBadge": "Rector's day",
+  "canceledClassBadge": "Class canceled",
   "newsSectionLabel": "Recent news",
   "professorNaN": "No professor",
   "roomNaN": "No room",

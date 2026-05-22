@@ -14,6 +14,7 @@ import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lectures/utils/diagonal_stripes_painter.dart';
+import 'package:plan_pm/pages/lectures/utils/canceled_reason.dart';
 
 import '../../../env_config.dart';
 
@@ -60,17 +61,16 @@ class _LectureState extends State<Lecture> {
   double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
   bool _isInProgress = false; // czy zajęcia aktualnie trwają
   Timer? _timer;
-  late bool isRectorHours;
+
+  CanceledReason? canceledReason;
+  bool get isCanceledOrRector => canceledReason != null || kDebugRectorHours;
 
   @override
   void initState() {
     super.initState();
+    _determineStatus();
 
-    isRectorHours = kDebugRectorHours || (widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false);
-
-    if (widget.isProgressable && !isRectorHours) {
-      // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState
-      // nie gwarantuje przebudowy w każdej wersji Fluttera.
+    if (widget.isProgressable && !isCanceledOrRector) {
       _computeProgress();
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         if (mounted) setState(_computeProgress);
@@ -82,7 +82,21 @@ class _LectureState extends State<Lecture> {
   void didUpdateWidget(covariant Lecture oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.notes != widget.notes) {
-      isRectorHours = kDebugRectorHours || (widget.notes?.toLowerCase().contains('godziny rektorskie') ?? false);
+      _determineStatus();
+    }
+  }
+
+  void _determineStatus() {
+    final notes = widget.notes?.toLowerCase() ?? '';
+    
+    if (notes.contains('godziny rektorskie')) {
+      canceledReason = CanceledReason.rectorHours;
+    } else if (notes.contains('dzień rektorski')) {
+      canceledReason = CanceledReason.rectorDay;
+    } else if (notes.contains('zajęcia odwołane')) {
+      canceledReason = CanceledReason.canceled;
+    } else {
+      canceledReason = null;
     }
   }
 
@@ -135,13 +149,28 @@ class _LectureState extends State<Lecture> {
     }
 
     // Detekcja godzin rektorskich i nadpisanie kolorów na szaro
-    if (isRectorHours) {
+    if (isCanceledOrRector) {
       cardGradient = null;
       cardColor = AppColor.rectorHoursBackground(Theme.of(context).brightness);
       textColor = isDarkMode ? AppColor.onPrimary.withValues(alpha: 0.7) : AppColor.onPrimary;
     }
 
-    bool isInProgress = widget.isProgressable && _isInProgress && _progress > 0.0 && _progress < 1.0 && !isRectorHours;
+    bool isInProgress = widget.isProgressable && _isInProgress && _progress > 0.0 && _progress < 1.0 && !isCanceledOrRector;
+
+    String getBadgeText() {
+       if (kDebugRectorHours && canceledReason == null) return l10n.rectorHoursBadge; // Fallback dla debuga
+       
+       switch (canceledReason) {
+         case CanceledReason.rectorHours:
+           return l10n.rectorHoursBadge; // Np. "Godziny rektorskie"
+         case CanceledReason.rectorDay:
+           return l10n.rectorDayBadge; // Np. "Dzień rektorski"
+         case CanceledReason.canceled:
+           return l10n.canceledClassBadge; // Np. "Zajęcia odwołane"
+         default:
+           return '';
+       }
+    }
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
     FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
@@ -174,7 +203,7 @@ class _LectureState extends State<Lecture> {
         child: Stack(
           children: [
             // --- TŁO Z PASKAMI DLA GODZIN REKTORSKICH ---
-            if (isRectorHours)
+            if (isCanceledOrRector)
               Positioned.fill(
                 child: CustomPaint(
                   painter: DiagonalStripesPainter(
@@ -204,7 +233,7 @@ class _LectureState extends State<Lecture> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Pastylka "Godziny rektorskie" nad tytułem zajęć — tylko dla zajęć z wykrytymi godzinami rektorskimi
-                            if (isRectorHours)
+                            if (isCanceledOrRector)
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 2.0),
                                   child: Container(
@@ -219,7 +248,7 @@ class _LectureState extends State<Lecture> {
                                         Icon(LucideIcons.info, size: 14, color: Colors.white.withValues(alpha: 0.8)),
                                         const SizedBox(width: 6),
                                         Text(
-                                          l10n.rectorHoursBadge,
+                                          getBadgeText(),
                                           style: TextStyle(
                                             color: Colors.white.withValues(alpha: 0.8),
                                             fontSize: 12,
@@ -243,7 +272,7 @@ class _LectureState extends State<Lecture> {
                                       // Automatycznie przyjmie biały dla zwykłych, a szarawy dla rektorskich
                                       color: textColor, 
                                       // Tylko to wymaga warunku:
-                                      decoration: isRectorHours ? TextDecoration.lineThrough : null,
+                                      decoration: isCanceledOrRector ? TextDecoration.lineThrough : null,
                                       decorationColor: textColor,
                                       decorationThickness: 2.0,
                                     ),
@@ -455,7 +484,7 @@ class _LectureState extends State<Lecture> {
                                                 widget.group,
                                               ),
                                             ),
-                                            if (widget.notes != null && !isRectorHours)
+                                            if (widget.notes != null && !isCanceledOrRector)
                                               DescriptionItem(
                                                 icon: LucideIcons.stickyNote,
                                                 color: Colors.yellow,

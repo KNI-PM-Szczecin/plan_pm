@@ -284,6 +284,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rectorHoursBadge => 'Rector\'s hours';
 
   @override
+  String get rectorDayBadge => 'Rector\'s day';
+
+  @override
+  String get canceledClassBadge => 'Class canceled';
+
+  @override
   String get newsSectionLabel => 'Recent news';
 
   @override
