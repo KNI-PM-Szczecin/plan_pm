@@ -1,0 +1,22 @@
+[project]
+name = "plan-pm-backend"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.13",
+    "flask>=3.0",
+    "pillow>=11.0",
+    "psycopg2-binary>=2.9",
+    "pytest>=9.0",
+    "python-dotenv>=1.0",
+    "requests>=2.32",
+    "rich>=14.0",
+    "selenium>=4.36",
+    "supabase>=2.18",
+    "pypdf>=6.0",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests that make real network or Selenium calls (deselect with -m 'not slow')",
+]

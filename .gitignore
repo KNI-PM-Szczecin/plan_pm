@@ -23,6 +23,7 @@
 # When unpinning packages, Using lockfiles ensures that failures in PRs are
 # actually due to those PRs, not due to a package being updated.
 !/pubspec.lock
+!/backend/uv.lock
 
 # IntelliJ related
 *.iml
