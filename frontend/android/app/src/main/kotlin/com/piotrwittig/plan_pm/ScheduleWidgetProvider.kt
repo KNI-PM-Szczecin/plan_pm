@@ -8,12 +8,16 @@ import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
 import java.util.Calendar
+import kotlin.math.roundToInt
 
 data class LectureItem(val name: String, val start: String, val end: String, val location: String)
 
 class ScheduleWidgetProvider : AppWidgetProvider() {
 
-    private val maxCards = 5
+    private companion object {
+        const val MAX_CARDS = 5
+        const val DEFAULT_WIDGET_HEIGHT_DP = 200
+    }
 
     override fun onUpdate(
         context: Context,
@@ -65,9 +69,9 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         lectures: List<LectureItem>
     ) {
         val options = appWidgetManager.getAppWidgetOptions(widgetId)
-        // In portrait, MAX_HEIGHT reflects the widget's actual height
-        val heightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 200)
-        val cardsFit = cardsThatFit(heightDp)
+        val heightDp = widgetHeightDp(options)
+        val cardsFit = cardsThatFit(context, heightDp)
+
         val visible = filterRelevant(lectures, cardsFit)
 
         val views = RemoteViews(context.packageName, R.layout.widget_schedule)
@@ -75,20 +79,37 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(widgetId, views)
     }
 
-    private fun cardsThatFit(heightDp: Int): Int {
-        // Each card ~67dp + 8dp gap. Outer padding 28dp.
-        // height = 28 + n*67 + (n-1)*8 = 20 + 75n
-        // n = (height - 20) / 75
-        val n = (heightDp - 20) / 75
-        return n.coerceIn(1, maxCards)
+    private fun widgetHeightDp(options: Bundle): Int {
+        val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+        return when {
+            maxHeight > 0 -> maxHeight
+            minHeight > 0 -> minHeight
+            else -> DEFAULT_WIDGET_HEIGHT_DP
+        }
+    }
+
+    private fun cardsThatFit(context: Context, heightDp: Int): Int {
+        val verticalPaddingDp = context.dimensionDp(R.dimen.widget_padding) * 2
+        val cardMinHeightDp = context.dimensionDp(R.dimen.widget_card_min_height)
+        val cardGapDp = context.dimensionDp(R.dimen.widget_card_gap)
+
+        val availableForCards = heightDp - verticalPaddingDp
+        val cardAndGap = cardMinHeightDp + cardGapDp
+        val count = (availableForCards + cardGapDp) / cardAndGap
+
+        return count.coerceIn(1, MAX_CARDS)
     }
 
     private fun filterRelevant(lectures: List<LectureItem>, cardsFit: Int): List<LectureItem> {
-        if (lectures.size <= cardsFit) return lectures.take(cardsFit)
+        if (lectures.size <= cardsFit) return lectures
         val nowMinutes = currentMinutesOfDay()
-        return lectures
-            .filter { endMinutes(it.end) >= nowMinutes }
-            .take(cardsFit)
+        val firstCurrentOrUpcoming = lectures.indexOfFirst { endMinutes(it.end) >= nowMinutes }
+        val anchor = if (firstCurrentOrUpcoming >= 0) firstCurrentOrUpcoming else lectures.lastIndex
+        val lastStart = lectures.size - cardsFit
+        val start = anchor.coerceIn(0, lastStart)
+
+        return lectures.drop(start).take(cardsFit)
     }
 
     private fun currentMinutesOfDay(): Int {
@@ -186,4 +207,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             views.setViewVisibility(progressId, View.INVISIBLE)
         }
     }
+
+    private fun Context.dimensionDp(resId: Int): Int =
+        (resources.getDimension(resId) / resources.displayMetrics.density).roundToInt()
 }
