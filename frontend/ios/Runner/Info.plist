@@ -47,6 +47,17 @@
 				</array>
 			</dict>
 		</dict>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLName</key>
+				<string>com.piotrwittig.plan_pm</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>planpm</string>
+				</array>
+			</dict>
+		</array>
 		<key>HomeWidgetAppGroupName</key>
 		<string>group.com.piotrwittig.plan_pm</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>

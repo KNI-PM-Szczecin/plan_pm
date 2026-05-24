@@ -11,8 +11,13 @@ class WidgetService {
   static const _iosName = 'PlanPMScheduleWidget';
 
   static const _debugLectures = [
-    {'name': 'Aplikacje www', 'start': '08:00', 'end': '09:35', 'location': 'WChrobrego 112'},
     {'name': 'Bezpieczeństwo systemów', 'start': '09:45', 'end': '11:25', 'location': 'WChrobrego 208'},
+    {'name': 'Bazy danych', 'start': '11:35', 'end': '13:10', 'location': 'WChrobrego 305'},
+    {'name': 'Sieci komputerowe', 'start': '13:20', 'end': '15:00', 'location': 'WChrobrego 101'},
+    {'name': 'Matematyka dyskretna', 'start': '15:10', 'end': '16:45', 'location': 'WChrobrego 204'},
+    {'name': 'Aplikacje www', 'start': '19:30', 'end': '21:00', 'location': 'WChrobrego 112'},
+    {'name': 'Programowanie obiektowe', 'start': '21:00', 'end': '22:00', 'location': 'WChrobrego 215'},
+    {'name': 'Seminarium', 'start': '22:00', 'end': '23:30', 'location': 'WChrobrego 220'},
   ];
 
   static Future<void> pushTodayLectures() async {
