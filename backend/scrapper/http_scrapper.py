@@ -156,7 +156,7 @@ def fetch_plan_http(flow_id, zaz_button=2):
                     "Sala": cells[7].get_text(strip=True),
                     "Prowadzący": " ".join(cells[8].get_text(separator=" ", strip=True).split()),
                     "Forma zaliczenia": cells[9].get_text(strip=True),
-                    "Uwagi": cells[10].get_text(strip=True),
+                    "Uwagi": cells[11].get_text(strip=True),
                 }
                 schedule_data.append(entry)
 
