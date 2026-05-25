@@ -11,9 +11,12 @@ class WidgetService {
   static const _iosName = 'PlanPMScheduleWidget';
 
   static const _debugLectures = [
-    {'name': 'Bezpieczeństwo systemów', 'start': '09:45', 'end': '11:25', 'location': 'WChrobrego 208'},
-    {'name': 'Bazy danych', 'start': '11:35', 'end': '13:10', 'location': 'WChrobrego 305'},
-    {'name': 'Sieci komputerowe', 'start': '13:20', 'end': '15:00', 'location': 'WChrobrego 101'},
+    {'name': 'Bezpieczeństwo systemów', 'start': '08:00', 'end': '09:30', 'location': 'WChrobrego 208'},
+    {'name': 'Bazy danych', 'start': '09:45', 'end': '11:15', 'location': 'WChrobrego 305'},
+    {'name': 'Sieci komputerowe', 'start': '11:30', 'end': '13:00', 'location': 'WChrobrego 101'},
+    {'name': 'Matematyka dyskretna', 'start': '13:15', 'end': '14:45', 'location': 'WChrobrego 204'},
+    {'name': 'Algorytmy i struktury', 'start': '15:00', 'end': '16:30', 'location': 'WChrobrego 310'},
+    {'name': 'Inżynieria oprogramowania', 'start': '16:45', 'end': '18:15', 'location': 'WChrobrego 112'},
     {'name': 'Aplikacje www', 'start': '20:30', 'end': '21:45', 'location': 'WChrobrego 112'},
     {'name': 'Programowanie obiektowe', 'start': '21:45', 'end': '23:00', 'location': 'WChrobrego 215'},
   ];

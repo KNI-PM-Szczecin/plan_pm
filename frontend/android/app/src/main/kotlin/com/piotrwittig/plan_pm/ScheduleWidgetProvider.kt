@@ -15,7 +15,7 @@ data class LectureItem(val name: String, val start: String, val end: String, val
 class ScheduleWidgetProvider : AppWidgetProvider() {
 
     private companion object {
-        const val MAX_CARDS = 5
+        const val MAX_CARDS = 8
         const val DEFAULT_WIDGET_HEIGHT_DP = 200
     }
 
@@ -126,26 +126,24 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
     }
 
     private fun bindWidget(views: RemoteViews, lectures: List<LectureItem>, cardsFit: Int) {
-        val cardIds = listOf(
-            R.id.widget_card_1, R.id.widget_card_2, R.id.widget_card_3,
-            R.id.widget_card_4, R.id.widget_card_5
-        )
-
-        if (lectures.isEmpty()) {
-            cardIds.forEach { views.setViewVisibility(it, View.GONE) }
-            views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
-            return
-        }
-
-        views.setViewVisibility(R.id.widget_empty, View.GONE)
-
         val slots = listOf(
             CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1),
             CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2),
             CardSlot(R.id.widget_card_3, R.id.widget_name_3, R.id.widget_time_3, R.id.widget_location_3, R.id.widget_progress_3),
             CardSlot(R.id.widget_card_4, R.id.widget_name_4, R.id.widget_time_4, R.id.widget_location_4, R.id.widget_progress_4),
             CardSlot(R.id.widget_card_5, R.id.widget_name_5, R.id.widget_time_5, R.id.widget_location_5, R.id.widget_progress_5),
+            CardSlot(R.id.widget_card_6, R.id.widget_name_6, R.id.widget_time_6, R.id.widget_location_6, R.id.widget_progress_6),
+            CardSlot(R.id.widget_card_7, R.id.widget_name_7, R.id.widget_time_7, R.id.widget_location_7, R.id.widget_progress_7),
+            CardSlot(R.id.widget_card_8, R.id.widget_name_8, R.id.widget_time_8, R.id.widget_location_8, R.id.widget_progress_8),
         )
+
+        if (lectures.isEmpty()) {
+            slots.forEach { views.setViewVisibility(it.cardId, View.GONE) }
+            views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
+            return
+        }
+
+        views.setViewVisibility(R.id.widget_empty, View.GONE)
 
         for ((idx, slot) in slots.withIndex()) {
             if (idx >= cardsFit) {
