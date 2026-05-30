@@ -15,7 +15,19 @@ class CacheService {
 
   final BackendService _backendService = BackendService();
 
-  Future<void> syncLectures() async {
+  // Re-entrancy guards: równoległe wywołania zwracają to samo Future
+  // zamiast startować kolejny sync (który by się przeplatał z bieżącym i
+  // produkował duplikaty po `clearLectures` + insert loop).
+  Future<void>? _lecturesSync;
+  Future<void>? _newsSync;
+
+  Future<void> syncLectures() {
+    return _lecturesSync ??= _runLecturesSync().whenComplete(() {
+      _lecturesSync = null;
+    });
+  }
+
+  Future<void> _runLecturesSync() async {
     var lectures = await _backendService.fetchLectures();
     if (lectures.isEmpty) {
       AppLogger.w(
@@ -52,7 +64,13 @@ class CacheService {
     await WidgetService.pushTodayLectures();
   }
 
-  Future<void> syncNews() async {
+  Future<void> syncNews() {
+    return _newsSync ??= _runNewsSync().whenComplete(() {
+      _newsSync = null;
+    });
+  }
+
+  Future<void> _runNewsSync() async {
     AppLogger.i("[CACHE-SERVICE] syncNews — start");
     final news = await _backendService.fetchNews();
     if (news.isEmpty) {

@@ -425,6 +425,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Check your internet connection and try again.';
 
   @override
+  String get noGroupsAvailable => 'No groups available';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'No groups were found for your plan. Are you sure you want to continue?';
+
+  @override
   String get announcementDismiss => 'Got it';
 
   @override

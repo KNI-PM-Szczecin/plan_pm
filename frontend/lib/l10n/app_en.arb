@@ -115,6 +115,8 @@
   "noSpecialisationForField": "No specialisation available for this field",
   "unexpectedError": "Oops! Something went wrong.",
   "networkErrorDescription": "Check your internet connection and try again.",
+  "noGroupsAvailable": "No groups available",
+  "noGroupsAvailableDescription": "No groups were found for your plan. Are you sure you want to continue?",
   "pePageTitle": "PE Enrollment",
   "pePageDescription": "Choose your physical education classes for this semester. Remember that enrollment happens periodically.",
   "pePageButton": "Go to enrollment",

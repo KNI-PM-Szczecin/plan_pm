@@ -432,6 +432,13 @@ class AppLocalizationsUk extends AppLocalizations {
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
 
   @override
+  String get noGroupsAvailable => 'Немає доступних груп';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'Для вашого плану не знайдено жодних груп. Ви впевнені, що хочете продовжити?';
+
+  @override
   String get announcementDismiss => 'Зрозуміло';
 
   @override

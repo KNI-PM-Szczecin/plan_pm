@@ -47,6 +47,7 @@ class _InputPageState extends State<InputPage> {
   final _backendService = BackendService();
 
   late Future<UniversityData> _futureUniversityStructure;
+  bool _isSubmitting = false;
 
   // Formularz jest gotowy gdy wybrano wydział, kierunek, rok (!=0), tryb i stopień.
   // Specjalizacja jest opcjonalna — pojawia się jeśli backend ją zwraca.
@@ -110,56 +111,62 @@ class _InputPageState extends State<InputPage> {
           }
         },
         confirmLabel: l10n.groupSelection,
-        onConfirm: _canProceed
+        onConfirm: (_canProceed && !_isSubmitting)
             ? () async {
-                HapticFeedback.lightImpact();
-                Student.degreeCourse = selectedDegreeCourse.isNotEmpty
-                    ? selectedDegreeCourse
-                    : null;
-                Student.faculty = selectedFaculty.isNotEmpty
-                    ? selectedFaculty
-                    : null;
-                Student.specialisation = selectedSpecialisation.isNotEmpty
-                    ? selectedSpecialisation
-                    : null;
-                Student.studyMode = selectedTerm == 1
-                    ? StudyMode.stationary
-                    : StudyMode.notStationary;
-                Student.degreeLevel = selectedDegreeLevel == 1 ? "inż." : "mgr";
-                Student.year = selectedYear;
+                setState(() => _isSubmitting = true);
+                try {
+                  HapticFeedback.lightImpact();
+                  Student.degreeCourse = selectedDegreeCourse.isNotEmpty
+                      ? selectedDegreeCourse
+                      : null;
+                  Student.faculty = selectedFaculty.isNotEmpty
+                      ? selectedFaculty
+                      : null;
+                  Student.specialisation = selectedSpecialisation.isNotEmpty
+                      ? selectedSpecialisation
+                      : null;
+                  Student.studyMode = selectedTerm == 1
+                      ? StudyMode.stationary
+                      : StudyMode.notStationary;
+                  Student.degreeLevel =
+                      selectedDegreeLevel == 1 ? "inż." : "mgr";
+                  Student.year = selectedYear;
 
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                await prefs.setString("course", Student.course ?? "");
-                await prefs.setString("faculty", Student.faculty ?? "");
-                await prefs.setString(
-                  "degree_course",
-                  Student.degreeCourse ?? "",
-                );
-                await prefs.setString(
-                  "specialisation",
-                  Student.specialisation ?? "",
-                );
-                await prefs.setInt("year", selectedYear);
-                await prefs.setString(
-                  "study_mode",
-                  Student.studyMode?.programType ?? "S",
-                );
-                await prefs.setString(
-                  "degree_level",
-                  selectedDegreeLevel == 1 ? "inż." : "mgr",
-                );
-                await CacheService().syncNews();
-                await CacheService().syncLectures();
-                if (!context.mounted) return;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GroupSelectionPage(
-                      isRoleSwitch: widget.isRoleSwitch,
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setString("course", Student.course ?? "");
+                  await prefs.setString("faculty", Student.faculty ?? "");
+                  await prefs.setString(
+                    "degree_course",
+                    Student.degreeCourse ?? "",
+                  );
+                  await prefs.setString(
+                    "specialisation",
+                    Student.specialisation ?? "",
+                  );
+                  await prefs.setInt("year", selectedYear);
+                  await prefs.setString(
+                    "study_mode",
+                    Student.studyMode?.programType ?? "S",
+                  );
+                  await prefs.setString(
+                    "degree_level",
+                    selectedDegreeLevel == 1 ? "inż." : "mgr",
+                  );
+                  await CacheService().syncNews();
+                  await CacheService().syncLectures();
+                  if (!context.mounted) return;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GroupSelectionPage(
+                        isRoleSwitch: widget.isRoleSwitch,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } finally {
+                  if (mounted) setState(() => _isSubmitting = false);
+                }
               }
             : null,
       ),
