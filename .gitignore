@@ -3,6 +3,7 @@
 
 # Secrets
 .env
+.mcp.json
 
 # Claude Code
 .claude/
