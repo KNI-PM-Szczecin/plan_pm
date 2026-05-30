@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="top"
+    android:padding="@dimen/widget_padding"
+    android:background="@drawable/widget_background">
+
+    <LinearLayout
+        android:id="@+id/widget_card_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:background="@drawable/widget_card_grad_0"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_1"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_2"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_3"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_3"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_4"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_4"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_5"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_5"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_6"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/widget_card_min_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_6"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/widget_time_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_7"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Brak zajęć na dziś"
+        android:textSize="13sp"
+        android:textColor="@color/widget_secondary_text"
+        android:gravity="center"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -5,6 +5,7 @@ import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_utils.dart';
 import 'package:plan_pm/service/database_service.dart';
+import 'package:plan_pm/service/widget_service.dart';
 
 class CacheService {
   static final CacheService _cacheService = CacheService._internal();
@@ -59,6 +60,8 @@ class CacheService {
         degreeLevel: lecture.degreeLevel,
       );
     }
+
+    await WidgetService.pushTodayLectures();
   }
 
   Future<void> syncNews() {

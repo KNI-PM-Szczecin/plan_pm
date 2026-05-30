@@ -19,7 +19,11 @@ const bool kDebugNews = false;
 // ImgBB URL to use for the mock news image (empty = no image)
 const String kDebugNewsImageUrl = "";
 
+// Set to true to push fake lecture data to the home screen widget (bypasses real schedule)
+const bool kDebugWidget = false;
+
 // Set to true to simulate empty groups response (bypasses Supabase, always returns empty list)
 const bool kDebugEmptyGroups = false;
+
 // Set to true to always show the rector hours banner (for UI development)
 const bool kDebugRectorHours = false;
