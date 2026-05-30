@@ -49,18 +49,15 @@ class json2db:
     def load_env(self):
         # Load environment variables and create a db connection
         url = os.environ.get(f"{_prefix}SUPABASE_URL")
-        key = os.environ.get(f"{_prefix}SUPABASE_KEY")
         service_key = os.environ.get(f"{_prefix}SUPABASE_SERVICE_KEY")
 
-        if not url or not key:
-            raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY are required. Add them to your .env file.")
-        if not service_key:
-            raise EnvironmentError("SUPABASE_SERVICE_KEY is required for clear_db(). Add it to your .env file.")
+        if not url or not service_key:
+            raise EnvironmentError("SUPABASE_URL and SUPABASE_SERVICE_KEY are required. Add them to your .env file.")
 
         print("Got url: ", url)
 
-        self.db = create_client(url, key)
         self.admin_db = create_client(url, service_key)
+        self.db = self.admin_db
         
     def clear_db(self):
         self.admin_db.table("teachersclasses").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()

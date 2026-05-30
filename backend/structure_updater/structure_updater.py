@@ -215,15 +215,13 @@ def main() -> None:
         return
 
     url = os.environ.get(f"{_prefix}SUPABASE_URL")
-    key = os.environ.get(f"{_prefix}SUPABASE_KEY")
     service_key = os.environ.get(f"{_prefix}SUPABASE_SERVICE_KEY")
-    if not url or not key:
-        logger.error("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych")
-        print("Brak SUPABASE_URL lub SUPABASE_KEY w zmiennych środowiskowych.")
+    if not url or not service_key:
+        logger.error("Brak SUPABASE_URL lub SUPABASE_SERVICE_KEY w zmiennych środowiskowych")
+        print("Brak SUPABASE_URL lub SUPABASE_SERVICE_KEY w zmiennych środowiskowych.")
         return
 
-    db = create_client(url, key)
-    admin_db = create_client(url, service_key) if service_key else db
+    admin_db = create_client(url, service_key)
 
     try:
         clear_structure_tables(admin_db)
@@ -234,7 +232,7 @@ def main() -> None:
             "Failed to clear structure tables. Check Supabase delete policies/RLS."
         ) from exc
 
-    propagate_structure_to_db(db, structure)
+    propagate_structure_to_db(admin_db, structure)
     logger.info("Struktura zaktualizowana w bazie danych")
     print("Structure propagated to Supabase.")
 

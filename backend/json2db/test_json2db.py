@@ -1,6 +1,7 @@
 import json
 import shutil
 import pytest
+from unittest.mock import MagicMock
 from json2db import json2db
 
 INPUT = "./output/parser.json"
@@ -172,3 +173,68 @@ def test_plan_417_rooms_not_willowa(parser_output):
             f"Klasa planu 417 ma salę w Willowej: {room} (budynek: {b_name}). "
             f"Powinno być Żołnierska lub WChrobrego."
         )
+
+def test_load_env_success(monkeypatch, parser_output):
+    import sys
+    from json2db import json2db as j2db
+    import json2db.json2db as j2db_mod
+    
+    # Ensure we are patching the module, not the class
+    target = j2db_mod
+    if not hasattr(target, "create_client"):
+        # Fallback if j2db_mod is the class
+        target = sys.modules["json2db.json2db"]
+
+    mock_create = MagicMock()
+    monkeypatch.setattr(target, "create_client", mock_create)
+    
+    monkeypatch.setenv("SUPABASE_URL", "http://fake-url")
+    monkeypatch.setenv("SUPABASE_SERVICE_KEY", "fake-service-key")
+    
+    # Force _prefix to empty string (prod mode)
+    monkeypatch.setattr(target, "_prefix", "")
+    
+    db = j2db(input=parser_output)
+    db.load_env()
+    
+    assert db.db is not None
+    assert db.admin_db is not None
+    assert db.db is db.admin_db
+    # Verify create_client was called with service key
+    mock_create.assert_called_once_with("http://fake-url", "fake-service-key")
+    
+def test_load_env_test_mode(monkeypatch, parser_output):
+    import sys
+    from json2db import json2db as j2db
+    import json2db.json2db as j2db_mod
+    
+    target = j2db_mod
+    if not hasattr(target, "create_client"):
+        target = sys.modules["json2db.json2db"]
+
+    mock_create = MagicMock()
+    monkeypatch.setattr(target, "create_client", mock_create)
+    
+    monkeypatch.setenv("TEST_SUPABASE_URL", "http://test-url")
+    monkeypatch.setenv("TEST_SUPABASE_SERVICE_KEY", "test-service-key")
+    
+    # Force _prefix to TEST_ by patching the module level variable
+    # Since it's calculated at import time, we need to patch it carefully
+    monkeypatch.setattr(target, "_prefix", "TEST_")
+    
+    db = j2db(input=parser_output)
+    db.load_env()
+    
+    mock_create.assert_called_once_with("http://test-url", "test-service-key")
+
+def test_load_env_missing_service_key(monkeypatch, parser_output):
+    monkeypatch.setenv("SUPABASE_URL", "http://fake-url")
+    monkeypatch.delenv("SUPABASE_SERVICE_KEY", raising=False)
+    monkeypatch.setenv("TEST_SUPABASE_URL", "http://fake-url")
+    monkeypatch.delenv("TEST_SUPABASE_SERVICE_KEY", raising=False)
+    
+    db = json2db(input=parser_output)
+    with pytest.raises(EnvironmentError) as exc_info:
+        db.load_env()
+    assert "SUPABASE_SERVICE_KEY" in str(exc_info.value)
+

@@ -525,7 +525,7 @@ Both pipelines use `.env` at the backend root:
 
 ```
 SUPABASE_URL=https://...supabase.co
-SUPABASE_KEY=...
+SUPABASE_SERVICE_KEY=...
 ```
 
 Loaded via `python-dotenv`. Missing variables cause an error log and early exit (not an exception) in the main entry points.
