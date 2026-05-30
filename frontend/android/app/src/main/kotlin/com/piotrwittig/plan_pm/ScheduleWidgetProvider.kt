@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
@@ -15,7 +16,7 @@ data class LectureItem(val name: String, val start: String, val end: String, val
 class ScheduleWidgetProvider : AppWidgetProvider() {
 
     private companion object {
-        const val MAX_CARDS = 8
+        const val MAX_CARDS = 7
         const val DEFAULT_WIDGET_HEIGHT_DP = 200
     }
 
@@ -134,7 +135,6 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             CardSlot(R.id.widget_card_5, R.id.widget_name_5, R.id.widget_time_5, R.id.widget_location_5, R.id.widget_progress_5),
             CardSlot(R.id.widget_card_6, R.id.widget_name_6, R.id.widget_time_6, R.id.widget_location_6, R.id.widget_progress_6),
             CardSlot(R.id.widget_card_7, R.id.widget_name_7, R.id.widget_time_7, R.id.widget_location_7, R.id.widget_progress_7),
-            CardSlot(R.id.widget_card_8, R.id.widget_name_8, R.id.widget_time_8, R.id.widget_location_8, R.id.widget_progress_8),
         )
 
         if (lectures.isEmpty()) {
@@ -144,6 +144,14 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         }
 
         views.setViewVisibility(R.id.widget_empty, View.GONE)
+
+        // Center vertically when widget is at full capacity, otherwise anchor to top.
+        val rootGravity = if (lectures.size >= MAX_CARDS) {
+            Gravity.CENTER_VERTICAL or Gravity.START
+        } else {
+            Gravity.TOP or Gravity.START
+        }
+        views.setInt(R.id.widget_root, "setGravity", rootGravity)
 
         for ((idx, slot) in slots.withIndex()) {
             if (idx >= cardsFit) {
