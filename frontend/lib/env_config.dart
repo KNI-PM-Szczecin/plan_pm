@@ -21,3 +21,5 @@ const String kDebugNewsImageUrl = "";
 
 // Set to true to simulate empty groups response (bypasses Supabase, always returns empty list)
 const bool kDebugEmptyGroups = false;
+// Set to true to always show the rector hours banner (for UI development)
+const bool kDebugRectorHours = false;

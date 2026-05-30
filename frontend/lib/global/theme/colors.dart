@@ -145,4 +145,13 @@ class AppColor {
   static int get colorfulAlphaValue => _brightness == Brightness.light
       ? ColorThemes.lightColorfulAlphaValue
       : ColorThemes.darkColorfulAlphaValue;
+
+  static Color rectorHoursBackground(Brightness brightness) => 
+      brightness == Brightness.dark 
+          ? Color.lerp(Colors.grey.shade900, Colors.black, 0.1)! 
+          : Colors.grey.shade700;
+
+  static Color get rectorHoursBadge => Colors.white.withValues(alpha: 0.1);
+  static Color get rectorHoursDivider => const Color.fromARGB(80, 228, 227, 227);
+  static Color get rectorHoursAdditionalInfo => const Color(0xB3FFFFFF);
 }

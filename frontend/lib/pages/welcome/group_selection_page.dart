@@ -20,16 +20,69 @@ import 'package:plan_pm/service/cache_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
-class GroupSelectionPage extends StatelessWidget {
+class GroupSelectionPage extends StatefulWidget {
   const GroupSelectionPage({super.key, this.isRoleSwitch = false});
 
   final bool isRoleSwitch;
 
   @override
+  State<GroupSelectionPage> createState() => _GroupSelectionPageState();
+}
+
+class _GroupSelectionPageState extends State<GroupSelectionPage> {
+  final BackendService _backendService = BackendService();
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Student.selectedGroups = [];
+  }
+
+  Future<void> _handleConfirm() async {
+    setState(() => _isSubmitting = true);
+    try {
+      HapticFeedback.lightImpact();
+      if (widget.isRoleSwitch) {
+        await AppModeManager.setMode(AppMode.student);
+        sevenDayModeNotifier.value = false;
+      }
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList("groups", Student.selectedGroups ?? []);
+      await CacheService().syncNews();
+      await CacheService().syncLectures();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: "Plan PM"),
+        ),
+        (r) => false,
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  Future<void> _handleSkip() async {
+    HapticFeedback.lightImpact();
+    if (widget.isRoleSwitch) {
+      await AppModeManager.setMode(AppMode.student);
+      sevenDayModeNotifier.value = false;
+    }
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyHomePage(title: "Plan PM"),
+      ),
+      (r) => false,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final backendService = BackendService();
-    Student.selectedGroups = [];
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: CustomAppBar(title: l10n.groupSettings),
@@ -37,41 +90,9 @@ class GroupSelectionPage extends StatelessWidget {
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: OnboardingActionBar(
         skipLabel: l10n.skipButton,
-        onSkip: () async {
-          HapticFeedback.lightImpact();
-          if (isRoleSwitch) {
-            await AppModeManager.setMode(AppMode.student);
-            sevenDayModeNotifier.value = false;
-          }
-          if (!context.mounted) return;
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MyHomePage(title: "Plan PM"),
-            ),
-            (r) => false,
-          );
-        },
+        onSkip: _handleSkip,
         confirmLabel: l10n.save,
-        onConfirm: () async {
-          HapticFeedback.lightImpact();
-          if (isRoleSwitch) {
-            await AppModeManager.setMode(AppMode.student);
-            sevenDayModeNotifier.value = false;
-          }
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setStringList("groups", Student.selectedGroups ?? []);
-          await CacheService().syncNews();
-          await CacheService().syncLectures();
-          if (!context.mounted) return;
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MyHomePage(title: "Plan PM"),
-            ),
-            (r) => false,
-          );
-        },
+        onConfirm: _isSubmitting ? null : _handleConfirm,
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -87,7 +108,7 @@ class GroupSelectionPage extends StatelessWidget {
                 ),
               ),
               FutureBuilder(
-                future: backendService.fetchGroups(),
+                future: _backendService.fetchGroups(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(
