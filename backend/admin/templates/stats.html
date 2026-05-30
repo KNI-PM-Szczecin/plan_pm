@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Statystyki</h1>
+  <p>Dane o pobraniach i aktywnych użytkownikach ze sklepów.</p>
+</div>
+
+<div id="stats-loading" class="stats-loading">
+  <div class="spinner"></div>
+  <p class="stats-loading-text">
+    Pobieram dane z Google Play…<br>
+    To normalne, że trwa to kilkanaście sekund — API Google odpowiada powoli.
+  </p>
+</div>
+
+<div id="stats-content" style="display: none;">
+
+<div class="step-grid" id="stats-summary" style="margin-bottom: 32px; display: none;">
+  <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+    <span style="font-size: 11px; color: #888;">Aktywne urządzenia</span>
+    <span id="active-users" style="font-size: 24px; color: #fff; font-weight: 700;">-</span>
+  </div>
+  <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+    <span style="font-size: 11px; color: #888;">Stabilność (bez crashy)</span>
+    <span id="stability" style="font-size: 24px; color: #00E699; font-weight: 700;">-</span>
+  </div>
+  <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+    <span style="font-size: 11px; color: #888;">Bez zawieszeń (ANR)</span>
+    <span id="anr-free" style="font-size: 24px; color: #00E699; font-weight: 700;">-</span>
+  </div>
+  <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+    <span style="font-size: 11px; color: #888;">Średnia ocena</span>
+    <span id="avg-rating" style="font-size: 24px; color: #fff; font-weight: 700;">-</span>
+  </div>
+  <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+    <span style="font-size: 11px; color: #888;">Liczba opinii</span>
+    <span id="total-reviews" style="font-size: 24px; color: #fff; font-weight: 700;">-</span>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom: 32px;">
+  <div class="logs-title">Google Play Console (Android)</div>
+  <div style="height: 300px; position: relative; margin-bottom: 8px;">
+    <canvas id="googlePlayChart"></canvas>
+  </div>
+  <p style="font-size: 11px; color: #444; margin: 0 0 32px;">
+    Liczba aktywnych urządzeń jest anonimizowana i zaokrąglana przez Google ze względu na prywatność.
+    Dni z bardzo małą liczbą użytkowników są pomijane. Dane mają ok. 1 dzień opóźnienia.
+  </p>
+  
+  <div class="logs-title" style="font-size: 11px;">Aktywne urządzenia wg wersji</div>
+  <div id="versions-list" class="step-grid" style="margin-bottom: 32px;">
+    <p style="color: #444; font-size: 13px;">Ładowanie...</p>
+  </div>
+
+  <div class="logs-title" style="font-size: 11px;">Crashe i błędy (ostatnie 7 dni)</div>
+  <div id="issues-list" class="posts" style="gap: 8px; margin-bottom: 32px;">
+    <p style="color: #444; font-size: 13px;">Ładowanie...</p>
+  </div>
+
+  <div class="logs-title" style="font-size: 11px;">Ostatnie opinie</div>
+  <div id="reviews-list" class="posts" style="gap: 8px;">
+    <p style="color: #444; font-size: 13px;">Ładowanie opinii...</p>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="logs-title">App Store Connect (iOS)</div>
+  <p style="color: #444; font-size: 14px;">Integracja w trakcie przygotowania (wymagany klucz .p8).</p>
+</div>
+
+</div><!-- /stats-content -->
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  async function loadGoogleStats() {
+    const loadingEl = document.getElementById('stats-loading');
+    const contentEl = document.getElementById('stats-content');
+
+    try {
+      const response = await fetch('/api/stats/google-play');
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+
+      // Reveal content before drawing — Chart.js needs the canvas to have real
+      // dimensions, which it won't have while the wrapper is display:none.
+      loadingEl.style.display = 'none';
+      contentEl.style.display = 'block';
+      const ctx = document.getElementById('googlePlayChart').getContext('2d');
+
+      if (data.summary) {
+        document.getElementById('stats-summary').style.display = 'flex';
+        document.getElementById('active-users').textContent = data.summary.activeUsers;
+        document.getElementById('stability').textContent = data.summary.stability;
+        document.getElementById('anr-free').textContent = data.summary.anrFree;
+        document.getElementById('avg-rating').textContent = data.summary.avgRating;
+        document.getElementById('total-reviews').textContent = data.summary.totalReviews;
+      }
+
+      const versionsList = document.getElementById('versions-list');
+      if (data.versions && data.versions.length > 0) {
+        versionsList.innerHTML = '';
+        data.versions.forEach(v => {
+          versionsList.innerHTML += `
+            <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 12px 16px; gap: 2px; min-width: 120px;">
+              <span style="font-size: 11px; color: #888;">Wersja ${v.version}</span>
+              <span style="font-size: 18px; color: #fff; font-weight: 700;">${v.users}</span>
+            </div>
+          `;
+        });
+      } else {
+        versionsList.innerHTML = '<p style="color: #444; font-size: 13px;">Brak danych.</p>';
+      }
+
+      const issuesList = document.getElementById('issues-list');
+      if (data.issues && data.issues.length > 0) {
+        issuesList.innerHTML = '';
+        data.issues.forEach(i => {
+          issuesList.innerHTML += `
+            <div class="post" style="padding: 12px; border-color: #111;">
+              <div class="post-body">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #fff; font-weight: 600; font-size: 13px;">${i.title}</span>
+                  <span style="color: #f5a623; font-size: 12px;">${i.type}</span>
+                </div>
+                <div style="font-size: 11px; color: #666;">${i.count} zdarzeń · ${i.users} użytkowników</div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        issuesList.innerHTML = '<p style="color: #00E699; font-size: 13px;">Brak crashy 🎉</p>';
+      }
+
+      if (data.reviews && data.reviews.length > 0) {
+        const list = document.getElementById('reviews-list');
+        list.innerHTML = '';
+        data.reviews.forEach(r => {
+          const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+          const date = new Date(r.lastModified * 1000).toLocaleDateString();
+          list.innerHTML += `
+            <div class="post" style="padding: 12px; border-color: #111;">
+              <div class="post-body">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #fff; font-weight: 600; font-size: 13px;">${r.author || 'Użytkownik Google'}</span>
+                  <span style="color: #f5a623; font-size: 12px;">${stars}</span>
+                </div>
+                <p style="white-space: normal; -webkit-line-clamp: initial; font-size: 13px;">${r.text}</p>
+                <div style="font-size: 11px; color: #444; margin-top: 6px;">${date}</div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        document.getElementById('reviews-list').innerHTML = '<p style="color: #444; font-size: 13px;">Brak nowych opinii.</p>';
+      }
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: data.datasets.map(ds => ({
+            ...ds,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: ds.borderColor,
+            borderWidth: 2,
+            fill: true
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: '#888', font: { family: 'Inter' } }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#111' },
+              ticks: { color: '#444' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#444' }
+            }
+          }
+        }
+      });
+    } catch (err) {
+      console.error('Failed to load stats:', err);
+      loadingEl.innerHTML =
+        '<p class="stats-loading-text" style="color: #ff6b6b;">' +
+        'Nie udało się pobrać danych z Google Play.<br>' +
+        (err.message || 'Spróbuj odświeżyć stronę.') + '</p>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadGoogleStats);
+</script>
+{% endblock %}

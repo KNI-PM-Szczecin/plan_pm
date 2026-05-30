@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Pipeline</h1>
+  <p>Run and monitor your data processing pipeline.</p>
+</div>
+
+<div class="step-grid">
+  {% for key, step in steps.items() %}
+    <button
+      class="step-btn {% if running == key %}running{% endif %}"
+      onclick="runStep('{{ key }}')"
+      id="btn-{{ key }}"
+      {% if running and running != key %}disabled{% endif %}
+    >
+      <i class="bi {% if key == 'full' %}bi-play-fill{% elif key == 'mapper' %}bi-grid-3x3-gap-fill{% elif key == 'scrapper' %}bi-globe{% elif key == 'parser' %}bi-circle-half{% elif key == 'json2db' %}bi-upload{% else %}bi-building{% endif %}"></i>
+      {{ step.label }}
+    </button>
+  {% endfor %}
+</div>
+
+<div class="terminal-wrap">
+  <div class="terminal-header">
+    <span id="terminal-status" class="terminal-status idle">idle</span>
+    <button class="btn-clear" onclick="clearTerminal()">Wyczyść</button>
+  </div>
+  <pre id="terminal" class="terminal">&mdash; no output yet &mdash;</pre>
+</div>
+
+<div class="logs-section">
+  <div class="logs-title">LOGI MODUŁÓW</div>
+  <div class="log-tabs">
+    {% for mod in ['mapper', 'http_scrapper', 'scrapper', 'structure_updater'] %}
+      <button class="log-tab" id="tab-{{ mod }}" onclick="showLog('{{ mod }}')">{{ mod }}</button>
+    {% endfor %}
+  </div>
+  
+  <div class="terminal-wrap" id="module-logs-wrap" style="display:none; margin-top: 16px;">
+    <div class="terminal-header">
+      <span class="terminal-status" id="log-status">history logs</span>
+      <button class="btn-clear" onclick="closeLogs()">Zamknij</button>
+    </div>
+    <pre id="log-output" class="terminal" style="min-height: 200px; max-height: 400px;"></pre>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let activeStream = null;
+
+function setStatus(text, cls) {
+  const el = document.getElementById('terminal-status');
+  el.textContent = text;
+  el.className = 'terminal-status ' + cls;
+}
+
+function clearTerminal() {
+  document.getElementById('terminal').textContent = '— no output yet —';
+}
+
+function runStep(step) {
+  if (activeStream) activeStream.close();
+
+  const terminal = document.getElementById('terminal');
+  terminal.textContent = '';
+  setStatus('running: ' + step, 'running');
+
+  document.querySelectorAll('.step-btn').forEach(b => b.disabled = true);
+  document.getElementById('btn-' + step).classList.add('running');
+
+  activeStream = new EventSource('/pipeline/run/' + step);
+
+  activeStream.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.startsWith('[EXIT')) {
+      const code = parseInt(data.match(/\d+/)[0]);
+      setStatus(code === 0 ? 'done' : 'error (exit ' + code + ')', code === 0 ? 'done' : 'error');
+      document.querySelectorAll('.step-btn').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('running');
+      });
+      activeStream.close();
+      activeStream = null;
+    } else if (data.startsWith('[ERROR]')) {
+      terminal.textContent += data + '\n';
+      setStatus('error', 'error');
+      document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
+      activeStream.close();
+      activeStream = null;
+    } else {
+      terminal.textContent += data + '\n';
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+  };
+
+  activeStream.onerror = function() {
+    setStatus('połączenie zerwane', 'error');
+    document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
+    if (activeStream) { activeStream.close(); activeStream = null; }
+  };
+}
+
+function showLog(module) {
+  const wrap = document.getElementById('module-logs-wrap');
+  const out = document.getElementById('log-output');
+  
+  document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + module).classList.add('active');
+  
+  wrap.style.display = 'block';
+  out.textContent = 'Ładowanie...';
+
+  const es = new EventSource('/pipeline/logs/' + module);
+  let buf = '';
+  es.onmessage = function(e) {
+    const line = JSON.parse(e.data);
+    if (line === '[EOF]') { 
+      out.textContent = buf || '(puste)'; 
+      out.scrollTop = out.scrollHeight; 
+      es.close(); 
+    }
+    else buf += line + '\n';
+  };
+}
+
+function closeLogs() {
+    document.getElementById('module-logs-wrap').style.display = 'none';
+    document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+}
+</script>
+{% endblock %}

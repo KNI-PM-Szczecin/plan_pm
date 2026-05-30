@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>News</h1>
+  <p>Manage news and notifications for the mobile application.</p>
+</div>
+
+<div class="news-grid">
+  <div class="panel">
+    <div class="logs-title">Nowy post</div>
+    <form method="POST" action="{{ url_for('news.add') }}" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Tytuł</label>
+        <input type="text" id="title" name="title" required placeholder="Tytuł posta">
+      </div>
+
+      <div class="form-group">
+        <label for="content">Treść (obsługuje HTML)</label>
+        <textarea id="content" name="content" required placeholder="Wpisz treść..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="message_type">Typ</label>
+        <select id="message_type" name="message_type">
+          {% for value, label in message_types.items() %}
+            <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Zdjęcie</label>
+        <input type="file" id="image" name="image" accept="image/*" class="file-input">
+      </div>
+
+      <button type="submit" class="btn-primary">Dodaj post</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="logs-title">Podgląd</div>
+    <div class="preview-card">
+      <div id="preview-image-wrap">
+        <div class="card-image-placeholder">brak zdjęcia</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta" id="preview-meta">info • teraz</div>
+        <div class="card-title" id="preview-title">Tytuł posta</div>
+        <div class="card-content" id="preview-content">Tutaj pojawi się treść...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="posts-section">
+  <div class="logs-title">Opublikowane posty ({{ posts | length }})</div>
+  <div class="posts">
+    {% for post in posts %}
+      <div class="post">
+        <img class="post-thumb" src="{{ post.image_url or '' }}" alt=""
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="post-thumb-placeholder" style="display:none"></div>
+        <div class="post-body">
+          <h3>{{ post.title }}</h3>
+          <p>{{ post.content | striptags }}</p>
+        </div>
+        <div class="post-actions">
+          <span class="badge {{ post.message_type }}">{{ post.message_type }}</span>
+          <span class="meta">{{ post.created_at[:10] }}</span>
+          <div class="btn-group">
+            <button class="btn-edit" onclick="openEdit({{ post | tojson }})">Edytuj</button>
+            <button class="btn-delete"
+              onclick="if(confirm('Usuń post?')) fetch('/news/delete/{{ post.id }}', {method:'POST'}).then(() => location.reload())">Usuń</button>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p style="color:#444;font-size:13px;padding: 20px 0;">Brak postów.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay" onclick="closeEdit(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="logs-title">Edytuj post</span>
+      <button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('open')">&times;</button>
+    </div>
+    <form id="edit-form" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>Tytuł</label>
+        <input type="text" id="edit-title" name="title" required>
+      </div>
+      <div class="form-group">
+        <label>Treść</label>
+        <textarea id="edit-content" name="content" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Typ</label>
+        <select id="edit-type" name="message_type">
+          {% for value, label in message_types.items() %}
+            <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nowe zdjęcie</label>
+        <div id="edit-current-image"></div>
+        <input type="file" id="edit-image" name="image" accept="image/*" class="file-input">
+      </div>
+      <button type="submit" class="btn-primary">Zapisz zmiany</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const titleEl   = document.getElementById('title');
+  const contentEl = document.getElementById('content');
+  const typeEl    = document.getElementById('message_type');
+  const imageEl   = document.getElementById('image');
+
+  function update() {
+    document.getElementById('preview-title').textContent   = titleEl.value || 'Tytuł posta';
+    document.getElementById('preview-content').innerHTML   = contentEl.value || 'Tutaj pojawi się treść...';
+    document.getElementById('preview-meta').textContent    = (typeEl.value || 'info') + ' • teraz';
+  }
+
+  function updateImage() {
+    const file = imageEl.files[0];
+    const wrap = document.getElementById('preview-image-wrap');
+    wrap.innerHTML = file
+      ? `<img class="card-image" src="${URL.createObjectURL(file)}" alt="">`
+      : `<div class="card-image-placeholder">brak zdjęcia</div>`;
+  }
+
+  titleEl.addEventListener('input', update);
+  contentEl.addEventListener('input', update);
+  typeEl.addEventListener('change', update);
+  imageEl.addEventListener('change', updateImage);
+
+  function openEdit(post) {
+    document.getElementById('edit-title').value   = post.title;
+    document.getElementById('edit-content').value = post.content;
+    for (const opt of document.getElementById('edit-type').options)
+      opt.selected = opt.value === post.message_type;
+    const wrap = document.getElementById('edit-current-image');
+    wrap.innerHTML = post.image_url
+      ? `<img src="${post.image_url}" style="max-width:100%;max-height:120px;border-radius:6px;margin-bottom:10px;display:block;" onerror="this.style.display='none'">`
+      : '';
+    document.getElementById('edit-form').action = `/news/edit/${post.id}`;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeEdit(e) {
+    if (e.target === document.getElementById('modal-overlay'))
+      document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('modal-overlay').classList.remove('open');
+  });
+</script>
+{% endblock %}

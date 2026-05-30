@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan PM Admin{% if title %} — {{ title }}{% endif %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="navbar-brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo">
+      <span class="brand-name">Plan PM</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-sub">Admin</span>
+    </div>
+    <div class="navbar-tabs">
+      <a href="{{ url_for('pipeline.index') }}" class="navbar-tab {% if active == 'pipeline' %}active{% endif %}">Pipeline</a>
+      <a href="{{ url_for('news.index') }}"    class="navbar-tab {% if active == 'news'     %}active{% endif %}">News</a>
+      <a href="{{ url_for('stats.index') }}"   class="navbar-tab {% if active == 'stats'    %}active{% endif %}">Statistics</a>
+    </div>
+  </div>
+
+  <form method="POST" action="{{ url_for('settings.toggle_env') }}" style="margin:0">
+    <button type="submit" class="env-badge {{ env_mode }}">
+      <span class="dot"></span>
+      {{ env_mode | upper }}
+      <i class="bi bi-chevron-down"></i>
+    </button>
+  </form>
+</nav>
+
+<div class="wrapper">
+  {% if flash %}
+    <div class="flash">{{ flash }}</div>
+  {% endif %}
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  {% if error %}
+    <div class="flash error">⚠ {{ error }}</div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

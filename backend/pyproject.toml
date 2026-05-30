@@ -14,6 +14,8 @@ dependencies = [
     "selenium>=4.36",
     "supabase>=2.18",
     "pypdf>=6.0",
+    "google-api-python-client>=2.197.0",
+    "google-auth>=2.53.0",
 ]
 
 [tool.pytest.ini_options]
