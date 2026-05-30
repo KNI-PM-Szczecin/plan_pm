@@ -19,6 +19,9 @@ STEPS = {
     "structure": {"label": "Structure Updater", "cmd": [sys.executable, "-m", "structure_updater.structure_updater", "--source", "web"]},
 }
 
+# Single-flight guard for pipeline runs. In-process only — assumes the admin
+# runs on the single-process Flask dev server (app.run). It would NOT serialize
+# across multiple gunicorn/uwsgi workers; move to a DB/Redis lock if that changes.
 _lock = threading.Lock()
 _running: dict = {"step": None}
 

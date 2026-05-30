@@ -62,7 +62,8 @@ def index():
 @bp.route("/news/add", methods=["POST"])
 def add():
     try:
-        result = get_db().table("news").insert({
+        db = get_db()
+        result = db.table("news").insert({
             "title": request.form["title"],
             "content": request.form["content"],
             "message_type": request.form["message_type"],
@@ -71,7 +72,7 @@ def add():
         file = request.files.get("image")
         if file and file.filename:
             url = upload_image(file)
-            get_db().table("news").update({"image_url": url}).eq("id", result.data[0]["id"]).execute()
+            db.table("news").update({"image_url": url}).eq("id", result.data[0]["id"]).execute()
 
         session["flash"] = "Post dodany!"
     except APIError as e:

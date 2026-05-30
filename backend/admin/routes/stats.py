@@ -1,4 +1,5 @@
 import datetime
+import logging
 from pathlib import Path
 
 from flask import Blueprint, render_template, jsonify
@@ -8,6 +9,7 @@ from googleapiclient.discovery import build
 from admin.db import get_env_mode
 
 bp = Blueprint("stats", __name__)
+logger = logging.getLogger(__name__)
 
 BACKEND_ROOT = Path(__file__).parent.parent.parent
 PROJECT_ROOT = BACKEND_ROOT.parent
@@ -225,5 +227,6 @@ def google_play_stats():
             "reviews": reviews[:5],
         }
         return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        logger.exception("Google Play stats fetch failed")
+        return jsonify({"error": "Nie udało się pobrać danych z Google Play."}), 500

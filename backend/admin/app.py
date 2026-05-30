@@ -26,11 +26,18 @@ def create_app() -> Flask:
     app.register_blueprint(stats_bp)
 
     @app.before_request
-    def check_origin():
+    def guard():
         from flask import request
-        if request.method == "POST":
-            if request.remote_addr not in ("127.0.0.1", "::1"):
-                return "Forbidden", 403
+        # Reject cross-site requests (CSRF). This also covers the SSE GET
+        # endpoints (/pipeline/run, /pipeline/logs) which can run the pipeline
+        # and rewrite the prod DB — EventSource can't carry a CSRF token, so we
+        # rely on the browser-set Sec-Fetch-Site header. Absent header (older
+        # clients / curl) is allowed; only an explicit cross-site is blocked.
+        if request.headers.get("Sec-Fetch-Site") == "cross-site":
+            return "Forbidden", 403
+        # The admin tool is localhost-only — reject anything off loopback.
+        if request.remote_addr not in ("127.0.0.1", "::1"):
+            return "Forbidden", 403
 
     return app
 
