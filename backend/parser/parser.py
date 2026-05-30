@@ -15,8 +15,6 @@ MAP = {"Plan dla toku" : "program", "Przedmiot" : "subject", "Grupy" : "group", 
 
 DEBUG = False
 
-DEBUG = True
-
 ### DEBUG TOOL
 def printTok(tok):
     if not DEBUG:
@@ -194,9 +192,23 @@ class Parser:
         prof = teacher.find("prof. ", 1)
         dr = teacher.find("dr ", 7)
         mgr = teacher.find("mgr ", 1)
-    
+
+        # "kpt. ż. w." is a maritime title that can appear both as part of a compound
+        # academic title (e.g. "mgr inż. kpt. ż. w.") and as a standalone title for
+        # a second teacher. Distinguish by checking what precedes it:
+        # - preceded by '.' → part of compound title → find second occurrence
+        # - preceded by a name word (no dot) → starts a new teacher
+        first_kpt = teacher.find("kpt. ")
+        if first_kpt == -1:
+            kpt = -1
+        elif first_kpt == 0:
+            kpt = teacher.find("kpt. ", 5)
+        else:
+            before = teacher[:first_kpt].rstrip()
+            kpt = teacher.find("kpt. ", first_kpt + 5) if before.endswith('.') else first_kpt
+
         t = []
-    
+
         if prof != -1:
             t += self.parseTeachers(teacher[prof:])
             teacher = teacher[:prof]
@@ -206,9 +218,12 @@ class Parser:
         elif mgr != -1:
             t += (self.parseTeachers(teacher[mgr:]))
             teacher = teacher[:mgr]
-    
+        elif kpt != -1:
+            t += (self.parseTeachers(teacher[kpt:]))
+            teacher = teacher[:kpt]
+
         t.append(teacher.strip())
-    
+
         return t
 
     @staticmethod
