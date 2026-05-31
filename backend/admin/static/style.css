@@ -41,7 +41,6 @@ body {
 .brand-logo {
   height: 20px;
   width: auto;
-  filter: brightness(0) invert(1);
 }
 
 .brand-name {
