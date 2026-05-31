@@ -1,8 +1,18 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from os import path
 from json import loads as loadJSON, dumps as dumpJSON
 from dataclasses import dataclass, field
 from rich.progress import Progress
+
+# University times are Warsaw local; pin the zone so timestamps are identical
+# regardless of the host machine's timezone (json2db reads them back in the
+# same zone). Avoids cross-machine drift in the stored start/end times.
+WARSAW_TZ = ZoneInfo("Europe/Warsaw")
+
+from console_setup import force_utf8_output
+
+force_utf8_output()
 
 PROGRAM_TYPE = ["S", "N"]
 DEGREE_LEVEL = ["lic", "mgr", "inż."]
@@ -240,17 +250,16 @@ class Parser:
         return parsed_rooms
 
 
-    # Important!!! This will only work correctly if your system's date locale is Polish.
     @staticmethod
     def convertDateToTimestamp(date, start, end):
         date = date.split(".")
-        date = datetime(int(date[0]), int(date[1]), int(date[2].split(" ")[0]))
+        date = datetime(int(date[0]), int(date[1]), int(date[2].split(" ")[0]), tzinfo=WARSAW_TZ)
         start = start.split(":")
         end = end.split(":")
-    
+
         start = date.replace(hour=int(start[0]), minute=int(start[1]), second=0).timestamp()
         end = date.replace(hour=int(end[0]), minute=int(end[1]), second=0).timestamp()
-    
+
         return start, end
 
 

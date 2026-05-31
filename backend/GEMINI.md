@@ -9,10 +9,10 @@ The project is a data pipeline that scrapes, parses, and uploads university sche
 ### Tech Stack
 - **Language:** Python 3.13+
 - **Database:** Supabase (PostgreSQL + Storage)
-- **Scraping:** Selenium (Chrome) or `requests` (HTTP-only)
+- **Scraping:** `requests` (HTTP-only; mimics DevExpress AJAX callbacks)
 - **Data Processing:** BeautifulSoup4, Python standard library
 - **Admin UI:** Flask
-- **Testing:** pytest with coverage reporting
+- **Testing:** pytest
 
 ## Project Structure
 
@@ -20,16 +20,17 @@ The project is a data pipeline that scrapes, parses, and uploads university sche
 backend/
 ├── main.py                  # Entry point – runs the full schedule pipeline
 ├── mapper/                  # Step 1 – detects active schedule IDs
-├── scrapper/                # Step 2 – scrapes schedules (HTTP or Selenium)
+├── scrapper/                # Step 2 – scrapes schedules over HTTP (no browser)
 ├── parser/                  # Step 3 – normalises raw data into structured JSON
 ├── json2db/                 # Step 4 – uploads processed data to Supabase
 ├── structure_updater/       # Separate pipeline – updates university structure
-├── admin/                   # Flask admin UI (formerly news_tool)
+├── admin/                   # Flask admin panel (formerly news_tool)
 │   ├── app.py               # Flask application
+│   ├── routes/              # news, pipeline, stats, settings blueprints
 │   ├── static/              # CSS and static assets
 │   └── templates/           # HTML templates
-├── docs/                    # Technical documentation and reference files
-├── output/                  # Intermediate JSON files (gitignored, but examples exist)
+├── mcp_server/              # MCP server – drive the backend from an agent
+├── output/                  # Intermediate JSON files (gitignored)
 └── logs/                    # Process logs (gitignored)
 ```
 
@@ -46,21 +47,20 @@ backend/
 
 ### Full Schedule Pipeline
 ```bash
-python main.py                          # Run with default HTTP scrapper
+python main.py                          # HTTP scrapper, 10 workers (default)
 python main.py --workers 20             # Parallelize with more workers
-python main.py --old-scrapper           # Fallback to Selenium scrapper
 ```
 
 ### University Structure Update
 ```bash
-python -m structure_updater.structure_updater --source web
-python -m structure_updater.structure_updater --source xml --xml-path docs/structure.xml
+python -m structure_updater.structure_updater            # scrape + write to DB
+python -m structure_updater.structure_updater --dry-run  # preview only
 ```
 
-### Admin UI (News Management)
+### Admin Panel
 ```bash
-python admin/app.py
-# Access at http://localhost:5050
+python -m admin.app
+# Access at http://127.0.0.1:5050 (localhost only)
 ```
 
 ### Individual Steps
@@ -78,8 +78,7 @@ The project uses `pytest` with markers to distinguish between fast and slow test
 
 ```bash
 pytest -m "not slow"          # Unit tests and fast integrations
-pytest -m slow                # Integration tests (network/Selenium)
-pytest --cov=.                # Run with coverage report
+pytest -m slow                # Integration tests (network)
 ```
 
 ## Development Conventions
@@ -97,8 +96,7 @@ The schedule pipeline follows a strict flow: `Mapper -> Scrapper -> Parser -> js
 - `SUPABASE_SERVICE_KEY` is required for administrative tasks like clearing tables.
 
 ### Scraping
-- **HTTP Scrapper (Preferred):** Faster and more reliable. It mimics DevExpress AJAX callbacks.
-- **Selenium Scrapper (Fallback):** Used if the HTTP protocol changes. Requires a headless Chrome environment.
+- **HTTP-only:** the scrapper mimics DevExpress AJAX callbacks (~2s/plan). The old Selenium scrapper has been removed.
 
 ### Code Style
 - Use `logging` instead of `print` for process-long tasks. Logs are stored in the `logs/` directory.
@@ -106,19 +104,20 @@ The schedule pipeline follows a strict flow: `Mapper -> Scrapper -> Parser -> js
 
 ## Configuration
 
-Required `.env` variables:
+Required `.env` variables (the backend is trusted server-side and uses the
+service-role key only — the anon key was dropped):
 ```env
 SUPABASE_URL=https://<project>.supabase.co
-SUPABASE_KEY=<anon_key>
 SUPABASE_SERVICE_KEY=<service_role_key>
 
 # Optional test environment
 TEST_SUPABASE_URL=...
-TEST_SUPABASE_KEY=...
 TEST_SUPABASE_SERVICE_KEY=...
 ```
 
-Control database target via `.env_mode` file (content: `test` or `prod`).
+Control database target via `.env_mode` file (content: `test` or `prod`),
+overridable per-run with the `PLANPM_ENV` environment variable.
 
 ## Technical Documentation
-For detailed insights into the scraping logic and DevExpress grid internals, refer to `docs/agent.md`.
+For architecture, conventions, data flow, and gotchas, see the repository
+`CLAUDE.md` (the primary backend reference).

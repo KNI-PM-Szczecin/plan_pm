@@ -10,6 +10,10 @@ import json
 import logging
 from rich.progress import Progress
 
+from console_setup import force_utf8_output
+
+force_utf8_output()
+
 class Mapper:
     def __init__(self, output = "./output/mapper.json"):
         print("Running mapper.")

@@ -7,6 +7,16 @@ from dotenv import load_dotenv
 from supabase import create_client
 import datetime
 import time
+from zoneinfo import ZoneInfo
+
+from console_setup import force_utf8_output
+
+force_utf8_output()
+
+# Read epoch timestamps back in the same zone the parser wrote them (Warsaw),
+# so the formatted start/end strings — which are also the upsert/join keys —
+# are deterministic regardless of the host machine's timezone.
+WARSAW_TZ = ZoneInfo("Europe/Warsaw")
 
 # Database structure:
 # Building
@@ -166,8 +176,7 @@ class json2db:
         for program in self.data["programs"]:
             # Calculate shitty academic year to current year
             programs_year: int = int(program["academic_year"].split(" ")[0].split("/")[0])
-            
-            programs_year = programs_year
+
             current_academic_start_year = current_year if is_winter_semester else current_year - 1
             
             if programs_year > current_academic_start_year:
@@ -236,8 +245,8 @@ class json2db:
             subject = sclass["subject"]
             subject_name = self.data["subjects"][subject]
 
-            start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
-            end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"])).strftime("%Y-%m-%dT%H:%M:%S")
+            start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
+            end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
 
             current_class_key = (subject_name, start_time_formatted, sclass["group"], program_name)
 
@@ -281,7 +290,7 @@ class json2db:
 
             subject = self.data["subjects"][found_class_json["subject"]]
             group = found_class_json["group"]
-            start_time = datetime.datetime.fromtimestamp(int(found_class_json["startTime"])).strftime("%Y-%m-%dT%H:%M:%S")
+            start_time = datetime.datetime.fromtimestamp(int(found_class_json["startTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
 
             unique_class_key = (subject, group, start_time)
 

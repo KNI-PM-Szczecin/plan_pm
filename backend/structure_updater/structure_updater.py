@@ -10,6 +10,9 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 from notifier import notify_discord
+from console_setup import force_utf8_output
+
+force_utf8_output()
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -133,15 +136,22 @@ def fetch_structure_from_web() -> list[dict]:
 # ── Database ──────────────────────────────────────────────────────────────────
 
 def propagate_structure_to_db(db, structure: list[dict]) -> None:
+    # NOTE: PostgREST does not guarantee that a bulk insert returns rows in input
+    # order, so we match returned ids back to inputs by name/key rather than by
+    # positional zip — otherwise faculty/course ids could attach to the wrong
+    # parent and silently corrupt the whole tree.
+
     # 1 insert — all faculties
     faculty_rows = db.table(FACULTIES_TABLE_NAME).insert(
         [{"name": f["name"]} for f in structure]
     ).execute()
+    faculty_id_by_name = {row["name"]: row["id"] for row in faculty_rows.data}
 
-    # flatten degree courses, attaching the returned faculty IDs
+    # flatten degree courses, attaching the returned faculty IDs (matched by name)
     degree_courses_flat = [
-        {"name": dc["name"], "faculty_id": row["id"], "specialisations": dc["specialisations"]}
-        for faculty, row in zip(structure, faculty_rows.data)
+        {"name": dc["name"], "faculty_id": faculty_id_by_name[faculty["name"]],
+         "specialisations": dc["specialisations"]}
+        for faculty in structure
         for dc in faculty["degree_courses"]
     ]
 
@@ -149,11 +159,13 @@ def propagate_structure_to_db(db, structure: list[dict]) -> None:
     dc_rows = db.table(DEGREE_COURSES_TABLE_NAME).insert(
         [{"name": dc["name"], "faculty_id": dc["faculty_id"]} for dc in degree_courses_flat]
     ).execute()
+    # (name, faculty_id) is unique per degree course
+    dc_id_by_key = {(row["name"], row["faculty_id"]): row["id"] for row in dc_rows.data}
 
-    # flatten specialisations, attaching the returned degree course IDs
+    # flatten specialisations, attaching the returned degree course IDs (matched by key)
     specialisations_flat = [
-        {"name": spec, "degree_course_id": row["id"]}
-        for dc, row in zip(degree_courses_flat, dc_rows.data)
+        {"name": spec, "degree_course_id": dc_id_by_key[(dc["name"], dc["faculty_id"])]}
+        for dc in degree_courses_flat
         for spec in dc["specialisations"]
     ]
 

@@ -44,15 +44,26 @@ def _resolve_mode(env: str | None) -> str:
     return mode_file.read_text().strip() if mode_file.exists() else "prod"
 
 
-def _run(cmd: list[str], env: str | None = None) -> str:
+# Cap returned subprocess output: a full pipeline emits a lot, and the whole
+# string is fed back to the agent as a tool result (context-window cost).
+_MAX_OUTPUT_CHARS = 20000
+
+
+def _run(cmd: list[str], env: str | None = None) -> tuple[str, int]:
     # Propagate the chosen environment to the subprocess via PLANPM_ENV, which
     # json2db / structure_updater / main read in preference to .env_mode.
+    # PYTHONUTF8/IOENCODING keep Windows consoles from crashing on emoji output.
     proc_env = dict(os.environ)
     proc_env["PLANPM_ENV"] = _resolve_mode(env)
+    proc_env["PYTHONUTF8"] = "1"
+    proc_env["PYTHONIOENCODING"] = "utf-8"
     result = subprocess.run(cmd, capture_output=True, text=True,
+                            encoding="utf-8", errors="replace",
                             cwd=str(BACKEND_ROOT), env=proc_env)
     out = (result.stdout + result.stderr).strip()
-    return out + f"\n[exit {result.returncode}]"
+    if len(out) > _MAX_OUTPUT_CHARS:
+        out = "…(output obcięty)…\n" + out[-_MAX_OUTPUT_CHARS:]
+    return out, result.returncode
 
 
 def _get_db(env: str | None = None):
@@ -74,11 +85,11 @@ def run_pipeline_step(step: str, env: str = "prod") -> str:
     if step not in STEP_COMMANDS:
         return f"Nieznany krok: {step}. Dostępne: {', '.join(STEP_COMMANDS)}"
     mode = _resolve_mode(env)
-    output = _run(STEP_COMMANDS[step], env=mode)
+    output, code = _run(STEP_COMMANDS[step], env=mode)
     if step in _DB_STEPS:
-        notify_discord(f"Pipeline: {step}", success=output.rstrip().endswith("[exit 0]"),
+        notify_discord(f"Pipeline: {step}", success=(code == 0),
                        detail="źródło: MCP", env=mode, stats=pipeline_stats_text())
-    return output
+    return f"{output}\n[exit {code}]"
 
 
 @mcp.tool()
@@ -88,10 +99,10 @@ def run_full_pipeline(env: str = "prod") -> str:
     env: 'prod' (domyślnie) lub 'test' — na którą bazę danych działać.
     """
     mode = _resolve_mode(env)
-    output = _run([sys.executable, "main.py"], env=mode)
-    notify_discord("Full Pipeline", success=output.rstrip().endswith("[exit 0]"),
+    output, code = _run([sys.executable, "main.py"], env=mode)
+    notify_discord("Full Pipeline", success=(code == 0),
                    detail="źródło: MCP", env=mode, stats=pipeline_stats_text())
-    return output
+    return f"{output}\n[exit {code}]"
 
 
 @mcp.tool()
@@ -154,8 +165,12 @@ def delete_news(post_id: str, env: str = "prod") -> str:
 
     env: 'prod' (domyślnie) lub 'test'.
     """
-    db = _get_db(env)
-    db.table("news").delete().eq("id", post_id).execute()
+    mode = _resolve_mode(env)
+    db = _get_db(mode)
+    result = db.table("news").delete().eq("id", post_id).execute()
+    if not result.data:
+        return f"Nie znaleziono newsa o id {post_id} — nic nie usunięto."
+    notify_discord("Usunięto news", success=True, detail=f"{post_id} (źródło: MCP)", env=mode)
     return f"Usunięto post {post_id}"
 
 
@@ -178,8 +193,11 @@ def set_env_mode(mode: str) -> str:
         return f"Nieprawidłowy tryb: {mode}. Użyj: prod lub test"
     result = subprocess.run(
         [sys.executable, "scripts/switch_env.py", mode],
-        capture_output=True, text=True, cwd=str(REPO_ROOT),
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        cwd=str(REPO_ROOT),
     )
+    if result.returncode != 0:
+        return f"Błąd przełączania na {mode}: {(result.stderr or result.stdout).strip()}"
     return result.stdout.strip() or f"Przestawiono na: {mode}"
 
 

@@ -20,6 +20,10 @@ import requests
 from bs4 import BeautifulSoup
 from rich.progress import Progress
 
+from console_setup import force_utf8_output
+
+force_utf8_output()
+
 BASE_URL = "https://plany.am.szczecin.pl"
 # Stałe stany okien (niezmienne w DevExpress)
 WINDOW_STATE_HTML = '{"windowsState":"0:0:-1:0:0:0:-10000:-10000:1:0:0:0"}'.replace('"', '&quot;')
@@ -193,14 +197,12 @@ class HttpScrapper:
         self.stats = {
             "success": 0,
             "download_fail": 0,
-            "interaction_fail": 0,
             "parse_fail": 0,
             "total": 0,
         }
         self.failed_flows = []
 
     def scrapper(self, flow_id, progress=None):
-        self.stats["total"] += 1
         log_print = progress.console.print if progress else print
         log_print(f"📥 Scraping plan {flow_id}... ")
         self.logger.info(f"[{flow_id}] Scraping plan")
@@ -209,16 +211,26 @@ class HttpScrapper:
 
         try:
             schedule_data = fetch_plan_http(str(flow_id))
-        except Exception as e:
+        except requests.RequestException as e:
             log_print(f"❌ {flow_id}: Błąd pobierania.")
             self.logger.error(f"{flow_id}: Pobieranie nie powiodło się: {e}")
             with self.output_lock:
                 self.failed_flows.append(flow_id)
-                self.stats["interaction_fail"] += 1
+                self.stats["total"] += 1
+                self.stats["download_fail"] += 1
+            return
+        except Exception as e:
+            log_print(f"❌ {flow_id}: Błąd parsowania.")
+            self.logger.error(f"{flow_id}: Parsowanie nie powiodło się: {e}")
+            with self.output_lock:
+                self.failed_flows.append(flow_id)
+                self.stats["total"] += 1
+                self.stats["parse_fail"] += 1
             return
 
         with self.output_lock:
             self.results.extend(schedule_data)
+            self.stats["total"] += 1
             self.stats["success"] += 1
 
         self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie — {len(schedule_data)} rekordów.")
@@ -251,7 +263,6 @@ class HttpScrapper:
         print("\n📊 Statystyki:")
         print(f" - Łącznie prób:        {total}")
         print(f" - Sukcesów:           {self.stats['success']}")
-        print(f" - Błędy interakcji:   {self.stats['interaction_fail']}")
         print(f" - Nie pobrano pliku:  {self.stats['download_fail']}")
         print(f" - Błędy parsowania:   {self.stats['parse_fail']}")
         print(f" - Niepowodzenia:      {len(self.failed_flows)}")

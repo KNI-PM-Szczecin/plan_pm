@@ -75,23 +75,31 @@ STRUCTURE_STUB = [
 
 
 def _make_db_mock(faculty_ids=None, dc_ids=None):
-    """Build a minimal Supabase client mock with stable per-table objects."""
+    """Build a minimal Supabase client mock with stable per-table objects.
+
+    insert() echoes the inserted rows back with an "id" attached (like PostgREST
+    RETURNING *), so propagate_structure_to_db can match ids to inputs by name.
+    """
     db = MagicMock()
     _tables = {}
+    id_pools = {
+        "faculties": list(faculty_ids or [1]),
+        "degree_courses": list(dc_ids or [10, 20]),
+    }
 
     def _tbl(name):
         if name not in _tables:
             tbl = MagicMock()
-            if name == "faculties":
-                tbl.insert.return_value.execute.return_value.data = [
-                    {"id": fid} for fid in (faculty_ids or [1])
-                ]
-            elif name == "degree_courses":
-                tbl.insert.return_value.execute.return_value.data = [
-                    {"id": did} for did in (dc_ids or [10, 20])
-                ]
-            else:
-                tbl.insert.return_value.execute.return_value.data = []
+
+            def _insert(rows, _name=name):
+                ids = id_pools.get(_name, [])
+                data = [{**row, "id": (ids[i] if i < len(ids) else 1000 + i)}
+                        for i, row in enumerate(rows)]
+                result = MagicMock()
+                result.execute.return_value.data = data
+                return result
+
+            tbl.insert.side_effect = _insert
             _tables[name] = tbl
         return _tables[name]
 

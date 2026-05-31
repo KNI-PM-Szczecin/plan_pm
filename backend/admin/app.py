@@ -65,15 +65,24 @@ def create_app() -> Flask:
     @app.before_request
     def guard():
         from flask import request
-        # Reject cross-site requests (CSRF). This also covers the SSE GET
+        # Reject cross-origin requests (CSRF). This also covers the SSE GET
         # endpoints (/pipeline/run, /pipeline/logs) which can run the pipeline
         # and rewrite the prod DB — EventSource can't carry a CSRF token, so we
-        # rely on the browser-set Sec-Fetch-Site header. Absent header (older
-        # clients / curl) is allowed; only an explicit cross-site is blocked.
-        if request.headers.get("Sec-Fetch-Site") == "cross-site":
+        # rely on the browser-set Sec-Fetch-Site header. A browser cannot forge
+        # this header, so we only ALLOW values that mean "from our own page":
+        # 'same-origin' (fetch/EventSource) and 'none' (address-bar navigation).
+        # 'same-site' (another localhost origin) and 'cross-site' are blocked.
+        # Absent header (curl / non-browser) is allowed since it can't be set by
+        # a hostile page anyway, and the loopback check below still applies.
+        fetch_site = request.headers.get("Sec-Fetch-Site")
+        if fetch_site is not None and fetch_site not in ("same-origin", "none"):
             return "Forbidden", 403
         # The admin tool is localhost-only — reject anything off loopback.
-        if request.remote_addr not in ("127.0.0.1", "::1"):
+        # Normalize IPv4-mapped IPv6 (e.g. '::ffff:127.0.0.1') from dual-stack binds.
+        addr = request.remote_addr or ""
+        if addr.startswith("::ffff:"):
+            addr = addr[len("::ffff:"):]
+        if addr not in ("127.0.0.1", "::1"):
             return "Forbidden", 403
 
     return app

@@ -20,9 +20,7 @@ charset-normalizer==3.4.7
 click==8.4.1
     # via flask
 colorama==0.4.6 ; sys_platform == 'win32'
-    # via
-    #   click
-    #   pytest
+    # via click
 cryptography==48.0.0
     # via
     #   google-auth
@@ -74,8 +72,6 @@ idna==3.16
     #   httpx
     #   requests
     #   yarl
-iniconfig==2.3.0
-    # via pytest
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
@@ -92,13 +88,9 @@ mdurl==0.1.2
 multidict==6.7.1
     # via yarl
 packaging==26.2
-    # via
-    #   deprecation
-    #   pytest
+    # via deprecation
 pillow==12.2.0
     # via plan-pm-backend
-pluggy==1.6.0
-    # via pytest
 postgrest==2.25.1
     # via supabase
 propcache==0.5.2
@@ -127,9 +119,7 @@ pydantic==2.13.4
 pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
-    # via
-    #   pytest
-    #   rich
+    # via rich
 pyjwt==2.13.0
     # via
     #   plan-pm-backend
@@ -137,8 +127,6 @@ pyjwt==2.13.0
 pyparsing==3.3.2
     # via httplib2
 pypdf==6.12.1
-    # via plan-pm-backend
-pytest==9.0.3
     # via plan-pm-backend
 python-dotenv==1.2.2
     # via plan-pm-backend

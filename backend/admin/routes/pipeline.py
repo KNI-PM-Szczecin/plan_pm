@@ -1,10 +1,12 @@
 import json
+import os
+import queue
 import subprocess
 import sys
 import threading
 from pathlib import Path
 
-from flask import Blueprint, Response, render_template, session, redirect, url_for
+from flask import Blueprint, Response, render_template, session
 
 from admin.db import get_env_mode
 from notifier import notify_discord, pipeline_stats_text
@@ -89,14 +91,32 @@ def run(step: str):
 
     if not _lock.acquire(blocking=False):
         return Response(
-            f"data: {json.dumps('[ERROR] Inny krok jest już uruchomiony.')}\n\n",
+            f"data: {json.dumps('[ERROR] Inny krok jest już uruchomiony: ' + str(_running['step']))}\n\n"
+            f"data: {json.dumps('[EXIT 1]')}\n\n",
             mimetype="text/event-stream",
         )
 
     _running["step"] = step
 
-    def generate():
+    # The subprocess runs in a worker thread that OWNS the lock release and
+    # process cleanup, so the lock can't leak if the client disconnects. The SSE
+    # generator only relays lines from a queue; on disconnect it kills the proc.
+    q: "queue.Queue" = queue.Queue()
+    DONE = object()
+    proc_holder: list = []
+
+    def worker():
+        proc = None
         try:
+            # Match the displayed env exactly, and force UTF-8 + unbuffered so
+            # Windows consoles don't crash on emoji and logs stream live.
+            env = {
+                **os.environ,
+                "PLANPM_ENV": get_env_mode(),
+                "PYTHONUTF8": "1",
+                "PYTHONIOENCODING": "utf-8",
+                "PYTHONUNBUFFERED": "1",
+            }
             proc = subprocess.Popen(
                 STEPS[step]["cmd"],
                 stdout=subprocess.PIPE,
@@ -105,19 +125,46 @@ def run(step: str):
                 encoding="utf-8",
                 errors="replace",
                 cwd=str(BACKEND_ROOT),
+                env=env,
             )
+            proc_holder.append(proc)
             for line in proc.stdout:
-                yield f"data: {json.dumps(line.rstrip())}\n\n"
+                q.put(("log", line.rstrip()))
             code = proc.wait()
-            yield f"data: {json.dumps(f'[EXIT {code}]')}\n\n"
+            q.put(("exit", code))
             # Notify Discord for DB-touching steps. structure_updater notifies
             # itself (any caller), so it's excluded here to avoid duplicates.
             if step in ("full", "json2db"):
                 notify_discord(STEPS[step]["label"], success=(code == 0),
                                stats=pipeline_stats_text())
+        except Exception as e:
+            q.put(("log", f"[ERROR] Nie udało się uruchomić kroku: {e}"))
+            q.put(("exit", 1))
         finally:
+            if proc and proc.poll() is None:
+                proc.kill()
             _running["step"] = None
             _lock.release()
+            q.put((DONE, None))
+
+    threading.Thread(target=worker, daemon=True).start()
+
+    def generate():
+        try:
+            while True:
+                kind, val = q.get()
+                if kind is DONE:
+                    break
+                if kind == "log":
+                    yield f"data: {json.dumps(val)}\n\n"
+                else:  # exit
+                    yield f"data: {json.dumps(f'[EXIT {val}]')}\n\n"
+        except GeneratorExit:
+            # Client disconnected mid-run — stop the subprocess so it doesn't keep
+            # writing to the DB; the worker's finally still releases the lock.
+            if proc_holder and proc_holder[0].poll() is None:
+                proc_holder[0].kill()
+            raise
 
     return Response(generate(), mimetype="text/event-stream")
 

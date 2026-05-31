@@ -115,17 +115,23 @@ def _fetch_reviews(publisher):
     reviews_data = publisher.reviews().list(packageName=PACKAGE_NAME).execute()
     reviews = []
     total_rating = 0
+    rated = 0
     for r in reviews_data.get("reviews", []):
-        comment = r.get("comments", [{}])[0].get("userComment", {})
+        # A review's comments list can contain a developerComment (the reply)
+        # alongside/before the userComment — pick the one that is the user's.
+        comments = r.get("comments", [])
+        comment = next((c["userComment"] for c in comments if "userComment" in c), {})
         rating = comment.get("starRating", 0)
-        total_rating += rating
+        if rating:
+            total_rating += rating
+            rated += 1
         reviews.append({
             "author": r.get("authorName"),
             "rating": rating,
             "text": comment.get("text"),
             "lastModified": comment.get("lastModified", {}).get("seconds"),
         })
-    avg_rating = round(total_rating / len(reviews), 2) if reviews else 0
+    avg_rating = round(total_rating / rated, 2) if rated else 0
     return reviews, avg_rating
 
 
