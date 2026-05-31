@@ -29,6 +29,15 @@ ENV_CONFIG_DART.write_text(
     "\n"
     "// Set to true to always show the \"What's new\" dialog (for UI development)\n"
     "const bool kDebugWhatsNew = false;\n"
+    "\n"
+    "// Set to true to return mock news data (bypasses Supabase)\n"
+    "const bool kDebugNews = false;\n"
+    "\n"
+    "// ImgBB URL to use for the mock news image (empty = no image)\n"
+    "const String kDebugNewsImageUrl = \"\";\n"
+    "\n"
+    "// Set to true to always show the rector hours banner (for UI development)\n"
+    "const bool kDebugRectorHours = false;\n"
 )
 
 print(f"Przestawiono na: {mode}")

@@ -140,12 +140,10 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 SUPABASE_URL=https://<project>.supabase.co
-SUPABASE_KEY=<anon_key>
-SUPABASE_SERVICE_KEY=<service_role_key>   # required for json2db clear_db and news_tool uploads
+SUPABASE_SERVICE_KEY=<service_role_key>
 
 # Optional – test database (used when .env_mode contains "test")
 TEST_SUPABASE_URL=https://<test-project>.supabase.co
-TEST_SUPABASE_KEY=<test_anon_key>
 TEST_SUPABASE_SERVICE_KEY=<test_service_role_key>
 TEST_DB_URL=postgresql://...              # for direct DB access in slow tests
 ```
