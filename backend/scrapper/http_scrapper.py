@@ -181,7 +181,7 @@ class HttpScrapper:
 
         if not self.logger.handlers:
             os.makedirs("./logs", exist_ok=True)
-            handler = logging.FileHandler("./logs/http_scrapper.log", mode="w+", encoding="utf-8")
+            handler = logging.FileHandler("./logs/scrapper.log", mode="w+", encoding="utf-8")
             formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)

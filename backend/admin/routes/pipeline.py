@@ -14,10 +14,10 @@ BACKEND_ROOT = Path(__file__).parent.parent.parent
 STEPS = {
     "full":      {"label": "Full Pipeline",     "cmd": [sys.executable, "main.py"]},
     "mapper":    {"label": "Mapper",            "cmd": [sys.executable, "-c", "from mapper import Mapper; Mapper(output='./output/mapper.json').run(minID=0, maxID=600)"]},
-    "scrapper":  {"label": "Scrapper (HTTP)",   "cmd": [sys.executable, "-c", "from scrapper import HttpScrapper; HttpScrapper(input='./output/mapper.json', output='./output/scrapper.json').run()"]},
+    "scrapper":  {"label": "Scrapper",          "cmd": [sys.executable, "-c", "from scrapper import HttpScrapper; HttpScrapper(input='./output/mapper.json', output='./output/scrapper.json').run()"]},
     "parser":    {"label": "Parser",            "cmd": [sys.executable, "-c", "from parser import Parser; Parser(input='scrapper.json').run()"]},
     "json2db":   {"label": "Upload to DB",      "cmd": [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', clear=True).run()"]},
-    "structure": {"label": "Structure Updater", "cmd": [sys.executable, "-m", "structure_updater.structure_updater", "--source", "web"]},
+    "structure": {"label": "Structure Updater", "cmd": [sys.executable, "-m", "structure_updater.structure_updater"]},
 }
 
 # Single-flight guard for pipeline runs. In-process only — assumes the admin
@@ -83,8 +83,9 @@ def run(step: str):
                 yield f"data: {json.dumps(line.rstrip())}\n\n"
             code = proc.wait()
             yield f"data: {json.dumps(f'[EXIT {code}]')}\n\n"
-            # Notify Discord for DB-touching steps (those that push to an env).
-            if step in ("full", "json2db", "structure"):
+            # Notify Discord for DB-touching steps. structure_updater notifies
+            # itself (any caller), so it's excluded here to avoid duplicates.
+            if step in ("full", "json2db"):
                 notify_discord(STEPS[step]["label"], success=(code == 0))
         finally:
             _running["step"] = None
@@ -95,7 +96,7 @@ def run(step: str):
 
 @bp.route("/pipeline/logs/<module>")
 def logs(module: str):
-    allowed = {"mapper", "http_scrapper", "scrapper", "structure_updater"}
+    allowed = {"mapper", "scrapper", "structure_updater"}
     if module not in allowed:
         return "Not found", 404
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"

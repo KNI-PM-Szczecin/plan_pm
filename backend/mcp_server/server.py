@@ -21,8 +21,9 @@ sys.path.insert(0, str(BACKEND_ROOT))
 
 from notifier import notify_discord
 
-# Pipeline steps that write to the database (worth a Discord notification).
-_DB_STEPS = {"json2db", "structure"}
+# Pipeline steps worth a Discord notification from here. structure_updater
+# notifies itself, so it's excluded to avoid duplicate messages.
+_DB_STEPS = {"json2db"}
 
 mcp = FastMCP("plan-pm-backend")
 
@@ -31,7 +32,7 @@ STEP_COMMANDS = {
     "scrapper":  [sys.executable, "-c", "from scrapper import HttpScrapper; HttpScrapper(input='./output/mapper.json', output='./output/scrapper.json').run()"],
     "parser":    [sys.executable, "-c", "from parser import Parser; Parser(input='scrapper.json').run()"],
     "json2db":   [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', clear=True).run()"],
-    "structure": [sys.executable, "-m", "structure_updater.structure_updater", "--source", "web"],
+    "structure": [sys.executable, "-m", "structure_updater.structure_updater"],
 }
 
 
@@ -98,9 +99,9 @@ def get_logs(module: str, lines: int = 50) -> str:
     """
     Zwraca ostatnie N linii logu danego modułu.
 
-    Dostępne moduły: mapper, http_scrapper, scrapper, structure_updater
+    Dostępne moduły: mapper, scrapper, structure_updater
     """
-    allowed = {"mapper", "http_scrapper", "scrapper", "structure_updater"}
+    allowed = {"mapper", "scrapper", "structure_updater"}
     if module not in allowed:
         return f"Nieznany moduł: {module}. Dostępne: {', '.join(allowed)}"
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"

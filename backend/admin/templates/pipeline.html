@@ -44,7 +44,7 @@
 <div class="logs-section">
   <div class="logs-title">LOGI MODUŁÓW</div>
   <div class="log-tabs">
-    {% for mod in ['mapper', 'http_scrapper', 'scrapper', 'structure_updater'] %}
+    {% for mod in ['mapper', 'scrapper', 'structure_updater'] %}
       <button class="log-tab" id="tab-{{ mod }}" onclick="showLog('{{ mod }}')">{{ mod }}</button>
     {% endfor %}
   </div>
