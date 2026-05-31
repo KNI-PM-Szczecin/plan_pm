@@ -1,8 +1,8 @@
 from datetime import datetime
 from os import path
-from os import path
 from json import loads as loadJSON, dumps as dumpJSON
 from dataclasses import dataclass, field
+from rich.progress import Progress
 
 PROGRAM_TYPE = ["S", "N"]
 DEGREE_LEVEL = ["lic", "mgr", "inż."]
@@ -57,13 +57,14 @@ class ScheduleData:
     _subjects_set: set = field(default_factory=set, init=False, repr=False)
     _rooms_set: set = field(default_factory=set, init=False, repr=False)
 
-def progressBar(progress, max, bar=40):
-    if(progress>=max-1):
-        print(f"\r✅ [{bar*'█'}] {max}/{max} 100%              \n")
-        return
-    diff = int((max-progress)/max*bar)
-    print(f"\r❌ [{(bar-diff)*'█'}{diff*'░'}] {progress}/{max} {progress/max*100:.1f}%              ", end='')
-    return False
+def _with_progress(items, label):
+    """Yield items while showing a rich progress bar (matches mapper/scrapper)."""
+    items = list(items)
+    with Progress() as p:
+        task = p.add_task(label, total=len(items))
+        for item in items:
+            yield item
+            p.update(task, advance=1)
 
 class Parser:
     def __init__(self, debug=False, input = "scrapper.json", output = "./output", outputFile="parser.json"):
@@ -85,14 +86,14 @@ class Parser:
 
     def getTokAndPlan(self):
         print("Loading the JSON")
-        length = len(self.tok)
-        for tmp, i in enumerate(self.tok):
-            progressBar(tmp, length)
+        for i in _with_progress(self.tok, "Wczytywanie toków..."):
             self.breakDownTok(i)
 
         print("Cleaning up tok strings")
-        length = len(self.sched.programs)
-        self.sched.programs = [self.tokStringToDic(tok) for i, tok in enumerate(self.sched.programs) if not progressBar(i, length)]
+        self.sched.programs = [
+            self.tokStringToDic(tok)
+            for tok in _with_progress(self.sched.programs, "Czyszczenie toków...")
+        ]
     
         print("Normalizing classes")
         self.sched.classes = self.normalizeClasses(self.sched.classes, self.sched.teachers, self.sched.rooms)
@@ -261,23 +262,19 @@ class Parser:
             parsed = self.parseRooms(sala_str)
             return room_to_idx.get(parsed[0]) if parsed else None
 
-        length = len(classes)
-        return [{k: v for k, v in c.items() if k not in {"Liczba godzin", "Forma zajęć", "Forma zaliczenia"}} | {"Prowadzący": [teacher_to_idx[x] for x in self.parseTeachers(c["Prowadzący"])], "Sala": sala_idx(c["Sala"])} for num, c in enumerate(classes) if not progressBar(num, length) ]
+        return [{k: v for k, v in c.items() if k not in {"Liczba godzin", "Forma zajęć", "Forma zaliczenia"}} | {"Prowadzący": [teacher_to_idx[x] for x in self.parseTeachers(c["Prowadzący"])], "Sala": sala_idx(c["Sala"])} for c in _with_progress(classes, "Normalizacja zajęć...")]
     
 
     @staticmethod
     def breakDownTeachers(teachers):
-        length=len(teachers)
-        for i, t in enumerate(teachers):
+        for i, t in enumerate(_with_progress(teachers, "Przetwarzanie prowadzących...")):
             t = t.split(" ")
             teachers[i] = {"title": " ".join(t[:-2]), "fullName": " ".join(t[-2:])}
-            progressBar(i, length)
         return teachers
-    
+
     def breakDownBuildings(self, rooms):
         buildings = []
-        length=len(rooms)
-        for i, room in enumerate(rooms):
+        for i, room in enumerate(_with_progress(rooms, "Przetwarzanie budynków...")):
             r, b = self.breakDownRoom(room)
             t = {"building" : b, "room" : r}
             if not b:
@@ -287,7 +284,6 @@ class Parser:
                 buildings.append(b)
             t["building"] = buildings.index(b)
             rooms[i] = t
-            progressBar(i, length)
         return rooms, buildings
     
     @staticmethod
