@@ -161,6 +161,7 @@ class _LecturesPageState extends State<LecturesPage> {
                               programName: lecture.programName,
                               year: lecture.year,
                               degreeLevel: lecture.degreeLevel,
+                              notes: lecture.notes,
                             );
                           },
                         ),

@@ -143,6 +143,7 @@ class _TodayLecturesState extends State<TodayLectures> {
                         programName: lecture.programName,
                         year: lecture.year,
                         degreeLevel: lecture.degreeLevel,
+                        notes: lecture.notes,
                       );
                     }).toList();
 
