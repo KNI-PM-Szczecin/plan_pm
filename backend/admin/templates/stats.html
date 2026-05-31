@@ -6,6 +6,14 @@
   <p>Dane o pobraniach i aktywnych użytkownikach ze sklepów.</p>
 </div>
 
+<div class="seg-control" role="tablist">
+  <button class="seg-btn active" data-store="google" type="button">Google Play</button>
+  <button class="seg-btn" data-store="apple" type="button">App Store</button>
+</div>
+
+<!-- ── Google Play ─────────────────────────────────────────── -->
+<div id="store-google">
+
 <div id="stats-loading" class="stats-loading">
   <div class="spinner"></div>
   <p class="stats-loading-text">
@@ -65,12 +73,33 @@
   </div>
 </div>
 
+</div><!-- /stats-content -->
+</div><!-- /store-google -->
+
+<!-- ── App Store ───────────────────────────────────────────── -->
+<div id="store-apple" style="display: none;">
 <div class="panel">
   <div class="logs-title">App Store Connect (iOS)</div>
-  <p style="color: #444; font-size: 14px;">Integracja w trakcie przygotowania (wymagany klucz .p8).</p>
-</div>
 
-</div><!-- /stats-content -->
+  <div id="apple-summary" class="step-grid" style="margin: 8px 0 24px; display: none;">
+    <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+      <span style="font-size: 11px; color: #888;">Średnia ocena</span>
+      <span id="apple-avg-rating" style="font-size: 24px; color: #fff; font-weight: 700;">-</span>
+    </div>
+    <div class="step-btn active" style="flex-direction: column; align-items: flex-start; padding: 16px; gap: 4px; min-width: 150px;">
+      <span style="font-size: 11px; color: #888;">Liczba opinii</span>
+      <span id="apple-total-reviews" style="font-size: 24px; color: #fff; font-weight: 700;">-</span>
+    </div>
+  </div>
+
+  <div id="apple-analytics-note" style="font-size: 11px; color: #444; margin: 0 0 24px;"></div>
+
+  <div class="logs-title" style="font-size: 11px;">Ostatnie opinie (iOS)</div>
+  <div id="apple-reviews-list" class="posts" style="gap: 8px;">
+    <p style="color: #444; font-size: 13px;">Ładowanie opinii…</p>
+  </div>
+</div>
+</div><!-- /store-apple -->
 
 {% endblock %}
 
@@ -203,6 +232,66 @@
     }
   }
 
+  async function loadAppleStats() {
+    try {
+      const response = await fetch('/api/stats/app-store');
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+
+      if (data.summary) {
+        document.getElementById('apple-summary').style.display = 'flex';
+        document.getElementById('apple-avg-rating').textContent = data.summary.avgRating;
+        document.getElementById('apple-total-reviews').textContent = data.summary.totalReviews;
+      }
+
+      const note = document.getElementById('apple-analytics-note');
+      note.textContent = data.analyticsReady
+        ? 'Raporty Analytics (pobrania, sesje, crashe) są dostępne — wykresy iOS w przygotowaniu.'
+        : 'Raporty Analytics (pobrania, sesje, crashe) zaczną przychodzić ~24-48h po pierwszym żądaniu. Na razie dostępne tylko opinie.';
+
+      const list = document.getElementById('apple-reviews-list');
+      if (data.reviews && data.reviews.length > 0) {
+        list.innerHTML = '';
+        data.reviews.forEach(r => {
+          const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+          const date = r.date ? new Date(r.date).toLocaleDateString() : '';
+          const title = r.title ? `<strong>${r.title}</strong> ` : '';
+          list.innerHTML += `
+            <div class="post" style="padding: 12px; border-color: #111;">
+              <div class="post-body">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #fff; font-weight: 600; font-size: 13px;">${r.author || 'Użytkownik App Store'}</span>
+                  <span style="color: #f5a623; font-size: 12px;">${stars}</span>
+                </div>
+                <p style="white-space: normal; -webkit-line-clamp: initial; font-size: 13px;">${title}${r.text || ''}</p>
+                <div style="font-size: 11px; color: #444; margin-top: 6px;">${date}${r.territory ? ' · ' + r.territory : ''}</div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        list.innerHTML = '<p style="color: #444; font-size: 13px;">Brak opinii.</p>';
+      }
+    } catch (err) {
+      console.error('Failed to load Apple stats:', err);
+      document.getElementById('apple-reviews-list').innerHTML =
+        '<p style="color: #ff6b6b; font-size: 13px;">Nie udało się pobrać danych z App Store Connect.</p>';
+    }
+  }
+
+  function initStoreToggle() {
+    const buttons = document.querySelectorAll('.seg-btn');
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const store = btn.dataset.store;
+      document.getElementById('store-google').style.display = store === 'google' ? 'block' : 'none';
+      document.getElementById('store-apple').style.display = store === 'apple' ? 'block' : 'none';
+    }));
+  }
+
+  document.addEventListener('DOMContentLoaded', initStoreToggle);
   document.addEventListener('DOMContentLoaded', loadGoogleStats);
+  document.addEventListener('DOMContentLoaded', loadAppleStats);
 </script>
 {% endblock %}

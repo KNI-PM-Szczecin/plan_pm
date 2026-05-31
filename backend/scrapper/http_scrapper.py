@@ -167,6 +167,7 @@ class HttpScrapper:
     def __init__(self, output="./output/scrapper.json", input="./output/mapper.json"):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+        self.logger.propagate = False  # keep other modules' logs out of scrapper.log
         self.output = output
         self.input = input
         print("Running HTTP scrapper")
@@ -220,8 +221,7 @@ class HttpScrapper:
             self.results.extend(schedule_data)
             self.stats["success"] += 1
 
-        self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie.")
-        self.logger.info(f"[{flow_id}] Lectures: {str(schedule_data)[:300]}...")
+        self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie — {len(schedule_data)} rekordów.")
         log_print(f"✅ Gotowe ({time.time() - start_time:.2f} s)")
 
     def run(self, max_workers=10, flow_id=-1):

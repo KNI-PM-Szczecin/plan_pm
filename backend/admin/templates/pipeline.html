@@ -44,7 +44,7 @@
 <div class="logs-section">
   <div class="logs-title">LOGI MODUŁÓW</div>
   <div class="log-tabs">
-    {% for mod in ['mapper', 'scrapper', 'structure_updater'] %}
+    {% for mod in ['mapper', 'scrapper', 'structure_updater', 'json2db'] %}
       <button class="log-tab" id="tab-{{ mod }}" onclick="showLog('{{ mod }}')">{{ mod }}</button>
     {% endfor %}
   </div>
@@ -52,7 +52,10 @@
   <div class="terminal-wrap" id="module-logs-wrap" style="display:none; margin-top: 16px;">
     <div class="terminal-header">
       <span class="terminal-status" id="log-status">history logs</span>
-      <button class="btn-clear" onclick="closeLogs()">Zamknij</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-clear" onclick="refreshLogs()"><i class="bi bi-arrow-clockwise"></i> Odśwież</button>
+        <button class="btn-clear" onclick="closeLogs()">Zamknij</button>
+      </div>
     </div>
     <pre id="log-output" class="terminal" style="min-height: 200px; max-height: 400px;"></pre>
   </div>
@@ -199,32 +202,61 @@ function executeStep(step) {
   };
 }
 
+let currentLogModule = null;
+
 function showLog(module) {
   const wrap = document.getElementById('module-logs-wrap');
   const out = document.getElementById('log-output');
-  
+
+  currentLogModule = module;
   document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + module).classList.add('active');
-  
+
   wrap.style.display = 'block';
   out.textContent = 'Ładowanie...';
 
   const es = new EventSource('/pipeline/logs/' + module);
-  let buf = '';
+  const lines = [];
   es.onmessage = function(e) {
     const line = JSON.parse(e.data);
-    if (line === '[EOF]') { 
-      out.textContent = buf || '(puste)'; 
-      out.scrollTop = out.scrollHeight; 
-      es.close(); 
+    if (line === '[EOF]') {
+      renderLog(out, lines);
+      out.scrollTop = out.scrollHeight;
+      es.close();
     }
-    else buf += line + '\n';
+    else lines.push(line);
   };
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function colorizeLog(line) {
+  let h = escapeHtml(line);
+  h = h.replace(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)/, '<span class="log-ts">$1</span>');
+  h = h.replace(/\[(INFO|DEBUG)\]/, '<span class="log-info">[$1]</span>');
+  h = h.replace(/\[(WARNING|WARN)\]/, '<span class="log-warn">[$1]</span>');
+  h = h.replace(/\[(ERROR|CRITICAL)\]/, '<span class="log-error">[$1]</span>');
+  return h;
+}
+
+function renderLog(out, lines) {
+  if (!lines.length) { out.innerHTML = '<span style="color:#444">(puste)</span>'; return; }
+  const width = String(lines.length).length;
+  out.innerHTML = lines.map((line, i) =>
+    `<div class="log-row"><span class="log-ln">${String(i + 1).padStart(width, ' ')}</span><span class="log-msg">${colorizeLog(line)}</span></div>`
+  ).join('');
+}
+
+function refreshLogs() {
+    if (currentLogModule) showLog(currentLogModule);
 }
 
 function closeLogs() {
     document.getElementById('module-logs-wrap').style.display = 'none';
     document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+    currentLogModule = null;
 }
 </script>
 {% endblock %}

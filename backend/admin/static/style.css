@@ -203,6 +203,42 @@ body {
   color: #fff;
 }
 
+/* ── Segmented control ───────────────────────────── */
+
+.seg-control {
+  display: inline-flex;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 28px;
+}
+
+.seg-btn {
+  background: transparent;
+  color: #888;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.18s;
+}
+
+.seg-btn:hover:not(.active) {
+  color: #fff;
+}
+
+.seg-btn.active {
+  background: #1a1a1a;
+  color: #fff;
+}
+
 /* ── Terminal ────────────────────────────────────── */
 
 .terminal-wrap {
@@ -272,6 +308,36 @@ body {
 
 .terminal::-webkit-scrollbar { width: 8px; }
 .terminal::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+
+/* ── Log rows (line numbers + syntax colors) ──────── */
+
+.log-row {
+  display: flex;
+  gap: 16px;
+}
+
+.log-row:hover { background: #0b0b0b; }
+
+.log-ln {
+  color: #3a3a3a;
+  text-align: right;
+  min-width: 3ch;
+  flex-shrink: 0;
+  user-select: none;
+  white-space: pre;
+}
+
+.log-msg {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #b0b0b0;
+}
+
+.log-ts    { color: #5a6675; }
+.log-info  { color: #00E699; font-weight: 600; }
+.log-warn  { color: #f5a623; font-weight: 600; }
+.log-error { color: #ff6b6b; font-weight: 600; }
 
 /* ── Module Logs ─────────────────────────────────── */
 

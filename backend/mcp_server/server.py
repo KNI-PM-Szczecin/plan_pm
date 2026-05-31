@@ -19,7 +19,7 @@ REPO_ROOT = BACKEND_ROOT.parent
 load_dotenv(BACKEND_ROOT / ".env")
 sys.path.insert(0, str(BACKEND_ROOT))
 
-from notifier import notify_discord
+from notifier import notify_discord, pipeline_stats_text
 
 # Pipeline steps worth a Discord notification from here. structure_updater
 # notifies itself, so it's excluded to avoid duplicate messages.
@@ -77,7 +77,7 @@ def run_pipeline_step(step: str, env: str = "prod") -> str:
     output = _run(STEP_COMMANDS[step], env=mode)
     if step in _DB_STEPS:
         notify_discord(f"Pipeline: {step}", success=output.rstrip().endswith("[exit 0]"),
-                       detail="źródło: MCP", env=mode)
+                       detail="źródło: MCP", env=mode, stats=pipeline_stats_text())
     return output
 
 
@@ -90,7 +90,7 @@ def run_full_pipeline(env: str = "prod") -> str:
     mode = _resolve_mode(env)
     output = _run([sys.executable, "main.py"], env=mode)
     notify_discord("Full Pipeline", success=output.rstrip().endswith("[exit 0]"),
-                   detail="źródło: MCP", env=mode)
+                   detail="źródło: MCP", env=mode, stats=pipeline_stats_text())
     return output
 
 
@@ -99,9 +99,9 @@ def get_logs(module: str, lines: int = 50) -> str:
     """
     Zwraca ostatnie N linii logu danego modułu.
 
-    Dostępne moduły: mapper, scrapper, structure_updater
+    Dostępne moduły: mapper, scrapper, json2db, structure_updater
     """
-    allowed = {"mapper", "scrapper", "structure_updater"}
+    allowed = {"mapper", "scrapper", "json2db", "structure_updater"}
     if module not in allowed:
         return f"Nieznany moduł: {module}. Dostępne: {', '.join(allowed)}"
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"

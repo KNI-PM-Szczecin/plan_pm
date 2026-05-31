@@ -15,9 +15,41 @@ import urllib.request
 from pathlib import Path
 
 BACKEND_ROOT = Path(__file__).parent
+OUTPUT_DIR = BACKEND_ROOT / "output"
 
 _COLOR_OK = 0x2ECC71
 _COLOR_FAIL = 0xE74C3C
+
+
+def _count(path: Path, key: str | None = None):
+    """len() of a JSON artifact (or of artifact[key]); None if unreadable."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return len(data[key]) if key else len(data)
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def pipeline_stats_text() -> str:
+    """Discord-ready summary of pipeline artifact counts. Skips lines whose
+    artifact is missing/unreadable, so it works for single steps too."""
+    plans = _count(OUTPUT_DIR / "mapper.json")
+    scraped = _count(OUTPUT_DIR / "scrapper.json")
+    parsed = _count(OUTPUT_DIR / "parser.json", "classes")
+    to_db = None
+    try:
+        stats = json.loads((OUTPUT_DIR / "json2db_stats.json").read_text(encoding="utf-8"))
+        to_db = stats.get("classes")
+    except (OSError, ValueError):
+        pass
+
+    rows = [
+        ("📋 Znalezione plany (mapper)", plans),
+        ("🔎 Zescrapowane zajęcia", scraped),
+        ("🧩 Sparsowane zajęcia", parsed),
+        ("💾 Zapisane do bazy", to_db),
+    ]
+    return "\n".join(f"{label}: **{val}**" for label, val in rows if val is not None)
 
 
 def _app_version() -> str:
@@ -36,11 +68,13 @@ def _env_mode() -> str:
     return path.read_text().strip() if path.exists() else "prod"
 
 
-def notify_discord(action: str, success: bool, detail: str = "", env: str | None = None) -> None:
+def notify_discord(action: str, success: bool, detail: str = "",
+                   env: str | None = None, stats: str = "") -> None:
     """Post an embed to the Discord webhook. No-op if the webhook is unset.
 
     `env` ("prod"/"test") overrides the environment label — pass it when the
     operation targeted a specific DB rather than the global .env_mode.
+    `stats` adds a separate "Statystyki" field (e.g. pipeline_stats_text()).
     """
     url = os.environ.get("DISCORD_WEBHOOK_URL")
     if not url:
@@ -59,6 +93,8 @@ def notify_discord(action: str, success: bool, detail: str = "", env: str | None
     ]
     if detail:
         fields.append({"name": "Szczegóły", "value": detail[:1000], "inline": False})
+    if stats:
+        fields.append({"name": "Statystyki", "value": stats[:1000], "inline": False})
 
     payload = {
         "embeds": [{

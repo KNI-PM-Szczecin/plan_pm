@@ -1,7 +1,14 @@
+import base64
+import binascii
 import datetime
+import json
 import logging
+import os
+import time
+import urllib.request
 from pathlib import Path
 
+import jwt
 from flask import Blueprint, render_template, jsonify
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -13,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 BACKEND_ROOT = Path(__file__).parent.parent.parent
 PROJECT_ROOT = BACKEND_ROOT.parent
+# Legacy fallback path (the broad deploy key). Prefer GOOGLE_STATS_KEY_B64 in .env.
 GOOGLE_KEY_PATH = PROJECT_ROOT / "frontend" / "android" / "planpm_deploy_key.json"
 PACKAGE_NAME = "com.piotrwittig.plan_pm"
 TZ = {"id": "America/Los_Angeles"}
@@ -31,12 +39,35 @@ PL_MONTHS = ["", "sty", "lut", "mar", "kwi", "maj", "cze",
              "lip", "sie", "wrz", "paź", "lis", "gru"]
 
 
+def _safe(fn, default):
+    """Run a section fetch; on any API error log a concise warning and return default.
+
+    Store APIs (Google Reporting, ASC) return transient 503s routinely — a section
+    degrading to its fallback is expected, not an error, so we don't dump a traceback.
+    """
+    try:
+        return fn()
+    except Exception as exc:
+        logger.warning("Stats section fetch failed (%s); using fallback", exc)
+        return default
+
+
 def _credentials():
-    if not GOOGLE_KEY_PATH.exists():
-        return None
-    return service_account.Credentials.from_service_account_file(
-        str(GOOGLE_KEY_PATH), scopes=SCOPES
-    )
+    # Preferred: read-only stats service account from .env (base64-encoded JSON).
+    b64 = os.environ.get("GOOGLE_STATS_KEY_B64")
+    if b64:
+        try:
+            info = json.loads(base64.b64decode(b64))
+            return service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
+        except (binascii.Error, ValueError, KeyError):
+            logger.exception("GOOGLE_STATS_KEY_B64 is set but invalid")
+            return None
+    # Fallback: legacy key file on disk.
+    if GOOGLE_KEY_PATH.exists():
+        return service_account.Credentials.from_service_account_file(
+            str(GOOGLE_KEY_PATH), scopes=SCOPES
+        )
+    return None
 
 
 def _date_dict_to_date(d: dict) -> datetime.date:
@@ -180,6 +211,102 @@ def _fetch_error_issues(reporting):
     return issues
 
 
+# ── App Store Connect (iOS) ─────────────────────────────────────────────────
+# Read-only key (App Manager + Sales and Reports). Reviews work immediately;
+# analytics reports start arriving ~24-48h after the ONGOING report request.
+APPLE_API_BASE = "https://api.appstoreconnect.apple.com"
+
+
+def _apple_token():
+    """Sign a short-lived ES256 JWT from the read-only ASC key in .env."""
+    key_id = os.environ.get("APPLE_KEY_ID")
+    issuer = os.environ.get("APPLE_ISSUER_ID")
+    key_b64 = os.environ.get("APPLE_KEY_B64")
+    if not (key_id and issuer and key_b64):
+        return None
+    try:
+        private_key = base64.b64decode(key_b64).decode()
+    except (binascii.Error, ValueError):
+        logger.exception("APPLE_KEY_B64 is set but invalid")
+        return None
+    now = int(time.time())
+    return jwt.encode(
+        {"iss": issuer, "iat": now, "exp": now + 600, "aud": "appstoreconnect-v1"},
+        private_key, algorithm="ES256", headers={"kid": key_id, "typ": "JWT"},
+    )
+
+
+def _apple_get(path: str, token: str) -> dict:
+    req = urllib.request.Request(
+        APPLE_API_BASE + path, headers={"Authorization": f"Bearer {token}"}
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read())
+
+
+def _fetch_apple_reviews(token: str, app_id: str):
+    """Most recent customer reviews + average over the fetched page + total count."""
+    data = _apple_get(
+        f"/v1/apps/{app_id}/customerReviews?sort=-createdDate&limit=10", token
+    )
+    reviews, total_rating = [], 0
+    for d in data.get("data", []):
+        a = d.get("attributes", {})
+        rating = a.get("rating", 0)
+        total_rating += rating
+        reviews.append({
+            "author": a.get("reviewerNickname"),
+            "rating": rating,
+            "title": a.get("title"),
+            "text": a.get("body"),
+            "territory": a.get("territory"),
+            "date": a.get("createdDate"),
+        })
+    avg = round(total_rating / len(reviews), 2) if reviews else 0
+    total = data.get("meta", {}).get("paging", {}).get("total", len(reviews))
+    return reviews, avg, total
+
+
+def _apple_analytics_ready(token: str, app_id: str) -> bool:
+    """True once Apple has generated at least one report instance for the app."""
+    reqs = _apple_get(f"/v1/apps/{app_id}/analyticsReportRequests", token).get("data", [])
+    if not reqs:
+        return False
+    reports = _apple_get(
+        f"/v1/analyticsReportRequests/{reqs[0]['id']}/reports?limit=1", token
+    ).get("data", [])
+    if not reports:
+        return False
+    instances = _apple_get(
+        f"/v1/analyticsReports/{reports[0]['id']}/instances?limit=1", token
+    ).get("data", [])
+    return bool(instances)
+
+
+@bp.route("/api/stats/app-store")
+def app_store_stats():
+    token = _apple_token()
+    if token is None:
+        return jsonify({"error": "Brak klucza App Store Connect"}), 404
+    app_id = os.environ.get("APPLE_APP_ID", "")
+
+    try:
+        reviews, avg, total = _safe(
+            lambda: _fetch_apple_reviews(token, app_id), ([], 0, 0))
+        analytics_ready = _safe(
+            lambda: _apple_analytics_ready(token, app_id), False)
+        return jsonify({
+            "summary": {"avgRating": avg, "totalReviews": total},
+            "reviews": reviews[:5],
+            # Analytics download/parse is built once Apple generates the first
+            # report (~24-48h after the ONGOING request). Until then: pending.
+            "analyticsReady": analytics_ready,
+        })
+    except Exception:
+        logger.exception("App Store stats fetch failed")
+        return jsonify({"error": "Nie udało się pobrać danych z App Store Connect."}), 500
+
+
 @bp.route("/stats")
 def index():
     return render_template(
@@ -200,10 +327,14 @@ def google_play_stats():
         publisher = build("androidpublisher", "v3", credentials=creds)
         reporting = build("playdeveloperreporting", "v1beta1", credentials=creds)
 
-        reviews, avg_rating = _fetch_reviews(publisher)
-        labels, users, stability, versions = _fetch_crash_vitals(reporting)
-        anr_free = _fetch_anr(reporting)
-        issues = _fetch_error_issues(reporting)
+        # Each section is fetched independently — a transient Google error in
+        # one (e.g. errorIssues 503) degrades that section to empty instead of
+        # failing the whole page.
+        reviews, avg_rating = _safe(lambda: _fetch_reviews(publisher), ([], 0))
+        labels, users, stability, versions = _safe(
+            lambda: _fetch_crash_vitals(reporting), ([], [], None, []))
+        anr_free = _safe(lambda: _fetch_anr(reporting), None)
+        issues = _safe(lambda: _fetch_error_issues(reporting), [])
 
         data = {
             "summary": {

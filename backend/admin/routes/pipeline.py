@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Blueprint, Response, render_template, session, redirect, url_for
 
 from admin.db import get_env_mode
-from notifier import notify_discord
+from notifier import notify_discord, pipeline_stats_text
 
 BACKEND_ROOT = Path(__file__).parent.parent.parent
 
@@ -86,7 +86,8 @@ def run(step: str):
             # Notify Discord for DB-touching steps. structure_updater notifies
             # itself (any caller), so it's excluded here to avoid duplicates.
             if step in ("full", "json2db"):
-                notify_discord(STEPS[step]["label"], success=(code == 0))
+                notify_discord(STEPS[step]["label"], success=(code == 0),
+                               stats=pipeline_stats_text())
         finally:
             _running["step"] = None
             _lock.release()
@@ -96,7 +97,7 @@ def run(step: str):
 
 @bp.route("/pipeline/logs/<module>")
 def logs(module: str):
-    allowed = {"mapper", "scrapper", "structure_updater"}
+    allowed = {"mapper", "scrapper", "json2db", "structure_updater"}
     if module not in allowed:
         return "Not found", 404
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"
@@ -107,7 +108,9 @@ def logs(module: str):
         )
 
     def generate():
-        lines = log_path.read_text(errors="replace").splitlines()[-200:]
+        # Per-run logs (files open in mode="w+") stay bounded, so serve the whole
+        # file; 5000 is just a safety cap against a pathological run.
+        lines = log_path.read_text(errors="replace").splitlines()[-5000:]
         for line in lines:
             yield f"data: {json.dumps(line)}\n\n"
         yield f"data: {json.dumps('[EOF]')}\n\n"

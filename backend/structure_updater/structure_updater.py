@@ -36,6 +36,9 @@ SPECIALISATIONS_TABLE_NAME: str = "specialisations"
 os.makedirs("./logs", exist_ok=True)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logger.propagate = False  # keep other modules' logs out of structure_updater.log
+# Supabase's httpx client logs every REST request at INFO — too noisy for our logs.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 if not logger.handlers:
     _handler = logging.FileHandler("./logs/structure_updater.log", mode="w+", encoding="utf-8")
     _handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
