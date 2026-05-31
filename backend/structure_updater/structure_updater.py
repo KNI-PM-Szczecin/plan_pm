@@ -3,13 +3,13 @@ import re
 import json
 import logging
 import argparse
-import xml.etree.ElementTree as ET
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 from dotenv import load_dotenv
 from supabase import create_client
+
+from notifier import notify_discord
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -127,28 +127,6 @@ def fetch_structure_from_web() -> list[dict]:
     return structure
 
 
-# ── XML fallback ──────────────────────────────────────────────────────────────
-
-def parse_university_structure(xml_path: str = "structure.xml") -> list[dict]:
-    root = ET.parse(Path(xml_path)).getroot()
-    data: list[dict] = []
-
-    for faculty in root.findall("faculty"):
-        faculty_entry: dict = {"name": faculty.get("name", "Unknown faculty"), "degree_courses": []}
-        for degree_course in faculty.findall("degree_course"):
-            specialisations = [
-                s.text.strip()
-                for s in degree_course.findall("specialisation")
-                if s.text and s.text.strip()
-            ]
-            faculty_entry["degree_courses"].append(
-                {"name": degree_course.get("name", "Unknown degree course"), "specialisations": specialisations}
-            )
-        data.append(faculty_entry)
-
-    return data
-
-
 # ── Database ──────────────────────────────────────────────────────────────────
 
 def propagate_structure_to_db(db, structure: list[dict]) -> None:
@@ -192,25 +170,14 @@ def clear_structure_tables(db) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Aktualizacja struktury uczelni w bazie danych")
     parser.add_argument(
-        "--source", choices=["web", "xml"], default="web",
-        help="Źródło danych: 'web' (scraping, domyślnie) lub 'xml' (plik structure.xml)",
-    )
-    parser.add_argument(
-        "--xml-path", default="structure.xml",
-        help="Ścieżka do pliku XML (używane tylko z --source xml)",
-    )
-    parser.add_argument(
         "--dry-run", action="store_true",
         help="Wyświetl strukturę bez zapisywania do bazy danych",
     )
     args = parser.parse_args()
 
-    logger.info(f"Uruchomiono (source={args.source}, dry_run={args.dry_run})")
+    logger.info(f"Uruchomiono (dry_run={args.dry_run})")
 
-    if args.source == "web":
-        structure = fetch_structure_from_web()
-    else:
-        structure = parse_university_structure(args.xml_path)
+    structure = fetch_structure_from_web()
 
     total_courses = sum(len(f["degree_courses"]) for f in structure)
     total_specs = sum(len(dc["specialisations"]) for f in structure for dc in f["degree_courses"])
@@ -237,18 +204,23 @@ def main() -> None:
     # (must bypass RLS — anon is read-only).
     db = create_client(url, service_key)
 
+    mode = _resolve_env_mode()
     try:
         clear_structure_tables(db)
         logger.info("Wyczyszczono tabele struktury")
+        propagate_structure_to_db(db, structure)
     except Exception as exc:
-        logger.error(f"Błąd podczas czyszczenia tabel: {exc}")
+        logger.error(f"Błąd podczas aktualizacji struktury: {exc}")
+        notify_discord("Structure Updater", success=False, env=mode,
+                       detail=f"{len(structure)} wydziałów")
         raise RuntimeError(
-            "Failed to clear structure tables. Check Supabase delete policies/RLS."
+            "Failed to update structure. Check Supabase delete/insert policies/RLS."
         ) from exc
 
-    propagate_structure_to_db(db, structure)
     logger.info("Struktura zaktualizowana w bazie danych")
     print("Structure propagated to Supabase.")
+    notify_discord("Structure Updater", success=True, env=mode,
+                   detail=f"{len(structure)} wydziałów, {total_courses} kierunków")
 
 
 if __name__ == "__main__":
