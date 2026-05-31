@@ -20,6 +20,23 @@ STEPS = {
     "structure": {"label": "Structure Updater", "cmd": [sys.executable, "-m", "structure_updater.structure_updater"]},
 }
 
+STEP_INPUTS = {
+    "scrapper": {
+        "path": BACKEND_ROOT / "output" / "mapper.json",
+        "message": "Brak danych wejściowych: output/mapper.json. Uruchom najpierw Mapper albo Full Pipeline.",
+    },
+    "parser": {
+        "path": BACKEND_ROOT / "output" / "scrapper.json",
+        "message": "Brak danych wejściowych: output/scrapper.json. Uruchom najpierw Scrapper albo Full Pipeline.",
+    },
+    "json2db": {
+        "path": BACKEND_ROOT / "output" / "parser.json",
+        "message": "Brak danych wejściowych: output/parser.json. Uruchom najpierw Parser albo Full Pipeline.",
+    },
+}
+
+NO_LOGS_MESSAGE = "Brak logów."
+
 # Single-flight guard for pipeline runs. In-process only — assumes the admin
 # runs on the single-process Flask dev server (app.run). It would NOT serialize
 # across multiple gunicorn/uwsgi workers; move to a DB/Redis lock if that changes.
@@ -62,6 +79,14 @@ def run(step: str):
     if step not in STEPS:
         return "Unknown step", 404
 
+    required_input = STEP_INPUTS.get(step)
+    if required_input and not required_input["path"].exists():
+        return Response(
+            f"data: {json.dumps('[ERROR] ' + required_input['message'])}\n\n"
+            f"data: {json.dumps('[EXIT 1]')}\n\n",
+            mimetype="text/event-stream",
+        )
+
     if not _lock.acquire(blocking=False):
         return Response(
             f"data: {json.dumps('[ERROR] Inny krok jest już uruchomiony.')}\n\n",
@@ -77,6 +102,8 @@ def run(step: str):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 cwd=str(BACKEND_ROOT),
             )
             for line in proc.stdout:
@@ -103,14 +130,18 @@ def logs(module: str):
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"
     if not log_path.exists():
         return Response(
-            f"data: {json.dumps('(brak logów)')}\n\ndata: {json.dumps('[EOF]')}\n\n",
+            f"data: {json.dumps(NO_LOGS_MESSAGE)}\n\ndata: {json.dumps('[EOF]')}\n\n",
             mimetype="text/event-stream",
         )
 
     def generate():
         # Per-run logs (files open in mode="w+") stay bounded, so serve the whole
         # file; 5000 is just a safety cap against a pathological run.
-        lines = log_path.read_text(errors="replace").splitlines()[-5000:]
+        lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-5000:]
+        if not lines:
+            yield f"data: {json.dumps(NO_LOGS_MESSAGE)}\n\n"
+            yield f"data: {json.dumps('[EOF]')}\n\n"
+            return
         for line in lines:
             yield f"data: {json.dumps(line)}\n\n"
         yield f"data: {json.dumps('[EOF]')}\n\n"
