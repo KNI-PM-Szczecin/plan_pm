@@ -11,7 +11,6 @@ dependencies = [
     "python-dotenv>=1.0",
     "requests>=2.32",
     "rich>=14.0",
-    "selenium>=4.36",
     "supabase>=2.18",
     "pypdf>=6.0",
     "google-api-python-client>=2.197.0",
@@ -20,5 +19,5 @@ dependencies = [
 
 [tool.pytest.ini_options]
 markers = [
-    "slow: marks tests that make real network or Selenium calls (deselect with -m 'not slow')",
+    "slow: marks tests that make real network calls (deselect with -m 'not slow')",
 ]
