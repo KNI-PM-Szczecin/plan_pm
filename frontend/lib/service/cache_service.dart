@@ -55,6 +55,7 @@ class CacheService {
         group: lecture.group,
         duration: lecture.duration,
         date: lecture.date,
+        notes: lecture.notes,
         programName: lecture.programName,
         year: lecture.year,
         degreeLevel: lecture.degreeLevel,
