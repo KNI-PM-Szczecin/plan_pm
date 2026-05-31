@@ -13,8 +13,20 @@ from supabase import create_client
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
-_env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
-_prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
+
+def _resolve_env_mode() -> str:
+    # PLANPM_ENV overrides the global .env_mode file for a single run.
+    override = os.environ.get("PLANPM_ENV")
+    if override in ("prod", "test"):
+        return override
+    path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
+    try:
+        return open(path).read().strip()
+    except OSError:
+        return "prod"
+
+
+_prefix = "TEST_" if _resolve_env_mode() == "test" else ""
 
 BASE_URL = "https://plany.am.szczecin.pl"
 FACULTIES_TABLE_NAME: str = "faculties"

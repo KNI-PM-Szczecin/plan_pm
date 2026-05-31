@@ -19,6 +19,11 @@ REPO_ROOT = BACKEND_ROOT.parent
 load_dotenv(BACKEND_ROOT / ".env")
 sys.path.insert(0, str(BACKEND_ROOT))
 
+from notifier import notify_discord
+
+# Pipeline steps that write to the database (worth a Discord notification).
+_DB_STEPS = {"json2db", "structure"}
+
 mcp = FastMCP("plan-pm-backend")
 
 STEP_COMMANDS = {
@@ -30,37 +35,62 @@ STEP_COMMANDS = {
 }
 
 
-def _run(cmd: list[str]) -> str:
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(BACKEND_ROOT))
+def _resolve_mode(env: str | None) -> str:
+    """Explicit env arg wins; otherwise fall back to the global .env_mode file."""
+    if env in ("prod", "test"):
+        return env
+    mode_file = BACKEND_ROOT / ".env_mode"
+    return mode_file.read_text().strip() if mode_file.exists() else "prod"
+
+
+def _run(cmd: list[str], env: str | None = None) -> str:
+    # Propagate the chosen environment to the subprocess via PLANPM_ENV, which
+    # json2db / structure_updater / main read in preference to .env_mode.
+    proc_env = dict(os.environ)
+    proc_env["PLANPM_ENV"] = _resolve_mode(env)
+    result = subprocess.run(cmd, capture_output=True, text=True,
+                            cwd=str(BACKEND_ROOT), env=proc_env)
     out = (result.stdout + result.stderr).strip()
     return out + f"\n[exit {result.returncode}]"
 
 
-def _get_db():
+def _get_db(env: str | None = None):
     from supabase import create_client
-    mode_file = BACKEND_ROOT / ".env_mode"
-    prefix = "TEST_" if mode_file.exists() and mode_file.read_text().strip() == "test" else ""
+    prefix = "TEST_" if _resolve_mode(env) == "test" else ""
     return create_client(os.environ[f"{prefix}SUPABASE_URL"], os.environ[f"{prefix}SUPABASE_SERVICE_KEY"])
 
 
 # ── Pipeline tools ────────────────────────────────────────────────────────────
 
 @mcp.tool()
-def run_pipeline_step(step: str) -> str:
+def run_pipeline_step(step: str, env: str = "prod") -> str:
     """
     Uruchamia jeden krok pipeline'u plan_pm.
 
     Dostępne kroki: mapper, scrapper, parser, json2db, structure
+    env: 'prod' (domyślnie) lub 'test' — na którą bazę danych działać.
     """
     if step not in STEP_COMMANDS:
         return f"Nieznany krok: {step}. Dostępne: {', '.join(STEP_COMMANDS)}"
-    return _run(STEP_COMMANDS[step])
+    mode = _resolve_mode(env)
+    output = _run(STEP_COMMANDS[step], env=mode)
+    if step in _DB_STEPS:
+        notify_discord(f"Pipeline: {step}", success=output.rstrip().endswith("[exit 0]"),
+                       detail="źródło: MCP", env=mode)
+    return output
 
 
 @mcp.tool()
-def run_full_pipeline() -> str:
-    """Uruchamia pełny pipeline: mapper → scrapper → parser → json2db."""
-    return _run([sys.executable, "main.py"])
+def run_full_pipeline(env: str = "prod") -> str:
+    """Uruchamia pełny pipeline: mapper → scrapper → parser → json2db.
+
+    env: 'prod' (domyślnie) lub 'test' — na którą bazę danych działać.
+    """
+    mode = _resolve_mode(env)
+    output = _run([sys.executable, "main.py"], env=mode)
+    notify_discord("Full Pipeline", success=output.rstrip().endswith("[exit 0]"),
+                   detail="źródło: MCP", env=mode)
+    return output
 
 
 @mcp.tool()
@@ -83,35 +113,47 @@ def get_logs(module: str, lines: int = 50) -> str:
 # ── News tools ────────────────────────────────────────────────────────────────
 
 @mcp.tool()
-def list_news() -> list[dict]:
-    """Zwraca listę wszystkich newsów (id, title, message_type, created_at)."""
-    db = _get_db()
-    rows = db.table("news").select("id, title, message_type, created_at").order("created_at", desc=True).execute().data
-    return rows
+def list_news(env: str = "prod") -> list:
+    """Zwraca listę wszystkich newsów (id, title, message_type, created_at).
+
+    env: 'prod' (domyślnie) lub 'test'.
+    """
+    db = _get_db(env)
+    return db.table("news").select("id, title, message_type, created_at").order("created_at", desc=True).execute().data
 
 
 @mcp.tool()
-def create_news(title: str, content: str, message_type: str = "info") -> dict:
+def create_news(title: str, content: str, message_type: str = "info", env: str = "prod") -> dict:
     """
     Tworzy nowy news w Supabase.
 
     message_type: 'info' | 'warning' | 'alert'
+    env: 'prod' (domyślnie) lub 'test' — do której bazy zapisać.
     """
     if message_type not in ("info", "warning", "alert"):
         return {"error": f"Nieprawidłowy typ: {message_type}. Użyj: info, warning, alert"}
-    db = _get_db()
+    mode = _resolve_mode(env)
+    db = _get_db(mode)
     result = db.table("news").insert({
         "title": title,
         "content": content,
         "message_type": message_type,
     }).execute()
-    return result.data[0] if result.data else {"error": "Brak danych w odpowiedzi"}
+    if result.data:
+        notify_discord("Dodano news", success=True, detail=f"{title} (źródło: MCP)", env=mode)
+        return result.data[0]  # type: ignore[return-value]
+    notify_discord("Dodanie newsa nie powiodło się", success=False,
+                   detail=f"{title} (źródło: MCP)", env=mode)
+    return {"error": "Brak danych w odpowiedzi"}
 
 
 @mcp.tool()
-def delete_news(post_id: str) -> str:
-    """Usuwa news o podanym UUID."""
-    db = _get_db()
+def delete_news(post_id: str, env: str = "prod") -> str:
+    """Usuwa news o podanym UUID.
+
+    env: 'prod' (domyślnie) lub 'test'.
+    """
+    db = _get_db(env)
     db.table("news").delete().eq("id", post_id).execute()
     return f"Usunięto post {post_id}"
 

@@ -8,6 +8,7 @@ from PIL import Image
 from postgrest.exceptions import APIError
 
 from admin.db import get_db, get_env_mode
+from notifier import notify_discord
 
 bp = Blueprint("news", __name__)
 
@@ -61,10 +62,11 @@ def index():
 
 @bp.route("/news/add", methods=["POST"])
 def add():
+    title = request.form["title"]
     try:
         db = get_db()
         result = db.table("news").insert({
-            "title": request.form["title"],
+            "title": title,
             "content": request.form["content"],
             "message_type": request.form["message_type"],
         }).execute()
@@ -75,8 +77,10 @@ def add():
             db.table("news").update({"image_url": url}).eq("id", result.data[0]["id"]).execute()
 
         session["flash"] = "Post dodany!"
+        notify_discord("Dodano news", success=True, detail=title)
     except APIError as e:
         session["flash"] = "Błąd 402 — Supabase zablokował zapis." if _is_402(e) else f"Błąd bazy: {e}"
+        notify_discord("Dodanie newsa nie powiodło się", success=False, detail=title)
     return redirect(url_for("news.index"))
 
 

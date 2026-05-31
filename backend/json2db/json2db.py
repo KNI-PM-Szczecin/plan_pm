@@ -17,8 +17,21 @@ import time
 
 load_dotenv()
 
-_env_mode_path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
-_prefix = "TEST_" if open(_env_mode_path).read().strip() == "test" else ""
+
+def _resolve_env_mode() -> str:
+    # PLANPM_ENV (set by callers like the MCP server) wins over the global
+    # .env_mode file, so a single run can target test/prod without flipping it.
+    override = os.environ.get("PLANPM_ENV")
+    if override in ("prod", "test"):
+        return override
+    path = os.path.join(os.path.dirname(__file__), "..", ".env_mode")
+    try:
+        return open(path).read().strip()
+    except OSError:
+        return "prod"
+
+
+_prefix = "TEST_" if _resolve_env_mode() == "test" else ""
 
 _PAGE_SIZE = 1000
 
