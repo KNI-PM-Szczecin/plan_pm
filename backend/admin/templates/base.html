@@ -12,12 +12,12 @@
 
 <nav class="navbar">
   <div class="navbar-left">
-    <div class="navbar-brand">
+    <a href="{{ url_for('pipeline.index') }}" class="navbar-brand">
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo">
       <span class="brand-name">Plan PM</span>
       <span class="brand-divider">/</span>
       <span class="brand-sub">Admin</span>
-    </div>
+    </a>
     <div class="navbar-tabs">
       <a href="{{ url_for('pipeline.index') }}" class="navbar-tab {% if active == 'pipeline' %}active{% endif %}">Pipeline</a>
       <a href="{{ url_for('news.index') }}"    class="navbar-tab {% if active == 'news'     %}active{% endif %}">News</a>
