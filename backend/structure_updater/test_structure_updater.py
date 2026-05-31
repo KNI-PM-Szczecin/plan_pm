@@ -287,8 +287,11 @@ def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
     """), encoding="utf-8")
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.delenv("SUPABASE_URL", raising=False)
-    monkeypatch.delenv("SUPABASE_KEY", raising=False)
+    # Clear both prefixed and non-prefixed vars so the missing-env path triggers
+    # regardless of .env_mode (the module reads TEST_* in test mode).
+    for var in ("SUPABASE_URL", "SUPABASE_SERVICE_KEY",
+                "TEST_SUPABASE_URL", "TEST_SUPABASE_SERVICE_KEY"):
+        monkeypatch.delenv(var, raising=False)
     monkeypatch.setattr(sys, "argv", [
         "structure_updater", "--source", "xml", "--xml-path", str(xml)
     ])
@@ -316,7 +319,7 @@ def test_main_clear_tables_error(tmp_path, monkeypatch):
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
-    monkeypatch.setenv("SUPABASE_KEY", "fake-key")
+    monkeypatch.setenv("SUPABASE_SERVICE_KEY", "fake-key")
     monkeypatch.setattr(sys, "argv", [
         "structure_updater", "--source", "xml", "--xml-path", str(xml)
     ])
