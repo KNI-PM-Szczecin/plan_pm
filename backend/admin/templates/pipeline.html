@@ -6,6 +6,19 @@
   <p>Run and monitor your data processing pipeline.</p>
 </div>
 
+<div class="link-grid">
+  {% for link in links %}
+    <a class="link-card" href="{{ link.url }}" target="_blank" rel="noopener">
+      <i class="bi {{ link.icon }} link-icon" style="color: {{ link.color }};"></i>
+      <div class="link-text">
+        <span class="link-title">{{ link.title }}</span>
+        <span class="link-sub">{{ link.subtitle }}</span>
+      </div>
+      <i class="bi bi-arrow-up-right link-arrow"></i>
+    </a>
+  {% endfor %}
+</div>
+
 <div class="step-grid">
   {% for key, step in steps.items() %}
     <button

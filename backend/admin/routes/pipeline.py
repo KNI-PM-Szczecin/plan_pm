@@ -25,6 +25,18 @@ STEPS = {
 _lock = threading.Lock()
 _running: dict = {"step": None}
 
+# Quick-access resource links shown on the pipeline page.
+LINKS = [
+    {"title": "YouTrack", "subtitle": "Issues & tasks", "icon": "bi-kanban",
+     "color": "#4a9eff", "url": "https://mobilesigmas.youtrack.cloud/agiles/183-3/current"},
+    {"title": "GitHub", "subtitle": "Source code", "icon": "bi-github",
+     "color": "#ffffff", "url": "https://github.com/KNI-PM-Szczecin/plan_pm"},
+    {"title": "Knowledge Base", "subtitle": "Docs & guides", "icon": "bi-journal-text",
+     "color": "#a855f7", "url": "https://mobilesigmas.youtrack.cloud/articles/PLPM"},
+    {"title": "Supabase", "subtitle": "Database", "icon": "bi-lightning-charge-fill",
+     "color": "#3ecf8e", "url": "https://supabase.com/dashboard/project/tuhxoqjndjgbdmlhicws"},
+]
+
 bp = Blueprint("pipeline", __name__)
 
 
@@ -40,6 +52,7 @@ def index():
         flash=flash,
         steps=STEPS,
         running=_running["step"],
+        links=LINKS,
     )
 
 

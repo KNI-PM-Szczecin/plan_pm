@@ -27,6 +27,24 @@ def _app_version() -> str | None:
     return None
 
 
+def _last_deploy() -> str | None:
+    """Date of the last commit on origin/deployment — deploy.yml runs on push
+    there, so it approximates the last production deploy. Reflects the last
+    fetched state of the branch."""
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cd", "--date=format:%d.%m.%Y %H:%M",
+             "origin/deployment"],
+            cwd=str(BACKEND_ROOT.parent),
+            capture_output=True, text=True, timeout=5,
+        )
+        out = result.stdout.strip()
+        return out or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def create_app() -> Flask:
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
@@ -38,10 +56,11 @@ def create_app() -> Flask:
     app.register_blueprint(stats_bp)
 
     app_version = _app_version()
+    last_deploy = _last_deploy()
 
     @app.context_processor
-    def inject_version():
-        return {"app_version": app_version}
+    def inject_meta():
+        return {"app_version": app_version, "last_deploy": last_deploy}
 
     @app.before_request
     def guard():

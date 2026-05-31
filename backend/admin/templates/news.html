@@ -9,7 +9,7 @@
 <div class="news-grid">
   <div class="panel">
     <div class="logs-title">Nowy post</div>
-    <form method="POST" action="{{ url_for('news.add') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('news.add') }}" enctype="multipart/form-data" id="add-form">
       <div class="form-group">
         <label for="title">Tytuł</label>
         <input type="text" id="title" name="title" required placeholder="Tytuł posta">
@@ -113,6 +113,36 @@
     </form>
   </div>
 </div>
+
+<div id="add-confirm-modal" class="confirm-overlay" style="display:none;">
+  <div class="confirm-box">
+    <div class="confirm-head">
+      <div>
+        <h2 class="confirm-title">Dodać post?</h2>
+        <p class="confirm-sub">Potwierdź publikację</p>
+      </div>
+      <button class="confirm-x" onclick="closeAddConfirm()" aria-label="Zamknij">&times;</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-step">
+        <i class="bi bi-megaphone-fill"></i>
+        <span>Nowy post</span>
+      </div>
+      <p class="confirm-text">Post zostanie zapisany w bazie i pojawi się w aplikacji mobilnej.</p>
+      <div id="add-confirm-banner" class="confirm-banner">
+        <i class="bi bi-exclamation-triangle"></i>
+        <div>
+          <strong id="add-banner-title"></strong>
+          <span id="add-banner-text"></span>
+        </div>
+      </div>
+    </div>
+    <div class="confirm-foot">
+      <button class="confirm-btn cancel" onclick="closeAddConfirm()">Anuluj</button>
+      <button class="confirm-btn go" id="add-confirm-go">Tak, dodaj</button>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -161,6 +191,39 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') document.getElementById('modal-overlay').classList.remove('open');
+  });
+
+  // ── Confirm before adding a post ──
+  const ENV_MODE = "{{ env_mode }}";
+  const addForm = document.getElementById('add-form');
+  let addConfirmed = false;
+
+  addForm.addEventListener('submit', e => {
+    if (addConfirmed) return;          // second pass — let it through
+    e.preventDefault();
+    const banner = document.getElementById('add-confirm-banner');
+    const title = document.getElementById('add-banner-title');
+    const text = document.getElementById('add-banner-text');
+    if (ENV_MODE === 'prod') {
+      banner.className = 'confirm-banner prod';
+      title.textContent = 'Środowisko PRODUKCYJNE';
+      text.textContent = 'Post trafi do produkcyjnej bazy — zobaczą go użytkownicy aplikacji.';
+    } else {
+      banner.className = 'confirm-banner test';
+      title.textContent = 'Środowisko TESTOWE';
+      text.textContent = 'Post trafi do testowej bazy danych, nie produkcji.';
+    }
+    document.getElementById('add-confirm-modal').style.display = 'flex';
+  });
+
+  function closeAddConfirm() {
+    document.getElementById('add-confirm-modal').style.display = 'none';
+  }
+
+  document.getElementById('add-confirm-go').addEventListener('click', () => {
+    addConfirmed = true;
+    closeAddConfirm();
+    addForm.submit();
   });
 </script>
 {% endblock %}

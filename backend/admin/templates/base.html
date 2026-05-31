@@ -25,13 +25,38 @@
     </div>
   </div>
 
-  <form method="POST" action="{{ url_for('settings.toggle_env') }}" style="margin:0">
-    <button type="submit" class="env-badge {{ env_mode }}">
+  <div class="env-dropdown">
+    <button type="button" class="env-badge {{ env_mode }}" onclick="toggleEnvMenu(event)">
       <span class="dot"></span>
       {{ env_mode | upper }}
       <i class="bi bi-chevron-down"></i>
     </button>
-  </form>
+    <div class="env-menu" id="env-menu">
+      <div class="env-menu-header">Środowisko</div>
+      <form method="POST" action="{{ url_for('settings.set_env') }}">
+        <input type="hidden" name="mode" value="prod">
+        <button type="submit" class="env-option {% if env_mode == 'prod' %}active{% endif %}">
+          <span class="env-option-dot prod"></span>
+          <span class="env-option-text">
+            <span class="env-option-title">Produkcja</span>
+            <span class="env-option-sub">Baza danych PROD</span>
+          </span>
+          {% if env_mode == 'prod' %}<i class="bi bi-check2 env-check"></i>{% endif %}
+        </button>
+      </form>
+      <form method="POST" action="{{ url_for('settings.set_env') }}">
+        <input type="hidden" name="mode" value="test">
+        <button type="submit" class="env-option {% if env_mode == 'test' %}active{% endif %}">
+          <span class="env-option-dot test"></span>
+          <span class="env-option-text">
+            <span class="env-option-title">Test</span>
+            <span class="env-option-sub">Baza danych TEST</span>
+          </span>
+          {% if env_mode == 'test' %}<i class="bi bi-check2 env-check"></i>{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
 </nav>
 
 <div class="wrapper">
@@ -56,7 +81,18 @@
 
 <footer class="app-footer">
   Plan PM{% if app_version %} · wersja aplikacji <strong>{{ app_version }}</strong>{% endif %}
+  {% if last_deploy %} · ostatni deploy na produkcję <strong>{{ last_deploy }}</strong>{% endif %}
 </footer>
+
+<script>
+  function toggleEnvMenu(e) {
+    e.stopPropagation();
+    document.getElementById('env-menu').classList.toggle('open');
+  }
+  document.addEventListener('click', function () {
+    document.getElementById('env-menu').classList.remove('open');
+  });
+</script>
 
 {% block scripts %}{% endblock %}
 </body>

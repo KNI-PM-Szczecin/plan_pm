@@ -773,3 +773,92 @@ button[type="submit"].btn-primary:hover {
   text-align: center;
 }
 .app-footer strong { color: #888; font-weight: 600; }
+
+/* ── Resource links ──────────────────────────────── */
+
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.link-card:hover { border-color: #333; background: #111; }
+
+.link-icon { font-size: 22px; flex-shrink: 0; }
+
+.link-text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.link-title { color: #fff; font-size: 14px; font-weight: 600; }
+.link-sub { color: #666; font-size: 12px; }
+
+.link-arrow { color: #444; font-size: 14px; }
+.link-card:hover .link-arrow { color: #888; }
+
+/* ── Env dropdown ────────────────────────────────── */
+
+.env-dropdown { position: relative; }
+
+.env-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+.env-menu.open { display: block; }
+
+.env-menu-header {
+  font-size: 12px;
+  color: #666;
+  padding: 8px 10px;
+}
+
+.env-menu form { margin: 0; }
+
+.env-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 10px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.env-option:hover { background: #141414; }
+.env-option.active { border-color: #6b4cff; background: #0f0d1a; }
+
+.env-option-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.env-option-dot.prod { background: #00E699; }
+.env-option-dot.test { background: #888; }
+
+.env-option-text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.env-option-title { color: #fff; font-size: 15px; font-weight: 700; }
+.env-option-sub { color: #777; font-size: 12px; }
+
+.env-check { color: #00E699; font-size: 18px; }
