@@ -115,25 +115,6 @@ body {
 }
 
 .env-badge.prod {
-  background: #000;
-  border-color: #0070f3;
-}
-
-.env-badge.prod .dot {
-  background: #0070f3;
-  box-shadow: 0 0 8px #0070f3;
-}
-
-.env-badge.prod {
-  background: rgba(0, 112, 243, 0.1);
-  color: #fff;
-  border: 1px solid rgba(0, 112, 243, 0.4);
-}
-
-/* Matching Figma specific colors */
-.env-badge.prod {
-  background: #00dfd8; /* Wait, Figma shows green-ish? Let's check the image */
-  /* Re-reading image: it's a bright green button with text PROD */
   background: #00E699;
   color: #000;
   border: none;
@@ -661,3 +642,134 @@ button[type="submit"].btn-primary:hover {
   max-width: 320px;
   line-height: 1.5;
 }
+
+/* ── Confirmation modal (pipeline) ───────────────── */
+/* Prefixed .confirm-* to avoid clashing with the news edit modal (.modal-*). */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.confirm-box {
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+}
+
+.confirm-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.confirm-title { color: #fff; font-size: 20px; font-weight: 700; }
+.confirm-sub { color: #666; font-size: 13px; margin-top: 2px; }
+
+.confirm-x {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.confirm-x:hover { color: #fff; }
+
+.confirm-body { padding: 24px; }
+
+.confirm-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.confirm-step i {
+  font-size: 20px;
+  color: #fff;
+  background: #1a1a1a;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+.confirm-step span { color: #fff; font-size: 18px; font-weight: 700; }
+
+.confirm-text { color: #888; font-size: 14px; line-height: 1.6; }
+
+.confirm-banner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+}
+.confirm-banner i { font-size: 18px; margin-top: 1px; }
+.confirm-banner strong { display: block; font-size: 14px; margin-bottom: 2px; }
+.confirm-banner span { font-size: 13px; line-height: 1.5; }
+
+.confirm-banner.prod {
+  border: 1px solid #ff3b3b;
+  background: rgba(255, 59, 59, 0.06);
+}
+.confirm-banner.prod i,
+.confirm-banner.prod strong { color: #ff3b3b; }
+.confirm-banner.prod span { color: #c97b7b; }
+
+.confirm-banner.test {
+  border: 1px solid #f5a623;
+  background: rgba(245, 166, 35, 0.06);
+}
+.confirm-banner.test i,
+.confirm-banner.test strong { color: #f5a623; }
+.confirm-banner.test span { color: #c8a76a; }
+
+.confirm-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.confirm-btn {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+}
+.confirm-btn.cancel { background: #1a1a1a; color: #ccc; border-color: #2a2a2a; }
+.confirm-btn.cancel:hover { background: #222; }
+.confirm-btn.go { background: #ff3b3b; color: #000; }
+.confirm-btn.go:hover { background: #ff5555; }
+
+/* ── Footer ──────────────────────────────────────── */
+
+.app-footer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  border-top: 1px solid #111;
+  color: #555;
+  font-size: 12px;
+  text-align: center;
+}
+.app-footer strong { color: #888; font-weight: 600; }

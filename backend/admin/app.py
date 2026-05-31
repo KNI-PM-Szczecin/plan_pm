@@ -15,6 +15,18 @@ from admin.routes.settings import bp as settings_bp
 from admin.routes.stats import bp as stats_bp
 
 
+def _app_version() -> str | None:
+    """Read the mobile app version from frontend/pubspec.yaml (e.g. 1.1.2+22)."""
+    pubspec = BACKEND_ROOT.parent / "frontend" / "pubspec.yaml"
+    try:
+        for line in pubspec.read_text(encoding="utf-8").splitlines():
+            if line.startswith("version:"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return None
+
+
 def create_app() -> Flask:
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
@@ -24,6 +36,12 @@ def create_app() -> Flask:
     app.register_blueprint(pipeline_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(stats_bp)
+
+    app_version = _app_version()
+
+    @app.context_processor
+    def inject_version():
+        return {"app_version": app_version}
 
     @app.before_request
     def guard():
