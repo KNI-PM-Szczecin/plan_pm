@@ -8,12 +8,14 @@ import time
 import urllib.request
 from pathlib import Path
 
-import jwt
 from flask import Blueprint, render_template, jsonify
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
 
 from admin.db import get_env_mode
+
+# google-* and PyJWT power the (optional) store-statistics feature only. They are
+# imported lazily inside the functions that need them so a missing/half-installed
+# stats dependency degrades the Statistics page instead of crashing the whole
+# admin panel (news, pipeline, settings) at import time.
 
 bp = Blueprint("stats", __name__)
 logger = logging.getLogger(__name__)
@@ -53,6 +55,11 @@ def _safe(fn, default):
 
 
 def _credentials():
+    try:
+        from google.oauth2 import service_account
+    except ImportError:
+        logger.warning("google-auth not installed — Google Play stats unavailable")
+        return None
     # Preferred: read-only stats service account from .env (base64-encoded JSON).
     b64 = os.environ.get("GOOGLE_STATS_KEY_B64")
     if b64:
@@ -219,6 +226,11 @@ APPLE_API_BASE = "https://api.appstoreconnect.apple.com"
 
 def _apple_token():
     """Sign a short-lived ES256 JWT from the read-only ASC key in .env."""
+    try:
+        import jwt
+    except ImportError:
+        logger.warning("PyJWT not installed — App Store stats unavailable")
+        return None
     key_id = os.environ.get("APPLE_KEY_ID")
     issuer = os.environ.get("APPLE_ISSUER_ID")
     key_b64 = os.environ.get("APPLE_KEY_B64")
@@ -319,6 +331,11 @@ def index():
 
 @bp.route("/api/stats/google-play")
 def google_play_stats():
+    try:
+        from googleapiclient.discovery import build
+    except ImportError:
+        return jsonify({"error": "Biblioteki Google nie są zainstalowane. Uruchom: uv sync (lub pip install -e .)"}), 503
+
     creds = _credentials()
     if creds is None:
         return jsonify({"error": "Brak klucza Google Play"}), 404

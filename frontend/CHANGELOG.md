@@ -1,3 +1,15 @@
+## 1.2.0
+
+### pl-PL
+
+- Dodano widżety ekranu głównego z dzisiejszym planem zajęć
+- Wersja testowa — sprawdzamy działanie widżetów na różnych urządzeniach
+
+### en-US
+
+- Added home screen widgets showing today's schedule
+- Test build — verifying widgets across different devices
+
 ## 1.1.2
 
 ### pl-PL
