@@ -7,6 +7,7 @@ from pathlib import Path
 from flask import Blueprint, Response, render_template, session, redirect, url_for
 
 from admin.db import get_env_mode
+from notifier import notify_discord
 
 BACKEND_ROOT = Path(__file__).parent.parent.parent
 
@@ -63,7 +64,7 @@ def run(step: str):
 
     if not _lock.acquire(blocking=False):
         return Response(
-            "data: [ERROR] Inny krok jest już uruchomiony.\n\n",
+            f"data: {json.dumps('[ERROR] Inny krok jest już uruchomiony.')}\n\n",
             mimetype="text/event-stream",
         )
 
@@ -81,7 +82,10 @@ def run(step: str):
             for line in proc.stdout:
                 yield f"data: {json.dumps(line.rstrip())}\n\n"
             code = proc.wait()
-            yield f"data: [EXIT {code}]\n\n"
+            yield f"data: {json.dumps(f'[EXIT {code}]')}\n\n"
+            # Notify Discord for DB-touching steps (those that push to an env).
+            if step in ("full", "json2db", "structure"):
+                notify_discord(STEPS[step]["label"], success=(code == 0))
         finally:
             _running["step"] = None
             _lock.release()
@@ -96,12 +100,15 @@ def logs(module: str):
         return "Not found", 404
     log_path = BACKEND_ROOT / "logs" / f"{module}.log"
     if not log_path.exists():
-        return Response("data: (brak logów)\n\n", mimetype="text/event-stream")
+        return Response(
+            f"data: {json.dumps('(brak logów)')}\n\ndata: {json.dumps('[EOF]')}\n\n",
+            mimetype="text/event-stream",
+        )
 
     def generate():
         lines = log_path.read_text(errors="replace").splitlines()[-200:]
         for line in lines:
             yield f"data: {json.dumps(line)}\n\n"
-        yield "data: [EOF]\n\n"
+        yield f"data: {json.dumps('[EOF]')}\n\n"
 
     return Response(generate(), mimetype="text/event-stream")
