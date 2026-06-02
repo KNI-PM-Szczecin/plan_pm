@@ -272,9 +272,9 @@ def test_main_dry_run_xml(tmp_path, monkeypatch, capsys):
 
 
 def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
-    """main() bez SUPABASE_URL/KEY drukuje błąd i nie crashuje."""
+    """main() bez SUPABASE_URL/SERVICE_KEY drukuje błąd i nie crashuje."""
     import sys
-    from structure_updater.structure_updater import main
+    from structure_updater import structure_updater as su
 
     xml = tmp_path / "structure.xml"
     xml.write_text(textwrap.dedent("""\
@@ -287,16 +287,24 @@ def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
     """), encoding="utf-8")
 
     monkeypatch.chdir(tmp_path)
+    # Clear all possible env vars
     monkeypatch.delenv("SUPABASE_URL", raising=False)
-    monkeypatch.delenv("SUPABASE_KEY", raising=False)
+    monkeypatch.delenv("SUPABASE_SERVICE_KEY", raising=False)
+    monkeypatch.delenv("TEST_SUPABASE_URL", raising=False)
+    monkeypatch.delenv("TEST_SUPABASE_SERVICE_KEY", raising=False)
+    
+    # Force _prefix to empty string to be sure
+    monkeypatch.setattr(su, "_prefix", "")
+    
     monkeypatch.setattr(sys, "argv", [
         "structure_updater", "--source", "xml", "--xml-path", str(xml)
     ])
 
-    main()
+    su.main()
 
     output = capsys.readouterr().out
     assert "SUPABASE" in output
+    assert "SERVICE_KEY" in output
 
 
 def test_main_clear_tables_error(tmp_path, monkeypatch):
@@ -315,8 +323,9 @@ def test_main_clear_tables_error(tmp_path, monkeypatch):
     """), encoding="utf-8")
 
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(su, "_prefix", "")
     monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
-    monkeypatch.setenv("SUPABASE_KEY", "fake-key")
+    monkeypatch.setenv("SUPABASE_SERVICE_KEY", "fake-key")
     monkeypatch.setattr(sys, "argv", [
         "structure_updater", "--source", "xml", "--xml-path", str(xml)
     ])

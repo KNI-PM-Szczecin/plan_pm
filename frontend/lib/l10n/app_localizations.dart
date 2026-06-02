@@ -610,6 +610,24 @@ abstract class AppLocalizations {
   /// **'Puste'**
   String get emptyNotesLabel;
 
+  /// lecture.dart - Label for the lecture rector hours widget header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Godziny rektorskie'**
+  String get rectorHoursBadge;
+
+  /// lecture.dart - Label for the lecture rector day widget header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzień rektorski'**
+  String get rectorDayBadge;
+
+  /// lecture.dart - Label for the lecture rector hours widget header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zajęcia odwołane'**
+  String get canceledClassBadge;
+
   /// news_page.dart - Label/header for the section showing university news.
   ///
   /// In pl, this message translates to:
@@ -819,6 +837,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
   String get networkErrorDescription;
+
+  /// group_selection_page.dart - Title shown when no groups exist for the selected study settings.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak dostępnych grup'**
+  String get noGroupsAvailable;
+
+  /// group_selection_page.dart - Description shown when no groups exist for the selected study settings.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?'**
+  String get noGroupsAvailableDescription;
 
   /// No description provided for @announcementDismiss.
   ///

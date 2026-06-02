@@ -57,3 +57,8 @@ android {
 flutter {
     source = "../.."
 }
+
+configurations.all {
+    exclude(group = "androidx.glance", module = "glance-appwidget")
+    exclude(group = "androidx.compose.remote", module = "remote-creation-android")
+}

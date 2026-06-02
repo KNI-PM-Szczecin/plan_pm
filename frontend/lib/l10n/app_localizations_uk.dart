@@ -284,6 +284,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get emptyNotesLabel => 'Пусто';
 
   @override
+  String get rectorHoursBadge => 'Ректорські години';
+
+  @override
+  String get rectorDayBadge => 'Ректорський день';
+
+  @override
+  String get canceledClassBadge => 'Заняття скасовано';
+
+  @override
   String get newsSectionLabel => 'Останні новини';
 
   @override
@@ -421,6 +430,13 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get networkErrorDescription =>
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
+
+  @override
+  String get noGroupsAvailable => 'Немає доступних груп';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'Для вашого плану не знайдено жодних груп. Ви впевнені, що хочете продовжити?';
 
   @override
   String get announcementDismiss => 'Зрозуміло';

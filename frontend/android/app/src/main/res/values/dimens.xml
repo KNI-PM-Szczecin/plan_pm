@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="widget_padding">14dp</dimen>
+    <dimen name="widget_card_min_height">67dp</dimen>
+    <dimen name="widget_card_gap">8dp</dimen>
+</resources>

@@ -281,6 +281,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyNotesLabel => 'Empty';
 
   @override
+  String get rectorHoursBadge => 'Rector\'s hours';
+
+  @override
+  String get rectorDayBadge => 'Rector\'s day';
+
+  @override
+  String get canceledClassBadge => 'Class canceled';
+
+  @override
   String get newsSectionLabel => 'Recent news';
 
   @override
@@ -414,6 +423,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get networkErrorDescription =>
       'Check your internet connection and try again.';
+
+  @override
+  String get noGroupsAvailable => 'No groups available';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'No groups were found for your plan. Are you sure you want to continue?';
 
   @override
   String get announcementDismiss => 'Got it';

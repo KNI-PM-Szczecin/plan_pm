@@ -107,6 +107,42 @@ def test_parseTeachers_empty():
     assert p.parseTeachers("") == []
 
 
+def test_parseTeachers_kpt_compound_title_splits_correctly():
+    """Both teachers have 'mgr inż. kpt. ż. w.' — compound title should not split on the first kpt."""
+    p = Parser.__new__(Parser)
+    result = p.parseTeachers(
+        "mgr inż. kpt. ż. w. Tomasz Pluta mgr inż. kpt. ż. w. Barbara Kwiecińska"
+    )
+    assert len(result) == 2
+    assert any("Tomasz Pluta" in r for r in result)
+    assert any("Barbara Kwiecińska" in r for r in result)
+
+
+def test_parseTeachers_kpt_standalone_after_mgr():
+    """Second teacher has only 'kpt. ż. w.' title (no mgr/dr), must still split."""
+    p = Parser.__new__(Parser)
+    result = p.parseTeachers("mgr inż. Jan Kowalski kpt. ż. w. Anna Nowak")
+    assert len(result) == 2
+    assert any("Jan Kowalski" in r for r in result)
+    assert any("Anna Nowak" in r for r in result)
+
+
+def test_parseTeachers_kpt_single_teacher():
+    """Single teacher with kpt. ż. w. title — must NOT split."""
+    p = Parser.__new__(Parser)
+    result = p.parseTeachers("kpt. ż. w. Jan Kowalski")
+    assert result == ["kpt. ż. w. Jan Kowalski"]
+
+
+def test_parseTeachers_kpt_both_standalone():
+    """Both teachers have only 'kpt. ż. w.' — splits on second occurrence."""
+    p = Parser.__new__(Parser)
+    result = p.parseTeachers("kpt. ż. w. Jan Kowalski kpt. ż. w. Anna Nowak")
+    assert len(result) == 2
+    assert any("Jan Kowalski" in r for r in result)
+    assert any("Anna Nowak" in r for r in result)
+
+
 # --- Testy dla tokStringToDic ---
 
 def test_tokStringToDic_standard():

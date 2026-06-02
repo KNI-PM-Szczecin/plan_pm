@@ -13,6 +13,10 @@ import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/pages/lectures/utils/diagonal_stripes_painter.dart';
+import 'package:plan_pm/pages/lectures/utils/canceled_reason.dart';
+
+import '../../../env_config.dart';
 
 // Karta pojedynczego zajęcia na liście planu.
 // Obsługuje rozwijanie szczegółów oraz animowany pasek postępu dla zajęć aktualnie trwających.
@@ -58,17 +62,41 @@ class _LectureState extends State<Lecture> {
   bool _isInProgress = false; // czy zajęcia aktualnie trwają
   Timer? _timer;
 
+  CanceledReason? canceledReason;
+  bool get isCanceledOrRector => canceledReason != null || kDebugRectorHours;
+
   @override
   void initState() {
     super.initState();
+    _determineStatus();
 
-    if (widget.isProgressable) {
-      // Ustaw wartości bezpośrednio przed pierwszym buildem — setState w initState
-      // nie gwarantuje przebudowy w każdej wersji Fluttera.
+    if (widget.isProgressable && !isCanceledOrRector) {
       _computeProgress();
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         if (mounted) setState(_computeProgress);
       });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant Lecture oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.notes != widget.notes) {
+      _determineStatus();
+    }
+  }
+
+  void _determineStatus() {
+    final notes = widget.notes?.toLowerCase() ?? '';
+    
+    if (notes.contains('godziny rektorskie')) {
+      canceledReason = CanceledReason.rectorHours;
+    } else if (notes.contains('dzień rektorski')) {
+      canceledReason = CanceledReason.rectorDay;
+    } else if (notes.contains('zajęcia odwołane')) {
+      canceledReason = CanceledReason.canceled;
+    } else {
+      canceledReason = null;
     }
   }
 
@@ -97,6 +125,7 @@ class _LectureState extends State<Lecture> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Dobierz gradient/kolor i kolor tekstu na podstawie ustawienia stylu kolorów.
     // Pastel używa ciemnego tekstu bo jasne tło słabo kontrastuje z białym.
@@ -119,13 +148,33 @@ class _LectureState extends State<Lecture> {
         cardGradient = defaultGradients[widget.idx % defaultGradients.length];
     }
 
-    bool isInProgress = widget.isProgressable && _isInProgress;
+    // Detekcja godzin rektorskich i nadpisanie kolorów na szaro
+    if (isCanceledOrRector) {
+      cardGradient = null;
+      cardColor = AppColor.rectorHoursBackground(Theme.of(context).brightness);
+      textColor = isDarkMode ? AppColor.onPrimary.withValues(alpha: 0.7) : AppColor.onPrimary;
+    }
+
+    bool isInProgress = widget.isProgressable && _isInProgress && _progress > 0.0 && _progress < 1.0 && !isCanceledOrRector;
+
+    String getBadgeText() {
+       if (kDebugRectorHours && canceledReason == null) return l10n.rectorHoursBadge; // Fallback dla debuga
+       
+       switch (canceledReason) {
+         case CanceledReason.rectorHours:
+           return l10n.rectorHoursBadge; // Np. "Godziny rektorskie"
+         case CanceledReason.rectorDay:
+           return l10n.rectorDayBadge; // Np. "Dzień rektorski"
+         case CanceledReason.canceled:
+           return l10n.canceledClassBadge; // Np. "Zajęcia odwołane"
+         default:
+           return '';
+       }
+    }
 
     // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
     FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
-    FontWeight subTextWeight = isInProgress
-        ? FontWeight.bold
-        : FontWeight.normal;
+    FontWeight subTextWeight = isInProgress ? FontWeight.bold : FontWeight.normal;
 
     final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -149,7 +198,24 @@ class _LectureState extends State<Lecture> {
             ? Border.all(color: Colors.white.withValues(alpha: 0.25), width: 0.5)
             : null,
       ),
-      child: Material(
+      child: ClipRRect( // ClipRRect, żeby paski nie wychodziły poza zaokrąglone rogi
+        borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
+        child: Stack(
+          children: [
+            // --- TŁO Z PASKAMI DLA GODZIN REKTORSKICH ---
+            if (isCanceledOrRector)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: DiagonalStripesPainter(
+                    color: isDarkMode 
+                      ? Colors.white.withValues(alpha: 0.03) 
+                      : Colors.black.withValues(alpha: 0.05),
+                    stripeWidth: 1.5,
+                    spacing: 12.0,
+                  ),
+                ),
+              ),
+          Material(
             color: Colors.transparent,
             child: InkWell(
               radius: 300.0,
@@ -164,7 +230,35 @@ class _LectureState extends State<Lecture> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Pastylka "Godziny rektorskie" nad tytułem zajęć — tylko dla zajęć z wykrytymi godzinami rektorskimi
+                            if (isCanceledOrRector)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 2.0),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.rectorHoursBadge, // Półprzezroczyste tło pastylki
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(LucideIcons.info, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          getBadgeText(),
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(alpha: 0.8),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                             // Wiersz: nazwa zajęć + strzałka rozwijania
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,7 +269,12 @@ class _LectureState extends State<Lecture> {
                                     style: TextStyle(
                                       fontWeight: titleWeight,
                                       fontSize: 20,
-                                      color: textColor,
+                                      // Automatycznie przyjmie biały dla zwykłych, a szarawy dla rektorskich
+                                      color: textColor, 
+                                      // Tylko to wymaga warunku:
+                                      decoration: isCanceledOrRector ? TextDecoration.lineThrough : null,
+                                      decorationColor: textColor,
+                                      decorationThickness: 2.0,
                                     ),
                                   ),
                                 ),
@@ -219,16 +318,7 @@ class _LectureState extends State<Lecture> {
                                 // normalizowany do standardowego ", "
                                 Expanded(
                                   child: Text(
-                                    widget.location != null
-                                        ? widget.location!
-                                                      .split(" , ")
-                                                      .length ==
-                                                  1
-                                              ? widget.location!
-                                              : widget.location!
-                                                    .split(" , ")
-                                                    .join(", ")
-                                        : l10n.roomNaN,
+                                    widget.location?.replaceAll(" , ", ", ") ?? l10n.roomNaN,
                                     style: TextStyle(
                                       color: textColor,
                                       fontWeight: subTextWeight,
@@ -394,7 +484,7 @@ class _LectureState extends State<Lecture> {
                                                 widget.group,
                                               ),
                                             ),
-                                            if (widget.notes != null)
+                                            if (widget.notes != null && !isCanceledOrRector)
                                               DescriptionItem(
                                                 icon: LucideIcons.stickyNote,
                                                 color: Colors.yellow,
@@ -415,7 +505,11 @@ class _LectureState extends State<Lecture> {
               ),
             ),
           ),
+          ],
+        ),
+      ),
     );
+      
 
     return Padding(
       padding: const EdgeInsets.all(4),

@@ -276,6 +276,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get emptyNotesLabel => 'Puste';
 
   @override
+  String get rectorHoursBadge => 'Godziny rektorskie';
+
+  @override
+  String get rectorDayBadge => 'Dzień rektorski';
+
+  @override
+  String get canceledClassBadge => 'Zajęcia odwołane';
+
+  @override
   String get newsSectionLabel => 'Nowości z uczelni';
 
   @override
@@ -411,6 +420,13 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get networkErrorDescription =>
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
+
+  @override
+  String get noGroupsAvailable => 'Brak dostępnych grup';
+
+  @override
+  String get noGroupsAvailableDescription =>
+      'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?';
 
   @override
   String get announcementDismiss => 'Rozumiem';
