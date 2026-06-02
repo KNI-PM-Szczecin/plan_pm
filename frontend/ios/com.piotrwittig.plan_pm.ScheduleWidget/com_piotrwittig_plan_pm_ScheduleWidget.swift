@@ -76,6 +76,22 @@ struct LectureCard: View {
     let lecture: [String: String]
     let colors: [Color]
     @Environment(\.widgetFamily) var family
+    @Environment(\.widgetRenderingMode) var renderingMode
+
+    @ViewBuilder
+    private var cardBackground: some View {
+        if renderingMode == .accented {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white.opacity(0.15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.white.opacity(0.35), lineWidth: 1)
+                )
+        } else {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -113,10 +129,7 @@ struct LectureCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
-        )
+        .background(cardBackground)
         .overlay(alignment: .bottom) {
             if #available(iOS 16, *) {
                 let start = parseTime(lecture["start"] ?? "")
