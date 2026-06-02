@@ -1,3 +1,23 @@
+## 1.2.0
+
+### pl-PL
+
+- Nowe widżety ekranu głównego z planem zajęć (iOS i Android)
+- Wyróżnienie godzin rektorskich w liście zajęć
+- Wyświetlanie notatek do zajęć w widżecie ekranu głównego
+- Naprawiono błąd duplikowania zajęć przy szybkim onboardingu
+- Naprawiono wyświetlanie widżetu w trybie Clear/Tinted (iOS 26)
+- Informacja o braku grup przy wyborze grupy
+
+### en-US
+
+- New schedule home screen widgets (iOS and Android)
+- Rector hours highlighted in the lecture list
+- Lecture notes displayed in the home screen widget
+- Fixed duplicate lectures on rapid onboarding taps
+- Fixed widget rendering in iOS 26 Clear/Tinted mode
+- Empty groups feedback on group selection screen
+
 ## 1.1.2
 
 ### pl-PL

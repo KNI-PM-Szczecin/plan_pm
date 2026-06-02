@@ -63,7 +63,19 @@ platform :ios do
       xcodeproj: "Runner.xcodeproj",
     )
 
-    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      export_team_id: "UYTX3DLBWN",
+      export_options: {
+        signingStyle: "automatic",
+      },
+      # Let Xcode register the App Group capability and create/update the
+      # distribution profiles for the app + ScheduleWidget extension on the fly
+      # (uses the admin App Store Connect API key configured above).
+      xcargs: "-allowProvisioningUpdates",
+    )
 
     changelog = [
       read_changelog_locale(version_name, "pl-PL"),
