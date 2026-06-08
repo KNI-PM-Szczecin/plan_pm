@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -28,6 +29,8 @@ def set_env():
             check=True,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
         )
         session["flash"] = f"Przełączono na: {new_mode.upper()}"
     except subprocess.CalledProcessError as e:
