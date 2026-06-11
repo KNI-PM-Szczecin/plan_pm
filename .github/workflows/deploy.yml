@@ -8,13 +8,13 @@ jobs:
   ios:
     name: iOS → TestFlight
     if: "!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip ios]')"
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '26.5'
 
       - uses: subosito/flutter-action@v2
         with:
