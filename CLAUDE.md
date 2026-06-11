@@ -176,8 +176,13 @@ Po każdej zmianie ARB: `flutter gen-l10n`.
 | `kDebugAnnouncement` | Wymuszaj dialog ogłoszenia | `false` |
 | `kDebugWhatsNew` | Wymuszaj dialog "Co nowego" | `false` |
 | `kDebugNews` | Mock newsy | `false` |
+| `kDebugRectorHours` | Wymuszaj baner godzin rektorskich | `false` |
+| `kDebugWidget` | Fake dane w widgecie ekranu głównego | `false` |
+| `kDebugEmptyGroups` | Symuluj pustą listę grup | `false` |
 
 Przełączane przez: `python scripts/switch_env.py [test|prod]`
+
+> **WAŻNE:** `switch_env.py` **nadpisuje cały plik** `env_config.dart` przy każdym wywołaniu. Dodając nową flagę do `env_config.dart`, **zawsze jednocześnie** dodaj ją też do `switch_env.py` (w bloku `ENV_CONFIG_DART.write_text(...)`). Pominięcie tego powoduje utratę flagi po następnym przełączeniu środowiska i błąd kompilacji.
 
 ---
 
@@ -212,7 +217,7 @@ main.py
   └── json2db     → upsertuje do Supabase
 ```
 
-Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`). Stary scrapper Selenium został usunięty; nie ma już flagi `--old-scrapper`.
+Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`).
 
 **Uruchamianie:**
 ```bash
