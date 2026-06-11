@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Pipeline</h1>
+  <p>Run and monitor your data processing pipeline.</p>
+</div>
+
+<div class="link-grid">
+  {% for link in links %}
+    <a class="link-card" href="{{ link.url }}" target="_blank" rel="noopener">
+      <i class="bi {{ link.icon }} link-icon" style="color: {{ link.color }};"></i>
+      <div class="link-text">
+        <span class="link-title">{{ link.title }}</span>
+        <span class="link-sub">{{ link.subtitle }}</span>
+      </div>
+      <i class="bi bi-arrow-up-right link-arrow"></i>
+    </a>
+  {% endfor %}
+</div>
+
+<div class="step-grid">
+  {% for key, step in steps.items() %}
+    <button
+      class="step-btn {% if running == key %}running{% endif %}"
+      onclick="runStep('{{ key }}')"
+      id="btn-{{ key }}"
+      {% if running and running != key %}disabled{% endif %}
+    >
+      <i class="bi {% if key == 'full' %}bi-play-fill{% elif key == 'mapper' %}bi-grid-3x3-gap-fill{% elif key == 'scrapper' %}bi-globe{% elif key == 'parser' %}bi-circle-half{% elif key == 'json2db' %}bi-upload{% else %}bi-building{% endif %}"></i>
+      {{ step.label }}
+    </button>
+  {% endfor %}
+</div>
+
+<div class="terminal-wrap">
+  <div class="terminal-header">
+    <span id="terminal-status" class="terminal-status idle">idle</span>
+    <button class="btn-clear" onclick="clearTerminal()">Wyczyść</button>
+  </div>
+  <pre id="terminal" class="terminal">&mdash; no output yet &mdash;</pre>
+</div>
+
+<div class="logs-section">
+  <div class="logs-title">LOGI MODUŁÓW</div>
+  <div class="log-tabs">
+    {% for mod in ['mapper', 'scrapper', 'structure_updater', 'json2db'] %}
+      <button class="log-tab" id="tab-{{ mod }}" onclick="showLog('{{ mod }}')">{{ mod }}</button>
+    {% endfor %}
+  </div>
+  
+  <div class="terminal-wrap" id="module-logs-wrap" style="display:none; margin-top: 16px;">
+    <div class="terminal-header">
+      <span class="terminal-status" id="log-status">history logs</span>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-clear" onclick="refreshLogs()"><i class="bi bi-arrow-clockwise"></i> Odśwież</button>
+        <button class="btn-clear" onclick="closeLogs()">Zamknij</button>
+      </div>
+    </div>
+    <pre id="log-output" class="terminal" style="min-height: 200px; max-height: 400px;"></pre>
+  </div>
+</div>
+
+<div id="confirm-modal" class="confirm-overlay" style="display:none;">
+  <div class="confirm-box">
+    <div class="confirm-head">
+      <div>
+        <h2 class="confirm-title">Potwierdzenie</h2>
+        <p class="confirm-sub">Sprawdź zanim uruchomisz</p>
+      </div>
+      <button class="confirm-x" onclick="closeConfirm()" aria-label="Zamknij">&times;</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-step">
+        <i id="confirm-icon" class="bi bi-play-fill"></i>
+        <span id="confirm-label">—</span>
+      </div>
+      <p id="confirm-desc" class="confirm-text">—</p>
+      <div id="confirm-banner" class="confirm-banner" style="display:none;">
+        <i class="bi bi-exclamation-triangle"></i>
+        <div>
+          <strong id="confirm-banner-title"></strong>
+          <span id="confirm-banner-text"></span>
+        </div>
+      </div>
+    </div>
+    <div class="confirm-foot">
+      <button class="confirm-btn cancel" onclick="closeConfirm()">Anuluj</button>
+      <button class="confirm-btn go" id="confirm-go">Tak, uruchom</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let activeStream = null;
+
+function setStatus(text, cls) {
+  const el = document.getElementById('terminal-status');
+  el.textContent = text;
+  el.className = 'terminal-status ' + cls;
+}
+
+function clearTerminal() {
+  document.getElementById('terminal').textContent = '— no output yet —';
+}
+
+// Steps that clear/overwrite the database — gated behind a confirmation modal.
+const ENV_MODE = "{{ env_mode }}";
+const DESTRUCTIVE = {
+  full:      { label: 'Full Pipeline',     icon: 'bi-play-fill',
+               desc: 'Uruchomi cały pipeline: mapper → scrapper → parser → upload do bazy danych. Operacja może potrwać kilka minut.' },
+  json2db:   { label: 'Upload to DB',      icon: 'bi-upload',
+               desc: 'Wyczyści tabele i wgra na nowo dane z parser.json. Nadpisuje wszystkie istniejące zajęcia w bazie.' },
+  structure: { label: 'Structure Updater', icon: 'bi-building',
+               desc: 'Wyczyści i nadpisze strukturę uczelni (wydziały, kierunki, specjalizacje) w bazie.' },
+};
+
+let pendingStep = null;
+
+function runStep(step) {
+  if (DESTRUCTIVE[step]) openConfirm(step);
+  else executeStep(step);
+}
+
+function openConfirm(step) {
+  pendingStep = step;
+  const info = DESTRUCTIVE[step];
+  document.getElementById('confirm-label').textContent = info.label;
+  document.getElementById('confirm-icon').className = 'bi ' + info.icon;
+  document.getElementById('confirm-desc').textContent = info.desc;
+
+  // Env banner: red for prod, amber for test.
+  const banner = document.getElementById('confirm-banner');
+  const title = document.getElementById('confirm-banner-title');
+  const text = document.getElementById('confirm-banner-text');
+  if (ENV_MODE === 'prod') {
+    banner.className = 'confirm-banner prod';
+    title.textContent = 'Środowisko PRODUKCYJNE';
+    text.textContent = 'Ta operacja zostanie wykonana na prawdziwej bazie danych.';
+  } else {
+    banner.className = 'confirm-banner test';
+    title.textContent = 'Środowisko TESTOWE';
+    text.textContent = 'Operacja dotyczy testowej bazy danych, nie produkcji.';
+  }
+  banner.style.display = 'flex';
+
+  document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  pendingStep = null;
+}
+
+document.getElementById('confirm-go').addEventListener('click', function () {
+  const step = pendingStep;
+  closeConfirm();
+  if (step) executeStep(step);
+});
+
+function executeStep(step) {
+  if (activeStream) activeStream.close();
+
+  const terminal = document.getElementById('terminal');
+  terminal.textContent = '';
+  setStatus('running: ' + step, 'running');
+
+  document.querySelectorAll('.step-btn').forEach(b => b.disabled = true);
+  document.getElementById('btn-' + step).classList.add('running');
+
+  activeStream = new EventSource('/pipeline/run/' + step);
+
+  activeStream.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.startsWith('[EXIT')) {
+      const code = parseInt(data.match(/\d+/)[0]);
+      setStatus(code === 0 ? 'done' : 'error (exit ' + code + ')', code === 0 ? 'done' : 'error');
+      document.querySelectorAll('.step-btn').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('running');
+      });
+      activeStream.close();
+      activeStream = null;
+    } else if (data.startsWith('[ERROR]')) {
+      terminal.textContent += data + '\n';
+      setStatus('error', 'error');
+      document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
+      activeStream.close();
+      activeStream = null;
+    } else {
+      terminal.textContent += data + '\n';
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+  };
+
+  activeStream.onerror = function() {
+    setStatus('połączenie zerwane', 'error');
+    document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
+    if (activeStream) { activeStream.close(); activeStream = null; }
+  };
+}
+
+let currentLogModule = null;
+
+function showLog(module) {
+  const wrap = document.getElementById('module-logs-wrap');
+  const out = document.getElementById('log-output');
+
+  currentLogModule = module;
+  document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + module).classList.add('active');
+
+  wrap.style.display = 'block';
+  out.textContent = 'Ładowanie...';
+
+  const es = new EventSource('/pipeline/logs/' + module);
+  const lines = [];
+  es.onmessage = function(e) {
+    const line = JSON.parse(e.data);
+    if (line === '[EOF]') {
+      renderLog(out, lines);
+      out.scrollTop = out.scrollHeight;
+      es.close();
+    }
+    else lines.push(line);
+  };
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function colorizeLog(line) {
+  let h = escapeHtml(line);
+  h = h.replace(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)/, '<span class="log-ts">$1</span>');
+  h = h.replace(/\[(INFO|DEBUG)\]/, '<span class="log-info">[$1]</span>');
+  h = h.replace(/\[(WARNING|WARN)\]/, '<span class="log-warn">[$1]</span>');
+  h = h.replace(/\[(ERROR|CRITICAL)\]/, '<span class="log-error">[$1]</span>');
+  return h;
+}
+
+function renderLog(out, lines) {
+  if (!lines.length) { out.innerHTML = '<span style="color:#444">(puste)</span>'; return; }
+  const width = String(lines.length).length;
+  out.innerHTML = lines.map((line, i) =>
+    `<div class="log-row"><span class="log-ln">${String(i + 1).padStart(width, ' ')}</span><span class="log-msg">${colorizeLog(line)}</span></div>`
+  ).join('');
+}
+
+function refreshLogs() {
+    if (currentLogModule) showLog(currentLogModule);
+}
+
+function closeLogs() {
+    document.getElementById('module-logs-wrap').style.display = 'none';
+    document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+    currentLogModule = null;
+}
+</script>
+{% endblock %}

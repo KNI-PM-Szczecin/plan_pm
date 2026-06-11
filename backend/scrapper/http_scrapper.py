@@ -20,6 +20,10 @@ import requests
 from bs4 import BeautifulSoup
 from rich.progress import Progress
 
+from console_setup import force_utf8_output
+
+force_utf8_output()
+
 BASE_URL = "https://plany.am.szczecin.pl"
 # Stałe stany okien (niezmienne w DevExpress)
 WINDOW_STATE_HTML = '{"windowsState":"0:0:-1:0:0:0:-10000:-10000:1:0:0:0"}'.replace('"', '&quot;')
@@ -167,6 +171,7 @@ class HttpScrapper:
     def __init__(self, output="./output/scrapper.json", input="./output/mapper.json"):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+        self.logger.propagate = False  # keep other modules' logs out of scrapper.log
         self.output = output
         self.input = input
         print("Running HTTP scrapper")
@@ -181,7 +186,7 @@ class HttpScrapper:
 
         if not self.logger.handlers:
             os.makedirs("./logs", exist_ok=True)
-            handler = logging.FileHandler("./logs/http_scrapper.log", mode="w+", encoding="utf-8")
+            handler = logging.FileHandler("./logs/scrapper.log", mode="w+", encoding="utf-8")
             formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
@@ -192,14 +197,12 @@ class HttpScrapper:
         self.stats = {
             "success": 0,
             "download_fail": 0,
-            "interaction_fail": 0,
             "parse_fail": 0,
             "total": 0,
         }
         self.failed_flows = []
 
     def scrapper(self, flow_id, progress=None):
-        self.stats["total"] += 1
         log_print = progress.console.print if progress else print
         log_print(f"📥 Scraping plan {flow_id}... ")
         self.logger.info(f"[{flow_id}] Scraping plan")
@@ -208,20 +211,29 @@ class HttpScrapper:
 
         try:
             schedule_data = fetch_plan_http(str(flow_id))
-        except Exception as e:
+        except requests.RequestException as e:
             log_print(f"❌ {flow_id}: Błąd pobierania.")
             self.logger.error(f"{flow_id}: Pobieranie nie powiodło się: {e}")
             with self.output_lock:
                 self.failed_flows.append(flow_id)
-                self.stats["interaction_fail"] += 1
+                self.stats["total"] += 1
+                self.stats["download_fail"] += 1
+            return
+        except Exception as e:
+            log_print(f"❌ {flow_id}: Błąd parsowania.")
+            self.logger.error(f"{flow_id}: Parsowanie nie powiodło się: {e}")
+            with self.output_lock:
+                self.failed_flows.append(flow_id)
+                self.stats["total"] += 1
+                self.stats["parse_fail"] += 1
             return
 
         with self.output_lock:
             self.results.extend(schedule_data)
+            self.stats["total"] += 1
             self.stats["success"] += 1
 
-        self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie.")
-        self.logger.info(f"[{flow_id}] Lectures: {str(schedule_data)[:300]}...")
+        self.logger.info(f"{flow_id}: Pobrano i sparsowano poprawnie — {len(schedule_data)} rekordów.")
         log_print(f"✅ Gotowe ({time.time() - start_time:.2f} s)")
 
     def run(self, max_workers=10, flow_id=-1):
@@ -251,7 +263,6 @@ class HttpScrapper:
         print("\n📊 Statystyki:")
         print(f" - Łącznie prób:        {total}")
         print(f" - Sukcesów:           {self.stats['success']}")
-        print(f" - Błędy interakcji:   {self.stats['interaction_fail']}")
         print(f" - Nie pobrano pliku:  {self.stats['download_fail']}")
         print(f" - Błędy parsowania:   {self.stats['parse_fail']}")
         print(f" - Niepowodzenia:      {len(self.failed_flows)}")

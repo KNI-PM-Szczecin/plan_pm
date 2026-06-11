@@ -10,6 +10,10 @@ import json
 import logging
 from rich.progress import Progress
 
+from console_setup import force_utf8_output
+
+force_utf8_output()
+
 class Mapper:
     def __init__(self, output = "./output/mapper.json"):
         print("Running mapper.")
@@ -26,26 +30,21 @@ class Mapper:
             with open(log_file, "a", encoding="utf-8"):
                 pass
 
+        # propagate=False keeps this module's logs out of the root logger, so a
+        # later pipeline step (json2db's httpx chatter) can't bleed into mapper.log.
+        self.logger.propagate = False
         if not self.logger.handlers:
             handler = logging.FileHandler(log_file, mode="w+", encoding="utf-8")
             formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
-            
+
         self.stats = {
             "success": 0,
             "interaction_fail": 0,
             "total": 0
         }
         self.valid_records = {}
-
-        logging.basicConfig(
-            filename=log_file,
-            filemode="w+",
-            encoding="utf-8",
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(message)s"
-        )
 
     def check_page(self, flow_id):
         url = f"https://plany.am.szczecin.pl/Plany/PlanyTokow/{flow_id}"

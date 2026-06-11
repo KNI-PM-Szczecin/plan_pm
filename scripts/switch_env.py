@@ -3,6 +3,10 @@
 import sys
 from pathlib import Path
 
+reconfigure = getattr(sys.stdout, "reconfigure", None)
+if reconfigure is not None:
+    reconfigure(encoding="utf-8", errors="replace")
+
 REPO_ROOT = Path(__file__).parent.parent
 ENV_MODE_FILE = REPO_ROOT / "backend" / ".env_mode"
 ENV_CONFIG_DART = REPO_ROOT / "frontend" / "lib" / "env_config.dart"
