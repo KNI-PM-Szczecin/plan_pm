@@ -57,11 +57,11 @@ class _AboutPageState extends State<AboutPage> {
   SnackBar _styledSnackBar({required Widget icon, required String text}) {
     return SnackBar(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColor.inverseSurface,
+      backgroundColor: AppColor.surfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
         side: BorderSide(
-          color: AppColor.onInverseSurface.withValues(alpha: 0.12),
+          color: AppColor.onSurface.withValues(alpha: 0.12),
           width: 1,
         ),
       ),
@@ -74,7 +74,7 @@ class _AboutPageState extends State<AboutPage> {
             child: Text(
               text,
               style: TextStyle(
-                color: AppColor.onInverseSurface,
+                color: AppColor.onSurface,
                 fontSize: 15,
               ),
             ),
@@ -115,7 +115,7 @@ class _AboutPageState extends State<AboutPage> {
           ..showSnackBar(_styledSnackBar(
             icon: Icon(
               Icons.mouse,
-              color: AppColor.onInverseSurface.withValues(alpha: 0.7),
+              color: AppColor.onSurface.withValues(alpha: 0.7),
               size: 22,
             ),
             text: l10n.debugTapsRemaining(7 - _tapCount),

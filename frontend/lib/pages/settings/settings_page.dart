@@ -17,6 +17,7 @@ import 'package:plan_pm/pages/settings/widgets/info/role_info.dart';
 import 'package:plan_pm/pages/settings/widgets/info/student_info.dart';
 import 'package:plan_pm/pages/settings/appearance_page.dart';
 import 'package:plan_pm/pages/settings/language_page.dart';
+import 'package:plan_pm/pages/welcome/gdpr_consent_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/pages/settings/about_page.dart';
@@ -158,6 +159,24 @@ class _SettingsPageState extends State<SettingsPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(l10n.debugCacheCleared),
+                                ),
+                              );
+                            },
+                          ),
+                          Divider(height: 1, color: AppColor.outline),
+                          MenuButton(
+                            title: l10n.debugShowGdpr,
+                            onTap: () async {
+                              HapticFeedback.lightImpact();
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.remove("gdpr_consent");
+                              if (!context.mounted) return;
+                              Navigator.push(
+                                context,
+                                appRoute(
+                                  (context) => GdprConsentPage(
+                                    onAccepted: () {},
+                                  ),
                                 ),
                               );
                             },

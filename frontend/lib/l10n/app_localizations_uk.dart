@@ -649,4 +649,17 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get searchHint => 'Пошук...';
+
+  @override
+  String get debugShowGdpr => 'Показати екран згоди GDPR';
+
+  @override
+  String get gdprTitle => 'Конфіденційність і дані';
+
+  @override
+  String get gdprBody =>
+      'Додаток Plan PM відображає імена, наукові звання та розклади занять викладачів Морського університету в Щецині. Ці дані отримані з публічно доступних університетських систем та є персональними даними відповідно до Загального регламенту захисту даних (GDPR).\n\nКористуючись додатком, ви підтверджуєте, що розумієте мету відображення цих даних, та надаєте на це згоду.';
+
+  @override
+  String get gdprAccept => 'Розумію і погоджуюсь';
 }

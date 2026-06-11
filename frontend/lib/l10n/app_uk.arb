@@ -213,5 +213,21 @@
   "debugSevenDayMode": "Режим 7 днів",
   "newsLoading": "Завантаження новин",
   "newsNoDataDescription": "Немає нових повідомлень. Перевірте пізніше для оновлень.",
-  "searchHint": "Пошук..."
+  "searchHint": "Пошук...",
+  "debugShowGdpr": "Показати екран згоди GDPR",
+  "@debugShowGdpr": {
+    "description": "settings_page.dart - Debug button label to preview the GDPR consent screen."
+  },
+  "gdprTitle": "Конфіденційність і дані",
+  "@gdprTitle": {
+    "description": "gdpr_consent_page.dart - Title for the GDPR consent screen."
+  },
+  "gdprBody": "Додаток Plan PM відображає імена, наукові звання та розклади занять викладачів Морського університету в Щецині. Ці дані отримані з публічно доступних університетських систем та є персональними даними відповідно до Загального регламенту захисту даних (GDPR).\n\nКористуючись додатком, ви підтверджуєте, що розумієте мету відображення цих даних, та надаєте на це згоду.",
+  "@gdprBody": {
+    "description": "gdpr_consent_page.dart - GDPR consent body text."
+  },
+  "gdprAccept": "Розумію і погоджуюсь",
+  "@gdprAccept": {
+    "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  }
 }

@@ -642,4 +642,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchHint => 'Search...';
+
+  @override
+  String get debugShowGdpr => 'Show GDPR consent screen';
+
+  @override
+  String get gdprTitle => 'Privacy & Data';
+
+  @override
+  String get gdprBody =>
+      'Plan PM displays names, academic titles, and schedules of lecturers at the Maritime University of Szczecin. This data is sourced from publicly accessible university systems and constitutes personal data under the General Data Protection Regulation (GDPR).\n\nBy using the app, you confirm that you understand the purpose for which this data is displayed and consent to its use.';
+
+  @override
+  String get gdprAccept => 'I understand and accept';
 }

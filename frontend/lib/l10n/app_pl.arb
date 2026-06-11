@@ -622,5 +622,21 @@
   "debugSevenDayMode": "Tryb 7-dniowy",
   "newsLoading": "Ładowanie aktualności",
   "newsNoDataDescription": "Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.",
-  "searchHint": "Szukaj..."
+  "searchHint": "Szukaj...",
+  "debugShowGdpr": "Pokaż ekran zgody RODO",
+  "@debugShowGdpr": {
+    "description": "settings_page.dart - Debug button label to preview the GDPR consent screen."
+  },
+  "gdprTitle": "Prywatność i dane",
+  "@gdprTitle": {
+    "description": "gdpr_consent_page.dart - Title for the GDPR consent screen."
+  },
+  "gdprBody": "Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.",
+  "@gdprBody": {
+    "description": "gdpr_consent_page.dart - GDPR consent body text."
+  },
+  "gdprAccept": "Rozumiem i akceptuję",
+  "@gdprAccept": {
+    "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  }
 }

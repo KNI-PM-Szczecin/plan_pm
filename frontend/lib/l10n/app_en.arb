@@ -212,5 +212,21 @@
   "debugSevenDayMode": "7-day mode",
   "newsLoading": "Loading news",
   "newsNoDataDescription": "No new messages. Check back later for updates.",
-  "searchHint": "Search..."
+  "searchHint": "Search...",
+  "debugShowGdpr": "Show GDPR consent screen",
+  "@debugShowGdpr": {
+    "description": "settings_page.dart - Debug button label to preview the GDPR consent screen."
+  },
+  "gdprTitle": "Privacy & Data",
+  "@gdprTitle": {
+    "description": "gdpr_consent_page.dart - Title for the GDPR consent screen."
+  },
+  "gdprBody": "Plan PM displays names, academic titles, and schedules of lecturers at the Maritime University of Szczecin. This data is sourced from publicly accessible university systems and constitutes personal data under the General Data Protection Regulation (GDPR).\n\nBy using the app, you confirm that you understand the purpose for which this data is displayed and consent to its use.",
+  "@gdprBody": {
+    "description": "gdpr_consent_page.dart - GDPR consent body text."
+  },
+  "gdprAccept": "I understand and accept",
+  "@gdprAccept": {
+    "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  }
 }

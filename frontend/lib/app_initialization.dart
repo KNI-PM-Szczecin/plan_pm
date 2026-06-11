@@ -8,6 +8,7 @@ import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
+import 'package:plan_pm/pages/welcome/gdpr_consent_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
@@ -15,19 +16,55 @@ import 'package:plan_pm/service/cache_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<void> _clearUserProfile(SharedPreferences prefs) async {
+  for (final key in const [
+    'app_mode',
+    'lecturer_id',
+    'lecturer_name',
+    'lecturer_title',
+    'course',
+    'degree_course',
+    'faculty',
+    'specialisation',
+    'year',
+    'study_mode',
+    'term',
+    'degree_level',
+    'groups',
+    'seven_day_mode',
+  ]) {
+    await prefs.remove(key);
+  }
+}
+
 Future<Widget> appInitialization() async {
-  AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  if (!prefs.containsKey("gdpr_consent")) {
+    final Widget nextPage = await _buildTargetPage(prefs);
+    return GdprConsentPage(nextPage: nextPage);
+  }
+
+  return _buildTargetPage(prefs);
+}
+
+Future<Widget> _buildTargetPage(SharedPreferences prefs) async {
+  AppLogger.i("[APP-INIT] Start");
 
   final info = await PackageInfo.fromPlatform();
   final currentVersion = info.version;
   final lastVersion = prefs.getString('last_app_version');
+  await prefs.setString('last_app_version', currentVersion);
+
   if (lastVersion != null && lastVersion != currentVersion) {
-    AppLogger.i("[APP-INIT] Version changed $lastVersion → $currentVersion, clearing cache");
+    AppLogger.i("[APP-INIT] Version changed $lastVersion → $currentVersion, resetting user profile");
     await DatabaseService.instance.clearLectures();
     await DatabaseService.instance.clearNews();
+    await _clearUserProfile(prefs);
+    await prefs.setBool('skip_welcome', true);
+    sevenDayModeNotifier.value = false;
+    return const RoleSelectionPage();
   }
-  await prefs.setString('last_app_version', currentVersion);
 
   if (!prefs.containsKey("skip_welcome")) {
     return const WelcomePage();

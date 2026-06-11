@@ -1251,6 +1251,30 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Szukaj...'**
   String get searchHint;
+
+  /// settings_page.dart - Debug button label to preview the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż ekran zgody RODO'**
+  String get debugShowGdpr;
+
+  /// gdpr_consent_page.dart - Title for the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prywatność i dane'**
+  String get gdprTitle;
+
+  /// gdpr_consent_page.dart - GDPR consent body text.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.'**
+  String get gdprBody;
+
+  /// gdpr_consent_page.dart - Accept button label on the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozumiem i akceptuję'**
+  String get gdprAccept;
 }
 
 class _AppLocalizationsDelegate
