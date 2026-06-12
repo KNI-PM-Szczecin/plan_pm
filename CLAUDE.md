@@ -154,9 +154,9 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 
 **Android (RemoteViews / `AppWidgetProvider`):**
 - Provider: [`android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt`](frontend/android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt)
-- Layout: [`android/app/src/main/res/layout/widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 8 slotów kart (gradient 0..7)
+- Layout: [`android/app/src/main/res/layout/widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 5 slotów kart (gradient 0..4)
 - Dimens (per-card min height, padding, gap) w [`res/values/dimens.xml`](frontend/android/app/src/main/res/values/dimens.xml)
-- Liczba widocznych kart wyliczana dynamicznie w `onAppWidgetOptionsChanged` z `OPTION_APPWIDGET_MAX/MIN_HEIGHT` (`cardsThatFit`) — Android nie ma równowartości iOS-owego "snap" do rozmiaru
+- Liczba widocznych kart: `n = floor((height - padding + gap) / (cardMinHeight + gap))`, max 5 — logika w `cardCountForHeight()`. Karty używają `layout_weight="1"` więc rozciągają się do dostępnej wysokości — nie ma pustej przestrzeni ani ucięć niezależnie od dokładnego rozmiaru widżetu
 - Czyta z `HomeWidgetPreferences` shared preferences plik, klucz `schedule_data` (**nie** `flutter.schedule_data` z `FlutterSharedPreferences`)
 - **Progress bar statyczny** — RemoteViews nie obsługuje live timerów. Pasek odświeża się przy `updateAppWidget` (push z apki, resize, kolejny entry timeline w iOS-sty­lu nie istnieje)
 - **Glance dependency exclusion w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** `home_widget` transitively wymaga `glance-appwidget` (AGP 9.1+, compileSdk 37+). Wykluczone bo używamy klasycznego `AppWidgetProvider`, nie Glance. Nie odblokowywuj bez upgradeu całego toolchainu.

@@ -229,5 +229,33 @@
   "gdprAccept": "Розумію і погоджуюсь",
   "@gdprAccept": {
     "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  },
+  "gdprCard1Title": "Університетські дані",
+  "@gdprCard1Title": {
+    "description": "gdpr_consent_page.dart - Title of the first info card."
+  },
+  "gdprCard1Body": "Plan PM відображає імена, академічні звання та розклади занять викладачів Морського університету в Щецині. Ці дані отримані з публічно доступних університетських систем.",
+  "@gdprCard1Body": {
+    "description": "gdpr_consent_page.dart - Body of the first info card."
+  },
+  "gdprCard2Title": "GDPR",
+  "@gdprCard2Title": {
+    "description": "gdpr_consent_page.dart - Title of the second info card."
+  },
+  "gdprCard2Body": "Ці дані є персональними даними відповідно до Загального регламенту захисту даних (GDPR).",
+  "@gdprCard2Body": {
+    "description": "gdpr_consent_page.dart - Body of the second info card."
+  },
+  "gdprCard3Title": "Ваша згода",
+  "@gdprCard3Title": {
+    "description": "gdpr_consent_page.dart - Title of the third info card."
+  },
+  "gdprCard3Body": "Користуючись додатком, ви підтверджуєте, що розумієте мету відображення цих даних та надаєте на це згоду.",
+  "@gdprCard3Body": {
+    "description": "gdpr_consent_page.dart - Body of the third info card."
+  },
+  "gdprRevoke": "Ви можете відкликати згоду в будь-який момент у налаштуваннях.",
+  "@gdprRevoke": {
+    "description": "gdpr_consent_page.dart - Footer note below the accept button."
   }
 }

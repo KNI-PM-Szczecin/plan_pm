@@ -26,4 +26,4 @@ const bool kDebugRectorHours = false;
 const bool kDebugEmptyGroups = false;
 
 // Set to true to use hardcoded fake schedule data in the home screen widget (bypasses DB)
-const bool kDebugWidget = false;
+const bool kDebugWidget = true;

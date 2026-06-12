@@ -228,5 +228,33 @@
   "gdprAccept": "I understand and accept",
   "@gdprAccept": {
     "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  },
+  "gdprCard1Title": "University data",
+  "@gdprCard1Title": {
+    "description": "gdpr_consent_page.dart - Title of the first info card."
+  },
+  "gdprCard1Body": "Plan PM displays names, academic titles and schedules of lecturers at the Maritime University of Szczecin. This data is sourced from publicly accessible university systems.",
+  "@gdprCard1Body": {
+    "description": "gdpr_consent_page.dart - Body of the first info card."
+  },
+  "gdprCard2Title": "GDPR",
+  "@gdprCard2Title": {
+    "description": "gdpr_consent_page.dart - Title of the second info card."
+  },
+  "gdprCard2Body": "This data constitutes personal data under the General Data Protection Regulation (GDPR).",
+  "@gdprCard2Body": {
+    "description": "gdpr_consent_page.dart - Body of the second info card."
+  },
+  "gdprCard3Title": "Your consent",
+  "@gdprCard3Title": {
+    "description": "gdpr_consent_page.dart - Title of the third info card."
+  },
+  "gdprCard3Body": "By using the app, you confirm that you understand the purpose for which this data is displayed and consent to its use.",
+  "@gdprCard3Body": {
+    "description": "gdpr_consent_page.dart - Body of the third info card."
+  },
+  "gdprRevoke": "You can withdraw your consent at any time in settings.",
+  "@gdprRevoke": {
+    "description": "gdpr_consent_page.dart - Footer note below the accept button."
   }
 }
