@@ -27,3 +27,6 @@ const bool kDebugEmptyGroups = false;
 
 // Set to true to use hardcoded fake schedule data in the home screen widget (bypasses DB)
 const bool kDebugWidget = true;
+
+// Set to true to show the GDPR consent screen before confirming lecturer selection
+const bool kDebugGdpr = false;

@@ -1,29 +1,35 @@
-// Jednorazowy, blokujący ekran zgody RODO — pokazywany raz przy pierwszym uruchomieniu.
-// Użytkownik musi zaakceptować, żeby kontynuować; nie można go zamknąć przyciskiem wstecz.
+// Ekran zgody RODO — pokazywany przy wyborze wykładowcy (gdy kDebugGdpr = true).
+// Żeby przejść dalej, użytkownik musi zaakceptować; przyciskiem wstecz może anulować.
+// Nie zapisuje stanu zgody — każde wejście wymaga ponownej akceptacji.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/widgets/back_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GdprConsentPage extends StatelessWidget {
-  const GdprConsentPage({super.key, this.nextPage, this.onAccepted})
-      : assert(nextPage != null || onAccepted != null);
+  const GdprConsentPage({super.key, required this.onAccepted});
 
-  final Widget? nextPage;
-  final VoidCallback? onAccepted;
+  final VoidCallback onAccepted;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         backgroundColor: AppColor.background,
         body: SafeArea(
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: SizedBox(width: 56, child: AppBackButton()),
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -90,19 +96,10 @@ class GdprConsentPage extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      onPressed: () async {
+                      onPressed: () {
                         HapticFeedback.lightImpact();
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString("gdpr_consent", "true");
-                        if (!context.mounted) return;
-                        if (onAccepted != null) {
-                          Navigator.of(context).pop();
-                          onAccepted!();
-                        } else {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => nextPage!),
-                          );
-                        }
+                        Navigator.of(context).pop();
+                        onAccepted();
                       },
                       child: Text(l10n.gdprAccept),
                     ),

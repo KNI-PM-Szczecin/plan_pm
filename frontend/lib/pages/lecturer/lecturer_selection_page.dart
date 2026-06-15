@@ -6,8 +6,10 @@ import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/back_button.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_search_field.dart';
 import 'package:plan_pm/pages/lecturer/widgets/lecturer_tile.dart';
+import 'package:plan_pm/pages/welcome/gdpr_consent_page.dart';
 
 class LecturerSelectionPage extends StatefulWidget {
   const LecturerSelectionPage({
@@ -117,7 +119,17 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
                     ? null
                     : () {
                         HapticFeedback.lightImpact();
-                        widget.onContinue(_selected!);
+                        if (kDebugGdpr) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => GdprConsentPage(
+                                onAccepted: () => widget.onContinue(_selected!),
+                              ),
+                            ),
+                          );
+                        } else {
+                          widget.onContinue(_selected!);
+                        }
                       },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 54),

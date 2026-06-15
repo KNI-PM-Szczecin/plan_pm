@@ -48,6 +48,9 @@ ENV_CONFIG_DART.write_text(
     "\n"
     "// Set to true to simulate empty groups response (bypasses Supabase, always returns empty list)\n"
     "const bool kDebugEmptyGroups = false;\n"
+    "\n"
+    "// Set to true to show the GDPR consent screen before confirming lecturer selection\n"
+    "const bool kDebugGdpr = false;\n"
 )
 
 print(f"Przestawiono na: {mode}")

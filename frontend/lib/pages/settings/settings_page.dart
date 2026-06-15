@@ -166,11 +166,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           Divider(height: 1, color: AppColor.outline),
                           MenuButton(
                             title: l10n.debugShowGdpr,
-                            onTap: () async {
+                            onTap: () {
                               HapticFeedback.lightImpact();
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.remove("gdpr_consent");
-                              if (!context.mounted) return;
                               Navigator.push(
                                 context,
                                 appRoute(

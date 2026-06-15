@@ -8,7 +8,6 @@ import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
-import 'package:plan_pm/pages/welcome/gdpr_consent_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
@@ -39,11 +38,6 @@ Future<void> _clearUserProfile(SharedPreferences prefs) async {
 
 Future<Widget> appInitialization() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  if (!prefs.containsKey("gdpr_consent")) {
-    final Widget nextPage = await _buildTargetPage(prefs);
-    return GdprConsentPage(nextPage: nextPage);
-  }
 
   return _buildTargetPage(prefs);
 }
