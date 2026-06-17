@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label_small">Plan PM — mały</string>
+    <string name="widget_label_medium">Plan PM — średni</string>
+    <string name="widget_label_large">Plan PM — duży</string>
+</resources>

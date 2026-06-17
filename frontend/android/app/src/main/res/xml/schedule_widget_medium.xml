@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Medium widget — 4 tiles wide, 2 cards tall (same height as the old small).
+     No android:resizeMode => not resizable. 2 cards = 28 (padding) + 2*66 + 8 (gap). -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:updatePeriodMillis="1800000"
+    android:minWidth="290dp"
+    android:minHeight="168dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:initialLayout="@layout/widget_schedule"
+    android:widgetCategory="home_screen" />

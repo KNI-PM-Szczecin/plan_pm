@@ -112,11 +112,34 @@ private let cardGradients: [[Color]] = [
     [Color(red: 0.94, green: 0.52, blue: 0.10), Color(red: 0.82, green: 0.28, blue: 0.18)],
 ]
 
+// Solid grey used for rector-hours / canceled cards (≈ Colors.grey.shade700,
+// i.e. AppColor.rectorHoursBackground in the Flutter UI). Fixed so the white
+// text stays legible in both light and dark widget backgrounds.
+private let rectorCardColor = Color(red: 0.38, green: 0.38, blue: 0.40)
+
+// Diagonal hatch texture mirroring Flutter's DiagonalStripesPainter
+// (spacing 12, stroke width 1.5).
+struct DiagonalStripes: Shape {
+    var spacing: CGFloat = 12
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        var x = -rect.height
+        while x < rect.width {
+            p.move(to: CGPoint(x: x, y: 0))
+            p.addLine(to: CGPoint(x: x + rect.height, y: rect.height))
+            x += spacing
+        }
+        return p
+    }
+}
+
 struct LectureCard: View {
     let lecture: [String: String]
     let colors: [Color]
     @Environment(\.widgetFamily) var family
     @Environment(\.widgetRenderingMode) var renderingMode
+
+    private var isRector: Bool { !(lecture["badge"] ?? "").isEmpty }
 
     @ViewBuilder
     private var cardBackground: some View {
@@ -127,6 +150,14 @@ struct LectureCard: View {
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.white.opacity(0.35), lineWidth: 1)
                 )
+        } else if isRector {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(rectorCardColor)
+                .overlay(
+                    DiagonalStripes()
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1.5)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                )
         } else {
             RoundedRectangle(cornerRadius: 14)
                 .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
@@ -135,10 +166,20 @@ struct LectureCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(lecture["name"] ?? "")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
+            // Rector hours / canceled: a compact inline warning icon (no extra
+            // row) plus the grey textured background and a struck-through title.
+            HStack(spacing: 5) {
+                if isRector {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                Text(lecture["name"] ?? "")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.white)
+                    .strikethrough(isRector)
+                    .lineLimit(1)
+            }
             HStack(spacing: 10) {
                 HStack(spacing: 4) {
                     Image("ClockIcon")
@@ -147,6 +188,7 @@ struct LectureCard: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 11, height: 11)
                     Text("\(lecture["start"] ?? "") - \(lecture["end"] ?? "")")
+                        .strikethrough(isRector)
                 }
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.white.opacity(0.88))
@@ -158,6 +200,7 @@ struct LectureCard: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 11, height: 11)
                         Text(loc)
+                            .strikethrough(isRector)
                             .lineLimit(1)
                     }
                     .font(.system(size: 11, weight: .medium))
@@ -171,7 +214,7 @@ struct LectureCard: View {
         .padding(.vertical, 8)
         .background(cardBackground)
         .overlay(alignment: .bottom) {
-            if #available(iOS 16, *) {
+            if #available(iOS 16, *), !isRector {
                 let start = lectureDate(lecture, timeKey: "start")
                 let end = lectureDate(lecture, timeKey: "end")
                 if let s = start, let e = end, s <= Date(), Date() <= e {

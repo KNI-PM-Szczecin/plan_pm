@@ -4,23 +4,36 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.Gravity
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
 import java.util.Calendar
 
-data class LectureItem(val name: String, val start: String, val end: String, val location: String)
+data class LectureItem(
+    val name: String,
+    val start: String,
+    val end: String,
+    val location: String,
+    // Rector-hours / canceled state. `rector` is the state key (empty for an
+    // ordinary lecture); `badge` is the localized label to show in the pill.
+    val rector: String = "",
+    val badge: String = ""
+) {
+    val isRector: Boolean get() = rector.isNotEmpty()
+}
 
-class ScheduleWidgetProvider : AppWidgetProvider() {
+open class ScheduleWidgetProvider : AppWidgetProvider() {
 
     private companion object {
-        const val MAX_CARDS = 5
+        const val MAX_CARDS = 7  // must match the number of card slots in widget_schedule.xml
         // Must stay in sync with dimens.xml values used in widget_schedule.xml.
         const val VERTICAL_PADDING_DP = 28  // widget_padding (14dp) × 2
-        const val CARD_MIN_HEIGHT_DP  = 67  // widget_card_min_height
-        const val CARD_GAP_DP         = 8   // widget_card_gap
+        const val CARD_HEIGHT_DP      = 62  // widget_card_height (EXACT, must match dimens.xml)
+        const val CARD_GAP_DP         = 5   // widget_card_gap
+        const val MIN_PAD_DP          = 2   // floor for the symmetric inset
     }
 
     override fun onUpdate(
@@ -57,7 +70,9 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                         name = obj.optString("name", ""),
                         start = obj.optString("start", ""),
                         end = obj.optString("end", ""),
-                        location = obj.optString("location", "")
+                        location = obj.optString("location", ""),
+                        rector = obj.optString("rector", ""),
+                        badge = obj.optString("badge", "")
                     )
                 )
             }
@@ -73,14 +88,27 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
     ) {
         val options = appWidgetManager.getAppWidgetOptions(widgetId)
         val heightDp = widgetHeightDp(options)
-        val cardCount = cardCountForHeight(heightDp)
-        val cardHeightDp = (heightDp - VERTICAL_PADDING_DP - (cardCount - 1) * CARD_GAP_DP) / cardCount
+        val cardCount = resolveCardCount(heightDp)
 
         val visible = filterRelevant(lectures, cardCount)
 
         val views = RemoteViews(context.packageName, R.layout.widget_schedule)
-        bindWidget(views, visible, cardCount, cardHeightDp)
+        bindWidget(views, visible, cardCount)
+        applyBoxPadding(context, views, heightDp, visible.size)
         appWidgetManager.updateAppWidget(widgetId, views)
+    }
+
+    // Centers the cards vertically and frames them with an equal inset on all four
+    // sides: the leftover vertical space (height − card stack) is split top/bottom,
+    // and that same value is reused left/right. shownCount must be the number of cards
+    // actually rendered (fewer when there aren't enough lectures) so partial lists
+    // are centered and framed too.
+    private fun applyBoxPadding(context: Context, views: RemoteViews, heightDp: Int, shownCount: Int) {
+        if (shownCount <= 0) return  // empty state keeps the layout's default padding
+        val cardStackDp = shownCount * CARD_HEIGHT_DP + (shownCount - 1) * CARD_GAP_DP
+        val padDp = ((heightDp - cardStackDp) / 2).coerceAtLeast(MIN_PAD_DP)
+        val padPx = (padDp * context.resources.displayMetrics.density).toInt()
+        views.setViewPadding(R.id.widget_box, padPx, padPx, padPx, padPx)
     }
 
     private fun widgetHeightDp(options: Bundle): Int {
@@ -89,17 +117,28 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         return when {
             maxHeight > 0 -> maxHeight
             minHeight > 0 -> minHeight
-            else -> VERTICAL_PADDING_DP + CARD_MIN_HEIGHT_DP  // default → 1 card
+            else -> VERTICAL_PADDING_DP + CARD_HEIGHT_DP  // default → 1 card
         }
     }
 
     // Returns how many cards fit: n = floor((height - padding + gap) / (cardHeight + gap)).
-    // Cards use layout_weight so they stretch to fill any remaining space — no clipping.
+    // Cards are fixed-height and top-aligned (like iOS) — leftover space stays empty
+    // rather than stretching the cards to fill it.
     private fun cardCountForHeight(heightDp: Int): Int {
         val available = heightDp - VERTICAL_PADDING_DP + CARD_GAP_DP
-        val cardUnit = CARD_MIN_HEIGHT_DP + CARD_GAP_DP
+        val cardUnit = CARD_HEIGHT_DP + CARD_GAP_DP
         return (available / cardUnit).coerceIn(1, MAX_CARDS)
     }
+
+    // Default card count: height-based with a comfortable padding reserve.
+    // Subclasses may override (the small widget packs more cards into the same footprint).
+    protected open fun resolveCardCount(heightDp: Int): Int = cardCountForHeight(heightDp)
+
+    // Max cards whose stack fits the height while still leaving the minimum inset
+    // (2 × MIN_PAD_DP) that applyBoxPadding will apply, so the last card is never
+    // clipped below the widget edge.
+    protected fun maxCardsThatFit(heightDp: Int): Int =
+        ((heightDp - 2 * MIN_PAD_DP + CARD_GAP_DP) / (CARD_HEIGHT_DP + CARD_GAP_DP)).coerceIn(1, MAX_CARDS)
 
     private fun filterRelevant(lectures: List<LectureItem>, cardCount: Int): List<LectureItem> {
         if (lectures.size <= cardCount) return lectures
@@ -124,13 +163,15 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         return h * 60 + m
     }
 
-    private fun bindWidget(views: RemoteViews, lectures: List<LectureItem>, cardCount: Int, cardHeightDp: Int) {
+    private fun bindWidget(views: RemoteViews, lectures: List<LectureItem>, cardCount: Int) {
         val slots = listOf(
-            CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1),
-            CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2),
-            CardSlot(R.id.widget_card_3, R.id.widget_name_3, R.id.widget_time_3, R.id.widget_location_3, R.id.widget_progress_3),
-            CardSlot(R.id.widget_card_4, R.id.widget_name_4, R.id.widget_time_4, R.id.widget_location_4, R.id.widget_progress_4),
-            CardSlot(R.id.widget_card_5, R.id.widget_name_5, R.id.widget_time_5, R.id.widget_location_5, R.id.widget_progress_5),
+            CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1, R.drawable.widget_card_grad_0),
+            CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2, R.drawable.widget_card_grad_1),
+            CardSlot(R.id.widget_card_3, R.id.widget_name_3, R.id.widget_time_3, R.id.widget_location_3, R.id.widget_progress_3, R.drawable.widget_card_grad_2),
+            CardSlot(R.id.widget_card_4, R.id.widget_name_4, R.id.widget_time_4, R.id.widget_location_4, R.id.widget_progress_4, R.drawable.widget_card_grad_3),
+            CardSlot(R.id.widget_card_5, R.id.widget_name_5, R.id.widget_time_5, R.id.widget_location_5, R.id.widget_progress_5, R.drawable.widget_card_grad_4),
+            CardSlot(R.id.widget_card_6, R.id.widget_name_6, R.id.widget_time_6, R.id.widget_location_6, R.id.widget_progress_6, R.drawable.widget_card_grad_5),
+            CardSlot(R.id.widget_card_7, R.id.widget_name_7, R.id.widget_time_7, R.id.widget_location_7, R.id.widget_progress_7, R.drawable.widget_card_grad_6),
         )
 
         if (lectures.isEmpty()) {
@@ -140,16 +181,6 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         }
 
         views.setViewVisibility(R.id.widget_empty, View.GONE)
-
-        val rootGravity = if (cardCount == MAX_CARDS && lectures.size >= MAX_CARDS) {
-            Gravity.CENTER_VERTICAL or Gravity.START
-        } else {
-            Gravity.TOP or Gravity.START
-        }
-        views.setInt(R.id.widget_root, "setGravity", rootGravity)
-
-        val nameSp = nameFontSp(cardHeightDp)
-        val timeSp = timeFontSp(cardHeightDp)
 
         for ((idx, slot) in slots.withIndex()) {
             if (idx >= cardCount) {
@@ -162,25 +193,17 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                 timeId = slot.timeId,
                 locationId = slot.locationId,
                 progressId = slot.progressId,
-                nameSp = nameSp,
-                timeSp = timeSp)
+                gradientRes = slot.gradientRes)
         }
     }
-
-    // Scale name font: 14sp at ≤67dp, up to 22sp at ≥130dp.
-    private fun nameFontSp(cardHeightDp: Int): Float =
-        (14f + (cardHeightDp - CARD_MIN_HEIGHT_DP).coerceAtLeast(0) * 0.12f).coerceAtMost(22f)
-
-    // Scale time/location font: 11sp at ≤67dp, up to 15sp at ≥130dp.
-    private fun timeFontSp(cardHeightDp: Int): Float =
-        (11f + (cardHeightDp - CARD_MIN_HEIGHT_DP).coerceAtLeast(0) * 0.06f).coerceAtMost(15f)
 
     private data class CardSlot(
         val cardId: Int,
         val nameId: Int,
         val timeId: Int,
         val locationId: Int,
-        val progressId: Int
+        val progressId: Int,
+        val gradientRes: Int
     )
 
     private fun bindCard(
@@ -192,8 +215,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         timeId: Int,
         locationId: Int,
         progressId: Int,
-        nameSp: Float,
-        timeSp: Float
+        gradientRes: Int
     ) {
         if (idx >= lectures.size) {
             views.setViewVisibility(cardId, View.GONE)
@@ -202,18 +224,37 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
 
         val lecture = lectures[idx]
         views.setViewVisibility(cardId, View.VISIBLE)
-        views.setTextViewText(nameId, lecture.name)
-        views.setTextViewTextSize(nameId, TypedValue.COMPLEX_UNIT_SP, nameSp)
-        views.setTextViewText(timeId, "${lecture.start} – ${lecture.end}")
-        views.setTextViewTextSize(timeId, TypedValue.COMPLEX_UNIT_SP, timeSp)
+        // Strike through the time and room too (alongside the title) for rector
+        // hours / canceled lectures, matching the in-app card.
+        val timeText = "${lecture.start} – ${lecture.end}"
+        views.setTextViewText(timeId, if (lecture.isRector) strikeThrough(timeText) else timeText)
 
         if (lecture.location.isNotEmpty()) {
-            views.setTextViewText(locationId, lecture.location)
-            views.setTextViewTextSize(locationId, TypedValue.COMPLEX_UNIT_SP, timeSp)
+            views.setTextViewText(
+                locationId,
+                if (lecture.isRector) strikeThrough(lecture.location) else lecture.location
+            )
             views.setViewVisibility(locationId, View.VISIBLE)
         } else {
             views.setViewVisibility(locationId, View.GONE)
         }
+
+        // RemoteViews recycle across updates, so both branches must explicitly
+        // set the background, title icon and styling to avoid stale state.
+        // Rector hours / canceled: grey card + a compact leading warning icon on
+        // the (struck-through) title — no extra row, keeping the card height.
+        if (lecture.isRector) {
+            views.setInt(cardId, "setBackgroundResource", R.drawable.widget_card_rector)
+            views.setTextViewText(nameId, strikeThrough(lecture.name))
+            views.setTextViewCompoundDrawablesRelative(nameId, R.drawable.ic_widget_warning, 0, 0, 0)
+            // No live progress bar for rector / canceled lectures (matches the app).
+            views.setViewVisibility(progressId, View.GONE)
+            return
+        }
+
+        views.setInt(cardId, "setBackgroundResource", gradientRes)
+        views.setTextViewText(nameId, lecture.name)
+        views.setTextViewCompoundDrawablesRelative(nameId, 0, 0, 0, 0)
 
         val startMin = endMinutes(lecture.start)
         val endMin = endMinutes(lecture.end)
@@ -226,4 +267,30 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             views.setViewVisibility(progressId, View.INVISIBLE)
         }
     }
+
+    private fun strikeThrough(text: String): SpannableString =
+        SpannableString(text).apply {
+            setSpan(StrikethroughSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+}
+
+// Three fixed-size, non-resizable widgets. They differ only by their footprint
+// (provider-info XML); the card count adapts to each one's height via the base
+// class, so the white box is filled without clipping the last card.
+
+/** Small widget — packs up to 3 cards into its (unchanged) footprint, capped so the
+ *  last card is never clipped if the launcher gives it less room. */
+class ScheduleWidgetSmall : ScheduleWidgetProvider() {
+    override fun resolveCardCount(heightDp: Int): Int = minOf(3, maxCardsThatFit(heightDp))
+}
+
+/** Medium widget — packs up to 5 cards into its (unchanged) footprint, capped so the
+ *  last card is never clipped if the launcher gives it less room. */
+class ScheduleWidgetMedium : ScheduleWidgetProvider() {
+    override fun resolveCardCount(heightDp: Int): Int = minOf(5, maxCardsThatFit(heightDp))
+}
+
+/** Large widget — full screen width; packs as many cards as physically fit (up to 7). */
+class ScheduleWidgetLarge : ScheduleWidgetProvider() {
+    override fun resolveCardCount(heightDp: Int): Int = maxCardsThatFit(heightDp)
 }

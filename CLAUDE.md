@@ -153,10 +153,15 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 - `Provider.getTimeline()` generuje wpisy przy każdym końcu zajęcia — widget przechodzi do następnego stanu automatycznie
 
 **Android (RemoteViews / `AppWidgetProvider`):**
-- Provider: [`android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt`](frontend/android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt)
-- Layout: [`android/app/src/main/res/layout/widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 5 slotów kart (gradient 0..4)
-- Dimens (per-card min height, padding, gap) w [`res/values/dimens.xml`](frontend/android/app/src/main/res/values/dimens.xml)
-- Liczba widocznych kart: `n = floor((height - padding + gap) / (cardMinHeight + gap))`, max 5 — logika w `cardCountForHeight()`. Karty używają `layout_weight="1"` więc rozciągają się do dostępnej wysokości — nie ma pustej przestrzeni ani ucięć niezależnie od dokładnego rozmiaru widżetu
+- **Trzy widżety o stałych rozmiarach** (jak na iOS, **bez resize'owania**) — wszystkie dziedziczą po `ScheduleWidgetProvider` w [`ScheduleWidgetProvider.kt`](frontend/android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt):
+  - `ScheduleWidgetSmall` — `schedule_widget_small.xml` (3×1 kafelki, ~1 karta)
+  - `ScheduleWidgetMedium` — `schedule_widget_medium.xml` (4×2 kafelki, ~2 karty)
+  - `ScheduleWidgetLarge` — `schedule_widget_large.xml` (5×4 kafelki, **pełna szerokość**, ~6 kart)
+  - Podklasy są **puste** — różnią się tylko footprintem w provider-info XML. **Liczba kart dopasowuje się do realnej wysokości** przez `resolveCardCount()` → `cardCountForHeight()` w klasie bazowej, więc biały box jest wypełniony bez ucinania ostatniej karty.
+  - Provider-info XML-e **nie mają `android:resizeMode`** → widżety są nieskalowalne. Pełną szerokość daje `minWidth=300dp` (≈5 kolumn) + `targetCellWidth=5`. **Uwaga na stary algorytm launchera `ceil((minHeight+30)/70)` wierszy** — za duże `minHeight` (np. 430dp → 7 wierszy) sprawia, że launcher **chowa widżet z pickera**; `large` ma więc `minHeight=250dp` + `targetCellHeight=4` (Android 12+).
+  - Trzy `<receiver>` w `AndroidManifest.xml`, etykiety w `res/values/strings.xml`. Flutter odświeża wszystkie trzy nazwy w `widget_service.dart` (`_androidWidgetNames`).
+- Layout współdzielony: [`widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 7 slotów kart (gradient 0..6). **Białe tło (`widget_box`) jest `match_parent`** — wypełnia cały footprint widżetu, więc obszar dotykowy = to, co widać (bez przezroczystego marginesu wokół). Android i tak kwantyzuje wysokość komórki do siatki (nie da się tego uniknąć), ale dzięki adaptacyjnej liczbie kart ewentualna nadwyżka to <1 karta.
+- Karty mają **dokładną stałą wysokość** (`layout_height="@dimen/widget_card_height"`, **nie** `wrap_content`+`minHeight`, **bez** `layout_weight`), wyrównane do góry (`gravity="top"`). **`CARD_HEIGHT_DP` w Kotlinie MUSI równać się `widget_card_height` w [`dimens.xml`](frontend/android/app/src/main/res/values/dimens.xml)** — inaczej liczba/wysokość kart się rozjeżdża. Nie wracać do `layout_weight="1"` (rozciągało karty do absurdu przy 2 zajęciach).
 - Czyta z `HomeWidgetPreferences` shared preferences plik, klucz `schedule_data` (**nie** `flutter.schedule_data` z `FlutterSharedPreferences`)
 - **Progress bar statyczny** — RemoteViews nie obsługuje live timerów. Pasek odświeża się przy `updateAppWidget` (push z apki, resize, kolejny entry timeline w iOS-sty­lu nie istnieje)
 - **Glance dependency exclusion w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** `home_widget` transitively wymaga `glance-appwidget` (AGP 9.1+, compileSdk 37+). Wykluczone bo używamy klasycznego `AppWidgetProvider`, nie Glance. Nie odblokowywuj bez upgradeu całego toolchainu.
@@ -178,6 +183,7 @@ Po każdej zmianie ARB: `flutter gen-l10n`.
 | `kDebugNews` | Mock newsy | `false` |
 | `kDebugRectorHours` | Wymuszaj baner godzin rektorskich | `false` |
 | `kDebugWidget` | Fake dane w widgecie ekranu głównego | `false` |
+| `kDebugWidgetCount` | Liczba fake zajęć (0–7) w widgecie gdy `kDebugWidget=true` (0 = pusty stan) | bez znaczenia (używane tylko przy `kDebugWidget`) |
 | `kDebugEmptyGroups` | Symuluj pustą listę grup | `false` |
 
 Przełączane przez: `python scripts/switch_env.py [test|prod]`

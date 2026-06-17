@@ -45,14 +45,39 @@
             android:value="2" />
 
         <receiver
-            android:name=".ScheduleWidgetProvider"
-            android:exported="true">
+            android:name=".ScheduleWidgetSmall"
+            android:exported="true"
+            android:label="@string/widget_label_small">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/schedule_widget_info" />
+                android:resource="@xml/schedule_widget_small" />
+        </receiver>
+
+        <receiver
+            android:name=".ScheduleWidgetMedium"
+            android:exported="true"
+            android:label="@string/widget_label_medium">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/schedule_widget_medium" />
+        </receiver>
+
+        <receiver
+            android:name=".ScheduleWidgetLarge"
+            android:exported="true"
+            android:label="@string/widget_label_large">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/schedule_widget_large" />
         </receiver>
     </application>
 </manifest>

@@ -87,17 +87,7 @@ class _LectureState extends State<Lecture> {
   }
 
   void _determineStatus() {
-    final notes = widget.notes?.toLowerCase() ?? '';
-    
-    if (notes.contains('godziny rektorskie')) {
-      canceledReason = CanceledReason.rectorHours;
-    } else if (notes.contains('dzień rektorski')) {
-      canceledReason = CanceledReason.rectorDay;
-    } else if (notes.contains('zajęcia odwołane')) {
-      canceledReason = CanceledReason.canceled;
-    } else {
-      canceledReason = null;
-    }
+    canceledReason = canceledReasonFromNotes(widget.notes);
   }
 
   @override

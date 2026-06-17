@@ -28,5 +28,9 @@ const bool kDebugEmptyGroups = false;
 // Set to true to use hardcoded fake schedule data in the home screen widget (bypasses DB)
 const bool kDebugWidget = false;
 
+// Number of fake lectures (0-7) pushed to the widget when kDebugWidget is true.
+// 0 = empty state. Lets you debug each widget size's card count.
+const int kDebugWidgetCount = 7;
+
 // Set to true to show the GDPR consent screen before confirming lecturer selection
 const bool kDebugGdpr = false;
