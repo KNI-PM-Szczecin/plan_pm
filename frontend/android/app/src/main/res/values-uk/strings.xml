@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label_small">Plan PM — малий</string>
+    <string name="widget_label_medium">Plan PM — середній</string>
+    <string name="widget_label_large">Plan PM — великий</string>
+    <string name="widget_empty">Сьогодні занять немає</string>
+</resources>

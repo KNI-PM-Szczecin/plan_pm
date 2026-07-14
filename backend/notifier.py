@@ -64,8 +64,12 @@ def _app_version() -> str:
 
 
 def _env_mode() -> str:
+    override = os.environ.get("PLANPM_ENV")
+    if override in ("prod", "test"):
+        return override
     path = BACKEND_ROOT / ".env_mode"
-    return path.read_text().strip() if path.exists() else "prod"
+    mode = path.read_text().strip() if path.exists() else "prod"
+    return mode if mode in ("prod", "test") else "prod"
 
 
 def notify_discord(action: str, success: bool, detail: str = "",

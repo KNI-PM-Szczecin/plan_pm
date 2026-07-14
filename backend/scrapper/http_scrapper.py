@@ -147,7 +147,7 @@ def fetch_plan_http(flow_id, zaz_button=2):
         elif "dxgvDataRow_iOS" in class_str:
             all_tds = row.find_all("td")
             cells = all_tds[1:-1] if len(all_tds) > 2 else all_tds
-            if len(cells) >= 11:
+            if len(cells) >= 12:
                 entry = {
                     "Plan dla toku": tok,
                     "Data zajęć": current_date,

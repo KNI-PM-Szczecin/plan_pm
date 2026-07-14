@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label_small">Plan PM — small</string>
+    <string name="widget_label_medium">Plan PM — medium</string>
+    <string name="widget_label_large">Plan PM — large</string>
+    <string name="widget_empty">No classes today</string>
+</resources>

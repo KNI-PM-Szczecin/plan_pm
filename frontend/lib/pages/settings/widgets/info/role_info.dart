@@ -1,7 +1,7 @@
 // Przełącznik roli użytkownika (Student / Wykładowca) — segmented control.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/theme/colors.dart';

@@ -1,8 +1,11 @@
 package com.piotrwittig.plan_pm
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -10,13 +13,17 @@ import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 data class LectureItem(
     val name: String,
     val start: String,
     val end: String,
     val location: String,
+    val date: String,
     // Rector-hours / canceled state. `rector` is the state key (empty for an
     // ordinary lecture); `badge` is the localized label to show in the pill.
     val rector: String = "",
@@ -71,13 +78,17 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
                         start = obj.optString("start", ""),
                         end = obj.optString("end", ""),
                         location = obj.optString("location", ""),
+                        date = obj.optString("date", ""),
                         rector = obj.optString("rector", ""),
                         badge = obj.optString("badge", "")
                     )
                 )
             }
         } catch (_: Exception) {}
-        return lectures
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(Date())
+        // Old payloads did not carry a date and could display yesterday's
+        // schedule after midnight. Treat missing/mismatched dates as stale.
+        return lectures.filter { it.date == today }
     }
 
     private fun updateWidget(
@@ -93,7 +104,19 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         val visible = filterRelevant(lectures, cardCount)
 
         val views = RemoteViews(context.packageName, R.layout.widget_schedule)
-        bindWidget(views, visible, cardCount)
+        bindWidget(context, views, visible, cardCount)
+        val openApp = Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse("planpm://schedule")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            openApp,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.setOnClickPendingIntent(R.id.widget_box, pendingIntent)
         applyBoxPadding(context, views, heightDp, visible.size)
         appWidgetManager.updateAppWidget(widgetId, views)
     }
@@ -163,7 +186,7 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         return h * 60 + m
     }
 
-    private fun bindWidget(views: RemoteViews, lectures: List<LectureItem>, cardCount: Int) {
+    private fun bindWidget(context: Context, views: RemoteViews, lectures: List<LectureItem>, cardCount: Int) {
         val slots = listOf(
             CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1, R.drawable.widget_card_grad_0),
             CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2, R.drawable.widget_card_grad_1),
@@ -176,6 +199,11 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
 
         if (lectures.isEmpty()) {
             slots.forEach { views.setViewVisibility(it.cardId, View.GONE) }
+            val prefs = context.getSharedPreferences("HomeWidgetPreferences", Context.MODE_PRIVATE)
+            views.setTextViewText(
+                R.id.widget_empty,
+                prefs.getString("widget_empty", context.getString(R.string.widget_empty))
+            )
             views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
             return
         }

@@ -8,6 +8,7 @@ import time
 import os
 import json
 import logging
+import threading
 from rich.progress import Progress
 
 from console_setup import force_utf8_output
@@ -45,10 +46,12 @@ class Mapper:
             "total": 0
         }
         self.valid_records = {}
+        self.stats_lock = threading.Lock()
 
     def check_page(self, flow_id):
         url = f"https://plany.am.szczecin.pl/Plany/PlanyTokow/{flow_id}"
-        self.stats["total"] += 1
+        with self.stats_lock:
+            self.stats["total"] += 1
         try:
             response = requests.get(url, timeout=20)
             if response.status_code == 200:
@@ -60,14 +63,16 @@ class Mapper:
                     if strong_tag:
                         name = strong_tag.text.strip()
                         self.logger.info(f"{flow_id}: ✅ Nazwa toku: {name}")
-                        self.stats["success"] += 1
+                        with self.stats_lock:
+                            self.stats["success"] += 1
                         
                         return flow_id, name
         except requests.RequestException as e:
             self.logger.error(f"{flow_id}: ❌ Błąd połączenia: {e}")
 
         self.logger.warning(f"{flow_id}: ❌ Nie znaleziono lub brak planu.")
-        self.stats["interaction_fail"] += 1
+        with self.stats_lock:
+            self.stats["interaction_fail"] += 1
         return flow_id, None
 
     def run(self, minID: int = 380, maxID: int = 430):

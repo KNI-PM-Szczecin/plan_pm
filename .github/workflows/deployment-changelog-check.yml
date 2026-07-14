@@ -14,7 +14,7 @@ jobs:
       - name: Check CHANGELOG entry for version
         run: |
           VERSION=$(grep '^version:' frontend/pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
-          if ! grep -q "^## $VERSION" frontend/CHANGELOG.md; then
+          if ! grep -Fqx "## $VERSION" frontend/CHANGELOG.md; then
             echo "❌ Brak wpisu w CHANGELOG.md dla wersji $VERSION"
             echo "   Dodaj sekcję '## $VERSION' do frontend/CHANGELOG.md"
             exit 1

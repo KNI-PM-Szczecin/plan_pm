@@ -3,4 +3,5 @@
     <string name="widget_label_small">Plan PM — mały</string>
     <string name="widget_label_medium">Plan PM — średni</string>
     <string name="widget_label_large">Plan PM — duży</string>
+    <string name="widget_empty">Brak zajęć na dziś</string>
 </resources>

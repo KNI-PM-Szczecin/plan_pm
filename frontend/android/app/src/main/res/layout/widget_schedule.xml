@@ -526,7 +526,7 @@
         android:id="@+id/widget_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Brak zajęć na dziś"
+        android:text="@string/widget_empty"
         android:textSize="13sp"
         android:textColor="@color/widget_secondary_text"
         android:gravity="center"

@@ -2,7 +2,7 @@
 // Sekcja debug pojawia się tylko po odblokowaniu easter-egga w [AboutPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/pages/external_link_page.dart';
 import 'package:plan_pm/global/utils/routing.dart';

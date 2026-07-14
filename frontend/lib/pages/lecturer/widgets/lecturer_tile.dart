@@ -1,7 +1,7 @@
 // Wiersz wykładowcy na liście wyboru — awatar z inicjałami, imię i nazwisko, ptaszek gdy zaznaczony.
 // Używany w [LecturerSelectionPage].
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 

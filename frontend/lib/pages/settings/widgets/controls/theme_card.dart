@@ -1,7 +1,7 @@
 // Karta wyboru motywu z podglądem obrazka i animacją naciśnięcia.
 // Używana w [AppearancePage] — wydzielona bo to niebanalny StatefulWidget.
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 
 class ThemeCard extends StatefulWidget {

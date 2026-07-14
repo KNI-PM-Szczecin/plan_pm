@@ -15,27 +15,6 @@ import 'package:plan_pm/service/cache_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> _clearUserProfile(SharedPreferences prefs) async {
-  for (final key in const [
-    'app_mode',
-    'lecturer_id',
-    'lecturer_name',
-    'lecturer_title',
-    'course',
-    'degree_course',
-    'faculty',
-    'specialisation',
-    'year',
-    'study_mode',
-    'term',
-    'degree_level',
-    'groups',
-    'seven_day_mode',
-  ]) {
-    await prefs.remove(key);
-  }
-}
-
 Future<Widget> appInitialization() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -51,13 +30,11 @@ Future<Widget> _buildTargetPage(SharedPreferences prefs) async {
   await prefs.setString('last_app_version', currentVersion);
 
   if (lastVersion != null && lastVersion != currentVersion) {
-    AppLogger.i("[APP-INIT] Version changed $lastVersion → $currentVersion, resetting user profile");
+    AppLogger.i(
+      "[APP-INIT] Version changed $lastVersion → $currentVersion, clearing cache",
+    );
     await DatabaseService.instance.clearLectures();
     await DatabaseService.instance.clearNews();
-    await _clearUserProfile(prefs);
-    await prefs.setBool('skip_welcome', true);
-    sevenDayModeNotifier.value = false;
-    return const RoleSelectionPage();
   }
 
   if (!prefs.containsKey("skip_welcome")) {

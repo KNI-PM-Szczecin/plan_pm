@@ -154,16 +154,15 @@ def test_tokStringToDic_standard():
     assert result["academic_year"] == "2024/2025 zima"
 
 
-def test_tokStringToDic_no_degree_level_raises():
-    """
-    Tok string bez żadnego poziomu wykształcenia (lic/mgr/inż.) powoduje
-    ValueError przy split("") na linii 99 — poza blokiem try/except.
-    Except w bloku try (linie 120-121) jest w praktyce nieosiągalny
-    przy obecnej implementacji — ten test to dokumentuje.
-    """
-    import pytest
-    with pytest.raises((ValueError, IndexError)):
-        Parser.tokStringToDic("Kurs bez stopnia 3.50 2024/2025 zima")
+def test_tokStringToDic_no_degree_level_is_handled():
+    result = Parser.tokStringToDic("Kurs bez stopnia 3.50 2024/2025 zima")
+    assert result["name"] == "Kurs bez stopnia 3.50 2024/2025 zima"
+    assert result["degree_level"] == ""
+
+
+def test_parseTeachers_whitespace_returns_empty():
+    parser = Parser.__new__(Parser)
+    assert parser.parseTeachers("   ") == []
 
 
 # --- Test trybu DEBUG ---

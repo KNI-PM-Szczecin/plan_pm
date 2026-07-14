@@ -58,7 +58,11 @@
 
 **Currently available**
 
-- View class schedules filtered by your degree programme
+- View class schedules filtered by your degree programme (daily and weekly views)
+- Lecturer mode — browse your own teaching schedule
+- News feed with university announcements
+- Native home screen widgets (iOS WidgetKit + Android, three sizes)
+- Three languages (Polish, English, Ukrainian), light/dark themes, accent colors
 
 **Planned**
 
@@ -99,11 +103,11 @@ Mapper → Scrapper → Parser → json2db
 
 A separate `structure_updater/` pipeline keeps the university hierarchy (Faculties → Degree Courses → Specialisations) up to date.
 
-The `news_tool/` is a local Flask admin UI for creating and managing news posts shown in the app.
+The `admin/` package is a local Flask admin panel (news management, pipeline runner with live logs, store stats, environment switching), and `mcp_server/` exposes the backend as MCP tools for AI agents.
 
 **Tech:** Python, BeautifulSoup, Flask, Supabase (PostgreSQL + Storage)
 
-For full backend documentation see [`backend/docs/agent.md`](backend/docs/agent.md).
+For full backend documentation see [`backend/README.md`](backend/README.md) and the root [`CLAUDE.md`](CLAUDE.md).
 
 ---
 

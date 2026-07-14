@@ -65,10 +65,15 @@ def create_app() -> Flask:
     @app.before_request
     def guard():
         from flask import request
-        # Reject cross-origin requests (CSRF). This also covers the SSE GET
-        # endpoints (/pipeline/run, /pipeline/logs) which can run the pipeline
-        # and rewrite the prod DB — EventSource can't carry a CSRF token, so we
-        # rely on the browser-set Sec-Fetch-Site header. A browser cannot forge
+        # Flask's loopback bind is not sufficient against DNS rebinding: the
+        # TCP peer can still be local while the browser sends an attacker-owned
+        # Host header. Only accept the hostnames this local tool is meant for.
+        host = request.host.split(":", 1)[0].strip("[]").lower()
+        if host not in ("localhost", "127.0.0.1", "::1"):
+            return "Forbidden", 403
+        # Reject cross-origin requests (CSRF). State-changing pipeline runs use
+        # POST; the browser-set Sec-Fetch-Site header adds another boundary.
+        # A browser cannot forge
         # this header, so we only ALLOW values that mean "from our own page":
         # 'same-origin' (fetch/EventSource) and 'none' (address-bar navigation).
         # 'same-site' (another localhost origin) and 'cross-site' are blocked.

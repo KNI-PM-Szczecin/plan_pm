@@ -1,0 +1,6 @@
+- Nowe widżety ekranu głównego z planem zajęć (iOS i Android)
+- Wyróżnienie godzin rektorskich w liście zajęć
+- Wyświetlanie notatek do zajęć w widżecie ekranu głównego
+- Naprawiono błąd duplikowania zajęć przy szybkim onboardingu
+- Naprawiono wyświetlanie widżetu w trybie Clear/Tinted (iOS 26)
+- Informacja o braku grup przy wyborze grupy

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
@@ -20,13 +21,48 @@ class WidgetService {
   static const _iosName = 'PlanPMScheduleWidget';
 
   static const _debugLectures = [
-    {'name': 'Bezpieczeństwo systemów', 'start': '09:45', 'end': '11:25', 'location': 'WChrobrego 208'},
-    {'name': 'Bazy danych', 'start': '11:35', 'end': '13:10', 'location': 'WChrobrego 305'},
-    {'name': 'Sieci komputerowe', 'start': '13:20', 'end': '15:00', 'location': 'WChrobrego 101'},
-    {'name': 'Matematyka dyskretna', 'start': '15:10', 'end': '16:45', 'location': 'WChrobrego 204'},
-    {'name': 'Aplikacje www', 'start': '19:30', 'end': '21:00', 'location': 'WChrobrego 112'},
-    {'name': 'Programowanie obiektowe', 'start': '21:00', 'end': '22:00', 'location': 'WChrobrego 215'},
-    {'name': 'Seminarium', 'start': '22:00', 'end': '23:30', 'location': 'WChrobrego 220'},
+    {
+      'name': 'Bezpieczeństwo systemów',
+      'start': '09:45',
+      'end': '11:25',
+      'location': 'WChrobrego 208',
+    },
+    {
+      'name': 'Bazy danych',
+      'start': '11:35',
+      'end': '13:10',
+      'location': 'WChrobrego 305',
+    },
+    {
+      'name': 'Sieci komputerowe',
+      'start': '13:20',
+      'end': '15:00',
+      'location': 'WChrobrego 101',
+    },
+    {
+      'name': 'Matematyka dyskretna',
+      'start': '15:10',
+      'end': '16:45',
+      'location': 'WChrobrego 204',
+    },
+    {
+      'name': 'Aplikacje www',
+      'start': '19:30',
+      'end': '21:00',
+      'location': 'WChrobrego 112',
+    },
+    {
+      'name': 'Programowanie obiektowe',
+      'start': '21:00',
+      'end': '22:00',
+      'location': 'WChrobrego 215',
+    },
+    {
+      'name': 'Seminarium',
+      'start': '22:00',
+      'end': '23:30',
+      'location': 'WChrobrego 220',
+    },
   ];
 
   static String _fmtDate(DateTime d) =>
@@ -49,7 +85,9 @@ class WidgetService {
   // read: `rector` is the state key (logic), `badge` is the localized label.
   // Both are empty for ordinary lectures. Mirrors `canceledReasonFromNotes`.
   static ({String rector, String badge}) _rectorFields(
-      String? notes, AppLocalizations l10n) {
+    String? notes,
+    AppLocalizations l10n,
+  ) {
     switch (canceledReasonFromNotes(notes)) {
       case CanceledReason.rectorHours:
         return (rector: 'hours', badge: l10n.rectorHoursBadge);
@@ -83,8 +121,11 @@ class WidgetService {
         // textured / badged state is visible while iterating on the widget UI,
         // without needing the kDebugRectorHours flag. With kDebugRectorHours on,
         // every 3rd lecture is marked too.
-        Map<String, String> decorate(int i, Map<String, String> e,
-            {bool withDate = false}) {
+        Map<String, String> decorate(
+          int i,
+          Map<String, String> e, {
+          bool withDate = false,
+        }) {
           final m = Map<String, String>.from(e);
           if (i == 1 || (kDebugRectorHours && i % 3 == 0)) {
             m['rector'] = 'hours';
@@ -99,7 +140,8 @@ class WidgetService {
 
         final count = kDebugWidgetCount.clamp(0, _debugLectures.length);
         todays = [
-          for (var i = 0; i < count; i++) decorate(i, _debugLectures[i])
+          for (var i = 0; i < count; i++)
+            decorate(i, _debugLectures[i], withDate: true),
         ];
         // iOS hides already-ended lectures (filterUpcoming) and keeps only the
         // current day, so the fixed daytime fixtures would vanish by evening.
@@ -137,38 +179,54 @@ class WidgetService {
             'start': l.startTime,
             'end': l.endTime,
             'location': l.location ?? '',
-            'rector': r.rector,
-            'badge': r.badge,
-          };
-        }).toList();
-        week = all.where((l) {
-          final d = DateUtils.dateOnly(l.date);
-          return !d.isBefore(today) && !d.isAfter(weekEnd);
-        }).map((l) {
-          final r = _rectorFields(l.notes, l10n);
-          return {
-            'name': l.name,
-            'start': l.startTime,
-            'end': l.endTime,
-            'location': l.location ?? '',
             'date': _fmtDate(l.date),
             'rector': r.rector,
             'badge': r.badge,
           };
         }).toList();
+        week = all
+            .where((l) {
+              final d = DateUtils.dateOnly(l.date);
+              return !d.isBefore(today) && !d.isAfter(weekEnd);
+            })
+            .map((l) {
+              final r = _rectorFields(l.notes, l10n);
+              return {
+                'name': l.name,
+                'start': l.startTime,
+                'end': l.endTime,
+                'location': l.location ?? '',
+                'date': _fmtDate(l.date),
+                'rector': r.rector,
+                'badge': r.badge,
+              };
+            })
+            .toList();
       }
 
       await HomeWidget.saveWidgetData<String>(
-          'schedule_data', jsonEncode(todays));
+        'schedule_data',
+        jsonEncode(todays),
+      );
       await HomeWidget.saveWidgetData<String>(
-          'schedule_week', jsonEncode(week));
-      for (final name in _androidWidgetNames) {
-        await HomeWidget.updateWidget(androidName: name);
+        'schedule_week',
+        jsonEncode(week),
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'widget_empty',
+        l10n.todayLecturesNaN,
+      );
+      if (Platform.isAndroid) {
+        for (final name in _androidWidgetNames) {
+          await HomeWidget.updateWidget(androidName: name);
+        }
+      } else if (Platform.isIOS) {
+        await HomeWidget.updateWidget(iOSName: _iosName);
       }
-      await HomeWidget.updateWidget(iOSName: _iosName);
 
       AppLogger.i(
-          '[WIDGET] Pushed ${todays.length} lectures for today, ${week.length} for the week to home widget');
+        '[WIDGET] Pushed ${todays.length} lectures for today, ${week.length} for the week to home widget',
+      );
     } catch (e) {
       AppLogger.e('[WIDGET] Failed to push widget data: $e');
     }
