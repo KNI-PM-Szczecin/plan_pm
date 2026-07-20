@@ -5,6 +5,8 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -47,6 +49,12 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         const val CARD_HEIGHT_DP = 62  // widget_card_height — nominal / fixed-height fallback (pre-API-31)
         const val CARD_GAP_DP    = 5   // widget_card_gap (spacing between cards)
         const val CARD_INSET_DP  = 6   // widget_card_inset (CONSTANT border around the card stack)
+        const val CARD_TEXT_PADDING_DP = 14  // card paddingStart/End in widget_schedule.xml
+        const val TITLE_TEXT_SP = 14f  // widget_name_* textSize (bold) — used to measure titles
+        const val TIME_TEXT_SP = 11f   // widget_time_* / widget_location_* textSize — used to measure the row
+        const val RECTOR_ICON_ALLOWANCE_DP = 22  // leading warning icon + drawablePadding on rector titles
+        const val TIME_ICON_ALLOWANCE_DP = 20    // clock icon + drawablePadding before the time
+        const val ROOM_LEAD_ALLOWANCE_DP = 30    // marginStart + pin icon + drawablePadding before the room
         // On API 31+ card heights flex slightly within [MIN, MAX] so the stack fills the
         // box exactly: cards grow (up to MAX) to swallow a small leftover, or shrink
         // (down to MIN) to squeeze in one more card. MIN must still fit the card content
@@ -130,8 +138,13 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             -1f
         }
 
+        val widthDp = widgetWidthDp(options)
+        // Width available to a card's content (px). Used both to abbreviate long titles
+        // (fitTitle) and to fit the time + room row (see bindCard).
+        val titleMaxWidthPx = titleMaxWidthPx(context, widthDp)
+
         val views = RemoteViews(context.packageName, R.layout.widget_schedule)
-        bindWidget(context, views, visible, cardCount, cardHeightDp)
+        bindWidget(context, views, visible, cardCount, cardHeightDp, titleMaxWidthPx)
         val openApp = Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse("planpm://schedule")
@@ -156,6 +169,66 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             else -> CARD_HEIGHT_DP + 2 * CARD_INSET_DP  // default → 1 card
         }
     }
+
+    // MIN_WIDTH is the widget's portrait width (the one shown on a normal home screen).
+    private fun widgetWidthDp(options: Bundle): Int {
+        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+        val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)
+        return when {
+            minWidth > 0 -> minWidth
+            maxWidth > 0 -> maxWidth
+            else -> 250  // sensible default before the launcher reports a size
+        }
+    }
+
+    // Pixels available to a title = widget width minus the box inset and the card's own
+    // horizontal padding, both sides. This is what fitTitle measures names against.
+    private fun titleMaxWidthPx(context: Context, widthDp: Int): Float {
+        val contentDp = widthDp - 2 * CARD_INSET_DP - 2 * CARD_TEXT_PADDING_DP
+        return contentDp * context.resources.displayMetrics.density
+    }
+
+    // A Paint configured like the title TextView (14sp, bold) so measureText matches
+    // roughly what the widget will render.
+    private fun titlePaint(context: Context): Paint {
+        val sizePx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, TITLE_TEXT_SP, context.resources.displayMetrics
+        )
+        return Paint().apply {
+            textSize = sizePx
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+    }
+
+    // If the full name fits maxWidthPx, keep it. Otherwise abbreviate every word except
+    // the last to an initial, e.g. "Bazy danych" -> "B.Danych". Single-word names can't
+    // be abbreviated and are returned unchanged (the TextView still ellipsizes as a last
+    // resort on an extremely narrow widget).
+    private fun fitTitle(paint: Paint, name: String, maxWidthPx: Float): String {
+        if (maxWidthPx <= 0f || paint.measureText(name) <= maxWidthPx) return name
+        val words = name.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        if (words.size <= 1) return name
+        val lead = words.dropLast(1).joinToString("") { "${it.first().uppercaseChar()}." }
+        val last = words.last().replaceFirstChar { it.uppercaseChar() }
+        return "$lead$last"
+    }
+
+    // A Paint configured like the time/room row (11sp, sans-serif-medium) for measuring.
+    private fun timePaint(context: Context): Paint {
+        val sizePx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, TIME_TEXT_SP, context.resources.displayMetrics
+        )
+        return Paint().apply {
+            textSize = sizePx
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            isAntiAlias = true
+        }
+    }
+
+    // Short room = the last whitespace-separated token, e.g. "WChrobrego 208" -> "208".
+    // Single-token rooms ("Aula") are returned unchanged.
+    private fun shortRoom(location: String): String = location.trim().substringAfterLast(' ')
 
     // How many cards fit if each is shrunk to MIN_CARD_DP — the API 31+ path, where
     // card heights are flexible. Using the MINIMUM height here is what lets a nearly-
@@ -203,7 +276,13 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         return h * 60 + m
     }
 
-    private fun bindWidget(context: Context, views: RemoteViews, lectures: List<LectureItem>, cardCount: Int, cardHeightDp: Float) {
+    private fun bindWidget(context: Context, views: RemoteViews, lectures: List<LectureItem>, cardCount: Int, cardHeightDp: Float, titleMaxWidthPx: Float) {
+        val density = context.resources.displayMetrics.density
+        val paint = titlePaint(context)
+        val timePaint = timePaint(context)
+        val rectorAllowancePx = RECTOR_ICON_ALLOWANCE_DP * density
+        val timeIconPx = TIME_ICON_ALLOWANCE_DP * density
+        val roomLeadPx = ROOM_LEAD_ALLOWANCE_DP * density
         val slots = listOf(
             CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1, R.drawable.widget_card_grad_0),
             CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2, R.drawable.widget_card_grad_1),
@@ -244,7 +323,13 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                 locationId = slot.locationId,
                 progressId = slot.progressId,
                 gradientRes = slot.gradientRes,
-                cardHeightDp = cardHeightDp)
+                cardHeightDp = cardHeightDp,
+                paint = paint,
+                titleMaxWidthPx = titleMaxWidthPx,
+                rectorAllowancePx = rectorAllowancePx,
+                timePaint = timePaint,
+                timeIconPx = timeIconPx,
+                roomLeadPx = roomLeadPx)
         }
     }
 
@@ -267,7 +352,13 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         locationId: Int,
         progressId: Int,
         gradientRes: Int,
-        cardHeightDp: Float
+        cardHeightDp: Float,
+        paint: Paint,
+        titleMaxWidthPx: Float,
+        rectorAllowancePx: Float,
+        timePaint: Paint,
+        timeIconPx: Float,
+        roomLeadPx: Float
     ) {
         if (idx >= lectures.size) {
             views.setViewVisibility(cardId, View.GONE)
@@ -281,15 +372,33 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         if (cardHeightDp > 0f && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             views.setViewLayoutHeight(cardId, cardHeightDp, TypedValue.COMPLEX_UNIT_DIP)
         }
+        // Fit the time + room on one line, shrinking to keep the room visible even on a
+        // narrow widget: prefer full time + full room; else full time + short room (just
+        // the room number, e.g. "WChrobrego 208" -> "208"); else start-only time + short
+        // room. The room is dropped only when the lecture has none.
+        val timeFull = "${lecture.start} – ${lecture.end}"
+        val roomShort = shortRoom(lecture.location)
+        fun rowFits(time: String, room: String): Boolean {
+            var w = timeIconPx + timePaint.measureText(time)
+            if (room.isNotEmpty()) w += roomLeadPx + timePaint.measureText(room)
+            return w <= titleMaxWidthPx
+        }
+        val timeText: String
+        val roomText: String
+        when {
+            lecture.location.isEmpty() -> { timeText = timeFull; roomText = "" }
+            rowFits(timeFull, lecture.location) -> { timeText = timeFull; roomText = lecture.location }
+            rowFits(timeFull, roomShort) -> { timeText = timeFull; roomText = roomShort }
+            else -> { timeText = lecture.start; roomText = roomShort }
+        }
+
         // Strike through the time and room too (alongside the title) for rector
         // hours / canceled lectures, matching the in-app card.
-        val timeText = "${lecture.start} – ${lecture.end}"
         views.setTextViewText(timeId, if (lecture.isRector) strikeThrough(timeText) else timeText)
-
-        if (lecture.location.isNotEmpty()) {
+        if (roomText.isNotEmpty()) {
             views.setTextViewText(
                 locationId,
-                if (lecture.isRector) strikeThrough(lecture.location) else lecture.location
+                if (lecture.isRector) strikeThrough(roomText) else roomText
             )
             views.setViewVisibility(locationId, View.VISIBLE)
         } else {
@@ -302,7 +411,9 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         // the (struck-through) title — no extra row, keeping the card height.
         if (lecture.isRector) {
             views.setInt(cardId, "setBackgroundResource", R.drawable.widget_card_rector)
-            views.setTextViewText(nameId, strikeThrough(lecture.name))
+            // The leading warning icon eats some title width, so budget for it.
+            val rectorTitle = fitTitle(paint, lecture.name, titleMaxWidthPx - rectorAllowancePx)
+            views.setTextViewText(nameId, strikeThrough(rectorTitle))
             views.setTextViewCompoundDrawablesRelative(nameId, R.drawable.ic_widget_warning, 0, 0, 0)
             // No live progress bar for rector / canceled lectures (matches the app).
             views.setViewVisibility(progressId, View.GONE)
@@ -310,7 +421,7 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
         }
 
         views.setInt(cardId, "setBackgroundResource", gradientRes)
-        views.setTextViewText(nameId, lecture.name)
+        views.setTextViewText(nameId, fitTitle(paint, lecture.name, titleMaxWidthPx))
         views.setTextViewCompoundDrawablesRelative(nameId, 0, 0, 0, 0)
 
         val startMin = endMinutes(lecture.start)

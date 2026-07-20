@@ -33,7 +33,7 @@
     android:minWidth="250dp"
     android:minHeight="224dp"
 
-    android:minResizeWidth="180dp"
+    android:minResizeWidth="110dp"
     android:minResizeHeight="90dp"
 
     android:maxResizeWidth="600dp"

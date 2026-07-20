@@ -77,6 +77,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -149,6 +151,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -221,6 +225,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -293,6 +299,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -365,6 +373,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -437,6 +447,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -509,6 +521,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -581,6 +595,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -653,6 +669,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -725,6 +743,8 @@
                 android:layout_marginStart="10dp"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
