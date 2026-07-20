@@ -6,7 +6,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
@@ -32,15 +34,25 @@ data class LectureItem(
     val isRector: Boolean get() = rector.isNotEmpty()
 }
 
-open class ScheduleWidgetProvider : AppWidgetProvider() {
+// Single resizable home-screen widget. There is exactly one provider class and
+// one <receiver> in the manifest; the number of lecture cards is derived from the
+// widget's current height at runtime (see flexCapacity / cardCountForHeight), so the
+// same code fills a 1-card sliver or a 10-card full-height widget without subclasses.
+// On API 31+ card heights also flex slightly so the stack fills the box exactly.
+class ScheduleWidgetProvider : AppWidgetProvider() {
 
     private companion object {
-        const val MAX_CARDS = 7  // must match the number of card slots in widget_schedule.xml
+        const val MAX_CARDS = 10  // must match the number of card slots in widget_schedule.xml
         // Must stay in sync with dimens.xml values used in widget_schedule.xml.
-        const val VERTICAL_PADDING_DP = 28  // widget_padding (14dp) × 2
-        const val CARD_HEIGHT_DP      = 62  // widget_card_height (EXACT, must match dimens.xml)
-        const val CARD_GAP_DP         = 5   // widget_card_gap
-        const val MIN_PAD_DP          = 2   // floor for the symmetric inset
+        const val CARD_HEIGHT_DP = 62  // widget_card_height — nominal / fixed-height fallback (pre-API-31)
+        const val CARD_GAP_DP    = 5   // widget_card_gap (spacing between cards)
+        const val CARD_INSET_DP  = 6   // widget_card_inset (CONSTANT border around the card stack)
+        // On API 31+ card heights flex slightly within [MIN, MAX] so the stack fills the
+        // box exactly: cards grow (up to MAX) to swallow a small leftover, or shrink
+        // (down to MIN) to squeeze in one more card. MIN must still fit the card content
+        // (title + time row + progress bar); MAX keeps cards from looking stretched.
+        const val MIN_CARD_DP = 60
+        const val MAX_CARD_DP = 74
     }
 
     override fun onUpdate(
@@ -99,12 +111,27 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
     ) {
         val options = appWidgetManager.getAppWidgetOptions(widgetId)
         val heightDp = widgetHeightDp(options)
-        val cardCount = resolveCardCount(heightDp)
+
+        // API 31+ can flex card heights (setViewLayoutHeight); older devices can't, so
+        // they fall back to fixed 62dp cards.
+        val flexible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        val availableDp = heightDp - 2 * CARD_INSET_DP  // vertical space for cards + gaps
+        val cardCount = if (flexible) flexCapacity(availableDp) else cardCountForHeight(heightDp)
 
         val visible = filterRelevant(lectures, cardCount)
 
+        // Height each shown card gets so the stack fills the box: total space split
+        // evenly across the actually-visible cards, clamped to [MIN, MAX]. -1 = keep
+        // the layout's fixed height (fallback path).
+        val cardHeightDp = if (flexible && visible.isNotEmpty()) {
+            ((availableDp - (visible.size - 1) * CARD_GAP_DP).toFloat() / visible.size)
+                .coerceIn(MIN_CARD_DP.toFloat(), MAX_CARD_DP.toFloat())
+        } else {
+            -1f
+        }
+
         val views = RemoteViews(context.packageName, R.layout.widget_schedule)
-        bindWidget(context, views, visible, cardCount)
+        bindWidget(context, views, visible, cardCount, cardHeightDp)
         val openApp = Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse("planpm://schedule")
@@ -117,21 +144,7 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.widget_box, pendingIntent)
-        applyBoxPadding(context, views, heightDp, visible.size)
         appWidgetManager.updateAppWidget(widgetId, views)
-    }
-
-    // Centers the cards vertically and frames them with an equal inset on all four
-    // sides: the leftover vertical space (height − card stack) is split top/bottom,
-    // and that same value is reused left/right. shownCount must be the number of cards
-    // actually rendered (fewer when there aren't enough lectures) so partial lists
-    // are centered and framed too.
-    private fun applyBoxPadding(context: Context, views: RemoteViews, heightDp: Int, shownCount: Int) {
-        if (shownCount <= 0) return  // empty state keeps the layout's default padding
-        val cardStackDp = shownCount * CARD_HEIGHT_DP + (shownCount - 1) * CARD_GAP_DP
-        val padDp = ((heightDp - cardStackDp) / 2).coerceAtLeast(MIN_PAD_DP)
-        val padPx = (padDp * context.resources.displayMetrics.density).toInt()
-        views.setViewPadding(R.id.widget_box, padPx, padPx, padPx, padPx)
     }
 
     private fun widgetHeightDp(options: Bundle): Int {
@@ -140,28 +153,32 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         return when {
             maxHeight > 0 -> maxHeight
             minHeight > 0 -> minHeight
-            else -> VERTICAL_PADDING_DP + CARD_HEIGHT_DP  // default → 1 card
+            else -> CARD_HEIGHT_DP + 2 * CARD_INSET_DP  // default → 1 card
         }
     }
 
-    // Returns how many cards fit: n = floor((height - padding + gap) / (cardHeight + gap)).
-    // Cards are fixed-height and top-aligned (like iOS) — leftover space stays empty
-    // rather than stretching the cards to fill it.
+    // How many cards fit if each is shrunk to MIN_CARD_DP — the API 31+ path, where
+    // card heights are flexible. Using the MINIMUM height here is what lets a nearly-
+    // full leftover fit one extra (slightly shorter) card instead of wasting it as
+    // white space. The exact per-card height is then computed in updateWidget and the
+    // cards grow back up (toward MAX_CARD_DP) to fill the box. availableDp already
+    // excludes the constant border (2 × inset). Clamped to [1, MAX_CARDS].
+    private fun flexCapacity(availableDp: Int): Int {
+        val cardUnit = MIN_CARD_DP + CARD_GAP_DP
+        return ((availableDp + CARD_GAP_DP) / cardUnit).coerceIn(1, MAX_CARDS)
+    }
+
+    // Fixed-height fallback for pre-API-31 devices (no setViewLayoutHeight): how many
+    // 62dp cards fit. The box keeps a CONSTANT CARD_INSET_DP border with cards pinned
+    // to the top (see widget_schedule.xml); we reserve that border (2×) and pack as
+    // many fixed-height cards as fit. Any leftover shows as plain white box below the
+    // last card. Clamped to [1, MAX_CARDS].
+    //   n = floor((height + gap - 2*inset) / (cardHeight + gap))
     private fun cardCountForHeight(heightDp: Int): Int {
-        val available = heightDp - VERTICAL_PADDING_DP + CARD_GAP_DP
+        val available = heightDp + CARD_GAP_DP - 2 * CARD_INSET_DP
         val cardUnit = CARD_HEIGHT_DP + CARD_GAP_DP
         return (available / cardUnit).coerceIn(1, MAX_CARDS)
     }
-
-    // Default card count: height-based with a comfortable padding reserve.
-    // Subclasses may override (the small widget packs more cards into the same footprint).
-    protected open fun resolveCardCount(heightDp: Int): Int = cardCountForHeight(heightDp)
-
-    // Max cards whose stack fits the height while still leaving the minimum inset
-    // (2 × MIN_PAD_DP) that applyBoxPadding will apply, so the last card is never
-    // clipped below the widget edge.
-    protected fun maxCardsThatFit(heightDp: Int): Int =
-        ((heightDp - 2 * MIN_PAD_DP + CARD_GAP_DP) / (CARD_HEIGHT_DP + CARD_GAP_DP)).coerceIn(1, MAX_CARDS)
 
     private fun filterRelevant(lectures: List<LectureItem>, cardCount: Int): List<LectureItem> {
         if (lectures.size <= cardCount) return lectures
@@ -186,7 +203,7 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         return h * 60 + m
     }
 
-    private fun bindWidget(context: Context, views: RemoteViews, lectures: List<LectureItem>, cardCount: Int) {
+    private fun bindWidget(context: Context, views: RemoteViews, lectures: List<LectureItem>, cardCount: Int, cardHeightDp: Float) {
         val slots = listOf(
             CardSlot(R.id.widget_card_1, R.id.widget_name_1, R.id.widget_time_1, R.id.widget_location_1, R.id.widget_progress_1, R.drawable.widget_card_grad_0),
             CardSlot(R.id.widget_card_2, R.id.widget_name_2, R.id.widget_time_2, R.id.widget_location_2, R.id.widget_progress_2, R.drawable.widget_card_grad_1),
@@ -195,6 +212,11 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
             CardSlot(R.id.widget_card_5, R.id.widget_name_5, R.id.widget_time_5, R.id.widget_location_5, R.id.widget_progress_5, R.drawable.widget_card_grad_4),
             CardSlot(R.id.widget_card_6, R.id.widget_name_6, R.id.widget_time_6, R.id.widget_location_6, R.id.widget_progress_6, R.drawable.widget_card_grad_5),
             CardSlot(R.id.widget_card_7, R.id.widget_name_7, R.id.widget_time_7, R.id.widget_location_7, R.id.widget_progress_7, R.drawable.widget_card_grad_6),
+            // Slots 8–10 for tall widgets. Only 8 gradients exist (grad_0..7), so the
+            // colors cycle: slot 8 → grad_7, then wrap around to grad_0, grad_1.
+            CardSlot(R.id.widget_card_8, R.id.widget_name_8, R.id.widget_time_8, R.id.widget_location_8, R.id.widget_progress_8, R.drawable.widget_card_grad_7),
+            CardSlot(R.id.widget_card_9, R.id.widget_name_9, R.id.widget_time_9, R.id.widget_location_9, R.id.widget_progress_9, R.drawable.widget_card_grad_0),
+            CardSlot(R.id.widget_card_10, R.id.widget_name_10, R.id.widget_time_10, R.id.widget_location_10, R.id.widget_progress_10, R.drawable.widget_card_grad_1),
         )
 
         if (lectures.isEmpty()) {
@@ -221,7 +243,8 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
                 timeId = slot.timeId,
                 locationId = slot.locationId,
                 progressId = slot.progressId,
-                gradientRes = slot.gradientRes)
+                gradientRes = slot.gradientRes,
+                cardHeightDp = cardHeightDp)
         }
     }
 
@@ -243,7 +266,8 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         timeId: Int,
         locationId: Int,
         progressId: Int,
-        gradientRes: Int
+        gradientRes: Int,
+        cardHeightDp: Float
     ) {
         if (idx >= lectures.size) {
             views.setViewVisibility(cardId, View.GONE)
@@ -252,6 +276,11 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
 
         val lecture = lectures[idx]
         views.setViewVisibility(cardId, View.VISIBLE)
+        // Flexible card height (API 31+). cardHeightDp <= 0 means "keep the layout's
+        // fixed height" (older devices), so we leave the card untouched there.
+        if (cardHeightDp > 0f && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            views.setViewLayoutHeight(cardId, cardHeightDp, TypedValue.COMPLEX_UNIT_DIP)
+        }
         // Strike through the time and room too (alongside the title) for rector
         // hours / canceled lectures, matching the in-app card.
         val timeText = "${lecture.start} – ${lecture.end}"
@@ -300,25 +329,4 @@ open class ScheduleWidgetProvider : AppWidgetProvider() {
         SpannableString(text).apply {
             setSpan(StrikethroughSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-}
-
-// Three fixed-size, non-resizable widgets. They differ only by their footprint
-// (provider-info XML); the card count adapts to each one's height via the base
-// class, so the white box is filled without clipping the last card.
-
-/** Small widget — packs up to 3 cards into its (unchanged) footprint, capped so the
- *  last card is never clipped if the launcher gives it less room. */
-class ScheduleWidgetSmall : ScheduleWidgetProvider() {
-    override fun resolveCardCount(heightDp: Int): Int = minOf(3, maxCardsThatFit(heightDp))
-}
-
-/** Medium widget — packs up to 5 cards into its (unchanged) footprint, capped so the
- *  last card is never clipped if the launcher gives it less room. */
-class ScheduleWidgetMedium : ScheduleWidgetProvider() {
-    override fun resolveCardCount(heightDp: Int): Int = minOf(5, maxCardsThatFit(heightDp))
-}
-
-/** Large widget — full screen width; packs as many cards as physically fit (up to 7). */
-class ScheduleWidgetLarge : ScheduleWidgetProvider() {
-    override fun resolveCardCount(heightDp: Int): Int = maxCardsThatFit(heightDp)
 }

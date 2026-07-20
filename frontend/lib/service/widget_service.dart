@@ -12,12 +12,8 @@ import 'package:plan_pm/service/database_service.dart';
 
 class WidgetService {
   static const _appGroupId = 'group.com.piotrwittig.plan_pm';
-  // Three fixed-size Android widgets share the same data; update them all.
-  static const _androidWidgetNames = [
-    'ScheduleWidgetSmall',
-    'ScheduleWidgetMedium',
-    'ScheduleWidgetLarge',
-  ];
+  // One resizable Android widget (class name = the manifest <receiver> name).
+  static const _androidWidgetName = 'ScheduleWidgetProvider';
   static const _iosName = 'PlanPMScheduleWidget';
 
   static const _debugLectures = [
@@ -217,9 +213,7 @@ class WidgetService {
         l10n.todayLecturesNaN,
       );
       if (Platform.isAndroid) {
-        for (final name in _androidWidgetNames) {
-          await HomeWidget.updateWidget(androidName: name);
-        }
+        await HomeWidget.updateWidget(androidName: _androidWidgetName);
       } else if (Platform.isIOS) {
         await HomeWidget.updateWidget(iOSName: _iosName);
       }

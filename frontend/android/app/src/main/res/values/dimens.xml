@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="widget_padding">14dp</dimen>
     <!-- Exact fixed card height. Must contain the card content (title + time/location row
          + reserved progress bar + paddings) and MUST equal CARD_HEIGHT_DP in
          ScheduleWidgetProvider.kt, or the height-based card count over/undershoots. -->
     <dimen name="widget_card_height">62dp</dimen>
     <dimen name="widget_card_gap">5dp</dimen>
+    <!-- Constant border between the white box edge and the cards, on all four sides.
+         The box hugs its cards (wrap_content), so this padding never changes as the
+         widget is resized — no "jumping" margins. MUST equal CARD_INSET_DP in
+         ScheduleWidgetProvider.kt, or the card-count math and the visible border drift
+         apart. Kept ≤ widget_card_gap-ish so 3 cards still fit a ~3-cell widget. -->
+    <dimen name="widget_card_inset">6dp</dimen>
 </resources>
