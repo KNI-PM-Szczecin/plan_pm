@@ -108,7 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       if (index == stages.length - 1) {
                         final SharedPreferences prefs =
                             await SharedPreferences.getInstance();
-                        await prefs.setString("skip_welcome", "true");
+                        await prefs.setBool("skip_welcome", true);
                         if (!context.mounted) return;
                         Navigator.push(
                           context,
