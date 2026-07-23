@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grey background for rector-hours / canceled lectures, matching the in-app
+     AppColor.rectorHoursBackground (Colors.grey.shade700). RemoteViews cannot
+     render the diagonal hatch texture used in the Flutter card, so the card is
+     a flat grey here; the badge + strikethrough still mark it clearly. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#616161" />
+    <corners android:radius="14dp" />
+</shape>

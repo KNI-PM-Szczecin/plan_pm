@@ -64,11 +64,9 @@ python -m admin.app
 ```
 
 ### Individual Steps
-Each module can be run independently:
+Only `scrapper` and `json2db` have CLI entry points (`mapper` and `parser` run as part of `main.py`, the admin panel, or the MCP `run_pipeline_step` tool):
 ```bash
-python -m mapper.mapper
 python -m scrapper.http_scrapper
-python -m parser.parser
 python -m json2db.json2db --input ./output/parser.json
 ```
 

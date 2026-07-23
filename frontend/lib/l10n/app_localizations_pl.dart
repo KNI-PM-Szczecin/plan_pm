@@ -640,4 +640,42 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get searchHint => 'Szukaj...';
+
+  @override
+  String get debugShowGdpr => 'Pokaż ekran zgody RODO';
+
+  @override
+  String get gdprTitle => 'Prywatność i dane';
+
+  @override
+  String get gdprBody =>
+      'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.';
+
+  @override
+  String get gdprAccept => 'Rozumiem i akceptuję';
+
+  @override
+  String get gdprCard1Title => 'Dane uczelniane';
+
+  @override
+  String get gdprCard1Body =>
+      'Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni.';
+
+  @override
+  String get gdprCard2Title => 'RODO';
+
+  @override
+  String get gdprCard2Body =>
+      'Dane te stanowią dane osobowe w rozumieniu Ogólnego Rozporządzenia o Ochronie Danych Osobowych (RODO).';
+
+  @override
+  String get gdprCard3Title => 'Twoja zgoda';
+
+  @override
+  String get gdprCard3Body =>
+      'Korzystając z aplikacji potwierdzasz, że rozumiesz cel wyświetlania tych danych i wyrażasz zgodę na ich użycie.';
+
+  @override
+  String get gdprRevoke =>
+      'Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.';
 }

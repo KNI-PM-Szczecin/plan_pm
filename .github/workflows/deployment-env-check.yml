@@ -18,8 +18,12 @@ jobs:
 
           check() {
             local KEY=$1
-            local VAL=$(grep "^const bool $KEY" "$FILE" | grep -o 'true\|false')
-            if [ "$VAL" = "true" ]; then
+            local LINE
+            LINE=$(grep -E "^const bool ${KEY} = (true|false);$" "$FILE" || true)
+            if [ -z "$LINE" ]; then
+              echo "❌ Missing or malformed bool flag: $KEY"
+              FAILED=1
+            elif echo "$LINE" | grep -q '= true;'; then
               echo "❌ $KEY is set to true — must be false before deploying"
               FAILED=1
             else
@@ -27,9 +31,17 @@ jobs:
             fi
           }
 
-          check kUseTestDb
-          check kSimulateNetworkErrors
-          check kDebugAnnouncement
-          check kDebugWhatsNew
+          EXPECTED=(
+            kUseTestDb kSimulateNetworkErrors kDebugAnnouncement kDebugWhatsNew
+            kDebugNews kDebugRectorHours kDebugWidget kDebugEmptyGroups kDebugGdpr
+          )
+          for FLAG in "${EXPECTED[@]}"; do check "$FLAG"; done
+
+          while read -r FLAG; do
+            if [[ ! " ${EXPECTED[*]} " =~ " ${FLAG} " ]]; then
+              echo "❌ Unknown bool flag $FLAG — add it to the production checklist"
+              FAILED=1
+            fi
+          done < <(sed -nE 's/^const bool ([A-Za-z0-9_]+) = (true|false);$/\1/p' "$FILE")
 
           [ $FAILED -eq 0 ] || exit 1

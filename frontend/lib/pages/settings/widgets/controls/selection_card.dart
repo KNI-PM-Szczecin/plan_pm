@@ -1,7 +1,7 @@
 // Pozioma karta wyboru z animacją naciśnięcia — używana w [LanguagePage] i podobnych.
 // [leading] to ikona lub emoji po lewej, [label] to tekst po prawej.
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 
 class SelectionCard extends StatefulWidget {

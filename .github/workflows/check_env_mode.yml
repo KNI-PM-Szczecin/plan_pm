@@ -13,9 +13,9 @@ jobs:
       - name: Sprawdź tryb środowiska
         run: |
           MODE=$(cat backend/.env_mode | tr -d '[:space:]')
-          if [ "$MODE" = "test" ]; then
-            echo "❌ Aplikacja jest przestawiona na tryb TEST."
-            echo "   Uruchom scripts/switch_env.sh prod przed otwarciem PR."
+          if [ "$MODE" != "prod" ]; then
+            echo "❌ Nieprawidłowy tryb środowiska: '$MODE' (wymagany: prod)."
+            echo "   Uruchom: python scripts/switch_env.py prod"
             exit 1
           fi
           echo "✅ Tryb: $MODE"

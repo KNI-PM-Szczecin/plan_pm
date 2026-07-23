@@ -2,7 +2,7 @@
 // (maksymalnie 3) pogrupowane po dniu. Obsługuje pull-to-refresh przez
 // [refreshNotifier]. Logika filtrowania wydzielona do [lecture_filters.dart].
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/states/generic_loading.dart';
@@ -72,7 +72,8 @@ class _TodayLecturesState extends State<TodayLectures> {
               description: snapshot.error.toString(),
             );
           }
-          if (snapshot.connectionState == ConnectionState.waiting && _cachedData == null) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _cachedData == null) {
             return GenericLoading(label: l10n.lectureLoading);
           }
           final unfilteredLectures = snapshot.data ?? _cachedData ?? [];
@@ -84,14 +85,7 @@ class _TodayLecturesState extends State<TodayLectures> {
             );
           }
 
-          final lectures = getClosestLectures(
-            unfilteredLectures.where((lecture) {
-              final lectureDate = lecture.date;
-              return lectureDate.year == currentDate.year &&
-                  lectureDate.month == currentDate.month;
-            }).toList(),
-            currentDate,
-          );
+          final lectures = getClosestLectures(unfilteredLectures, currentDate);
 
           if (lectures.isEmpty) {
             return GenericNoResource(

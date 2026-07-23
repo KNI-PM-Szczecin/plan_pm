@@ -3,7 +3,7 @@
 // Po wyborze zapisuje dane, synchronizuje plan i wraca do ekranu głównego.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';
@@ -48,10 +48,13 @@ class _LecturerInfoState extends State<LecturerInfo> {
             }
 
             await DatabaseService.instance.clearLectures();
+            await CacheService().syncNews();
             await CacheService().syncLectures();
 
             if (!mounted) return;
-            Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/home', (_) => false);
           },
         ),
       ),

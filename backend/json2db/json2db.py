@@ -56,6 +56,7 @@ def _resolve_env_mode() -> str:
 _prefix = "TEST_" if _resolve_env_mode() == "test" else ""
 
 _PAGE_SIZE = 1000
+MIN_CLASSES_TO_CLEAR = 100
 
 def _fetch_all(query_builder, page_size: int = _PAGE_SIZE) -> list:
     """Fetch all rows from a Supabase query by paginating in chunks of page_size."""
@@ -73,9 +74,10 @@ class json2db:
     db: Any
     data: dict
     
-    def __init__(self, input, dry_run=False, clear=False):
+    def __init__(self, input, dry_run=False, clear=False, force=False):
         self.dry_run = dry_run
         self.clear = clear
+        self.force = force
         self.log("Json2DB loaded.")
         with open(input, encoding="utf8") as file:
             self.data = json.loads(file.read())
@@ -143,23 +145,32 @@ class json2db:
         response = self.db.table("building").select("id, name").execute()
         buildings = {v['name']: v['id'] for v in response.data}
         
+        existing_rooms = _fetch_all(self.db.table("rooms").select("name, building"))
+        existing_keys = {(room["name"], room["building"]) for room in existing_rooms}
         query = []
         for room in self.data["rooms"]:
             if room["building"] != None:
                 building_name = self.data["building"][room["building"]]
                 id = buildings.get(building_name)
                 
-                query.append({
+                row = {
                     "name": room["room"],
                     "building": id
-                    })
+                }
             else:
-                query.append({
+                row = {
                     "name": room["room"],
                     "building": None
-                    })
+                }
+            # PostgreSQL treats NULL values as distinct in a regular UNIQUE
+            # constraint, so upsert alone would duplicate unassigned rooms.
+            key = (row["name"], row["building"])
+            if key not in existing_keys:
+                query.append(row)
+                existing_keys.add(key)
                 
-        _ = self.db.table("rooms").upsert(query, on_conflict="name, building").execute()
+        if query:
+            _ = self.db.table("rooms").upsert(query, on_conflict="name, building").execute()
 
         self.log(f"Wpisano {len(query)} sal do bazy.")
         return len(query)
@@ -248,7 +259,7 @@ class json2db:
             start_time_formatted = datetime.datetime.fromtimestamp(int(sclass["startTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
             end_time_formatted = datetime.datetime.fromtimestamp(int(sclass["endTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
 
-            current_class_key = (subject_name, start_time_formatted, sclass["group"], program_name)
+            current_class_key = (subject_name, start_time_formatted, sclass["group"], found_program_id)
 
             if current_class_key in processed_class_keys:
                 # print(f"Pominięto duplikat klasy w JSON: {current_class_key}")
@@ -272,12 +283,19 @@ class json2db:
     def load_teachers_classes(self):
         self.log("Loading teachers/classes")
 
-        classes_data = _fetch_all(self.db.table("classes").select("id, subject, group, startTime"))
+        classes_data = _fetch_all(self.db.table("classes").select("id, subject, group, startTime, program"))
+        programs_data = _fetch_all(self.db.table("programs").select("id, name, academicYear, language, programType, courseLength, degreeLevel"))
         teachers_data = _fetch_all(self.db.table("teachers").select("id, fullName"))
 
         classes_map = {
-            (v["subject"], v["group"], v["startTime"]): v["id"]
+            (v["subject"], v["group"], v["startTime"], v["program"]): v["id"]
             for v in classes_data
+        }
+
+        programs_map = {
+            (v["name"], v["academicYear"], v["language"], v["programType"],
+             float(v["courseLength"]), v["degreeLevel"]): v["id"]
+            for v in programs_data
         }
 
         teachers_map = {v["fullName"]: v["id"] for v in teachers_data}
@@ -291,8 +309,15 @@ class json2db:
             subject = self.data["subjects"][found_class_json["subject"]]
             group = found_class_json["group"]
             start_time = datetime.datetime.fromtimestamp(int(found_class_json["startTime"]), WARSAW_TZ).strftime("%Y-%m-%dT%H:%M:%S")
+            found_program = self.data["programs"][found_class_json["program"]]
+            program_key = (
+                found_program["name"], found_program["academic_year"],
+                found_program["language"], found_program["program_type"],
+                float(found_program["course_length"]), found_program["degree_level"],
+            )
+            program_id = programs_map.get(program_key)
 
-            unique_class_key = (subject, group, start_time)
+            unique_class_key = (subject, group, start_time, program_id)
 
             found_class_id = classes_map.get(unique_class_key)
 
@@ -325,6 +350,15 @@ class json2db:
             self.log("Tryb dry-run — pominięto zapis do bazy danych")
             print(json.dumps(self.data, ensure_ascii=False, indent=2))
             return
+
+        if self.clear and not self.force:
+            class_count = len(self.data.get("classes", []))
+            if class_count < MIN_CLASSES_TO_CLEAR:
+                raise ValueError(
+                    f"Refusing to clear the database: input contains only {class_count} "
+                    f"classes (minimum: {MIN_CLASSES_TO_CLEAR}). Use force=True/--force "
+                    "only after manually verifying the input."
+                )
 
         start_time = time.time()
         self.load_env()
@@ -365,7 +399,11 @@ if __name__ == "__main__":
         "--clear", action="store_true",
         help="Wyczyść bazę danych przed zapisem (domyślnie: wyłączone)",
     )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Pomiń bramkę minimalnej liczby zajęć dla --clear (niebezpieczne)",
+    )
     args = parser.parse_args()
 
-    App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear)
+    App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear, force=args.force)
     App.run()

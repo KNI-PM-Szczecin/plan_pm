@@ -21,6 +21,27 @@ def test_json2db_loads(parser_output):
     assert "programs" in db.data
 
 
+def test_clear_refuses_suspiciously_small_input(tmp_path):
+    path = tmp_path / "small.json"
+    path.write_text(json.dumps({"classes": []}), encoding="utf-8")
+    db = json2db(input=str(path), clear=True)
+    db.load_env = MagicMock()
+
+    with pytest.raises(ValueError, match="Refusing to clear the database"):
+        db.run()
+    db.load_env.assert_not_called()
+
+
+def test_force_allows_small_input_past_safety_gate(tmp_path):
+    path = tmp_path / "small.json"
+    path.write_text(json.dumps({"classes": []}), encoding="utf-8")
+    db = json2db(input=str(path), clear=True, force=True)
+    db.load_env = MagicMock(side_effect=RuntimeError("past gate"))
+
+    with pytest.raises(RuntimeError, match="past gate"):
+        db.run()
+
+
 # --- Testy weryfikujące błąd w load_classes: room_map oparty tylko na nazwie sali ---
 
 @pytest.fixture
@@ -237,4 +258,3 @@ def test_load_env_missing_service_key(monkeypatch, parser_output):
     with pytest.raises(EnvironmentError) as exc_info:
         db.load_env()
     assert "SUPABASE_SERVICE_KEY" in str(exc_info.value)
-

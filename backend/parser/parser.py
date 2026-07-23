@@ -136,8 +136,12 @@ class Parser:
                 tok["degree_level"] = degree_level
                 break
 
+        if not tok["degree_level"]:
+            print(f"Error processing course (unknown degree level): {original}")
+            tok["name"] = original.strip()
+            return tok
 
-        temp = original.split(tok['degree_level'])
+        temp = original.split(tok['degree_level'], 1)
 
         for program_type in PROGRAM_TYPE:
             if f'{program_type} ' in temp[0][-2:]:
@@ -198,7 +202,8 @@ class Parser:
 
 
     def parseTeachers(self, teacher):
-        if teacher == "":
+        teacher = teacher.strip()
+        if not teacher:
             return []
         prof = teacher.find("prof. ", 1)
         dr = teacher.find("dr ", 7)
@@ -233,7 +238,9 @@ class Parser:
             t += (self.parseTeachers(teacher[kpt:]))
             teacher = teacher[:kpt]
 
-        t.append(teacher.strip())
+        remaining = teacher.strip()
+        if remaining:
+            t.append(remaining)
 
         return t
 
@@ -276,10 +283,16 @@ class Parser:
 
     @staticmethod
     def breakDownTeachers(teachers):
-        for i, t in enumerate(_with_progress(teachers, "Przetwarzanie prowadzących...")):
-            t = t.split(" ")
-            teachers[i] = {"title": " ".join(t[:-2]), "fullName": " ".join(t[-2:])}
-        return teachers
+        result = []
+        for teacher in _with_progress(teachers, "Przetwarzanie prowadzących..."):
+            parts = teacher.split()
+            if not parts:
+                continue
+            result.append({
+                "title": " ".join(parts[:-2]),
+                "fullName": " ".join(parts[-2:]),
+            })
+        return result
 
     def breakDownBuildings(self, rooms):
         buildings = []

@@ -622,5 +622,49 @@
   "debugSevenDayMode": "Tryb 7-dniowy",
   "newsLoading": "Ładowanie aktualności",
   "newsNoDataDescription": "Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.",
-  "searchHint": "Szukaj..."
+  "searchHint": "Szukaj...",
+  "debugShowGdpr": "Pokaż ekran zgody RODO",
+  "@debugShowGdpr": {
+    "description": "settings_page.dart - Debug button label to preview the GDPR consent screen."
+  },
+  "gdprTitle": "Prywatność i dane",
+  "@gdprTitle": {
+    "description": "gdpr_consent_page.dart - Title for the GDPR consent screen."
+  },
+  "gdprBody": "Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.",
+  "@gdprBody": {
+    "description": "gdpr_consent_page.dart - GDPR consent body text."
+  },
+  "gdprAccept": "Rozumiem i akceptuję",
+  "@gdprAccept": {
+    "description": "gdpr_consent_page.dart - Accept button label on the GDPR consent screen."
+  },
+  "gdprCard1Title": "Dane uczelniane",
+  "@gdprCard1Title": {
+    "description": "gdpr_consent_page.dart - Title of the first info card."
+  },
+  "gdprCard1Body": "Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni.",
+  "@gdprCard1Body": {
+    "description": "gdpr_consent_page.dart - Body of the first info card."
+  },
+  "gdprCard2Title": "RODO",
+  "@gdprCard2Title": {
+    "description": "gdpr_consent_page.dart - Title of the second info card."
+  },
+  "gdprCard2Body": "Dane te stanowią dane osobowe w rozumieniu Ogólnego Rozporządzenia o Ochronie Danych Osobowych (RODO).",
+  "@gdprCard2Body": {
+    "description": "gdpr_consent_page.dart - Body of the second info card."
+  },
+  "gdprCard3Title": "Twoja zgoda",
+  "@gdprCard3Title": {
+    "description": "gdpr_consent_page.dart - Title of the third info card."
+  },
+  "gdprCard3Body": "Korzystając z aplikacji potwierdzasz, że rozumiesz cel wyświetlania tych danych i wyrażasz zgodę na ich użycie.",
+  "@gdprCard3Body": {
+    "description": "gdpr_consent_page.dart - Body of the third info card."
+  },
+  "gdprRevoke": "Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.",
+  "@gdprRevoke": {
+    "description": "gdpr_consent_page.dart - Footer note below the accept button."
+  }
 }

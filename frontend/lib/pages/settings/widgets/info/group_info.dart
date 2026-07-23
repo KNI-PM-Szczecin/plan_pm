@@ -2,7 +2,7 @@
 // Przycisk "Zmień grupy" otwiera [GroupSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';

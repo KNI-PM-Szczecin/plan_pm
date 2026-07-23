@@ -76,7 +76,7 @@ def index():
     )
 
 
-@bp.route("/pipeline/run/<step>")
+@bp.post("/pipeline/run/<step>")
 def run(step: str):
     if step not in STEPS:
         return "Unknown step", 404

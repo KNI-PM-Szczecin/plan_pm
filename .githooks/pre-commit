@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+import subprocess
+import sys
+from pathlib import Path
+
+repo_root = Path(subprocess.check_output(
+    ["git", "rev-parse", "--show-toplevel"], text=True
+).strip())
+mode_file = repo_root / "backend" / ".env_mode"
+mode = mode_file.read_text().strip() if mode_file.exists() else ""
+
+if mode != "prod":
+    print(f"Commit blocked: backend/.env_mode must contain 'prod' (found: {mode!r}).")
+    print("Run: python scripts/switch_env.py prod")
+    sys.exit(1)

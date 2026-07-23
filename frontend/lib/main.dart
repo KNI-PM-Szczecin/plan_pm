@@ -19,7 +19,7 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: Secrets.supabaseUrl,
-    anonKey: Secrets.supabaseAnonKey,
+    publishableKey: Secrets.supabaseAnonKey,
   );
 
   themeNotifier = ThemeNotifier();

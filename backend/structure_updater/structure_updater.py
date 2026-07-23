@@ -35,6 +35,8 @@ BASE_URL = "https://plany.am.szczecin.pl"
 FACULTIES_TABLE_NAME: str = "faculties"
 DEGREE_COURSES_TABLE_NAME: str = "degree_courses"
 SPECIALISATIONS_TABLE_NAME: str = "specialisations"
+MIN_FACULTIES_TO_CLEAR = 2
+MIN_DEGREE_COURSES_TO_CLEAR = 5
 
 os.makedirs("./logs", exist_ok=True)
 logger = logging.getLogger(__name__)
@@ -188,6 +190,10 @@ def main() -> None:
         "--dry-run", action="store_true",
         help="Wyświetl strukturę bez zapisywania do bazy danych",
     )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Pomiń kontrolę kompletności danych przed wyczyszczeniem bazy (niebezpieczne)",
+    )
     args = parser.parse_args()
 
     logger.info(f"Uruchomiono (dry_run={args.dry_run})")
@@ -207,6 +213,17 @@ def main() -> None:
         logger.info("Tryb dry-run — pominięto zapis do bazy danych")
         print(json.dumps(structure, ensure_ascii=False, indent=2))
         return
+
+    if not args.force and (
+        len(structure) < MIN_FACULTIES_TO_CLEAR
+        or total_courses < MIN_DEGREE_COURSES_TO_CLEAR
+    ):
+        raise ValueError(
+            "Refusing to clear university structure: scraped only "
+            f"{len(structure)} faculties and {total_courses} degree courses; "
+            f"minimum is {MIN_FACULTIES_TO_CLEAR} and {MIN_DEGREE_COURSES_TO_CLEAR}. "
+            "Use --force only after manually verifying the output."
+        )
 
     url = os.environ.get(f"{_prefix}SUPABASE_URL")
     service_key = os.environ.get(f"{_prefix}SUPABASE_SERVICE_KEY")

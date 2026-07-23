@@ -79,3 +79,20 @@
 - First public beta release
 - Schedule browsing
 - Announcement notifications
+## 1.2.1
+
+### pl-PL
+
+- Zabezpieczono import planu i struktury uczelni przed utratą danych
+- Naprawiono przełączanie z wykładowcy na studenta i odświeżanie aktualności
+- Naprawiono plan na granicy miesiąca oraz widżet Android po północy
+- Aktualizacje aplikacji nie usuwają już zapisanego profilu
+- Ulepszono kontrole wersji i flag produkcyjnych w CI
+
+### en-US
+
+- Protected schedule and university structure imports against data loss
+- Fixed lecturer-to-student switching and news refresh
+- Fixed month-boundary schedules and the Android widget after midnight
+- App updates no longer remove the saved profile
+- Improved CI checks for versions and production flags

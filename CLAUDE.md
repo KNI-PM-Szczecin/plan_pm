@@ -111,7 +111,7 @@ lib/pages/
 `WelcomePage` → `RoleSelectionPage` → `InputPage` → `GroupSelectionPage` → home
 
 **Pierwsza instalacja — wykładowca:**
-`WelcomePage` → `RoleSelectionPage` → `LecturerSelectionPage.onContinue`:
+`WelcomePage` → `RoleSelectionPage` → `LecturerSelectionPage` (przy `kDebugGdpr=true` najpierw `GdprConsentPage` — ekran zgody RODO; back = anuluj) → `onContinue`:
   1. Zapisz dane w SharedPreferences
   2. `AppModeManager.setMode(AppMode.lecturer)`
   3. `sevenDayModeNotifier.value = true`
@@ -148,16 +148,21 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 - Widget `kind` musi być **dokładnie** `PlanPMScheduleWidget` (matchuje `_iosName` w Dart)
 - App Group: `group.com.piotrwittig.plan_pm` (dodany w `Info.plist` jako `HomeWidgetAppGroupName`)
 - URL scheme `planpm://schedule` (`CFBundleURLTypes` w `Info.plist`) — `widgetURL` na widoku otwiera apkę po tapnięciu
-- Wielkości: `systemSmall` (1 karta, bez sali), `systemMedium` (2 karty), `systemLarge` (5 kart)
+- Wielkości: `systemSmall` i `systemMedium` (do 2 kart; small bez sali), `systemLarge` (do 5 kart)
 - Live progress bar przez `ProgressView(timerInterval:)` (iOS 16+) — aktualizuje się sam, bez timeline refresh
 - `Provider.getTimeline()` generuje wpisy przy każdym końcu zajęcia — widget przechodzi do następnego stanu automatycznie
 
 **Android (RemoteViews / `AppWidgetProvider`):**
-- Provider: [`android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt`](frontend/android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt)
-- Layout: [`android/app/src/main/res/layout/widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 8 slotów kart (gradient 0..7)
-- Dimens (per-card min height, padding, gap) w [`res/values/dimens.xml`](frontend/android/app/src/main/res/values/dimens.xml)
-- Liczba widocznych kart wyliczana dynamicznie w `onAppWidgetOptionsChanged` z `OPTION_APPWIDGET_MAX/MIN_HEIGHT` (`cardsThatFit`) — Android nie ma równowartości iOS-owego "snap" do rozmiaru
+- **Jeden skalowalny (resizable) widżet** — pojedyncza klasa `ScheduleWidgetProvider` w [`ScheduleWidgetProvider.kt`](frontend/android/app/src/main/kotlin/com/piotrwittig/plan_pm/ScheduleWidgetProvider.kt) (iOS ma osobne, stałe rozmiary — to dotyczy tylko Androida):
+  - **Liczba kart dopasowuje się do realnej wysokości** przez `cardCountForHeight()` — czyta bieżącą wysokość z `getAppWidgetOptions()` (`onUpdate` i `onAppWidgetOptionsChanged`), więc jeden kod obsługuje widżet od 1 karty (mały) do `MAX_CARDS` (=10) kart (pełna wysokość). Wzór rezerwuje stały border (`2 × CARD_INSET_DP`) i upycha tyle kart, ile się mieści. **Brak dynamicznego paddingu w runtime** — border jest wpieczony w layout (patrz niżej), więc marginesy nie „skaczą" przy resize. `MAX_CARDS` **musi równać się** liczbie slotów `widget_card_*` w layoucie; gradienty (grad_0..7, 8 szt.) cyklują dla slotów 9–10.
+  - Provider-info: [`schedule_widget.xml`](frontend/android/app/src/main/res/xml/schedule_widget.xml) z `android:resizeMode="horizontal|vertical"` → skalowalny w obu osiach. Domyślny rozmiar `targetCellWidth=4`/`targetCellHeight=3` (Android 12+) oraz `minWidth`/`minHeight` (starsze). Zakres skalowania: `minResizeWidth`(110dp ≈ 2 kolumny)/`minResizeHeight` … `maxResizeWidth`/`maxResizeHeight`. **Uwaga na stary algorytm launchera `ceil((minHeight+30)/70)` wierszy** — za duże `minHeight` sprawia, że launcher **chowa widżet z pickera**; dlatego `minHeight=224dp` (≈3 karty), nie więcej.
+  - **Skracanie nazw do inicjałów przy wąskim widżecie:** provider mierzy szerokość tytułu (`Paint.measureText`, font 14sp bold) względem realnej szerokości widżetu (`OPTION_APPWIDGET_MIN_WIDTH` − inset − padding karty). Gdy nazwa się nie mieści, `fitTitle()` skraca wszystkie słowa poza ostatnim do inicjału, np. „Bazy danych" → „B.Danych" (jednowyrazowe zostają bez zmian, `maxLines=1 ellipsize=end` to ostateczny fallback). Karty rektorskie rezerwują dodatkowo miejsce na ikonę ostrzeżenia.
+  - **Sala chowana na najmniejszym widżecie:** poniżej `LOCATION_MIN_WIDTH_DP` (200dp ≈ 2 kolumny) `showLocation=false` → pole sali jest `GONE` (nie zawija się, nie ściska czasu). Powyżej progu sala pokazuje się w całości; ma `maxLines=1`+`ellipsize=end`, więc przy średniej szerokości nie zawija się (najwyżej ucina).
+  - Jeden `<receiver name=".ScheduleWidgetProvider">` w `AndroidManifest.xml`, etykieta `widget_label` w `res/values/strings.xml`. Flutter odświeża tę jedną nazwę w `widget_service.dart` (`_androidWidgetName`).
+- Layout współdzielony: [`widget_schedule.xml`](frontend/android/app/src/main/res/layout/widget_schedule.xml) — 10 slotów kart. **Białe tło (`widget_box`) jest `match_parent`** — wypełnia cały footprint (brak przezroczystej martwej strefy, cały widżet klikalny). Karty są przyklejone do góry (`gravity="top"`) ze **stałym** paddingiem `@dimen/widget_card_inset` — border góra/boki jest zawsze jednakowy, a karty **nie ruszają się** przy resize (brak pulsowania). Gdy footprint jest wyższy niż potrzeba na karty, nadwyżka to białe wypełnienie pod ostatnią kartą (pojawia się tylko gdy widżet jest wyższy niż wypełniają go zajęcia).
+- **Wysokość kart:** na Androidzie 12+ (API 31) karty mają **elastyczną** wysokość w zakresie `[MIN_CARD_DP, MAX_CARD_DP]` (60–74dp) — provider liczy `flexCapacity()` (ile kart wejdzie przy MIN) i rozdziela wysokość równo przez `RemoteViews.setViewLayoutHeight(...)`, więc stos kart **wypełnia box dokładnie**: karty rosną (do MAX), żeby zjeść mały nadmiar, albo kurczą się (do MIN), żeby zmieścić jeszcze jedną. Na starszych API — fallback: stała wysokość `@dimen/widget_card_height` (62dp) i `cardCountForHeight()`. **`widget_card_height` w layoucie to wartość nominalna/fallback; runtime i tak ją nadpisuje na 12+.** Nie wracać do `layout_weight="1"` (rozciągało karty do absurdu przy 2 zajęciach). **Wartości MUSZĄ się zgadzać:** `CARD_INSET_DP` ↔ `widget_card_inset` (Kotlin ↔ [`dimens.xml`](frontend/android/app/src/main/res/values/dimens.xml)).
 - Czyta z `HomeWidgetPreferences` shared preferences plik, klucz `schedule_data` (**nie** `flutter.schedule_data` z `FlutterSharedPreferences`)
+- Każdy wpis `schedule_data` ma datę `yyyy-MM-dd`; provider odrzuca stare lub bezdatowe dane po północy. Cały `widget_box` ma `PendingIntent` otwierający `planpm://schedule`.
 - **Progress bar statyczny** — RemoteViews nie obsługuje live timerów. Pasek odświeża się przy `updateAppWidget` (push z apki, resize, kolejny entry timeline w iOS-sty­lu nie istnieje)
 - **Glance dependency exclusion w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** `home_widget` transitively wymaga `glance-appwidget` (AGP 9.1+, compileSdk 37+). Wykluczone bo używamy klasycznego `AppWidgetProvider`, nie Glance. Nie odblokowywuj bez upgradeu całego toolchainu.
 
@@ -174,10 +179,19 @@ Po każdej zmianie ARB: `flutter gen-l10n`.
 | `kUseTestDb` | Używaj testowego Supabase | `false` |
 | `kSimulateNetworkErrors` | Symuluj błędy sieci | `false` |
 | `kDebugAnnouncement` | Wymuszaj dialog ogłoszenia | `false` |
+| `kDebugAnnouncementType` | Typ podglądanego ogłoszenia (`info`/`warning`/`update`) | bez znaczenia (string, używane tylko przy `kDebugAnnouncement`) |
 | `kDebugWhatsNew` | Wymuszaj dialog "Co nowego" | `false` |
 | `kDebugNews` | Mock newsy | `false` |
+| `kDebugNewsImageUrl` | URL (ImgBB) obrazka dla mock newsów, pusty = brak | bez znaczenia (string, używane tylko przy `kDebugNews`) |
+| `kDebugRectorHours` | Wymuszaj baner godzin rektorskich | `false` |
+| `kDebugWidget` | Fake dane w widgecie ekranu głównego | `false` |
+| `kDebugWidgetCount` | Liczba fake zajęć (0–7) w widgecie gdy `kDebugWidget=true` (0 = pusty stan) | bez znaczenia (używane tylko przy `kDebugWidget`) |
+| `kDebugEmptyGroups` | Symuluj pustą listę grup | `false` |
+| `kDebugGdpr` | Pokazuj ekran zgody RODO przed potwierdzeniem wyboru wykładowcy | `false` |
 
 Przełączane przez: `python scripts/switch_env.py [test|prod]`
+
+> **WAŻNE:** `switch_env.py` **nadpisuje cały plik** `env_config.dart` przy każdym wywołaniu. Dodając nową flagę do `env_config.dart`, **zawsze jednocześnie** dodaj ją też do `switch_env.py` (w bloku `ENV_CONFIG_DART.write_text(...)`). Pominięcie tego powoduje utratę flagi po następnym przełączeniu środowiska i błąd kompilacji.
 
 ---
 
@@ -212,17 +226,18 @@ main.py
   └── json2db     → upsertuje do Supabase
 ```
 
-Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`). Stary scrapper Selenium został usunięty; nie ma już flagi `--old-scrapper`.
+Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`).
 
 **Uruchamianie:**
 ```bash
 python main.py [--workers N]      # pełny pipeline (domyślnie 10 workerów)
-python uploadparsetodb.py         # tylko upload istniejącego parser.json
 python -m json2db.json2db --input ./output/parser.json [--clear] [--dry-run]
-python -m structure_updater.structure_updater --source web [--dry-run]
+python -m structure_updater.structure_updater [--dry-run]
 python -m admin.app               # panel admina pod localhost:5050
 python -m mcp_server.server        # MCP server (stdio) do sterowania backendem przez agenta
 ```
+
+> **Sanity gates:** `json2db(clear=True)` sam sprawdza `MIN_CLASSES_TO_CLEAR` (100), więc ochrona obejmuje pełny pipeline, CLI, admina i MCP. `structure_updater` analogicznie wymaga co najmniej 2 wydziałów i 5 kierunków. `--force`/`force=True` omija bramkę wyłącznie do świadomego użycia po ręcznej weryfikacji artefaktu.
 
 **Testy:**
 ```bash
@@ -251,16 +266,16 @@ Dwa poziomy wyboru środowiska (test/prod):
 ### Admin Panel (`admin/`)
 
 Flask, localhost-only (`python -m admin.app`, port 5050). `create_app()` rejestruje blueprinty z `admin/routes/`:
-- **news** — CRUD newsów + upload/resize zdjęć (Pillow → Supabase Storage)
+- **news** — CRUD newsów + upload/resize zdjęć (Pillow → imgbb.com)
 - **pipeline** — uruchamia kroki pipeline'u przez SSE z live logami; single-flight guard (zakłada jednoprocesowy dev server)
 - **stats** — recenzje i wskaźniki z Google Play (Reviews + Play Developer Reporting API) oraz App Store Connect (JWT ze sklucza Apple)
 - **settings** — przełącza `.env_mode` przez `switch_env.py`
 
-Zabezpieczenia (`@app.before_request`): odrzuca żądania z `Sec-Fetch-Site: cross-site` (CSRF, w tym SSE) oraz spoza loopbacka. `admin/db.py` dobiera klienta Supabase wg `.env_mode`.
+Zabezpieczenia (`@app.before_request`): odrzuca żądania, których `Sec-Fetch-Site` nie jest `same-origin`/`none`/brak (blokuje cross-site **i** same-site — CSRF, w tym SSE), oraz spoza loopbacka. `admin/db.py` dobiera klienta Supabase wg `.env_mode`.
 
 ### MCP Server (`mcp_server/server.py`)
 
-FastMCP (`plan-pm-backend`), narzędzia agenta do sterowania backendem: `run_pipeline_step`, `run_full_pipeline`, `get_logs`, `list_news`/`create_news`/`delete_news`, `get_env_mode`/`set_env_mode`. Każde przyjmuje `env="prod"|"test"` i propaguje je do podprocesów przez `PLANPM_ENV`.
+FastMCP (`plan-pm-backend`), narzędzia agenta do sterowania backendem: `run_pipeline_step` (kroki: `mapper|scrapper|parser|json2db|structure`), `run_full_pipeline`, `get_logs`, `list_news`/`create_news`/`delete_news`, `get_env_mode`/`set_env_mode`. Narzędzia pipeline'owe i newsowe przyjmują `env="prod"|"test"` (**domyślnie `prod`**, niezależnie od `.env_mode`!) i propagują je do podprocesów przez `PLANPM_ENV`; `get_logs` i `get_env_mode`/`set_env_mode` nie mają parametru `env`.
 
 ### Powiadomienia (`notifier.py`)
 
@@ -281,9 +296,9 @@ feature/*  ──PR──►  main  ──PR──►  deployment  ──push─
 | Workflow | Trigger | Co sprawdza |
 |----------|---------|-------------|
 | `check_env_mode.yml` | PR → main | `.env_mode` == `prod` |
-| `deployment-env-check.yml` | PR → deployment | wszystkie flagi debug == `false` |
+| `deployment-env-check.yml` | PR → deployment | 4 flagi debug == `false` (`kUseTestDb`, `kSimulateNetworkErrors`, `kDebugAnnouncement`, `kDebugWhatsNew` — **pozostałe flagi NIE są sprawdzane przez CI**, weryfikuj ręcznie) |
 | `deployment-changelog-check.yml` | PR → deployment | `CHANGELOG.md` ma wpis dla aktualnej wersji |
-| `version-check.yml` | PR → deployment | wersja w `pubspec.yaml` > bazy |
+| `version-check.yml` | PR → deployment lub production | wersja w `pubspec.yaml` > bazy |
 | `deployment-source-check.yml` | PR → deployment | źródłowy branch == `main` |
 | `deploy.yml` | push → deployment | buduje iOS + Android, deployuje |
 
@@ -296,7 +311,7 @@ Dodaj do **treści commita** (nie tytułu PR):
 
 ### Secrets w CI
 
-`secrets.dart` jest generowany w trakcie buildu ze zmiennych GitHub Secrets — nie istnieje w repo. Lokalnie utwórz go ręcznie lub przez `switch_env.py`.
+`secrets.dart` jest generowany w trakcie buildu ze zmiennych GitHub Secrets — nie istnieje w repo. Lokalnie utwórz go ręcznie (skopiuj `lib/secrets_example.dart` i uzupełnij klucze — `switch_env.py` go **nie** generuje).
 
 ---
 

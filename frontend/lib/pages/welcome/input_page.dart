@@ -3,7 +3,7 @@
 // Po zatwierdzeniu persystuje dane i przechodzi do [GroupSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/models/student.dart';
@@ -128,8 +128,9 @@ class _InputPageState extends State<InputPage> {
                   Student.studyMode = selectedTerm == 1
                       ? StudyMode.stationary
                       : StudyMode.notStationary;
-                  Student.degreeLevel =
-                      selectedDegreeLevel == 1 ? "inż." : "mgr";
+                  Student.degreeLevel = selectedDegreeLevel == 1
+                      ? "inż."
+                      : "mgr";
                   Student.year = selectedYear;
 
                   final SharedPreferences prefs =
@@ -153,15 +154,19 @@ class _InputPageState extends State<InputPage> {
                     "degree_level",
                     selectedDegreeLevel == 1 ? "inż." : "mgr",
                   );
-                  await CacheService().syncNews();
-                  await CacheService().syncLectures();
+                  // During lecturer → student switching the app is still in
+                  // lecturer mode here. Sync only after GroupSelectionPage has
+                  // committed the new mode, otherwise lecturer data is cached.
+                  if (!widget.isRoleSwitch) {
+                    await CacheService().syncNews();
+                    await CacheService().syncLectures();
+                  }
                   if (!context.mounted) return;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => GroupSelectionPage(
-                        isRoleSwitch: widget.isRoleSwitch,
-                      ),
+                      builder: (context) =>
+                          GroupSelectionPage(isRoleSwitch: widget.isRoleSwitch),
                     ),
                   );
                 } finally {
@@ -213,7 +218,8 @@ class _InputPageState extends State<InputPage> {
                     final facultiesData = snapshot.data!;
                     final List<String> faculties = facultiesData.keys.toList();
 
-                    final List<String> degreeCourses = selectedFaculty.isNotEmpty
+                    final List<String> degreeCourses =
+                        selectedFaculty.isNotEmpty
                         ? facultiesData[selectedFaculty]!.keys.toList()
                         : <String>[];
 
@@ -298,7 +304,9 @@ class _InputPageState extends State<InputPage> {
                               HapticFeedback.lightImpact();
                               setState(() {
                                 selectedSpecialisation =
-                                    value == noSpecialisationOption ? "" : value!;
+                                    value == noSpecialisationOption
+                                    ? ""
+                                    : value!;
                               });
                             },
                           )

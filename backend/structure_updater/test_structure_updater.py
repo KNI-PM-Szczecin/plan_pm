@@ -210,7 +210,7 @@ def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
     for var in ("SUPABASE_URL", "SUPABASE_SERVICE_KEY",
                 "TEST_SUPABASE_URL", "TEST_SUPABASE_SERVICE_KEY"):
         monkeypatch.delenv(var, raising=False)
-    monkeypatch.setattr(sys, "argv", ["structure_updater"])
+    monkeypatch.setattr(sys, "argv", ["structure_updater", "--force"])
 
     su.main()
 
@@ -228,13 +228,26 @@ def test_main_clear_tables_error(tmp_path, monkeypatch):
     for var in ("SUPABASE_URL", "SUPABASE_SERVICE_KEY",
                 "TEST_SUPABASE_URL", "TEST_SUPABASE_SERVICE_KEY"):
         monkeypatch.setenv(var, "https://example.supabase.co" if "URL" in var else "fake-key")
-    monkeypatch.setattr(sys, "argv", ["structure_updater"])
+    monkeypatch.setattr(sys, "argv", ["structure_updater", "--force"])
 
     fake_db = MagicMock()
     fake_db.table.return_value.delete.return_value.gte.return_value.execute.side_effect = Exception("RLS error")
     monkeypatch.setattr(su, "create_client", lambda *_: fake_db)
 
     with pytest.raises(RuntimeError, match="Failed to update structure"):
+        su.main()
+
+
+def test_main_refuses_to_clear_suspiciously_small_structure(tmp_path, monkeypatch):
+    import sys
+    from structure_updater import structure_updater as su
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(su, "fetch_structure_from_web", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["structure_updater"])
+    monkeypatch.setattr(su, "create_client", MagicMock())
+
+    with pytest.raises(ValueError, match="Refusing to clear university structure"):
         su.main()
 
 

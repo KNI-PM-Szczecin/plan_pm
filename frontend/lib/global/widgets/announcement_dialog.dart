@@ -3,7 +3,7 @@
 // przycisk zamknięcia, 'update' dodatkowo przycisk otwierający [storeUrl]
 // w App Store / Play Store. Wywoływany wyłącznie z main.dart podczas inicjalizacji.
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/gradient_button.dart';

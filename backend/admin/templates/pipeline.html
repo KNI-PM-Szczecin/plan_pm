@@ -161,7 +161,7 @@ document.getElementById('confirm-go').addEventListener('click', function () {
 });
 
 function executeStep(step) {
-  if (activeStream) activeStream.close();
+  if (activeStream) activeStream.abort();
 
   const terminal = document.getElementById('terminal');
   terminal.textContent = '';
@@ -170,10 +170,10 @@ function executeStep(step) {
   document.querySelectorAll('.step-btn').forEach(b => b.disabled = true);
   document.getElementById('btn-' + step).classList.add('running');
 
-  activeStream = new EventSource('/pipeline/run/' + step);
+  activeStream = new AbortController();
+  const controller = activeStream;
 
-  activeStream.onmessage = function(e) {
-    const data = JSON.parse(e.data);
+  function handleData(data) {
     if (data.startsWith('[EXIT')) {
       const code = parseInt(data.match(/\d+/)[0]);
       setStatus(code === 0 ? 'done' : 'error (exit ' + code + ')', code === 0 ? 'done' : 'error');
@@ -181,25 +181,46 @@ function executeStep(step) {
         b.disabled = false;
         b.classList.remove('running');
       });
-      activeStream.close();
+      controller.abort();
       activeStream = null;
     } else if (data.startsWith('[ERROR]')) {
       terminal.textContent += data + '\n';
       setStatus('error', 'error');
       document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
-      activeStream.close();
+      controller.abort();
       activeStream = null;
     } else {
       terminal.textContent += data + '\n';
       terminal.scrollTop = terminal.scrollHeight;
     }
-  };
+  }
 
-  activeStream.onerror = function() {
+  fetch('/pipeline/run/' + step, {
+    method: 'POST',
+    headers: {'X-Requested-With': 'PlanPM-Admin'},
+    signal: controller.signal,
+  }).then(async response => {
+    if (!response.ok || !response.body) throw new Error('HTTP ' + response.status);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, {stream: true});
+      const events = buffer.split('\n\n');
+      buffer = events.pop();
+      for (const event of events) {
+        const line = event.split('\n').find(line => line.startsWith('data: '));
+        if (line) handleData(JSON.parse(line.slice(6)));
+      }
+    }
+  }).catch(function(error) {
+    if (error.name === 'AbortError') return;
     setStatus('połączenie zerwane', 'error');
     document.querySelectorAll('.step-btn').forEach(b => b.disabled = false);
-    if (activeStream) { activeStream.close(); activeStream = null; }
-  };
+    if (activeStream === controller) activeStream = null;
+  });
 }
 
 let currentLogModule = null;

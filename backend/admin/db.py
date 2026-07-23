@@ -7,8 +7,12 @@ BACKEND_ROOT = Path(__file__).parent.parent
 
 
 def get_env_mode() -> str:
+    override = os.environ.get("PLANPM_ENV")
+    if override in ("prod", "test"):
+        return override
     path = BACKEND_ROOT / ".env_mode"
-    return path.read_text().strip() if path.exists() else "prod"
+    mode = path.read_text().strip() if path.exists() else "prod"
+    return mode if mode in ("prod", "test") else "prod"
 
 
 def get_db():

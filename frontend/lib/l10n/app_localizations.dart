@@ -1251,6 +1251,72 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Szukaj...'**
   String get searchHint;
+
+  /// settings_page.dart - Debug button label to preview the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż ekran zgody RODO'**
+  String get debugShowGdpr;
+
+  /// gdpr_consent_page.dart - Title for the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prywatność i dane'**
+  String get gdprTitle;
+
+  /// gdpr_consent_page.dart - GDPR consent body text.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.'**
+  String get gdprBody;
+
+  /// gdpr_consent_page.dart - Accept button label on the GDPR consent screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozumiem i akceptuję'**
+  String get gdprAccept;
+
+  /// gdpr_consent_page.dart - Title of the first info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dane uczelniane'**
+  String get gdprCard1Title;
+
+  /// gdpr_consent_page.dart - Body of the first info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni.'**
+  String get gdprCard1Body;
+
+  /// gdpr_consent_page.dart - Title of the second info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'RODO'**
+  String get gdprCard2Title;
+
+  /// gdpr_consent_page.dart - Body of the second info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dane te stanowią dane osobowe w rozumieniu Ogólnego Rozporządzenia o Ochronie Danych Osobowych (RODO).'**
+  String get gdprCard2Body;
+
+  /// gdpr_consent_page.dart - Title of the third info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twoja zgoda'**
+  String get gdprCard3Title;
+
+  /// gdpr_consent_page.dart - Body of the third info card.
+  ///
+  /// In pl, this message translates to:
+  /// **'Korzystając z aplikacji potwierdzasz, że rozumiesz cel wyświetlania tych danych i wyrażasz zgodę na ich użycie.'**
+  String get gdprCard3Body;
+
+  /// gdpr_consent_page.dart - Footer note below the accept button.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.'**
+  String get gdprRevoke;
 }
 
 class _AppLocalizationsDelegate
