@@ -1,6 +1,6 @@
 // Klikalny wiersz w menu ustawień — opcjonalna ikona z kolorowym tłem po lewej, chevron po prawej.
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 

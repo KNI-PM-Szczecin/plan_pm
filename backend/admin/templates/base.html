@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan PM Admin{% if title %} — {{ title }}{% endif %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v=2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-left">
+    <a href="{{ url_for('pipeline.index') }}" class="navbar-brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo">
+      <span class="brand-name">Plan PM</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-sub">Admin</span>
+    </a>
+    <div class="navbar-tabs">
+      <a href="{{ url_for('pipeline.index') }}" class="navbar-tab {% if active == 'pipeline' %}active{% endif %}">Pipeline</a>
+      <a href="{{ url_for('news.index') }}"    class="navbar-tab {% if active == 'news'     %}active{% endif %}">News</a>
+      <a href="{{ url_for('stats.index') }}"   class="navbar-tab {% if active == 'stats'    %}active{% endif %}">Statistics</a>
+    </div>
+  </div>
+
+  <div class="env-dropdown">
+    <button type="button" class="env-badge {{ env_mode }}" onclick="toggleEnvMenu(event)">
+      <span class="dot"></span>
+      {{ env_mode | upper }}
+      <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="env-menu" id="env-menu">
+      <div class="env-menu-header">Środowisko</div>
+      <form method="POST" action="{{ url_for('settings.set_env') }}">
+        <input type="hidden" name="mode" value="prod">
+        <button type="submit" class="env-option {% if env_mode == 'prod' %}active{% endif %}">
+          <span class="env-option-dot prod"></span>
+          <span class="env-option-text">
+            <span class="env-option-title">Produkcja</span>
+            <span class="env-option-sub">Baza danych PROD</span>
+          </span>
+          {% if env_mode == 'prod' %}<i class="bi bi-check2 env-check"></i>{% endif %}
+        </button>
+      </form>
+      <form method="POST" action="{{ url_for('settings.set_env') }}">
+        <input type="hidden" name="mode" value="test">
+        <button type="submit" class="env-option {% if env_mode == 'test' %}active{% endif %}">
+          <span class="env-option-dot test"></span>
+          <span class="env-option-text">
+            <span class="env-option-title">Test</span>
+            <span class="env-option-sub">Baza danych TEST</span>
+          </span>
+          {% if env_mode == 'test' %}<i class="bi bi-check2 env-check"></i>{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="wrapper">
+  {% if flash %}
+    <div class="flash">{{ flash }}</div>
+  {% endif %}
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  {% if error %}
+    <div class="flash error">⚠ {{ error }}</div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="app-footer">
+  Plan PM{% if app_version %} · wersja aplikacji <strong>{{ app_version }}</strong>{% endif %}
+  {% if last_deploy %} · ostatni deploy na produkcję <strong>{{ last_deploy }}</strong>{% endif %}
+</footer>
+
+<script>
+  function toggleEnvMenu(e) {
+    e.stopPropagation();
+    document.getElementById('env-menu').classList.toggle('open');
+  }
+  document.addEventListener('click', function () {
+    document.getElementById('env-menu').classList.remove('open');
+  });
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

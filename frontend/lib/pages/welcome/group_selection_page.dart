@@ -4,7 +4,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
@@ -17,6 +17,7 @@ import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_pm/service/cache_service.dart';
+import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -46,6 +47,7 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
       if (widget.isRoleSwitch) {
         await AppModeManager.setMode(AppMode.student);
         sevenDayModeNotifier.value = false;
+        await DatabaseService.instance.clearLectures();
       }
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setStringList("groups", Student.selectedGroups ?? []);
@@ -65,19 +67,29 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
   }
 
   Future<void> _handleSkip() async {
-    HapticFeedback.lightImpact();
-    if (widget.isRoleSwitch) {
-      await AppModeManager.setMode(AppMode.student);
-      sevenDayModeNotifier.value = false;
+    setState(() => _isSubmitting = true);
+    try {
+      HapticFeedback.lightImpact();
+      if (widget.isRoleSwitch) {
+        await AppModeManager.setMode(AppMode.student);
+        sevenDayModeNotifier.value = false;
+        await DatabaseService.instance.clearLectures();
+      }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList("groups", Student.selectedGroups ?? []);
+      await CacheService().syncNews();
+      await CacheService().syncLectures();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: "Plan PM"),
+        ),
+        (r) => false,
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MyHomePage(title: "Plan PM"),
-      ),
-      (r) => false,
-    );
   }
 
   @override
@@ -90,7 +102,9 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: OnboardingActionBar(
         skipLabel: l10n.skipButton,
-        onSkip: _handleSkip,
+        onSkip: () {
+          if (!_isSubmitting) _handleSkip();
+        },
         confirmLabel: l10n.save,
         onConfirm: _isSubmitting ? null : _handleConfirm,
       ),

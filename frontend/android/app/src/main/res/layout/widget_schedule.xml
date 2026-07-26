@@ -4,20 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="top"
-    android:padding="@dimen/widget_padding"
-    android:background="@drawable/widget_background">
+    android:gravity="top">
+
+    <!-- White rounded box FILLS the whole widget footprint (match_parent) so there is
+         no transparent dead zone and the entire widget is tappable. Cards are pinned to
+         the TOP (gravity="top") with a CONSTANT padding (widget_card_inset) on every
+         side — so the top/side border never changes and, crucially, the cards NEVER
+         move when you resize (no pulsing/jumping margins). cardCountForHeight picks how
+         many cards fit; if the footprint is taller than the cards need, the extra space
+         is plain white box below the last card (it only appears when the widget is made
+         taller than its lectures fill). -->
+    <LinearLayout
+        android:id="@+id/widget_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="top"
+        android:padding="@dimen/widget_card_inset"
+        android:background="@drawable/widget_background">
 
     <LinearLayout
         android:id="@+id/widget_card_1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:background="@drawable/widget_card_grad_0"
         android:visibility="gone">
 
@@ -29,13 +43,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_1"
@@ -43,20 +62,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_1"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -66,7 +88,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -77,13 +99,12 @@
     <LinearLayout
         android:id="@+id/widget_card_2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_1"
         android:visibility="gone">
@@ -96,13 +117,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_2"
@@ -110,20 +136,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_2"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -133,7 +162,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -144,13 +173,12 @@
     <LinearLayout
         android:id="@+id/widget_card_3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_2"
         android:visibility="gone">
@@ -163,13 +191,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_3"
@@ -177,20 +210,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_3"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -200,7 +236,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -211,13 +247,12 @@
     <LinearLayout
         android:id="@+id/widget_card_4"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_3"
         android:visibility="gone">
@@ -230,13 +265,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_4"
@@ -244,20 +284,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_4"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -267,7 +310,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -278,13 +321,12 @@
     <LinearLayout
         android:id="@+id/widget_card_5"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_4"
         android:visibility="gone">
@@ -297,13 +339,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_5"
@@ -311,20 +358,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_5"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -334,7 +384,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -345,13 +395,12 @@
     <LinearLayout
         android:id="@+id/widget_card_6"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_5"
         android:visibility="gone">
@@ -364,13 +413,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_6"
@@ -378,20 +432,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_6"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -401,7 +458,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -412,13 +469,12 @@
     <LinearLayout
         android:id="@+id/widget_card_7"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/widget_card_min_height"
+        android:layout_height="@dimen/widget_card_height"
         android:orientation="vertical"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:paddingTop="11dp"
-        android:paddingBottom="11dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
         android:layout_marginTop="@dimen/widget_card_gap"
         android:background="@drawable/widget_card_grad_6"
         android:visibility="gone">
@@ -431,13 +487,18 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/widget_time_7"
@@ -445,20 +506,23 @@
                 android:layout_height="wrap_content"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:drawableStart="@drawable/ic_widget_clock"
                 android:drawablePadding="4dp" />
 
             <TextView
                 android:id="@+id/widget_location_7"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="#E0FFFFFF"
                 android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="10dp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:drawableStart="@drawable/ic_widget_map_pin"
                 android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -468,7 +532,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="0"
             android:progressTint="#FFFFFFFF"
@@ -476,14 +540,238 @@
             android:visibility="invisible" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/widget_card_8"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_card_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_7"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_time_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_8"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_9"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_card_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_0"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_time_9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_9"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_card_10"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_card_height"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:layout_marginTop="@dimen/widget_card_gap"
+        android:background="@drawable/widget_card_grad_1"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_name_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:drawablePadding="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_time_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:drawableStart="@drawable/ic_widget_clock"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/widget_location_10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#E0FFFFFF"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_widget_map_pin"
+                android:drawablePadding="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/widget_progress_10"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#FFFFFFFF"
+            android:progressBackgroundTint="#40FFFFFF"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <!-- Empty state ("no classes today") — fills the box and centers the text. -->
     <TextView
         android:id="@+id/widget_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Brak zajęć na dziś"
+        android:text="@string/widget_empty"
         android:textSize="13sp"
         android:textColor="@color/widget_secondary_text"
         android:gravity="center"
         android:visibility="gone" />
 
+    </LinearLayout>
 </LinearLayout>

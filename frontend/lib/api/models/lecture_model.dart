@@ -99,19 +99,42 @@ class LectureModel {
   ///
   /// - [location] to "budynek sala", np. "WChrobrego 176". Null jeśli brakuje danych o sali w bazie
   factory LectureModel.fromJson(Map<String, dynamic> json) {
-    DateTime timeFrom = DateTime.parse(json["start_time"]);
-    DateTime timeTo = DateTime.parse(json["end_time"]);
+    final startValue = json["start_time"] ?? json["startTime"];
+    final endValue = json["end_time"] ?? json["endTime"];
+    DateTime timeFrom = DateTime.parse(startValue as String);
+    DateTime timeTo = DateTime.parse(endValue as String);
     int duration = timeTo.difference(timeFrom).inMinutes;
 
-    String? roomName = json["room_name"] as String?;
-    String? buildingName = json["building_name"] as String?;
+    final legacyRoom = json["rooms"] as Map<String, dynamic>?;
+    String? roomName =
+        json["room_name"] as String? ?? legacyRoom?["name"] as String?;
+    final legacyBuilding = legacyRoom?["building"] as Map<String, dynamic>?;
+    String? buildingName =
+        json["building_name"] as String? ?? legacyBuilding?["name"] as String?;
     String? location;
-    
+
     if (buildingName != null && roomName != null) {
-    location = "$buildingName $roomName";
-  } else if (roomName != null) {
-    location = roomName;
-  }
+      location = "$buildingName $roomName";
+    } else if (legacyRoom == null && roomName != null) {
+      location = roomName;
+    }
+
+    String? professor = json["professors"] as String?;
+    if (professor == null) {
+      final teacherLinks = json["teachersclasses"] as List<dynamic>? ?? [];
+      final names = <String>[];
+      for (final link in teacherLinks) {
+        final teacher =
+            (link as Map<String, dynamic>)["teachers"] as Map<String, dynamic>?;
+        if (teacher == null) continue;
+        final fullName = (teacher["fullName"] as String? ?? '').trim();
+        final title = (teacher["title"] as String? ?? '').trim();
+        if (fullName.isNotEmpty) {
+          names.add(title.isEmpty ? fullName : '$title $fullName');
+        }
+      }
+      professor = names.isEmpty ? null : names.join(', ');
+    }
 
     return LectureModel(
       id: json["id"].toString(),
@@ -121,7 +144,7 @@ class LectureModel {
       room: roomName,
       building: buildingName,
       group: json["group"] as String,
-      professor: json["professors"] as String?, 
+      professor: professor,
       date: DateTime(
         timeFrom.year,
         timeFrom.month,

@@ -1,7 +1,7 @@
 // Strona wyboru języka aplikacji — system, polski, angielski, ukraiński.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';

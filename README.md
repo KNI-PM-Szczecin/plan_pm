@@ -7,7 +7,6 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
-![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=for-the-badge&logo=selenium&logoColor=white)
 
 ---
 
@@ -59,7 +58,11 @@
 
 **Currently available**
 
-- View class schedules filtered by your degree programme
+- View class schedules filtered by your degree programme (daily and weekly views)
+- Lecturer mode — browse your own teaching schedule
+- News feed with university announcements
+- Native home screen widgets (iOS WidgetKit + Android, three sizes)
+- Three languages (Polish, English, Ukrainian), light/dark themes, accent colors
 
 **Planned**
 
@@ -94,17 +97,17 @@ Mapper → Scrapper → Parser → json2db
 | Step        | What it does                                                        |
 | ----------- | ------------------------------------------------------------------- |
 | `mapper/`   | Discovers active schedule IDs via HTTP                              |
-| `scrapper/` | Scrapes each schedule page using Selenium/Chrome                    |
+| `scrapper/` | Scrapes each schedule page via HTTP POST                            |
 | `parser/`   | Normalises raw data, deduplicates, extracts teachers/rooms/subjects |
 | `json2db/`  | Upserts everything into Supabase                                    |
 
 A separate `structure_updater/` pipeline keeps the university hierarchy (Faculties → Degree Courses → Specialisations) up to date.
 
-The `news_tool/` is a local Flask admin UI for creating and managing news posts shown in the app.
+The `admin/` package is a local Flask admin panel (news management, pipeline runner with live logs, store stats, environment switching), and `mcp_server/` exposes the backend as MCP tools for AI agents.
 
-**Tech:** Python, Selenium, BeautifulSoup, Flask, Supabase (PostgreSQL + Storage)
+**Tech:** Python, BeautifulSoup, Flask, Supabase (PostgreSQL + Storage)
 
-For full backend documentation see [`backend/docs/agent.md`](backend/docs/agent.md).
+For full backend documentation see [`backend/README.md`](backend/README.md) and the root [`CLAUDE.md`](CLAUDE.md).
 
 ---
 

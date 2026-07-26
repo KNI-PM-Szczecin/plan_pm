@@ -2,7 +2,7 @@
 // Easter egg: 7 tapnięć w wersję odblokowuje sekcję debug w [SettingsPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -57,11 +57,11 @@ class _AboutPageState extends State<AboutPage> {
   SnackBar _styledSnackBar({required Widget icon, required String text}) {
     return SnackBar(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColor.inverseSurface,
+      backgroundColor: AppColor.surfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
         side: BorderSide(
-          color: AppColor.onInverseSurface.withValues(alpha: 0.12),
+          color: AppColor.onSurface.withValues(alpha: 0.12),
           width: 1,
         ),
       ),
@@ -73,10 +73,7 @@ class _AboutPageState extends State<AboutPage> {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                color: AppColor.onInverseSurface,
-                fontSize: 15,
-              ),
+              style: TextStyle(color: AppColor.onSurface, fontSize: 15),
             ),
           ),
         ],
@@ -102,24 +99,28 @@ class _AboutPageState extends State<AboutPage> {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
-          ..showSnackBar(_styledSnackBar(
-            icon: Icon(Icons.check_circle, color: AppColor.success, size: 22),
-            text: l10n.debugModeUnlocked,
-          ));
+          ..showSnackBar(
+            _styledSnackBar(
+              icon: Icon(Icons.check_circle, color: AppColor.success, size: 22),
+              text: l10n.debugModeUnlocked,
+            ),
+          );
       }
     } else if (_tapCount >= 3) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
-          ..showSnackBar(_styledSnackBar(
-            icon: Icon(
-              Icons.mouse,
-              color: AppColor.onInverseSurface.withValues(alpha: 0.7),
-              size: 22,
+          ..showSnackBar(
+            _styledSnackBar(
+              icon: Icon(
+                Icons.mouse,
+                color: AppColor.onSurface.withValues(alpha: 0.7),
+                size: 22,
+              ),
+              text: l10n.debugTapsRemaining(7 - _tapCount),
             ),
-            text: l10n.debugTapsRemaining(7 - _tapCount),
-          ));
+          );
       }
     }
   }
@@ -136,14 +137,16 @@ class _AboutPageState extends State<AboutPage> {
     final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
-      ..showSnackBar(_styledSnackBar(
-        icon: Icon(
-          Icons.do_not_disturb_on,
-          color: AppColor.destructive,
-          size: 22,
+      ..showSnackBar(
+        _styledSnackBar(
+          icon: Icon(
+            Icons.do_not_disturb_on,
+            color: AppColor.destructive,
+            size: 22,
+          ),
+          text: l10n.debugModeDisabled,
         ),
-        text: l10n.debugModeDisabled,
-      ));
+      );
   }
 
   Future<void> _launchRepo() async {
@@ -151,9 +154,9 @@ class _AboutPageState extends State<AboutPage> {
     final Uri url = Uri.parse('https://github.com/KNI-PM-Szczecin/plan_pm');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.couldNotOpenRepo)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.couldNotOpenRepo)));
       }
     }
   }
@@ -321,7 +324,8 @@ class _AboutPageState extends State<AboutPage> {
                                     },
                                     style: FilledButton.styleFrom(
                                       backgroundColor: AppColor.inverseSurface,
-                                      foregroundColor: AppColor.onInverseSurface,
+                                      foregroundColor:
+                                          AppColor.onInverseSurface,
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 16,
                                       ),
@@ -329,7 +333,7 @@ class _AboutPageState extends State<AboutPage> {
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
-                                    icon: Icon(LucideIcons.github, size: 20),
+                                    icon: Icon(LucideIcons.gitFork, size: 20),
                                     label: Text(
                                       l10n.githubRepo,
                                       style: TextStyle(

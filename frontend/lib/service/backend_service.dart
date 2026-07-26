@@ -47,13 +47,16 @@ class BackendService {
     if (Student.specialisation == null) {
       AppLogger.w("Specjalizacja studenta nie została ustawiona");
     }
-    
+
     final List<String> selectedGroups = Student.selectedGroups ?? [];
     var query = Supabase.instance.client
         .from("v_lectures")
         .select()
         .eq("program_type", Student.studyMode?.programType ?? "S")
-        .eq("program_name", Student.specialisation ?? Student.degreeCourse ?? "")
+        .eq(
+          "program_name",
+          Student.specialisation ?? Student.degreeCourse ?? "",
+        )
         .eq("year", Student.year ?? 0)
         .eq("degree_level", Student.degreeLevel ?? "");
 
@@ -82,7 +85,10 @@ class BackendService {
     final response = await Supabase.instance.client
         .from("v_unique_groups")
         .select("group")
-        .eq("program_name", Student.specialisation ?? Student.degreeCourse ?? "")
+        .eq(
+          "program_name",
+          Student.specialisation ?? Student.degreeCourse ?? "",
+        )
         .eq("program_type", Student.studyMode?.programType ?? "S")
         .eq("year", Student.year ?? 0)
         .eq("degree_level", Student.degreeLevel ?? "");
@@ -105,7 +111,8 @@ class BackendService {
           id: 'debug-1',
           createdAt: DateTime.now(),
           title: 'Mock news — test obrazu',
-          content: 'To jest testowy news do weryfikacji ładowania zdjęć z ImgBB.',
+          content:
+              'To jest testowy news do weryfikacji ładowania zdjęć z ImgBB.',
           messageType: 'info',
           imageUrl: kDebugNewsImageUrl.isNotEmpty ? kDebugNewsImageUrl : null,
         ),
@@ -118,13 +125,18 @@ class BackendService {
         ),
       ];
     }
-    AppLogger.d("[BACKEND-SERVICE] fetchNews — wysyłam zapytanie (limit=$limit)");
+    AppLogger.d(
+      "[BACKEND-SERVICE] fetchNews — wysyłam zapytanie (limit=$limit)",
+    );
     try {
       final response = await Supabase.instance.client
           .from("news")
           .select()
+          .order("created_at", ascending: false)
           .limit(limit);
-      AppLogger.d("[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy");
+      AppLogger.d(
+        "[BACKEND-SERVICE] fetchNews — odpowiedź: ${response.length} wierszy",
+      );
       if (response.isEmpty) return [];
       return response.map((json) {
         final id = json["id"].toString();
@@ -180,7 +192,7 @@ class BackendService {
 
       facultiesMap.putIfAbsent(f, () => {});
       facultiesMap[f]!.putIfAbsent(dc, () => []);
-      
+
       // Dodajemy specjalizację tylko jeśli istnieje i jeszcze jej nie ma na liście
       if (s != null && !facultiesMap[f]![dc]!.contains(s)) {
         facultiesMap[f]![dc]!.add(s);
@@ -204,9 +216,9 @@ class BackendService {
         .select()
         .eq("teacher_id", teacherId);
 
-  final List<dynamic> data = response;
-  final lectures = data.map((json) => LectureModel.fromJson(json)).toList();
-  lectures.sort((a, b) => a.date.compareTo(b.date));
-  return lectures;
+    final List<dynamic> data = response;
+    final lectures = data.map((json) => LectureModel.fromJson(json)).toList();
+    lectures.sort((a, b) => a.date.compareTo(b.date));
+    return lectures;
   }
 }

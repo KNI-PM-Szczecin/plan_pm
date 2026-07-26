@@ -1,7 +1,7 @@
 // Pole wyszukiwania wykładowców z ikoną lupy i przyciskiem czyszczenia (×).
 // Używane w [LecturerSelectionPage].
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 

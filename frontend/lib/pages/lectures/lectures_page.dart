@@ -2,7 +2,7 @@
 // Logika dat startowych i narzędzia wydzielone do [lecture_utils.dart].
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/models/student.dart';

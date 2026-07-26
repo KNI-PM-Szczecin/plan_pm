@@ -1,6 +1,6 @@
 // Pobiera wiadomości z bazy i buduje listę [NewsCard] — obsługuje stany ładowania, błędu i braku danych.
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/news_model.dart';
 import 'package:plan_pm/global/widgets/states/generic_loading.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';

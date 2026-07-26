@@ -34,12 +34,21 @@ class _HomePageState extends State<HomePage> {
       edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight,
       onRefresh: () async {
         AppLogger.d("Refreshing home page elements...");
-        final CacheService cacheService = CacheService();
-        await cacheService.syncLectures();
-        await cacheService.syncNews();
+        try {
+          final CacheService cacheService = CacheService();
+          await cacheService.syncLectures();
+          await cacheService.syncNews();
 
-        // Notify TodayLectures to reset its Future and recalculate time to 'now'
-        _refreshNotifier.value++;
+          // Re-read both SQLite-backed sections and recalculate time to 'now'.
+          _refreshNotifier.value++;
+        } catch (error, stackTrace) {
+          AppLogger.e("Home refresh failed", error, stackTrace);
+          if (context.mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.unexpectedError)));
+          }
+        }
       },
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
@@ -57,9 +66,13 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               HomeSection(
                 title: l10n.newsSectionLabel,
-                child: NewsBuilder(
-                  limit: 1,
-                  descriptionColor: AppColor.onSurfaceVariant,
+                child: ValueListenableBuilder<int>(
+                  valueListenable: _refreshNotifier,
+                  builder: (context, refresh, _) => NewsBuilder(
+                    key: ValueKey(refresh),
+                    limit: 1,
+                    descriptionColor: AppColor.onSurfaceVariant,
+                  ),
                 ),
               ),
               TodayLectures(refreshNotifier: _refreshNotifier),

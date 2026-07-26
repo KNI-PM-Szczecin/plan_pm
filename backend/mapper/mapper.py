@@ -8,7 +8,12 @@ import time
 import os
 import json
 import logging
+import threading
 from rich.progress import Progress
+
+from console_setup import force_utf8_output
+
+force_utf8_output()
 
 class Mapper:
     def __init__(self, output = "./output/mapper.json"):
@@ -26,30 +31,27 @@ class Mapper:
             with open(log_file, "a", encoding="utf-8"):
                 pass
 
+        # propagate=False keeps this module's logs out of the root logger, so a
+        # later pipeline step (json2db's httpx chatter) can't bleed into mapper.log.
+        self.logger.propagate = False
         if not self.logger.handlers:
             handler = logging.FileHandler(log_file, mode="w+", encoding="utf-8")
             formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
-            
+
         self.stats = {
             "success": 0,
             "interaction_fail": 0,
             "total": 0
         }
         self.valid_records = {}
-
-        logging.basicConfig(
-            filename=log_file,
-            filemode="w+",
-            encoding="utf-8",
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(message)s"
-        )
+        self.stats_lock = threading.Lock()
 
     def check_page(self, flow_id):
         url = f"https://plany.am.szczecin.pl/Plany/PlanyTokow/{flow_id}"
-        self.stats["total"] += 1
+        with self.stats_lock:
+            self.stats["total"] += 1
         try:
             response = requests.get(url, timeout=20)
             if response.status_code == 200:
@@ -61,14 +63,16 @@ class Mapper:
                     if strong_tag:
                         name = strong_tag.text.strip()
                         self.logger.info(f"{flow_id}: ✅ Nazwa toku: {name}")
-                        self.stats["success"] += 1
+                        with self.stats_lock:
+                            self.stats["success"] += 1
                         
                         return flow_id, name
         except requests.RequestException as e:
             self.logger.error(f"{flow_id}: ❌ Błąd połączenia: {e}")
 
         self.logger.warning(f"{flow_id}: ❌ Nie znaleziono lub brak planu.")
-        self.stats["interaction_fail"] += 1
+        with self.stats_lock:
+            self.stats["interaction_fail"] += 1
         return flow_id, None
 
     def run(self, minID: int = 380, maxID: int = 430):

@@ -12,6 +12,8 @@
 *.class
 *.lock
 *.log
+**/fastlane/report.xml
+**/fastlane/README.md
 *.pyc
 *.swp
 .DS_Store
@@ -171,3 +173,9 @@ app.*.symbols
 .python-version
 .gclient_previous_custom_vars
 .gclient_previous_sync_commits
+
+# Local tool and generated dependency state
+frontend/.vscode/
+frontend/android/.bundle/
+frontend/android/vendor/bundle/
+backend/structure_updater/output/

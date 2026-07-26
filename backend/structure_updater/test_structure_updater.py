@@ -1,15 +1,11 @@
-import os
 import textwrap
 import pytest
 from unittest.mock import MagicMock
 from structure_updater.structure_updater import (
     _extract_items,
-    parse_university_structure,
     propagate_structure_to_db,
     fetch_structure_from_web,
 )
-
-XML = "structure.xml"
 
 # ── _extract_items ─────────────────────────────────────────────────────────────
 
@@ -64,75 +60,6 @@ def test_extract_items_preserves_capitalisation():
     assert items[0]['text'] == 'programowanie Systemów Informatycznych'
 
 
-# ── parse_university_structure ────────────────────────────────────────────────
-
-def test_parse_university_structure_shape(tmp_path):
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="Wydział Informatyki">
-                <degree_course name="Informatyka">
-                    <specialisation>Programowanie</specialisation>
-                    <specialisation>Sieci komputerowe</specialisation>
-                </degree_course>
-                <degree_course name="Teleinformatyka">
-                </degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
-    data = parse_university_structure(str(xml))
-    assert len(data) == 1
-    faculty = data[0]
-    assert faculty["name"] == "Wydział Informatyki"
-    assert len(faculty["degree_courses"]) == 2
-
-
-def test_parse_university_structure_specialisations(tmp_path):
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="Wydział Informatyki">
-                <degree_course name="Informatyka">
-                    <specialisation>Programowanie</specialisation>
-                    <specialisation>  Sieci komputerowe  </specialisation>
-                </degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
-    data = parse_university_structure(str(xml))
-    specs = data[0]["degree_courses"][0]["specialisations"]
-    assert specs == ["Programowanie", "Sieci komputerowe"]
-
-
-def test_parse_university_structure_empty_specialisations(tmp_path):
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="Wydział Nawigacyjny">
-                <degree_course name="Oceanotechnika">
-                </degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
-    data = parse_university_structure(str(xml))
-    assert data[0]["degree_courses"][0]["specialisations"] == []
-
-
-def test_parse_university_structure_real_xml():
-    if not os.path.exists(XML):
-        pytest.skip(f"{XML} not found")
-    data = parse_university_structure(XML)
-    assert len(data) > 0
-    for faculty in data:
-        assert "name" in faculty
-        assert "degree_courses" in faculty
-        for dc in faculty["degree_courses"]:
-            assert "name" in dc
-            assert "specialisations" in dc
-
 
 # ── propagate_structure_to_db ─────────────────────────────────────────────────
 
@@ -148,23 +75,31 @@ STRUCTURE_STUB = [
 
 
 def _make_db_mock(faculty_ids=None, dc_ids=None):
-    """Build a minimal Supabase client mock with stable per-table objects."""
+    """Build a minimal Supabase client mock with stable per-table objects.
+
+    insert() echoes the inserted rows back with an "id" attached (like PostgREST
+    RETURNING *), so propagate_structure_to_db can match ids to inputs by name.
+    """
     db = MagicMock()
     _tables = {}
+    id_pools = {
+        "faculties": list(faculty_ids or [1]),
+        "degree_courses": list(dc_ids or [10, 20]),
+    }
 
     def _tbl(name):
         if name not in _tables:
             tbl = MagicMock()
-            if name == "faculties":
-                tbl.insert.return_value.execute.return_value.data = [
-                    {"id": fid} for fid in (faculty_ids or [1])
-                ]
-            elif name == "degree_courses":
-                tbl.insert.return_value.execute.return_value.data = [
-                    {"id": did} for did in (dc_ids or [10, 20])
-                ]
-            else:
-                tbl.insert.return_value.execute.return_value.data = []
+
+            def _insert(rows, _name=name):
+                ids = id_pools.get(_name, [])
+                data = [{**row, "id": (ids[i] if i < len(ids) else 1000 + i)}
+                        for i, row in enumerate(rows)]
+                result = MagicMock()
+                result.execute.return_value.data = data
+                return result
+
+            tbl.insert.side_effect = _insert
             _tables[name] = tbl
         return _tables[name]
 
@@ -241,30 +176,22 @@ def test_clear_structure_tables_calls_delete_on_all_tables():
 
 # ── main() ────────────────────────────────────────────────────────────────────
 
-def test_main_dry_run_xml(tmp_path, monkeypatch, capsys):
-    """main() z --source xml --dry-run wypisuje strukturę i nie zapisuje do bazy."""
-    import sys
-    from structure_updater.structure_updater import main
+_FAKE_STRUCTURE = [
+    {"name": "Wydział Testowy",
+     "degree_courses": [{"name": "Kierunek A", "specialisations": ["Spec 1"]}]},
+]
 
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="Wydział Testowy">
-                <degree_course name="Kierunek A">
-                    <specialisation>Spec 1</specialisation>
-                </degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
+
+def test_main_dry_run(tmp_path, monkeypatch, capsys):
+    """main() z --dry-run wypisuje strukturę (z web) i nie zapisuje do bazy."""
+    import sys
+    from structure_updater import structure_updater as su
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(sys, "argv", [
-        "structure_updater", "--source", "xml",
-        "--xml-path", str(xml), "--dry-run"
-    ])
+    monkeypatch.setattr(su, "fetch_structure_from_web", lambda: _FAKE_STRUCTURE)
+    monkeypatch.setattr(sys, "argv", ["structure_updater", "--dry-run"])
 
-    main()
+    su.main()
 
     output = capsys.readouterr().out
     assert "Wydział Testowy" in output
@@ -276,65 +203,51 @@ def test_main_missing_env_vars(tmp_path, monkeypatch, capsys):
     import sys
     from structure_updater import structure_updater as su
 
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="W">
-                <degree_course name="K"></degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
-
     monkeypatch.chdir(tmp_path)
-    # Clear all possible env vars
-    monkeypatch.delenv("SUPABASE_URL", raising=False)
-    monkeypatch.delenv("SUPABASE_SERVICE_KEY", raising=False)
-    monkeypatch.delenv("TEST_SUPABASE_URL", raising=False)
-    monkeypatch.delenv("TEST_SUPABASE_SERVICE_KEY", raising=False)
-    
-    # Force _prefix to empty string to be sure
-    monkeypatch.setattr(su, "_prefix", "")
-    
-    monkeypatch.setattr(sys, "argv", [
-        "structure_updater", "--source", "xml", "--xml-path", str(xml)
-    ])
+    monkeypatch.setattr(su, "fetch_structure_from_web", lambda: _FAKE_STRUCTURE)
+    # Clear both prefixed and non-prefixed vars so the missing-env path triggers
+    # regardless of .env_mode (the module reads TEST_* in test mode).
+    for var in ("SUPABASE_URL", "SUPABASE_SERVICE_KEY",
+                "TEST_SUPABASE_URL", "TEST_SUPABASE_SERVICE_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setattr(sys, "argv", ["structure_updater", "--force"])
 
     su.main()
 
-    output = capsys.readouterr().out
-    assert "SUPABASE" in output
-    assert "SERVICE_KEY" in output
+    assert "SUPABASE" in capsys.readouterr().out
 
 
 def test_main_clear_tables_error(tmp_path, monkeypatch):
-    """main() propaguje RuntimeError gdy clear_structure_tables zawodzi."""
+    """main() propaguje RuntimeError gdy aktualizacja struktury zawodzi."""
     import sys
     from structure_updater import structure_updater as su
 
-    xml = tmp_path / "structure.xml"
-    xml.write_text(textwrap.dedent("""\
-        <?xml version="1.0" encoding="UTF-8"?>
-        <university>
-            <faculty name="W">
-                <degree_course name="K"></degree_course>
-            </faculty>
-        </university>
-    """), encoding="utf-8")
-
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(su, "_prefix", "")
-    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
-    monkeypatch.setenv("SUPABASE_SERVICE_KEY", "fake-key")
-    monkeypatch.setattr(sys, "argv", [
-        "structure_updater", "--source", "xml", "--xml-path", str(xml)
-    ])
+    monkeypatch.setattr(su, "fetch_structure_from_web", lambda: _FAKE_STRUCTURE)
+    monkeypatch.setattr(su, "notify_discord", lambda *a, **k: None)
+    for var in ("SUPABASE_URL", "SUPABASE_SERVICE_KEY",
+                "TEST_SUPABASE_URL", "TEST_SUPABASE_SERVICE_KEY"):
+        monkeypatch.setenv(var, "https://example.supabase.co" if "URL" in var else "fake-key")
+    monkeypatch.setattr(sys, "argv", ["structure_updater", "--force"])
 
     fake_db = MagicMock()
     fake_db.table.return_value.delete.return_value.gte.return_value.execute.side_effect = Exception("RLS error")
     monkeypatch.setattr(su, "create_client", lambda *_: fake_db)
 
-    with pytest.raises(RuntimeError, match="Failed to clear structure tables"):
+    with pytest.raises(RuntimeError, match="Failed to update structure"):
+        su.main()
+
+
+def test_main_refuses_to_clear_suspiciously_small_structure(tmp_path, monkeypatch):
+    import sys
+    from structure_updater import structure_updater as su
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(su, "fetch_structure_from_web", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["structure_updater"])
+    monkeypatch.setattr(su, "create_client", MagicMock())
+
+    with pytest.raises(ValueError, match="Refusing to clear university structure"):
         su.main()
 
 

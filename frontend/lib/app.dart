@@ -1,8 +1,10 @@
 // Korzeń aplikacji — MaterialApp z motywem, lokalizacjami i builderem AppColor.
 // [AppRebuilder] wymusza rebuild drzewa po zmianie motywu lub języka.
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChrome, SystemUiOverlayStyle, Brightness;
+import 'package:flutter/services.dart'
+    show SystemChrome, SystemUiOverlayStyle, Brightness;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:plan_pm/app_initialization.dart';
 import 'package:plan_pm/env_config.dart';
@@ -43,8 +45,15 @@ AppBarTheme _appBarThemeForBrightness(Brightness brightness) {
   );
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final Future<Widget> _initialization = appInitialization();
 
   @override
   Widget build(BuildContext context) {
@@ -62,32 +71,40 @@ class App extends StatelessWidget {
                   themeMode: currentThemeMode,
                   title: 'Plan PM',
                   debugShowCheckedModeBanner: kUseTestDb,
-                  theme: ThemeData(
-                    fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
-                    brightness: Brightness.light,
-                    colorScheme: ColorScheme.fromSeed(
-                      seedColor: AppColor.primary,
-                      brightness: Brightness.light,
-                    ),
-                    appBarTheme: _appBarThemeForBrightness(Brightness.light),
-                  ).copyWith(
-                    textTheme: _tightTextTheme(
-                      ThemeData(brightness: Brightness.light).textTheme,
-                    ),
-                  ),
-                  darkTheme: ThemeData(
-                    fontFamily: defaultTargetPlatform == TargetPlatform.iOS ? '.SF Pro Text' : 'Inter',
-                    brightness: Brightness.dark,
-                    colorScheme: ColorScheme.fromSeed(
-                      seedColor: AppColor.primary,
-                      brightness: Brightness.dark,
-                    ),
-                    appBarTheme: _appBarThemeForBrightness(Brightness.dark),
-                  ).copyWith(
-                    textTheme: _tightTextTheme(
-                      ThemeData(brightness: Brightness.dark).textTheme,
-                    ),
-                  ),
+                  theme:
+                      ThemeData(
+                        fontFamily: defaultTargetPlatform == TargetPlatform.iOS
+                            ? '.SF Pro Text'
+                            : 'Inter',
+                        brightness: Brightness.light,
+                        colorScheme: ColorScheme.fromSeed(
+                          seedColor: AppColor.primary,
+                          brightness: Brightness.light,
+                        ),
+                        appBarTheme: _appBarThemeForBrightness(
+                          Brightness.light,
+                        ),
+                      ).copyWith(
+                        textTheme: _tightTextTheme(
+                          ThemeData(brightness: Brightness.light).textTheme,
+                        ),
+                      ),
+                  darkTheme:
+                      ThemeData(
+                        fontFamily: defaultTargetPlatform == TargetPlatform.iOS
+                            ? '.SF Pro Text'
+                            : 'Inter',
+                        brightness: Brightness.dark,
+                        colorScheme: ColorScheme.fromSeed(
+                          seedColor: AppColor.primary,
+                          brightness: Brightness.dark,
+                        ),
+                        appBarTheme: _appBarThemeForBrightness(Brightness.dark),
+                      ).copyWith(
+                        textTheme: _tightTextTheme(
+                          ThemeData(brightness: Brightness.dark).textTheme,
+                        ),
+                      ),
                   builder: (context, child) {
                     return Builder(
                       builder: (BuildContext innerContext) {
@@ -118,7 +135,7 @@ class App extends StatelessWidget {
                     '/home': (_) => const MyHomePage(title: 'Strona główna'),
                   },
                   home: FutureBuilder<Widget>(
-                    future: appInitialization(),
+                    future: _initialization,
                     builder: (context, AsyncSnapshot<Widget> screen) {
                       if (screen.connectionState != ConnectionState.done) {
                         return Container(color: AppColor.background);

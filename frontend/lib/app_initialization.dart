@@ -16,18 +16,26 @@ import 'package:plan_pm/service/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Widget> appInitialization() async {
-  AppLogger.i("[APP-INIT] Start");
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return _buildTargetPage(prefs);
+}
+
+Future<Widget> _buildTargetPage(SharedPreferences prefs) async {
+  AppLogger.i("[APP-INIT] Start");
 
   final info = await PackageInfo.fromPlatform();
   final currentVersion = info.version;
   final lastVersion = prefs.getString('last_app_version');
+  await prefs.setString('last_app_version', currentVersion);
+
   if (lastVersion != null && lastVersion != currentVersion) {
-    AppLogger.i("[APP-INIT] Version changed $lastVersion → $currentVersion, clearing cache");
+    AppLogger.i(
+      "[APP-INIT] Version changed $lastVersion → $currentVersion, clearing cache",
+    );
     await DatabaseService.instance.clearLectures();
     await DatabaseService.instance.clearNews();
   }
-  await prefs.setString('last_app_version', currentVersion);
 
   if (!prefs.containsKey("skip_welcome")) {
     return const WelcomePage();

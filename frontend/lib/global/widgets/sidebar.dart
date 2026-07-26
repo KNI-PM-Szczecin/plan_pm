@@ -2,7 +2,7 @@
 // Zawiera skróty do PE, legitymacji, wirtualnego dziekanatu, ustawień i "Co nowego".
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';

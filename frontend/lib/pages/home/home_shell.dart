@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/changelog.dart';
 import 'package:plan_pm/env_config.dart';

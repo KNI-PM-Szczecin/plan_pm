@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ONE resizable schedule widget (replaces the old small/medium/large trio).
+
+  How sizing works on Android:
+  - resizeMode="horizontal|vertical" is what actually lets the user drag the
+    handles to make the widget any size. Without it the widget is fixed.
+  - The number of lecture cards is NOT baked in here. The Kotlin provider reads
+    the widget's real height at runtime and shows as many cards as fit
+    (see cardCountForHeight() in ScheduleWidgetProvider.kt). So this file only
+    has to describe the allowed size RANGE and a sensible starting size.
+
+  Two generations of sizing attributes, both required for good behavior:
+  - Android 12+ (API 31): targetCellWidth/Height set the DEFAULT size in grid
+    cells, and maxResizeWidth/Height cap how large it can grow.
+  - Older Android: minWidth/minHeight double as BOTH the default size AND the
+    absolute floor; minResizeWidth/Height set how small the drag can go.
+
+  Height ↔ card math (must stay consistent with ScheduleWidgetProvider.kt;
+  border = 2 × widget_card_inset = 12dp, card = 62dp, gap = 5dp):
+     1 card  ≈ 12 + 62                       =  74dp
+     3 cards ≈ 12 + 3*62 + 2*5               = 208dp  ← ~default (targetCellHeight=3)
+    10 cards ≈ 12 + 10*62 + 9*5              = 677dp  ← MAX_CARDS → maxResizeHeight 720dp
+
+  minHeight is kept modest (224dp) on purpose: some old launchers compute grid
+  rows as ceil((minHeight + 30) / 70), and an over-large minHeight makes them
+  hide the widget from the picker entirely. maxResizeHeight (720dp) is generous so
+  a tall widget can actually grow to show up to MAX_CARDS cards.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:updatePeriodMillis="1800000"
+
+    android:minWidth="250dp"
+    android:minHeight="224dp"
+
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="90dp"
+
+    android:maxResizeWidth="600dp"
+    android:maxResizeHeight="720dp"
+
+    android:targetCellWidth="4"
+    android:targetCellHeight="3"
+
+    android:resizeMode="horizontal|vertical"
+    android:initialLayout="@layout/widget_schedule"
+    android:widgetCategory="home_screen" />

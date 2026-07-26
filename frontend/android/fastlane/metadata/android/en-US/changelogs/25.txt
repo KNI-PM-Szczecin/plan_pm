@@ -1,0 +1,6 @@
+- New schedule home screen widgets (iOS and Android)
+- Rector hours highlighted in the lecture list
+- Lecture notes displayed in the home screen widget
+- Fixed duplicate lectures on rapid onboarding taps
+- Fixed widget rendering in iOS 26 Clear/Tinted mode
+- Empty groups feedback on group selection screen

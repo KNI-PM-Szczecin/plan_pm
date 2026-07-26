@@ -38,21 +38,30 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="planpm" android:host="schedule" />
+            </intent-filter>
         </activity>
         
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- One resizable schedule widget. The provider class (Kotlin) renders it;
+             schedule_widget.xml describes its allowed size range. -->
         <receiver
             android:name=".ScheduleWidgetProvider"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/widget_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/schedule_widget_info" />
+                android:resource="@xml/schedule_widget" />
         </receiver>
     </application>
 </manifest>

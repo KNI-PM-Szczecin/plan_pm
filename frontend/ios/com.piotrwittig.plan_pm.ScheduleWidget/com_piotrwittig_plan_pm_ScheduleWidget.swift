@@ -6,11 +6,20 @@ struct ScheduleEntry: TimelineEntry {
     let lectures: [[String: String]]
 }
 
-fileprivate func parseTime(_ timeStr: String, on referenceDate: Date = Date()) -> Date? {
+// Combines a lecture's "yyyy-MM-dd" date with its "HH:mm" time into an absolute
+// Date. Falls back to today when the date field is missing (placeholder/snapshot
+// data or the legacy today-only payload), so a stale `schedule_data` still renders.
+fileprivate func lectureDate(_ lecture: [String: String], timeKey: String) -> Date? {
+    guard let timeStr = lecture[timeKey] else { return nil }
     let f = DateFormatter()
+    f.locale = Locale(identifier: "en_US_POSIX")
+    if let dateStr = lecture["date"], !dateStr.isEmpty {
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: "\(dateStr) \(timeStr)")
+    }
     f.dateFormat = "HH:mm"
     guard let t = f.date(from: timeStr) else { return nil }
-    var c = Calendar.current.dateComponents([.year, .month, .day], from: referenceDate)
+    var c = Calendar.current.dateComponents([.year, .month, .day], from: Date())
     let tc = Calendar.current.dateComponents([.hour, .minute], from: t)
     c.hour = tc.hour
     c.minute = tc.minute
@@ -18,10 +27,26 @@ fileprivate func parseTime(_ timeStr: String, on referenceDate: Date = Date()) -
     return Calendar.current.date(from: c)
 }
 
+// "yyyy-MM-dd" string for the calendar day a Date falls on.
+fileprivate func dayKey(_ date: Date) -> String {
+    let f = DateFormatter()
+    f.locale = Locale(identifier: "en_US_POSIX")
+    f.dateFormat = "yyyy-MM-dd"
+    return f.string(from: date)
+}
+
+// Lectures belonging to the calendar day of `date`. When items carry no `date`
+// field (legacy today-only payload) they are all treated as the current day.
+fileprivate func lecturesForDay(_ lectures: [[String: String]], on date: Date) -> [[String: String]] {
+    let anyDated = lectures.contains { ($0["date"]?.isEmpty == false) }
+    guard anyDated else { return lectures }
+    let key = dayKey(date)
+    return lectures.filter { $0["date"] == key }
+}
+
 fileprivate func filterUpcoming(_ lectures: [[String: String]], at date: Date) -> [[String: String]] {
     lectures.filter { lecture in
-        guard let endStr = lecture["end"],
-              let endDate = parseTime(endStr, on: date) else { return true }
+        guard let endDate = lectureDate(lecture, timeKey: "end") else { return true }
         return endDate >= date
     }
 }
@@ -41,27 +66,42 @@ struct Provider: TimelineProvider {
         completion(placeholder(in: context))
     }
     func getTimeline(in context: Context, completion: @escaping (Timeline<ScheduleEntry>) -> Void) {
-        let raw = UserDefaults(suiteName: "group.com.piotrwittig.plan_pm")?
-            .string(forKey: "schedule_data") ?? "[]"
+        let defaults = UserDefaults(suiteName: "group.com.piotrwittig.plan_pm")
+        // Prefer the week payload (dated); fall back to the legacy today-only one.
+        let raw = defaults?.string(forKey: "schedule_week")
+            ?? defaults?.string(forKey: "schedule_data") ?? "[]"
         let allLectures = (try? JSONDecoder().decode([[String: String]].self,
             from: Data(raw.utf8))) ?? []
 
         let now = Date()
-        var entries: [ScheduleEntry] = [
-            ScheduleEntry(date: now, lectures: allLectures)
-        ]
+        let cal = Calendar.current
 
-        let endTimes = allLectures
-            .compactMap { parseTime($0["end"] ?? "") }
-            .filter { $0 > now }
-            .sorted()
-        for endTime in endTimes {
-            let transition = endTime.addingTimeInterval(1)
-            entries.append(ScheduleEntry(date: transition, lectures: allLectures))
+        // A timeline entry is needed at every moment the rendered output changes:
+        //  - each lecture START → re-render so the live progress bar appears
+        //  - each lecture END (+1s) → re-render so it drops off / next slides up
+        //  - each upcoming midnight → roll the visible day over without the app
+        var boundaries = Set<Date>()
+        for lecture in allLectures {
+            if let s = lectureDate(lecture, timeKey: "start"), s > now { boundaries.insert(s) }
+            if let e = lectureDate(lecture, timeKey: "end"), e > now {
+                boundaries.insert(e.addingTimeInterval(1))
+            }
+        }
+        var midnight = cal.startOfDay(for: now)
+        for _ in 0..<8 {
+            midnight = cal.date(byAdding: .day, value: 1, to: midnight)!
+            if midnight > now { boundaries.insert(midnight) }
         }
 
-        let next = Calendar.current.date(byAdding: .hour, value: 24, to: now)!
-        completion(Timeline(entries: entries, policy: .after(next)))
+        var dates = [now] + boundaries.sorted()
+        if dates.count > 200 { dates = Array(dates.prefix(200)) }
+        let entries = dates.map { ScheduleEntry(date: $0, lectures: allLectures) }
+
+        // Re-pull periodically so a server-side schedule change picked up by the
+        // app (which rewrites the App Group) is reflected even if the widget's
+        // timeline is otherwise long-lived.
+        let refresh = cal.date(byAdding: .hour, value: 6, to: now)!
+        completion(Timeline(entries: entries, policy: .after(refresh)))
     }
 }
 
@@ -72,11 +112,34 @@ private let cardGradients: [[Color]] = [
     [Color(red: 0.94, green: 0.52, blue: 0.10), Color(red: 0.82, green: 0.28, blue: 0.18)],
 ]
 
+// Solid grey used for rector-hours / canceled cards (≈ Colors.grey.shade700,
+// i.e. AppColor.rectorHoursBackground in the Flutter UI). Fixed so the white
+// text stays legible in both light and dark widget backgrounds.
+private let rectorCardColor = Color(red: 0.38, green: 0.38, blue: 0.40)
+
+// Diagonal hatch texture mirroring Flutter's DiagonalStripesPainter
+// (spacing 12, stroke width 1.5).
+struct DiagonalStripes: Shape {
+    var spacing: CGFloat = 12
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        var x = -rect.height
+        while x < rect.width {
+            p.move(to: CGPoint(x: x, y: 0))
+            p.addLine(to: CGPoint(x: x + rect.height, y: rect.height))
+            x += spacing
+        }
+        return p
+    }
+}
+
 struct LectureCard: View {
     let lecture: [String: String]
     let colors: [Color]
     @Environment(\.widgetFamily) var family
     @Environment(\.widgetRenderingMode) var renderingMode
+
+    private var isRector: Bool { !(lecture["badge"] ?? "").isEmpty }
 
     @ViewBuilder
     private var cardBackground: some View {
@@ -87,6 +150,14 @@ struct LectureCard: View {
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.white.opacity(0.35), lineWidth: 1)
                 )
+        } else if isRector {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(rectorCardColor)
+                .overlay(
+                    DiagonalStripes()
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1.5)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                )
         } else {
             RoundedRectangle(cornerRadius: 14)
                 .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
@@ -95,10 +166,20 @@ struct LectureCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(lecture["name"] ?? "")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
+            // Rector hours / canceled: a compact inline warning icon (no extra
+            // row) plus the grey textured background and a struck-through title.
+            HStack(spacing: 5) {
+                if isRector {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                Text(lecture["name"] ?? "")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.white)
+                    .strikethrough(isRector)
+                    .lineLimit(1)
+            }
             HStack(spacing: 10) {
                 HStack(spacing: 4) {
                     Image("ClockIcon")
@@ -107,6 +188,7 @@ struct LectureCard: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 11, height: 11)
                     Text("\(lecture["start"] ?? "") - \(lecture["end"] ?? "")")
+                        .strikethrough(isRector)
                 }
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.white.opacity(0.88))
@@ -118,6 +200,7 @@ struct LectureCard: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 11, height: 11)
                         Text(loc)
+                            .strikethrough(isRector)
                             .lineLimit(1)
                     }
                     .font(.system(size: 11, weight: .medium))
@@ -131,9 +214,9 @@ struct LectureCard: View {
         .padding(.vertical, 8)
         .background(cardBackground)
         .overlay(alignment: .bottom) {
-            if #available(iOS 16, *) {
-                let start = parseTime(lecture["start"] ?? "")
-                let end = parseTime(lecture["end"] ?? "")
+            if #available(iOS 16, *), !isRector {
+                let start = lectureDate(lecture, timeKey: "start")
+                let end = lectureDate(lecture, timeKey: "end")
                 if let s = start, let e = end, s <= Date(), Date() <= e {
                     ProgressView(timerInterval: s...e, countsDown: false)
                         .progressViewStyle(.linear)
@@ -156,13 +239,14 @@ struct ScheduleWidgetView: View {
     }
 
     var visibleLectures: [[String: String]] {
+        let dayLectures = lecturesForDay(entry.lectures, on: entry.date)
         if family != .systemLarge {
-            return Array(filterUpcoming(entry.lectures, at: entry.date).prefix(maxCards))
+            return Array(filterUpcoming(dayLectures, at: entry.date).prefix(maxCards))
         }
-        if entry.lectures.count <= maxCards {
-            return entry.lectures
+        if dayLectures.count <= maxCards {
+            return dayLectures
         }
-        return Array(filterUpcoming(entry.lectures, at: entry.date).prefix(maxCards))
+        return Array(filterUpcoming(dayLectures, at: entry.date).prefix(maxCards))
     }
 
     var body: some View {
