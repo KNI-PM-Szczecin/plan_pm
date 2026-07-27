@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 default_platform(:ios)
 
 def read_changelog_locale(version, locale)
@@ -17,7 +19,12 @@ platform :ios do
       key_content: ENV["APP_STORE_PRIVATE_KEY"],
     )
 
-    # Install certificate and provisioning profile in CI
+    # Let Xcode manage the App Group capability and the distribution profiles for
+    # the app + ScheduleWidget extension. A single manually installed profile
+    # cannot cover both bundle IDs, so signing stays automatic on CI too.
+    signing_xcargs = ["-allowProvisioningUpdates"]
+
+    # Install the distribution certificate in CI (profiles are fetched on the fly)
     if ENV["CI"]
       keychain_name = "ci_keychain"
       keychain_password = "ci_temp"
@@ -37,16 +44,25 @@ platform :ios do
         keychain_password: keychain_password,
       )
 
-      profile_path = install_provisioning_profile(path: "profile.mobileprovision")
-      profile_uuid = File.basename(profile_path, ".mobileprovision")
+      # `api_key` above only authorizes fastlane's own App Store Connect calls.
+      # The archive needs the key on disk as well, otherwise
+      # -allowProvisioningUpdates falls back to Xcode's (nonexistent on CI)
+      # signed-in accounts. gym injects these flags into the *export* command
+      # itself, so they must not be repeated there -- xcodebuild rejects
+      # -authenticationKeyPath when it is passed twice.
+      key_id = ENV["APP_STORE_KEY_ID"]
+      key_path = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
+      File.write(key_path, ENV["APP_STORE_PRIVATE_KEY"].gsub('\n', "\n"))
+      File.chmod(0600, key_path)
 
-      update_code_signing_settings(
-        use_automatic_signing: false,
-        path: "Runner.xcodeproj",
-        code_sign_identity: "Apple Distribution",
-        profile_uuid: profile_uuid,
-      )
+      signing_xcargs += [
+        "-authenticationKeyPath '#{key_path}'",
+        "-authenticationKeyID '#{key_id}'",
+        "-authenticationKeyIssuerID '#{ENV["APP_STORE_ISSUER_ID"]}'",
+      ]
     end
+
+    signing_xcargs = signing_xcargs.join(" ")
 
     # Read version + build number from pubspec.yaml
     pubspec = YAML.load_file("../../pubspec.yaml")
@@ -71,10 +87,7 @@ platform :ios do
       export_options: {
         signingStyle: "automatic",
       },
-      # Let Xcode register the App Group capability and create/update the
-      # distribution profiles for the app + ScheduleWidget extension on the fly
-      # (uses the admin App Store Connect API key configured above).
-      xcargs: "-allowProvisioningUpdates",
+      xcargs: signing_xcargs,
     )
 
     changelog = [
