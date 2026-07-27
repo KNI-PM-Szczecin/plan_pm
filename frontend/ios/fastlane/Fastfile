@@ -45,8 +45,11 @@ platform :ios do
       )
 
       # `api_key` above only authorizes fastlane's own App Store Connect calls.
-      # xcodebuild needs the key on disk, otherwise -allowProvisioningUpdates
-      # falls back to Xcode's (nonexistent on CI) signed-in accounts.
+      # The archive needs the key on disk as well, otherwise
+      # -allowProvisioningUpdates falls back to Xcode's (nonexistent on CI)
+      # signed-in accounts. gym injects these flags into the *export* command
+      # itself, so they must not be repeated there -- xcodebuild rejects
+      # -authenticationKeyPath when it is passed twice.
       key_id = ENV["APP_STORE_KEY_ID"]
       key_path = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
       File.write(key_path, ENV["APP_STORE_PRIVATE_KEY"].gsub('\n', "\n"))
@@ -85,7 +88,6 @@ platform :ios do
         signingStyle: "automatic",
       },
       xcargs: signing_xcargs,
-      export_xcargs: signing_xcargs,
     )
 
     changelog = [
