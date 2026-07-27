@@ -20,6 +20,13 @@ jobs:
         with:
           channel: stable
 
+      # Runner.xcodeproj integrates plugins through CocoaPods and has no Swift
+      # package references. Newer Flutter releases enable Swift Package Manager
+      # by default, which routes SPM-capable plugins out of the Podfile and
+      # breaks the build with "Module 'app_links' not found".
+      - name: Disable Swift Package Manager plugin integration
+        run: flutter config --no-enable-swift-package-manager
+
       - name: Install Flutter dependencies
         working-directory: frontend
         run: flutter pub get
