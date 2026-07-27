@@ -58,11 +58,6 @@ jobs:
         run: |
           echo "${{ secrets.IOS_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.p12
 
-      - name: Decode provisioning profile
-        working-directory: frontend/ios
-        run: |
-          echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > profile.mobileprovision
-
       - name: Install Ruby dependencies
         working-directory: frontend/ios
         run: bundle install
