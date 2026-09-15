@@ -24,20 +24,31 @@ DateTime adjustInitialDate(StudyMode? mode, DateTime now) {
 }
 
 // Liczba dni do przodu przy nawigacji — omija weekend (stacjonarne) lub cały tydzień (niestacjonarne).
-int daysForward(StudyMode? mode, int weekday, bool sevenDay) {
-  if (sevenDay) return 1;
-  if (mode == StudyMode.stationary && weekday == DateTime.friday) return 3;
-  if (mode == StudyMode.notStationary && weekday == DateTime.sunday) return 5;
-  return 1;
-}
+// Chevrony przesuwają widok o cały tydzień. ±7 dni zachowuje dzień tygodnia,
+// więc zaznaczony dzień pozostaje widoczny w każdym trybie studiów i nie trzeba
+// omijać weekendu tak, jak przy przesuwaniu o pojedynczy dzień.
+//
+// Data budowana konstruktorem, nie przez add(Duration(days: 7)): Duration to
+// dokładne 168 godzin, więc przy zmianie czasu letni/zimowy skok o tydzień
+// wypadałby godzinę obok i przy dacie tuż po północy cofał się o dzień.
+// Konstruktor normalizuje kalendarzowo i jest na to odporny.
+DateTime nextWeek(DateTime date) => DateTime(
+  date.year,
+  date.month,
+  date.day + 7,
+  date.hour,
+  date.minute,
+  date.second,
+);
 
-// Liczba dni wstecz przy nawigacji — omija weekend (stacjonarne) lub cały tydzień (niestacjonarne).
-int daysBackward(StudyMode? mode, int weekday, bool sevenDay) {
-  if (sevenDay) return 1;
-  if (mode == StudyMode.stationary && weekday == DateTime.monday) return 3;
-  if (mode == StudyMode.notStationary && weekday == DateTime.friday) return 5;
-  return 1;
-}
+DateTime previousWeek(DateTime date) => DateTime(
+  date.year,
+  date.month,
+  date.day - 7,
+  date.hour,
+  date.minute,
+  date.second,
+);
 
 // Indeksy dni widocznych w selekcji: pon–pt dla stacjonarnych, pt–nd dla niestacjonarnych, cały tydzień w trybie 7-dniowym.
 List<int> visibleDayIndices(StudyMode? mode, bool sevenDay) {
