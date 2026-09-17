@@ -1,3 +1,4 @@
+import ipaddress
 import os
 import sys
 from pathlib import Path
@@ -45,6 +46,44 @@ def _last_deploy() -> str | None:
         return None
 
 
+_LOOPBACK_HOSTS = ("localhost", "127.0.0.1", "::1")
+_LOOPBACK_ADDRS = ("127.0.0.1", "::1")
+# Tailscale hands every node an address out of the 100.64.0.0/10 CGNAT range.
+_TAILNET = ipaddress.ip_network("100.64.0.0/10")
+
+
+def _expose_to_tailnet() -> bool:
+    """Opt-in. The default stays loopback-only so nothing is exposed by accident."""
+    return os.environ.get("ADMIN_ALLOW_TAILNET", "").lower() == "true"
+
+
+def _allowed_hosts() -> tuple[str, ...]:
+    """Host header allowlist. Stays explicit even when exposed: a wildcard would
+    throw away the DNS-rebinding protection, whereas naming the tailnet host does
+    not -- an attacker-owned domain still fails to match."""
+    extra = os.environ.get("ADMIN_ALLOWED_HOSTS", "")
+    return _LOOPBACK_HOSTS + tuple(
+        h.strip().lower() for h in extra.split(",") if h.strip()
+    )
+
+
+def _peer_allowed(addr: str) -> bool:
+    """Loopback always; tailnet peers only when explicitly enabled. Without this
+    range check, binding off loopback would let any LAN host reach a panel that
+    has no authentication at all."""
+    # Normalize IPv4-mapped IPv6 (e.g. '::ffff:127.0.0.1') from dual-stack binds.
+    if addr.startswith("::ffff:"):
+        addr = addr[len("::ffff:"):]
+    if addr in _LOOPBACK_ADDRS:
+        return True
+    if not _expose_to_tailnet():
+        return False
+    try:
+        return ipaddress.ip_address(addr) in _TAILNET
+    except ValueError:
+        return False
+
+
 def create_app() -> Flask:
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
@@ -69,7 +108,7 @@ def create_app() -> Flask:
         # TCP peer can still be local while the browser sends an attacker-owned
         # Host header. Only accept the hostnames this local tool is meant for.
         host = request.host.split(":", 1)[0].strip("[]").lower()
-        if host not in ("localhost", "127.0.0.1", "::1"):
+        if host not in _allowed_hosts():
             return "Forbidden", 403
         # Reject cross-origin requests (CSRF). State-changing pipeline runs use
         # POST; the browser-set Sec-Fetch-Site header adds another boundary.
@@ -82,12 +121,8 @@ def create_app() -> Flask:
         fetch_site = request.headers.get("Sec-Fetch-Site")
         if fetch_site is not None and fetch_site not in ("same-origin", "none"):
             return "Forbidden", 403
-        # The admin tool is localhost-only — reject anything off loopback.
-        # Normalize IPv4-mapped IPv6 (e.g. '::ffff:127.0.0.1') from dual-stack binds.
-        addr = request.remote_addr or ""
-        if addr.startswith("::ffff:"):
-            addr = addr[len("::ffff:"):]
-        if addr not in ("127.0.0.1", "::1"):
+        # Loopback by default; tailnet peers only when ADMIN_ALLOW_TAILNET=true.
+        if not _peer_allowed(request.remote_addr or ""):
             return "Forbidden", 403
 
     return app
@@ -95,4 +130,7 @@ def create_app() -> Flask:
 
 if __name__ == "__main__":
     debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    create_app().run(debug=debug, port=5050)
+    # Default bind stays loopback. Point ADMIN_BIND_HOST at the tailnet address
+    # rather than 0.0.0.0 so the panel never listens on the university LAN.
+    host = os.environ.get("ADMIN_BIND_HOST", "127.0.0.1")
+    create_app().run(debug=debug, host=host, port=5050)

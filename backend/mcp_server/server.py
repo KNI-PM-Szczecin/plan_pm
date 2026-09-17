@@ -19,7 +19,7 @@ REPO_ROOT = BACKEND_ROOT.parent
 load_dotenv(BACKEND_ROOT / ".env")
 sys.path.insert(0, str(BACKEND_ROOT))
 
-from notifier import notify_discord, pipeline_stats_text
+from notifier import NOTIFY_HANDLED_ENV, notify_discord, pipeline_stats_text
 
 # Pipeline steps worth a Discord notification from here. structure_updater
 # notifies itself, so it's excluded to avoid duplicate messages.
@@ -57,6 +57,8 @@ def _run(cmd: list[str], env: str | None = None) -> tuple[str, int]:
     proc_env["PLANPM_ENV"] = _resolve_mode(env)
     proc_env["PYTHONUTF8"] = "1"
     proc_env["PYTHONIOENCODING"] = "utf-8"
+    # We notify at the tool level; stop the CLI entry point duplicating it.
+    proc_env[NOTIFY_HANDLED_ENV] = "1"
     result = subprocess.run(cmd, capture_output=True, text=True,
                             encoding="utf-8", errors="replace",
                             cwd=str(BACKEND_ROOT), env=proc_env)

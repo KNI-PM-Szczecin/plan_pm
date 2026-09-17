@@ -9,6 +9,7 @@ from mapper import Mapper
 from scrapper import HttpScrapper
 from parser import Parser
 from json2db import json2db
+from notifier import caller_handles_notification, notify_discord, pipeline_stats_text
 
 parser = argparse.ArgumentParser(description="PlanPM pipeline")
 parser.add_argument("--workers", type=int, default=None, help="Liczba wątków (domyślnie: 10)")
@@ -26,6 +27,16 @@ Parser(input="scrapper.json").run()
 
 # The destructive safety gate lives inside json2db so every caller (CLI,
 # admin, MCP and this full pipeline) gets exactly the same protection.
-json2db(input="./output/parser.json", clear=True).run()
+ok = True
+try:
+    json2db(input="./output/parser.json", clear=True).run()
+except Exception:
+    ok = False
+    raise
+finally:
+    # Report to Discord unless the caller (admin, MCP) notifies for us.
+    if not caller_handles_notification():
+        notify_discord("Full Pipeline", success=ok, detail="źródło: CLI",
+                       stats=pipeline_stats_text())
 
 print(f"✅ PlanPM gotowy ({time.time() - start_time:.2f} s)")

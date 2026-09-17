@@ -320,7 +320,9 @@ Dodaj do **treści commita** (nie tytułu PR):
 - **Wszystkie artefakty Git po angielsku** — commit subject + body, PR title, PR description (włącznie z sekcjami "Summary"/"Test plan"/"Out of scope" i punktami). Konwersacja z użytkownikiem może być po polsku; tylko historia git i UI GitHuba muszą być po angielsku.
 - Format commita: `type: opis` (fix, feat, chore, refactor, docs)
 - **Nigdy nie commituj/pushuj bez wyraźnej zgody użytkownika** w danej rozmowie. Pull request też wymaga zgody przed `gh pr create`.
-- Nie pushuj bezpośrednio na `main` (branch protected)
+- Push bezpośrednio na `main` jest dozwolony. PR mile widziany przy większych
+  zmianach, ale nie jest wymagany (ochrona zdjęta 15.09.2026 decyzją zespołu).
+  Force push i usunięcie `main` pozostają zablokowane.
 - Nie używaj `git push --force` (na żadnym branchu) bez wyraźnej zgody w danym momencie
 - Nie commituj `.env`, `secrets.dart`, kluczy API
 - Nie dodawaj atrybucji Claude w commitach (`Co-Authored-By: Claude …` ani podobnych)

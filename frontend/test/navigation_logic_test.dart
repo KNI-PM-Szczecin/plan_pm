@@ -12,73 +12,47 @@ final saturday = DateTime(2026, 3, 28);
 final sunday = DateTime(2026, 3, 29);
 
 void main() {
-  group('daysForward', () {
-    group('tryb 7-dniowy', () {
-      test('każdy dzień wraca 1', () {
-        for (final date in [monday, tuesday, wednesday, thursday, friday, saturday, sunday]) {
-          expect(daysForward(StudyMode.stationary, date.weekday, true), 1);
-          expect(daysForward(StudyMode.notStationary, date.weekday, true), 1);
-          expect(daysForward(null, date.weekday, true), 1);
-        }
-      });
+  group('nextWeek / previousWeek', () {
+    test('przesuwa dokładnie o 7 dni', () {
+      expect(nextWeek(monday), DateTime(2026, 3, 30));
+      expect(previousWeek(monday), DateTime(2026, 3, 16));
     });
 
-    group('stacjonarny', () {
-      test('piątek → +3 (do poniedziałku)', () {
-        expect(daysForward(StudyMode.stationary, friday.weekday, false), 3);
-      });
-
-      test('pozostałe dni → +1', () {
-        for (final date in [monday, tuesday, wednesday, thursday]) {
-          expect(daysForward(StudyMode.stationary, date.weekday, false), 1);
-        }
-      });
+    test('zachowuje dzień tygodnia', () {
+      for (final date in [monday, tuesday, wednesday, thursday, friday, saturday, sunday]) {
+        expect(nextWeek(date).weekday, date.weekday);
+        expect(previousWeek(date).weekday, date.weekday);
+      }
     });
 
-    group('niestacjonarny', () {
-      test('niedziela → +5 (do piątku)', () {
-        expect(daysForward(StudyMode.notStationary, sunday.weekday, false), 5);
-      });
-
-      test('piątek i sobota → +1', () {
-        expect(daysForward(StudyMode.notStationary, friday.weekday, false), 1);
-        expect(daysForward(StudyMode.notStationary, saturday.weekday, false), 1);
-      });
-    });
-  });
-
-  group('daysBackward', () {
-    group('tryb 7-dniowy', () {
-      test('każdy dzień wraca 1', () {
-        for (final date in [monday, tuesday, wednesday, thursday, friday, saturday, sunday]) {
-          expect(daysBackward(StudyMode.stationary, date.weekday, true), 1);
-          expect(daysBackward(StudyMode.notStationary, date.weekday, true), 1);
-          expect(daysBackward(null, date.weekday, true), 1);
-        }
-      });
+    test('są wzajemnie odwrotne', () {
+      for (final date in [monday, wednesday, sunday]) {
+        expect(previousWeek(nextWeek(date)), date);
+        expect(nextWeek(previousWeek(date)), date);
+      }
     });
 
-    group('stacjonarny', () {
-      test('poniedziałek → -3 (do piątku)', () {
-        expect(daysBackward(StudyMode.stationary, monday.weekday, false), 3);
-      });
-
-      test('pozostałe dni → -1', () {
-        for (final date in [tuesday, wednesday, thursday, friday]) {
-          expect(daysBackward(StudyMode.stationary, date.weekday, false), 1);
-        }
-      });
+    test('przechodzi przez granicę miesiąca i roku', () {
+      expect(nextWeek(DateTime(2026, 10, 28)), DateTime(2026, 11, 4));
+      expect(previousWeek(DateTime(2027, 1, 4)), DateTime(2026, 12, 28));
     });
 
-    group('niestacjonarny', () {
-      test('piątek → -5 (do niedzieli)', () {
-        expect(daysBackward(StudyMode.notStationary, friday.weekday, false), 5);
-      });
+    test('zachowuje godzinę', () {
+      final withTime = DateTime(2026, 3, 23, 14, 35, 12);
+      expect(nextWeek(withTime), DateTime(2026, 3, 30, 14, 35, 12));
+    });
 
-      test('sobota i niedziela → -1', () {
-        expect(daysBackward(StudyMode.notStationary, saturday.weekday, false), 1);
-        expect(daysBackward(StudyMode.notStationary, sunday.weekday, false), 1);
-      });
+    // Duration(days: 7) to dokładne 168 h, więc przy zmianie czasu skok
+    // wypadłby godzinę obok i tuż po północy cofnąłby się o dzień. Konstruktor
+    // DateTime liczy kalendarzowo, więc data jest poprawna w każdej strefie.
+    test('poprawne przy zmianie czasu (DST)', () {
+      // W Polsce czas zmienia się 29.03.2026 i 25.10.2026.
+      final beforeSpring = DateTime(2026, 3, 25, 0, 30);
+      expect(nextWeek(beforeSpring), DateTime(2026, 4, 1, 0, 30));
+
+      final beforeAutumn = DateTime(2026, 10, 21, 0, 30);
+      expect(nextWeek(beforeAutumn), DateTime(2026, 10, 28, 0, 30));
+      expect(previousWeek(DateTime(2026, 10, 28, 0, 30)), beforeAutumn);
     });
   });
 

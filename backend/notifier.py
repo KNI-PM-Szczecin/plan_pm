@@ -10,15 +10,29 @@ Webhook URL is read from DISCORD_WEBHOOK_URL in .env (absent = no-op).
 
 import datetime
 import json
+import logging
 import os
-import urllib.request
 from pathlib import Path
+
+import requests
+
+logger = logging.getLogger(__name__)
 
 BACKEND_ROOT = Path(__file__).parent
 OUTPUT_DIR = BACKEND_ROOT / "output"
 
 _COLOR_OK = 0x2ECC71
 _COLOR_FAIL = 0xE74C3C
+
+# Set by a caller that runs a step as a subprocess and notifies itself
+# (admin panel, MCP). The CLI entry points honour it so a single run never
+# produces two embeds -- the same reason structure_updater is excluded there.
+NOTIFY_HANDLED_ENV = "PLANPM_NOTIFY_HANDLED"
+
+
+def caller_handles_notification() -> bool:
+    """True when an outer caller already notifies for this run."""
+    return os.environ.get(NOTIFY_HANDLED_ENV) == "1"
 
 
 def _count(path: Path, key: str | None = None):
@@ -109,14 +123,19 @@ def notify_discord(action: str, success: bool, detail: str = "",
     }
 
     try:
-        req = urllib.request.Request(
+        # requests (not urllib) so the CA bundle comes from certifi: a
+        # python.org interpreter ships an empty default store, which made
+        # every urllib call fail TLS verification and vanish into the
+        # except below.
+        resp = requests.post(
             url,
-            data=json.dumps(payload).encode("utf-8"),
+            json=payload,
             # Discord rejects requests without a proper User-Agent (403).
-            headers={"Content-Type": "application/json", "User-Agent": "PlanPM-Admin/1.0"},
-            method="POST",
+            headers={"User-Agent": "PlanPM-Admin/1.0"},
+            timeout=5,
         )
-        urllib.request.urlopen(req, timeout=5)
-    except Exception:
-        # Notification is best-effort; never break the caller.
-        pass
+        resp.raise_for_status()
+    except Exception as exc:
+        # Notification is best-effort; never break the caller. Log it, though
+        # -- silent failures hide a broken webhook indefinitely.
+        logger.warning("Discord notification failed (%s): %s", action, exc)

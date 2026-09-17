@@ -181,7 +181,12 @@ class json2db:
         current_year: int = datetime.datetime.now().year
         current_month: int = datetime.datetime.now().month
         
-        is_winter_semester: bool = True if current_month >= 10 else False
+        # September counts as winter: the university publishes the October
+        # schedule weeks before term starts, so a run on e.g. 15 Sep must
+        # already resolve to the upcoming academic year, or every cohort comes
+        # out one year too low. September is the earliest the new schedule is
+        # ever propagated, so the wall clock is a safe signal here.
+        is_winter_semester: bool = True if current_month >= 9 else False
          
         query: list = []
         for program in self.data["programs"]:
@@ -406,4 +411,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear, force=args.force)
-    App.run()
+
+    # A dry run touches nothing, so it is not worth an embed. Otherwise report
+    # to Discord unless an outer caller (admin, MCP) already notifies for us.
+    if args.dry_run:
+        App.run()
+    else:
+        from notifier import (caller_handles_notification, notify_discord,
+                              pipeline_stats_text)
+        ok = True
+        try:
+            App.run()
+        except Exception:
+            ok = False
+            raise
+        finally:
+            if not caller_handles_notification():
+                notify_discord("Pipeline: json2db", success=ok,
+                               detail="źródło: CLI", env=_resolve_env_mode(),
+                               stats=pipeline_stats_text())

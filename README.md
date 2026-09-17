@@ -1,6 +1,6 @@
-# PM Schedule
+# PlanPM
 
-**PM Schedule** is a free, open-source mobile application giving students of the Maritime University of Szczecin (_Politechnika Morska w Szczecinie_) easy access to their class schedules — no login, no paywall, no subscription. Built by students, for students.
+**PlanPM** is a free, open-source mobile application giving students of the Maritime University of Szczecin (_Politechnika Morska w Szczecinie_) easy access to their class schedules — no login, no paywall, no subscription. Built by students, for students.
 
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)

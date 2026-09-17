@@ -93,15 +93,7 @@ class _DaySelectionState extends State<DaySelection> {
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   setState(() {
-                    currentDate = currentDate.subtract(
-                      Duration(
-                        days: daysBackward(
-                          Student.studyMode,
-                          currentDate.weekday,
-                          sevenDayModeNotifier.value,
-                        ),
-                      ),
-                    );
+                    currentDate = previousWeek(currentDate);
                     selectedDay = currentDate.weekday - 1;
                     widget.onChange(selectedDay, currentDate);
                   });
@@ -112,6 +104,7 @@ class _DaySelectionState extends State<DaySelection> {
                 ),
               ),
               Text(
+                key: const ValueKey('daySelectionDate'),
                 "${currentDate.day} ${l10n.dateDayMonth(currentDate).toCapitalized}",
                 style: TextStyle(
                   fontSize: 18,
@@ -123,15 +116,7 @@ class _DaySelectionState extends State<DaySelection> {
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   setState(() {
-                    currentDate = currentDate.add(
-                      Duration(
-                        days: daysForward(
-                          Student.studyMode,
-                          currentDate.weekday,
-                          sevenDayModeNotifier.value,
-                        ),
-                      ),
-                    );
+                    currentDate = nextWeek(currentDate);
                     selectedDay = currentDate.weekday - 1;
                     widget.onChange(selectedDay, currentDate);
                   });
