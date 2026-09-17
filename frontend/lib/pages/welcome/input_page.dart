@@ -331,11 +331,11 @@ class _InputPageState extends State<InputPage> {
           ),
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(
-                left: 15,
-                top: 15,
-                right: 15,
-                bottom: 80,
+              padding: EdgeInsets.fromLTRB(
+                15,
+                15,
+                15,
+                15 + OnboardingActionBar.reservedSpace(context),
               ),
               child: Center(
                 child: Column(

@@ -132,9 +132,14 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
         confirmLabel: l10n.save,
         onConfirm: _isSubmitting ? null : _handleConfirm,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            12,
+            12,
+            12,
+            12 + OnboardingActionBar.reservedSpace(context),
+          ),
           child: Column(
             spacing: 10,
             children: [
