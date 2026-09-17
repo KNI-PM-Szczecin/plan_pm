@@ -236,6 +236,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupTypeLabs => 'Laboratories';
 
   @override
+  String get groupTypeProject => 'Project';
+
+  @override
+  String get groupTypeSimulator => 'Simulator';
+
+  @override
+  String get groupTypeElective => 'Electives';
+
+  @override
+  String get groupTypeElectiveHint => 'You can select several';
+
+  @override
   String get groupTypeOther => 'Other';
 
   @override
@@ -412,10 +424,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get degreeLevelLabel => 'Degree Level';
 
   @override
-  String get degreeLevelEngineering => 'Engineering';
+  String get degreeLevelEngineering => 'Engineer';
 
   @override
-  String get degreeLevelMasters => 'Masters';
+  String get degreeLevelMasters => 'Master';
+
+  @override
+  String get degreeLevelBachelor => 'Bachelor';
 
   @override
   String get unexpectedError => 'Oops! Something went wrong.';
@@ -429,7 +444,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noGroupsAvailableDescription =>
-      'No groups were found for your plan. Are you sure you want to continue?';
+      'No schedule has been published for these settings. From the second year onwards classes are usually filed under a specialisation — check whether you picked the right one. You can also continue without groups and see the whole year\'s schedule.';
+
+  @override
+  String noGroupsAvailableSettings(String settings) {
+    return 'Selected settings: $settings';
+  }
+
+  @override
+  String get changeStudyDetails => 'Change study details';
 
   @override
   String get announcementDismiss => 'Got it';

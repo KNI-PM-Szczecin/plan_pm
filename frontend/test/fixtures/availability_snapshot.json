@@ -1,0 +1,1291 @@
+{
+  "_comment": "Snapshot produkcji: v_academic_structure + distinct v_unique_groups. Regeneracja: backend/scripts/dump_availability_fixture.py",
+  "structure": [
+    {
+      "faculty": "Geoinżynierii i Ochrony Środowiska",
+      "degreeCourse": "Geodezja i Kartografia",
+      "specialisation": "Geoinformatyka"
+    },
+    {
+      "faculty": "Geoinżynierii i Ochrony Środowiska",
+      "degreeCourse": "Geodezja i Kartografia",
+      "specialisation": "Hydrografia"
+    },
+    {
+      "faculty": "Geoinżynierii i Ochrony Środowiska",
+      "degreeCourse": "Geoinformatyka",
+      "specialisation": null
+    },
+    {
+      "faculty": "Geoinżynierii i Ochrony Środowiska",
+      "degreeCourse": "Hydrografia",
+      "specialisation": null
+    },
+    {
+      "faculty": "Informatyki i Telekomunikacji",
+      "degreeCourse": "Informatyka",
+      "specialisation": "Programowanie systemów informatycznych"
+    },
+    {
+      "faculty": "Informatyki i Telekomunikacji",
+      "degreeCourse": "Informatyka",
+      "specialisation": "Programowanie systemów multimedialnych"
+    },
+    {
+      "faculty": "Informatyki i Telekomunikacji",
+      "degreeCourse": "Informatyka",
+      "specialisation": "Sztuczna Inteligencja"
+    },
+    {
+      "faculty": "Informatyki i Telekomunikacji",
+      "degreeCourse": "Teleinformatyka",
+      "specialisation": "Cyberbezpieczeństwo"
+    },
+    {
+      "faculty": "Informatyki i Telekomunikacji",
+      "degreeCourse": "Teleinformatyka",
+      "specialisation": "Eksploatacja systemów łączności"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Logistyka",
+      "specialisation": "Logistyka Offshore"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Logistyka",
+      "specialisation": "Logistyka Przedsiębiorstw"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Logistyka",
+      "specialisation": "Logistyka i Zarządzanie w Europejskim Systemie Transportowym"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Logistyka",
+      "specialisation": "Logistyka Łańcuchów Dostaw"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Transport",
+      "specialisation": "Eksploatacja Portów i Floty Morskiej"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Transport",
+      "specialisation": "Inżynieria i Bezpieczeństwo w Transporcie Drogowym"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Transport",
+      "specialisation": "Logistyka Transportu Zintegrowanego"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Zarządzanie",
+      "specialisation": "Organizacja i Zarządzanie w Gospodarce Morskiej"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Zarządzanie",
+      "specialisation": "Zarządzanie Zasobami Ludzkimi"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Zarządzanie i Inżynieria Produkcji",
+      "specialisation": "Utrzymanie Ruchu w Przemyśle 4.0"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Zarządzanie i Inżynieria Produkcji",
+      "specialisation": "Zarządzanie Innowacjami w Produkcji i Usługach"
+    },
+    {
+      "faculty": "Inżynieryjno-Ekonomiczny Transportu",
+      "degreeCourse": "Zarządzanie i Inżynieria Produkcji",
+      "specialisation": "Zarządzanie Zautomatyzowanymi Systemami Produkcyjnymi"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Inżynieria Modelowania Przestrzennego",
+      "specialisation": "Inżynieria Wydruku 3D"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Inżynieria przemysłowa i morskie elektrownie wiatrowe",
+      "specialisation": "Ekspolatacja siłowni wiatrowych"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Inżynieria przemysłowa i morskie elektrownie wiatrowe",
+      "specialisation": "Optymalizacja energetyczna"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Mechanika i Budowa Maszyn",
+      "specialisation": "Budowa i Eksploatacja Morskich Systemów Energetycznych"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Mechanika i Budowa Maszyn",
+      "specialisation": "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych"
+    },
+    {
+      "faculty": "Mechaniczny",
+      "degreeCourse": "Mechanika i Budowa Maszyn",
+      "specialisation": "Eksploatacja Siłowni Okrętowych"
+    },
+    {
+      "faculty": "Mechatroniki i Elektrotechniki",
+      "degreeCourse": "Automatyka i robotyka",
+      "specialisation": null
+    },
+    {
+      "faculty": "Mechatroniki i Elektrotechniki",
+      "degreeCourse": "Mechatronika",
+      "specialisation": "Mechatronika i Elektrotechnika Przemysłowa"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Nawigacja",
+      "specialisation": "Cyberbezpieczeństwo w żegludze morskiej"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Nawigacja",
+      "specialisation": "Eksploatacja Jednostek Pływających Offshore"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Nawigacja",
+      "specialisation": "Inżynieria Ruchu Morskiego"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Nawigacja",
+      "specialisation": "Ratownictwo"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Nawigacja",
+      "specialisation": "Transport Morski"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Oceanotechnika",
+      "specialisation": "Projektowanie i Budowa Statków"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Oceanotechnika- Budowa Jachtów i Okrętów",
+      "specialisation": "Projektowanie i Budowa Jachtów"
+    },
+    {
+      "faculty": "Nawigacyjny",
+      "degreeCourse": "Oceanotechnika- Budowa Jachtów i Okrętów",
+      "specialisation": "Projektowanie i Budowa Okrętów"
+    }
+  ],
+  "groups": {
+    "Automatyka i robotyka|1|S|inż.": [
+      "A01/AiR/2026/2027 ZS",
+      "C01/AiR/2026/2027 ZS",
+      "C02/AiR/2026/2027 ZS",
+      "C03/AiR/2026/2027 ZS",
+      "L01/AiR/2026/2027 ZS",
+      "L02/AiR/2026/2027 ZS",
+      "L03/AiR/2026/2027 ZS",
+      "L04/AiR/2026/2027 ZS",
+      "L05/AiR/2026/2027 ZS",
+      "L06/AiR/2026/2027 ZS",
+      "P01/AiR/2026/2027 ZS",
+      "P02/AiR/2026/2027 ZS",
+      "P03/AiR/2026/2027 ZS",
+      "P04/AiR/2026/2027 ZS",
+      "P05/AiR/2026/2027 ZS",
+      "P06/AiR/2026/2027 ZS"
+    ],
+    "Automatyka i robotyka|2|S|inż.": [
+      "A01/AiR/2025/2026 ZS",
+      "C01/AiR/2025/2026 ZS",
+      "L01/AiR/2025/2026 ZS",
+      "L02/AiR/2025/2026 ZS"
+    ],
+    "Automatyka i robotyka|3|S|inż.": [
+      "A01/AiR/2024/2025 ZS",
+      "C01/AiR/2024/2025 ZS",
+      "L01/AiR/2024/2025 ZS",
+      "L02/AiR/2024/2025 ZS"
+    ],
+    "Cyberbezpieczeństwo|3|S|inż.": [
+      "A01/CB/2024/2025 ZS",
+      "L01/CB/2024/2025 ZS",
+      "P01/CB/2024/2025 ZS"
+    ],
+    "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych|2|S|inż.": [
+      "A01/DiRMiUO/2025/2026 ZS",
+      "C01/DiRMiUO/2025/2026 ZS",
+      "L01/DiRMiUO/2025/2026 ZS"
+    ],
+    "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych|3|S|inż.": [
+      "A01/DiRMiUO/2024/2025 ZS",
+      "L01/DiRMiUO/2024/2025 ZS",
+      "L02/DiRMiUO/2024/2025 ZS",
+      "SYM01/DiRMiUO/2024/2025 ZS",
+      "SYM02/DiRMiUO/2024/2025 ZS"
+    ],
+    "Eksploatacja Portów i Floty Morskiej|3|S|inż.": [
+      "A01/EPiFM/2024/2025 ZS",
+      "C01/EPiFM/2024/2025 ZS",
+      "L01/EPiFM/2024/2025 ZS",
+      "P01/EPiFM/2024/2025 ZS",
+      "P0A01/WIET/2024/2025 ZS",
+      "P0A02/WIET/2024/2025 ZS",
+      "P0A03/WIET/2024/2025 ZS",
+      "P0A04/WIET/2024/2025 ZS",
+      "P0A05/WIET/2024/2025 ZS",
+      "P0A06/WIET/2024/2025 ZS",
+      "P0C02/WIET/2024/2025 ZS",
+      "P0C03A/WIET/2024/2025 ZS",
+      "P0C04/WIET/2024/2025 ZS",
+      "P0C05/WIET/2024/2025 ZS",
+      "P0L01/WIET/2024/2025 ZS",
+      "P0L06/WIET/2024/2025 ZS"
+    ],
+    "Eksploatacja Siłowni Okrętowych|2|S|inż.": [
+      "A01/ESO/2025/2026 ZS",
+      "C01/ESO/2025/2026 ZS",
+      "L01/ESO/2025/2026 ZS"
+    ],
+    "Eksploatacja Siłowni Okrętowych|3|S|inż.": [
+      "A01/ESO/2024/2025 ZS",
+      "L01/ESO/2024/2025 ZS",
+      "L02/ESO/2024/2025 ZS",
+      "SYM02/ESO/2024/2025 ZS"
+    ],
+    "Eksploatacja Siłowni Okrętowych|4|S|inż.": [
+      "A01/ESO UNzST/2023/2024 ZS",
+      "L01/ESO UNzST/2023/2024 ZS",
+      "L02/ESO UNZST/2023/2024 ZS"
+    ],
+    "Eksploatacja systemów łączności|4|S|inż.": [
+      "A01/ESŁ/2023/2024 ZS",
+      "L01/ESŁ/2023/2024 ZS",
+      "L02/ESŁ/2023/2024 ZS",
+      "P01/ESŁ/2023/2024 ZS",
+      "P02/ESŁ/2023/2024 ZS"
+    ],
+    "Ekspolatacja siłowni wiatrowych|2|S|inż.": [
+      "A01/ESW/2025/2026 ZS",
+      "C01/ESW/2025/2026 ZS",
+      "C02/ESW/2025/2026 ZS",
+      "L01/ESW/2025/2026 ZS",
+      "L03/ESW/2025/2026 ZS",
+      "LO2/ESW/2025/2026 ZS",
+      "P01/ESW/2025/2026 ZS",
+      "P02/ESW/2025/2026 ZS",
+      "P03/ESW/2025/2026 ZS"
+    ],
+    "Ekspolatacja siłowni wiatrowych|4|S|inż.": [
+      "A01/ESW/2023/2024 ZS",
+      "L01/ESW/2023/2024 ZS",
+      "L02/ESW/2023/2024 ZS",
+      "P01/ESW/2023/2024 ZS",
+      "P02/ESW/2023/2024 ZS"
+    ],
+    "Geodezja i Kartografia|1|S|inż.": [
+      "A01/GiK/2026/2027 ZS",
+      "C01/GiK/2026/2027 ZS",
+      "C02/GiK/2026/2027 ZS",
+      "C03/GiK/2026/2027 ZS",
+      "L01/GiK/2026/2027 ZS",
+      "L02/GiK/2026/2027 ZS",
+      "L03/GiK/2026/2027 ZS",
+      "L04/GiK/2026/2027 ZS",
+      "L05/GiK/2026/2027 ZS"
+    ],
+    "Geodezja i Kartografia|2|S|inż.": [
+      "A01/GiK/2025/2026 ZS",
+      "C01/GiK/2025/2026 ZS",
+      "L01/GiK/2025/2026 ZS",
+      "L02/GiK/2025/2026 ZS"
+    ],
+    "Geoinformatyka|3|S|inż.": [
+      "A01/G/2024/2025 ZS",
+      "C01/G/2024/2025 ZS",
+      "L01/G/2024/2025 ZS",
+      "P01/G/2024/2025 ZS"
+    ],
+    "Geoinformatyka|4|S|inż.": [
+      "A01/G/2023/2024 ZS",
+      "C01/G/2023/2024 ZS",
+      "L01/G/2023/2024 ZS",
+      "P01/G/2023/2024 ZS"
+    ],
+    "Hydrografia|2|S|mgr": [
+      "A01/H/2025/2026/MGR/LS",
+      "C01/H/2025/2026/MGR/LS",
+      "L01/H/2025/2026/MGR/LS",
+      "P01/H/2025/2026/MGR/LS"
+    ],
+    "Hydrografia|3|S|inż.": [
+      "A01/H/2024/2025 ZS",
+      "L01/H/2024/2025 ZS",
+      "P01/H/2024/2025 ZS"
+    ],
+    "Hydrografia|4|S|inż.": [
+      "A01/H/2023/2024 ZS",
+      "C01/H/2023/2024 ZS",
+      "L01/H/2023/2024 ZS",
+      "P01/H/2023/2024 ZS"
+    ],
+    "Informatyka|1|S|inż.": [
+      "A01/INF/2026/2027 ZS",
+      "C01/INF/2026/2027 ZS",
+      "CO2/INF/2026/2027 ZS",
+      "L01/INF/2026/2027 ZS",
+      "L03/INF/2026/2027 ZS",
+      "L04/INF/2026/2027 ZS",
+      "LO2/INF/2026/2027 ZS"
+    ],
+    "Informatyka|1|S|mgr": [
+      "A01/INF mgr/2026/2027 ZS",
+      "C01/INF mgr/2026/2027 ZS",
+      "L01/INF mgr/2026/2027 ZS",
+      "L02/INF mgr/2026/2027 ZS",
+      "P01/INF mgr/2026/2027 ZS",
+      "P02/INF mgr/2026/2027 ZS"
+    ],
+    "Informatyka|2|S|inż.": [
+      "A01/INF/2025/2026 ZS",
+      "C01/INF/2025/2026 ZS",
+      "C02/INF/2025/2026 ZS",
+      "L01/INF/2025/2026 ZS",
+      "L02/INF/2025/2026 ZS",
+      "L03/INF/2025/2026 ZS",
+      "L04/INF/2025/2026 ZS"
+    ],
+    "Inżynieria Modelowania Przestrzennego|1|S|inż.": [
+      "A01/IMP/2026/2027 ZS",
+      "C01/IMP/2026/2027 ZS",
+      "C02/IMP/2026/2027 ZS",
+      "L01/IMP/2026/2027 ZS",
+      "L02/IMP/2026/2027 ZS",
+      "L03/IMP/2026/2027 ZS"
+    ],
+    "Inżynieria Wydruku 3D|2|S|inż.": [
+      "A01/IW3D/2025/2026 ZS",
+      "L01/IW3D/2025/2026 ZS",
+      "L02/IW3D/2025/2026 ZS",
+      "P01/IW3D/2025/2026 ZS",
+      "P02/IW3D/2025/2026 ZS"
+    ],
+    "Inżynieria Wydruku 3D|3|S|inż.": [
+      "A01/IW3D/2024/2025 ZS",
+      "L01/IW3D/2024/2025 ZS",
+      "L02/IW3D/2024/2025 ZS",
+      "P01/IW3D/2024/2025 ZS",
+      "P02/IW3D/2024/2025 ZS"
+    ],
+    "Inżynieria i Bezpieczeństwo  w Transporcie Drogowym|4|S|inż.": [
+      "A01/IiBwTD/2023/2024 ZS",
+      "C01/IiBwTD/2023/2024 ZS",
+      "L01/IiBwTD/2023/2024 ZS",
+      "P0A01/WIET/2023/2024 ZS",
+      "P0A02/WIET/2023/2024 ZS",
+      "P0A03/WIET/2023/2024 ZS",
+      "P0A05/WIET/2023/2024 ZS",
+      "P0A06/WIET/2023/2024 ZS",
+      "P0C01A/WIET/2023/2024 ZS",
+      "P0C02/WIET/2023/2024 ZS",
+      "P0C03/WIET/2023/2024 ZS",
+      "P0L04A/WIET/2023/2024 ZS",
+      "P0L05A/WIET/2023/2024 ZS",
+      "P0L06A/WIET/2023/2024 ZS"
+    ],
+    "Inżynieria przemysłowa i morskie elektrownie wiatrowe|1|S|inż.": [
+      "A01/IPiMEW/2026/2027 ZS",
+      "C01/IPiMEW/2026/2027 ZS",
+      "C02/IPiMEW/2026/2027 ZS",
+      "C03/IPiMEW/2026/2027 ZS",
+      "L01/IPiMEW/2026/2027 ZS",
+      "L02/IPiMEW/2026/2027 ZS",
+      "L03/IPiMEW/2026/2027 ZS",
+      "L04/IPiMEW/2026/2027 ZS",
+      "L05/IPiMEW/2026/2027 ZS",
+      "L06/IPiMEW/2026/2027 ZS"
+    ],
+    "Inżynieria przemysłowa i morskie elektrownie wiatrowe|4|S|inż.": [
+      "A01/ESW/2023/2024 ZS",
+      "L01/ESW/2023/2024 ZS",
+      "L02/ESW/2023/2024 ZS",
+      "P01/ESW/2023/2024 ZS",
+      "P02/ESW/2023/2024 ZS"
+    ],
+    "Logistyka Offshore|2|S|mgr": [
+      "A01/LOOF MGR/2025/2026 LS",
+      "C01/LOOF MGR/2025/2026 LS",
+      "L01/LOOF MGR/2025/2026 LS",
+      "P01/LOOF MGR/2025/2026 LS",
+      "P0A01/WIET MGR/2025/2026 LS",
+      "P0L02/WIET MGR/2025/2026 LS",
+      "P0L03/WIET MGR/2025/2026 LS"
+    ],
+    "Logistyka Przedsiębiorstw|3|S|inż.": [
+      "A01/LP/2024/2025 ZS",
+      "C01/LP/2024/2025 ZS",
+      "L01/LP/2024/2025 ZS",
+      "L02/LP/2024/2025 ZS",
+      "P01/LP/2024/2025 ZS",
+      "P02/LP/2024/2025 ZS",
+      "P0A01/WIET/2024/2025 ZS",
+      "P0A02/WIET/2024/2025 ZS",
+      "P0A03/WIET/2024/2025 ZS",
+      "P0A04/WIET/2024/2025 ZS",
+      "P0A05/WIET/2024/2025 ZS",
+      "P0A06/WIET/2024/2025 ZS",
+      "P0C02/WIET/2024/2025 ZS",
+      "P0C03B/WIET/2024/2025 ZS",
+      "P0C04/WIET/2024/2025 ZS",
+      "P0C05/WIET/2024/2025 ZS",
+      "P0L01/WIET/2024/2025 ZS",
+      "P0L06/WIET/2024/2025 ZS"
+    ],
+    "Logistyka Przedsiębiorstw|4|S|inż.": [
+      "A01/LP/2023/2024 ZS",
+      "C01/LP/2023/2024 ZS",
+      "C02/LP/2023/2024 ZS",
+      "P01/LP/2023/2024 ZS",
+      "P02/LP/2023/2024 ZS",
+      "P03/LP/2023/2024 ZS",
+      "P0A01/WIET/2023/2024 ZS",
+      "P0A02/WIET/2023/2024 ZS",
+      "P0A03/WIET/2023/2024 ZS",
+      "P0A05/WIET/2023/2024 ZS",
+      "P0A06/WIET/2023/2024 ZS",
+      "P0C01A/WIET/2023/2024 ZS",
+      "P0C01B/WIET/2023/2024 ZS",
+      "P0C02/WIET/2023/2024 ZS",
+      "P0C03/WIET/2023/2024 ZS",
+      "P0L04A/WIET/2023/2024 ZS",
+      "P0L04B/WIET/2023/2024 ZS",
+      "P0L05A/WIET/2023/2024 ZS",
+      "P0L06A/WIET/2023/2024 ZS"
+    ],
+    "Logistyka Transportu Zintegrowanego|3|S|inż.": [
+      "A01/LTZ/2024/2025 ZS",
+      "C01/LTZ/2024/2025 ZS",
+      "L01/LTZ/2024/2025 ZS",
+      "P01/LTZ/2024/2025 ZS",
+      "P0A01/WIET/2024/2025 ZS",
+      "P0A02/WIET/2024/2025 ZS",
+      "P0A03/WIET/2024/2025 ZS",
+      "P0A04/WIET/2024/2025 ZS",
+      "P0A06/WIET/2024/2025 ZS",
+      "P0C02/WIET/2024/2025 ZS",
+      "P0C03A/WIET/2024/2025 ZS",
+      "P0C04/WIET/2024/2025 ZS",
+      "P0L01/WIET/2024/2025 ZS",
+      "P0L06/WIET/2024/2025 ZS"
+    ],
+    "Logistyka i Zarządzanie w Europejskim Systemie Transportowym|3|S|inż.": [
+      "A01/LIZWEST/2024/2025 ZS",
+      "C01/LIZWEST/2024/2025 ZS",
+      "C02/LIZWEST/2024/2025 ZS",
+      "L01/LIZWEST/2024/2025 ZS",
+      "L02/LIZWEST/2024/2025 ZS",
+      "L03/LIZWEST/2024/2025 ZS",
+      "P01/LIZWEST/2024/2025 ZS",
+      "P02/LIZWEST/2024/2025 ZS",
+      "P03/LIZWEST/2024/2025 ZS",
+      "P0A01/WIET/2024/2025 ZS",
+      "P0A02/WIET/2024/2025 ZS",
+      "P0A03/WIET/2024/2025 ZS",
+      "P0A04/WIET/2024/2025 ZS",
+      "P0A05/WIET/2024/2025 ZS",
+      "P0A06/WIET/2024/2025 ZS",
+      "P0C02/WIET/2024/2025 ZS",
+      "P0C03B/WIET/2024/2025 ZS",
+      "P0C04/WIET/2024/2025 ZS",
+      "P0C05/WIET/2024/2025 ZS",
+      "P0L01/WIET/2024/2025 ZS",
+      "P0L06/WIET/2024/2025 ZS"
+    ],
+    "Logistyka i Zarządzanie w Europejskim Systemie Transportowym|4|S|inż.": [
+      "A01/LIZWEST/2023/2024 ZS",
+      "C01/LIZWEST/2023/2024 ZS",
+      "P01/LIZWEST/2023/2024 ZS",
+      "P0A01/WIET/2023/2024 ZS",
+      "P0A02/WIET/2023/2024 ZS",
+      "P0A03/WIET/2023/2024 ZS",
+      "P0A05/WIET/2023/2024 ZS",
+      "P0A06/WIET/2023/2024 ZS",
+      "P0C01A/WIET/2023/2024 ZS",
+      "P0C02/WIET/2023/2024 ZS",
+      "P0C03/WIET/2023/2024 ZS",
+      "P0L04A/WIET/2023/2024 ZS",
+      "P0L05B/WIET/2023/2024 ZS",
+      "P0L06A/WIET/2023/2024 ZS",
+      "P0L06B/WIET/2023/2024 ZS"
+    ],
+    "Logistyka Łańcuchów Dostaw|2|S|mgr": [
+      "A01/LŁD MGR/2025/2026 LS",
+      "C01/LŁD MGR/2025/2026 LS",
+      "L01/LŁD MGR/2025/2026 LS",
+      "P01/LŁD MGR/2025/2026 LS",
+      "P0A01/WIET MGR/2025/2026 LS",
+      "P0L02/WIET MGR/2025/2026 LS",
+      "P0L03/WIET MGR/2025/2026 LS"
+    ],
+    "Logistyka|1|S|inż.": [
+      "A01/LOG/2026/2027 ZS",
+      "C01/LOG/2026/2027 ZS",
+      "C02/LOG/2026/2027 ZS",
+      "C03/LOG/2026/2027 ZS",
+      "L01/LOG/2026/2027 ZS",
+      "L02/LOG/2026/2027 ZS",
+      "L03/LOG/2026/2027 ZS",
+      "L04/LOG/2026/2027 ZS",
+      "L05/LOG/2026/2027 ZS",
+      "L06/LOG/2026/2027 ZS"
+    ],
+    "Logistyka|2|S|inż.": [
+      "A01/LOG/2025/2026 ZS",
+      "C01/LOG/2025/2026 ZS",
+      "C02/LOG/2025/2026 ZS",
+      "L01/LOG/2025/2026 ZS",
+      "L02/LOG/2025/2026 ZS",
+      "L03/LOG/2025/2026 ZS",
+      "L04/LOG/2025/2026 ZS",
+      "P01/LOG/2025/2026 ZS",
+      "P02/LOG/2025/2026 ZS",
+      "P03/LOG/2025/2026 ZS",
+      "P04/LOG/2025/2026 ZS"
+    ],
+    "Mechanika i Budowa Maszyn|1|S|inż.": [
+      "A01/MiBM/2026/2027 ZS",
+      "C01/MiBM/2026/2027 ZS",
+      "L01/MiBM/2026/2027 ZS",
+      "L02/MiBM/2026/2027 ZS"
+    ],
+    "Mechatronika i Elektrotechnika Przemysłowa|2|S|inż.": [
+      "A01/MiEP/2025/2026 ZS",
+      "C01/MiEP/2025/2026 ZS",
+      "C02/MiEP/2025/2026 ZS",
+      "C03/MiEP/2025/2026 ZS",
+      "L01/MiEP/2025/2026 ZS",
+      "L02/MiEP/2025/2026 ZS",
+      "L03/MiEP/2025/2026 ZS",
+      "L04/MiEP/2025/2026 ZS",
+      "L05/MiEP/2025/2026 ZS"
+    ],
+    "Mechatronika i Elektrotechnika Przemysłowa|3|S|inż.": [
+      "A01/MiEP/2024/2025 ZS",
+      "L01/MiEP/2024/2025 ZS",
+      "L02/MiEP/2024/2025 ZS",
+      "L03/MiEP/2024/2025 ZS",
+      "SYM01/MiEP/2024/2025 ZS",
+      "SYM02/MiEP/2024/2025 ZS",
+      "SYM03/MiEP/2024/2025 ZS"
+    ],
+    "Mechatronika|1|S|inż.": [
+      "A01/ MECH/2026/2027 ZS",
+      "C01/ MECH/2026/2027 ZS",
+      "C02/ MECH/2026/2027 ZS",
+      "CO3/ MECH/2026/2027 ZS",
+      "L01/ MECH/2026/2027 ZS",
+      "L02/ MECH/2026/2027 ZS",
+      "L03/ MECH/2026/2027 ZS",
+      "L04/ MECH/2026/2027 ZS",
+      "L05/ MECH/2026/2027 ZS",
+      "L06/ MECH/2026/2027 ZS"
+    ],
+    "Nawigacja|1|S|inż.": [
+      "A01/N/2026/2027 ZS",
+      "A02/N/2026/2027 ZS",
+      "C01/N/2026/2027 ZS",
+      "C02/N/2026/2027 ZS",
+      "C03/N/2026/2027 ZS",
+      "C04/N/2026/2027 ZS",
+      "C05/N/2026/2027 ZS",
+      "L01/N/2026/2027 ZS",
+      "L010/N/2026/2027 ZS",
+      "L02/N/2026/2027 ZS",
+      "L03/N/2026/2027 ZS",
+      "L04/N/2026/2027 ZS",
+      "L05/N/2026/2027 ZS",
+      "L06/N/2026/2027 ZS",
+      "L07/N/2026/2027 ZS",
+      "L08/N/2026/2027 ZS",
+      "L09/N/2026/2027 ZS"
+    ],
+    "Nawigacja|2|S|inż.": [
+      "A01/N/2025/2026 ZS",
+      "A02/N/2025/2026 ZS",
+      "C01/N/2025/2026 ZS",
+      "C02/N/2025/2026 ZS",
+      "C03/N/2025/2026 ZS",
+      "C04/N/2025/2026 ZS",
+      "L01/N/2025/2026 ZS",
+      "L02/N/2025/2026 ZS",
+      "L03/N/2025/2026 ZS",
+      "L04/N/2025/2026 ZS",
+      "L05/N/2025/2026 ZS",
+      "L06/N/2025/2026 ZS",
+      "L07/N/2025/2026 ZS",
+      "L08/N/2025/2026 ZS"
+    ],
+    "Nawigacja|3|S|inż.": [
+      "A01/N/2025/2026 ZS",
+      "A02/N/2025/2026 ZS",
+      "C01/N/2025/2026 ZS",
+      "C02/N/2025/2026 ZS",
+      "C03/N/2025/2026 ZS",
+      "C04/N/2025/2026 ZS",
+      "L01/N/2025/2026 ZS",
+      "L02/N/2025/2026 ZS",
+      "L03/N/2025/2026 ZS",
+      "L04/N/2025/2026 ZS",
+      "L05/N/2025/2026 ZS",
+      "L06/N/2025/2026 ZS",
+      "L07/N/2025/2026 ZS",
+      "L08/N/2025/2026 ZS"
+    ],
+    "Oceanotechnika- Budowa Jachtów i Okrętów|1|S|inż.": [
+      "A01/OBJiO/2026/2027 ZS",
+      "C01/OBJiO/2026/2027 ZS",
+      "C02/OBJiO/2026/2027 ZS",
+      "L01/OBJiO/2026/2027 ZS",
+      "L02/OBJiO/2026/2027 ZS",
+      "L03/OBJiO/2026/2027 ZS"
+    ],
+    "Oceanotechnika- Budowa Jachtów i Okrętów|2|S|inż.": [
+      "A01/OBJiO/2025/2026 ZS",
+      "C01/OBJiO/2025/2026 ZS",
+      "L01/OBJiO/2025/2026 ZS",
+      "P01/OBJiO/2025/2026 ZS"
+    ],
+    "Optymalizacja energetyczna|2|S|inż.": [
+      "A01/OE/2025/2026 ZS",
+      "C01/OE/2025/2026 ZS",
+      "L01/OE/2025/2026 ZS",
+      "P01/OE/2025/2026 ZS"
+    ],
+    "Organizacja i Zarządzanie w Gospodarce Morskiej|3|S|lic": [
+      "AO1/OiZwGM/2024/2025 ZS",
+      "CO1/OiZwGM/2024/2025 ZS",
+      "LO1/OiZwGM/2024/2025 ZS",
+      "PO1/OiZwGM/2024/2025 ZS"
+    ],
+    "Programowanie systemów informatycznych|3|S|inż.": [
+      "A01/PSI/2024/2025 ZS",
+      "L01/PSI/2024/2025 ZS"
+    ],
+    "Programowanie systemów informatycznych|4|S|inż.": [
+      "A01/PSI/2023/2024 ZS",
+      "L01/PSI/2023/2024 ZS"
+    ],
+    "Programowanie systemów multimedialnych|3|S|inż.": [
+      "A01/PSM/2024/2025 ZS",
+      "L01/PSM/2024/2025 ZS",
+      "L02/PSM/2024/2025 ZS",
+      "L03/PSM/2024/2025 ZS"
+    ],
+    "Programowanie systemów multimedialnych|4|S|inż.": [
+      "A01/PSM/2023/2024 ZS",
+      "L01/PSM/2023/2024 ZS",
+      "LO2/PSM/2023/2024 ZS",
+      "LO3/PSM/2023/2024 ZS"
+    ],
+    "Projektowanie i Budowa Jachtów|3|S|inż.": [
+      "A01/PiBJ/2024/2025 ZS",
+      "C01/PiBJ/2024/2025 ZS",
+      "L01/PiBJ/2024/2025 ZS",
+      "P01/PiBJ/2024/2025 ZS"
+    ],
+    "Projektowanie i Budowa Jachtów|4|S|inż.": [
+      "A01/PiBJ/2023/2024 ZS",
+      "C01/PiBJ/2023/2024 ZS",
+      "L01/PiBJ/2023/2024 ZS",
+      "P01/PiBJ/2023/2024 ZS"
+    ],
+    "Projektowanie i Budowa Okrętów|3|S|inż.": [
+      "A01/PiBO/2024/2025 ZS",
+      "C01/PiBO/2024/2025 ZS",
+      "L01/PiBO/2024/2025 ZS",
+      "P01/PiBO/2024/2025 ZS"
+    ],
+    "Projektowanie i Budowa Statków|2|S|mgr": [
+      "A01/PiBS MGR/2025/2026 ZS",
+      "L01/PiBS MGR/2025/2026 ZS",
+      "P01/PiBS MGR/2025/2026 ZS"
+    ],
+    "Sztuczna Inteligencja|2|S|mgr": [
+      "A01/SI MGR/2025/2026 ZS",
+      "L01/SI MGR/2025/2026 ZS",
+      "P01/SI MGR/2025/2026 ZS"
+    ],
+    "Teleinformatyka|1|S|inż.": [
+      "A01/TI/2026/2027 ZS",
+      "C01/TI/2026/2027 ZS",
+      "C02/TI/2026/2027 ZS",
+      "L01/TI/2026/2027 ZS",
+      "L02/TI/2026/2027 ZS",
+      "L03/TI/2026/2027 ZS"
+    ],
+    "Teleinformatyka|2|S|inż.": [
+      "A01/TI/2025/2026 ZS",
+      "C01/TI/2025/2026 ZS",
+      "L01/TI/2025/2026 ZS"
+    ],
+    "Transport Morski ang.|1|S|inż.": [
+      "A01/TM ANG/2026/2027 ZS",
+      "C01/TM ANG/2026/2027 ZS",
+      "L01/TM ANG/2026/2027 ZS",
+      "L02/TM ANG/2026/2027 ZS"
+    ],
+    "Transport Morski|2|S|inż.": [
+      "A01/TM ANG/2025/2026 ZS",
+      "C01/TM ANG/2025/2026 ZS",
+      "L01/TM ANG/2025/2026 ZS",
+      "L02/TM ANG/2025/2026 ZS"
+    ],
+    "Transport Morski|3|S|inż.": [
+      "A01/TM/2024/2025 ZS",
+      "C01/TM/2024/2025 ZS",
+      "C02/TM/2024/2025 ZS",
+      "L01/TM/2024/2025 ZS",
+      "L02/TM/2024/2025 ZS",
+      "L03/TM/2024/2025 ZS"
+    ],
+    "Transport|1|S|inż.": [
+      "A01/T/2026/2027 ZS",
+      "C01/T/2026/2027 ZS",
+      "C02/T/2026/2027 ZS",
+      "L01/T/2026/2027 ZS",
+      "L02/T/2026/2027 ZS",
+      "L03/T/2026/2027 ZS",
+      "L04/T/2026/2027 ZS"
+    ],
+    "Transport|2|S|inż.": [
+      "A01/T/2025/2026 ZS",
+      "C01/T/2025/2026 ZS",
+      "L01/T/2025/2026 ZS",
+      "L02/T/2025/2026 ZS",
+      "P01/T/2025/2026 ZS",
+      "P02/T/2025/2026 ZS"
+    ],
+    "Utrzymanie Ruchu w Przemyśle 4.0|2|S|mgr": [
+      "A01/URwP4.0 MGR/2025/2026 LS",
+      "C01/URwP4.0 MGR/2025/2026 LS",
+      "L01/URwP4.0 MGR/2025/2026 LS",
+      "L02/URwP4.0 MGR/2025/2026 LS",
+      "P0A01/WIET MGR/2025/2026 LS",
+      "P0L01/WIET MGR/2025/2026 LS",
+      "P0L02/WIET MGR/2025/2026 LS",
+      "P0L03/WIET MGR/2025/2026 LS"
+    ],
+    "Utrzymanie Ruchu w Przemyśle 4.0|3|S|mgr": [
+      "A01/URwP4.0 MGR/2025/2026 LS",
+      "C01/URwP4.0 MGR/2025/2026 LS",
+      "L01/URwP4.0 MGR/2025/2026 LS",
+      "L02/URwP4.0 MGR/2025/2026 LS"
+    ],
+    "Utrzymanie Ruchu w Przemyśle 4.0|4|S|mgr": [
+      "A01/URwP4.0 MGR/2025/2026 LS",
+      "C01/URwP4.0 MGR/2025/2026 LS",
+      "L01/URwP4.0 MGR/2025/2026 LS",
+      "L02/URwP4.0 MGR/2025/2026 LS"
+    ],
+    "Zarządzanie Innowacjami w Produkcji i Usługach|3|S|inż.": [
+      "A01/ZIwPiU/2024/2025 ZS",
+      "C01/ZIwPiU/2024/2025 ZS",
+      "L01/ZIwPiU/2024/2025 ZS",
+      "P01/ZIwPiU/2024/2025 ZS",
+      "P0A02/WIET/2024/2025 ZS",
+      "P0A03/WIET/2024/2025 ZS",
+      "P0A04/WIET/2024/2025 ZS",
+      "P0A05/WIET/2024/2025 ZS",
+      "P0C02/WIET/2024/2025 ZS",
+      "P0C03A/WIET/2024/2025 ZS",
+      "P0C04/WIET/2024/2025 ZS",
+      "P0C05/WIET/2024/2025 ZS"
+    ],
+    "Zarządzanie Innowacjami w Produkcji i Usługach|4|S|inż.": [
+      "A01/ZIwPiU/2023/2024 ZS",
+      "C01/ZIwPiU/2023/2024 ZS",
+      "P01/ZIwPiU/2023/2024 ZS",
+      "P0A01/WIET/2023/2024 ZS",
+      "P0A02/WIET/2023/2024 ZS",
+      "P0A03/WIET/2023/2024 ZS",
+      "P0A05/WIET/2023/2024 ZS",
+      "P0A06/WIET/2023/2024 ZS",
+      "P0C01A/WIET/2023/2024 ZS",
+      "P0C02/WIET/2023/2024 ZS",
+      "P0C03/WIET/2023/2024 ZS",
+      "P0L04A/WIET/2023/2024 ZS",
+      "P0L05A/WIET/2023/2024 ZS",
+      "P0L06A/WIET/2023/2024 ZS"
+    ],
+    "Zarządzanie Zasobami Ludzkimi|4|S|inż.": [
+      "A01/ZZL/2023/2024 ZS",
+      "C01/ZZL/2023/2024 ZS",
+      "P01/ZZL/2023/2024 ZS"
+    ],
+    "Zarządzanie i Inżynieria Produkcji|1|S|inż.": [
+      "A01/ZiIP/2026/2027 ZS",
+      "C01/ZiIP/2026/2027 ZS",
+      "L01/ZiIP/2026/2027 ZS",
+      "L02/ZiIP/2026/2027 ZS",
+      "P01/ZiIP/2026/2027 ZS",
+      "P02/ZiIP/2026/2027 ZS"
+    ],
+    "Zarządzanie i Inżynieria Produkcji|2|S|inż.": [
+      "A01/ZiIP/2025/2026 ZS",
+      "C01/ZiIP/2025/2026 ZS",
+      "L01/ZiIP/2025/2026 ZS",
+      "P01/ZiIP/2025/2026 ZS"
+    ]
+  },
+  "programs": [
+    {
+      "programName": "Automatyka i robotyka",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Automatyka i robotyka",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Automatyka i robotyka",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Cyberbezpieczeństwo",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Diagnostyka i Remonty Maszyn i Urządzeń Okrętowych",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Eksploatacja Portów i Floty Morskiej",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Eksploatacja Siłowni Okrętowych",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Eksploatacja Siłowni Okrętowych",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Eksploatacja Siłowni Okrętowych",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Eksploatacja systemów łączności",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Ekspolatacja siłowni wiatrowych",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Ekspolatacja siłowni wiatrowych",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Geodezja i Kartografia",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Geodezja i Kartografia",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Geoinformatyka",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Geoinformatyka",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Hydrografia",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Hydrografia",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Hydrografia",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Informatyka",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Informatyka",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Informatyka",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria Modelowania Przestrzennego",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria Wydruku 3D",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria Wydruku 3D",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria i Bezpieczeństwo  w Transporcie Drogowym",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria przemysłowa i morskie elektrownie wiatrowe",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Inżynieria przemysłowa i morskie elektrownie wiatrowe",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka Offshore",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Logistyka Przedsiębiorstw",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka Przedsiębiorstw",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka Transportu Zintegrowanego",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka i Zarządzanie w Europejskim Systemie Transportowym",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka i Zarządzanie w Europejskim Systemie Transportowym",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Logistyka Łańcuchów Dostaw",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Mechanika i Budowa Maszyn",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Mechatronika",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Mechatronika i Elektrotechnika Przemysłowa",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Mechatronika i Elektrotechnika Przemysłowa",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Nawigacja",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Nawigacja",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Nawigacja",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Oceanotechnika- Budowa Jachtów i Okrętów",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Oceanotechnika- Budowa Jachtów i Okrętów",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Optymalizacja energetyczna",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Organizacja i Zarządzanie w Gospodarce Morskiej",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "lic"
+    },
+    {
+      "programName": "Programowanie systemów informatycznych",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Programowanie systemów informatycznych",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Programowanie systemów multimedialnych",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Programowanie systemów multimedialnych",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Projektowanie i Budowa Jachtów",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Projektowanie i Budowa Jachtów",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Projektowanie i Budowa Okrętów",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Projektowanie i Budowa Statków",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Sztuczna Inteligencja",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Teleinformatyka",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Teleinformatyka",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Transport",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Transport",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Transport Morski",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Transport Morski",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Transport Morski ang.",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Utrzymanie Ruchu w Przemyśle 4.0",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Utrzymanie Ruchu w Przemyśle 4.0",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Utrzymanie Ruchu w Przemyśle 4.0",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "mgr"
+    },
+    {
+      "programName": "Zarządzanie Innowacjami w Produkcji i Usługach",
+      "year": 3,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Zarządzanie Innowacjami w Produkcji i Usługach",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Zarządzanie Zasobami Ludzkimi",
+      "year": 4,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Zarządzanie i Inżynieria Produkcji",
+      "year": 1,
+      "programType": "S",
+      "degreeLevel": "inż."
+    },
+    {
+      "programName": "Zarządzanie i Inżynieria Produkcji",
+      "year": 2,
+      "programType": "S",
+      "degreeLevel": "inż."
+    }
+  ]
+}

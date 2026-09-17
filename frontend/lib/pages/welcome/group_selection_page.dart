@@ -18,6 +18,7 @@ import 'package:plan_pm/service/backend_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_pm/service/cache_service.dart';
 import 'package:plan_pm/service/database_service.dart';
+import 'package:plan_pm/service/group_categories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -90,6 +91,29 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
+  }
+
+  /// Ustawienia, dla których odpytaliśmy backend — pokazywane w pustym stanie,
+  /// żeby student od razu zobaczył, która z nich nie pasuje (najczęściej brak
+  /// specjalizacji przy roku > 1, bo od 2. roku plany są wystawiane pod nią).
+  String _studySummary(AppLocalizations l10n) {
+    final program = Student.specialisation?.isNotEmpty == true
+        ? Student.specialisation!
+        : (Student.degreeCourse ?? "");
+    return [
+      if (program.isNotEmpty) program,
+      if (Student.year != null) "${l10n.yearText} ${Student.year}",
+      if (Student.studyMode != null)
+        Student.studyMode == StudyMode.stationary
+            ? l10n.campusButton
+            : l10n.extramuralButton,
+      if (Student.degreeLevel != null && Student.degreeLevel!.isNotEmpty)
+        switch (Student.degreeLevel) {
+          "mgr" => l10n.degreeLevelMasters,
+          "lic" => l10n.degreeLevelBachelor,
+          _ => l10n.degreeLevelEngineering,
+        },
+    ].join(" · ");
   }
 
   @override
@@ -168,35 +192,40 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
                   if (data.isEmpty) {
                     return GenericNoResource(
                       label: l10n.noGroupsAvailable,
-                      icon: LucideIcons.alertCircle,
-                      description: l10n.noGroupsAvailableDescription,
+                      icon: LucideIcons.calendarX,
+                      description:
+                          "${l10n.noGroupsAvailableSettings(_studySummary(l10n))}"
+                          "\n\n${l10n.noGroupsAvailableDescription}",
+                      action: OutlinedButton.icon(
+                        onPressed: Navigator.canPop(context)
+                            ? () {
+                                HapticFeedback.lightImpact();
+                                Navigator.pop(context);
+                              }
+                            : null,
+                        icon: Icon(LucideIcons.pencil, size: 16),
+                        label: Text(l10n.changeStudyDetails),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColor.onSurface,
+                          side: BorderSide(color: AppColor.outline),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
                     );
                   }
 
-                  final groups = data
-                      .map((g) {
-                        final group = g.toString();
-                        final first = group.split("/")[0];
-                        final key = first.isNotEmpty ? first[0] : "";
-                        return {
-                          key: [
-                            {"short": first, "long": group},
-                          ],
-                        };
-                      })
-                      .fold<Map<String, List<Map<String, String>>>>({}, (
-                        acc,
-                        elem,
-                      ) {
-                        elem.forEach((k, v) {
-                          acc.putIfAbsent(k, () => []).addAll(v);
-                        });
-                        return acc;
-                      });
+                  // Podział na sekcje (typ zajęć + osobna pula obieralnych)
+                  // siedzi w [buildGroupSections], żeby dało się go przetestować
+                  // na realnych kodach bez budowania widżetu.
+                  final sections = buildGroupSections(
+                    data.map((g) => g.toString()).toList(),
+                  );
 
                   return Column(
                     spacing: 10,
-                    children: [GroupBuilder(groups: groups)],
+                    children: [GroupBuilder(sections: sections)],
                   );
                 },
               ),

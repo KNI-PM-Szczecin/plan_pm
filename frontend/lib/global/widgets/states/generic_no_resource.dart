@@ -12,11 +12,16 @@ class GenericNoResource extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.description,
+    this.action,
   });
 
   final String label;
   final String description;
   final IconData icon;
+
+  /// Opcjonalny widget (zwykle przycisk) renderowany pod opisem — używany gdy
+  /// pusty stan da się naprawić akcją użytkownika, np. zmianą danych studiów.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +64,7 @@ class GenericNoResource extends StatelessWidget {
                   ),
                 ),
               ),
+              if (action != null) ...[const SizedBox(height: 5), action!],
             ],
           ),
         ),
