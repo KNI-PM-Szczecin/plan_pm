@@ -288,6 +288,22 @@
   "@groupTypeLabs": {
     "description": "group_builder.dart - Full name for group type 'L' (Laboratoria)."
   },
+  "groupTypeProject": "Projekt",
+  "@groupTypeProject": {
+    "description": "group_builder.dart - Section header for project groups (P01)."
+  },
+  "groupTypeSimulator": "Symulator",
+  "@groupTypeSimulator": {
+    "description": "group_builder.dart - Section header for simulator groups (SYM01)."
+  },
+  "groupTypeElective": "Przedmioty obieralne",
+  "@groupTypeElective": {
+    "description": "group_builder.dart - Section header for the faculty-wide elective pool (P0A04/WIET)."
+  },
+  "groupTypeElectiveHint": "Możesz zaznaczyć kilka",
+  "@groupTypeElectiveHint": {
+    "description": "group_builder.dart - Hint under the elective header: this is the only multi-select section."
+  },
   "groupTypeOther": "Inne",
   "@groupTypeOther": {
     "description": "group_builder.dart - Default name for unmapped group types."
@@ -465,13 +481,17 @@
   "@degreeLevelLabel": {
     "description": "input_page.dart - Label for the degree level selector."
   },
-  "degreeLevelEngineering": "Inżynierskie",
+  "degreeLevelEngineering": "Inż.",
   "@degreeLevelEngineering": {
     "description": "input_page.dart - Button label for engineering degree level."
   },
-  "degreeLevelMasters": "Magisterskie",
+  "degreeLevelMasters": "Mgr",
   "@degreeLevelMasters": {
     "description": "input_page.dart - Button label for masters degree level."
+  },
+  "degreeLevelBachelor": "Lic.",
+  "@degreeLevelBachelor": {
+    "description": "input_page.dart - Button label for bachelor degree level."
   },
   "unexpectedError": "Ojej! Coś poszło nie tak.",
   "@unexpectedError": {
@@ -485,9 +505,22 @@
   "@noGroupsAvailable": {
     "description": "group_selection_page.dart - Title shown when no groups exist for the selected study settings."
   },
-  "noGroupsAvailableDescription": "Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?",
+  "noGroupsAvailableDescription": "Dla tych ustawień nie ma opublikowanego planu. Od drugiego roku zajęcia są zwykle przypisane do specjalizacji — sprawdź, czy wybrałeś(aś) właściwą. Możesz też kontynuować bez grup i zobaczyć plan całego rocznika.",
   "@noGroupsAvailableDescription": {
     "description": "group_selection_page.dart - Description shown when no groups exist for the selected study settings."
+  },
+  "noGroupsAvailableSettings": "Wybrane ustawienia: {settings}",
+  "@noGroupsAvailableSettings": {
+    "description": "group_selection_page.dart - Summary of the study settings that returned no groups.",
+    "placeholders": {
+      "settings": {
+        "type": "String"
+      }
+    }
+  },
+  "changeStudyDetails": "Zmień dane studiów",
+  "@changeStudyDetails": {
+    "description": "group_selection_page.dart - Button that returns to the study details form when no groups were found."
   },
   "announcementDismiss": "Rozumiem",
   "announcementUpdate": "Aktualizuj",
