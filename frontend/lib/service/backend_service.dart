@@ -9,7 +9,6 @@ import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/service/database_service.dart';
-import 'package:plan_pm/service/program_availability.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/utils/logger.dart';
@@ -179,49 +178,28 @@ class BackendService {
     AppLogger.i("[BACKEND-SERVICE] Cache cleared");
   }
 
-  /// Kombinacje studiów, dla których w bazie naprawdę są grupy — drzewko
-  /// struktury złączone z planami po nazwie. Formularz onboardingu kaskaduje
-  /// po tym, żeby nie dało się wybrać zestawu bez ani jednej grupy.
-  Future<ProgramAvailability> fetchProgramAvailability() async {
-    final structureRows = await Supabase.instance.client
+  Future<Map<String, Map<String, List<String>>>> fetchStructure() async {
+    final response = await Supabase.instance.client
         .from('v_academic_structure')
         .select();
-    final programRows = await Supabase.instance.client
-        .from('v_unique_groups')
-        .select('program_name, year, program_type, degree_level');
 
-    final availability = ProgramAvailability.from(
-      structure: structureRows
-          .map(
-            (row) => StructureEntry(
-              faculty: row['faculty_name'] as String,
-              degreeCourse: row['degree_course_name'] as String,
-              specialisation: row['specialisation_name'] as String?,
-            ),
-          )
-          .toList(),
-      programs: programRows
-          .map(
-            (row) => ProgramRow(
-              programName: row['program_name'] as String,
-              year: (row['year'] as num).toInt(),
-              programType: row['program_type'] as String,
-              degreeLevel: row['degree_level'] as String,
-            ),
-          )
-          .toList(),
-    );
+    final Map<String, Map<String, List<String>>> facultiesMap = {};
 
-    if (availability.unmatchedProgramNames.isNotEmpty) {
-      // Plan, którego nazwa nie pasuje do żadnego węzła struktury, jest dla
-      // studenta niewidoczny. Backend raportuje to samo na Discorda po każdym
-      // przebiegu pipeline'u (structure_check) — tu zostaje ślad w logach.
-      AppLogger.w(
-        "[BACKEND-SERVICE] Plany bez węzła w strukturze: "
-        "${availability.unmatchedProgramNames.join(', ')}",
-      );
+    for (var row in response) {
+      final f = row['faculty_name'] as String;
+      final dc = row['degree_course_name'] as String;
+      final s = row['specialisation_name'] as String?; // Może być null
+
+      facultiesMap.putIfAbsent(f, () => {});
+      facultiesMap[f]!.putIfAbsent(dc, () => []);
+
+      // Dodajemy specjalizację tylko jeśli istnieje i jeszcze jej nie ma na liście
+      if (s != null && !facultiesMap[f]![dc]!.contains(s)) {
+        facultiesMap[f]![dc]!.add(s);
+      }
     }
-    return availability;
+
+    return facultiesMap;
   }
 
   Future<List<Map<String, dynamic>>> fetchAllTeachers() async {

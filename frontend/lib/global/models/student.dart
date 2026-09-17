@@ -11,8 +11,6 @@
 enum StudyMode { stationary, notStationary }
 
 extension StudyModeExtension on StudyMode {
-  /// Nazwa po polsku — wyłącznie do logów i debugowania. Na ekranach używaj
-  /// tłumaczeń (`l10n.campusButton` / `l10n.extramuralButton`).
   String get displayName => switch (this) {
     StudyMode.stationary => "Stacjonarne",
     StudyMode.notStationary => "Niestacjonarne",

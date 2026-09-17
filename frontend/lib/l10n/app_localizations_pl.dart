@@ -231,18 +231,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupTypeLabs => 'Laboratoria';
 
   @override
-  String get groupTypeProject => 'Projekt';
-
-  @override
-  String get groupTypeSimulator => 'Symulator';
-
-  @override
-  String get groupTypeElective => 'Przedmioty obieralne';
-
-  @override
-  String get groupTypeElectiveHint => 'Możesz zaznaczyć kilka';
-
-  @override
   String get groupTypeOther => 'Inne';
 
   @override
@@ -421,13 +409,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get degreeLevelLabel => 'Stopień studiów';
 
   @override
-  String get degreeLevelEngineering => 'Inż.';
+  String get degreeLevelEngineering => 'Inżynierskie';
 
   @override
-  String get degreeLevelMasters => 'Mgr';
-
-  @override
-  String get degreeLevelBachelor => 'Lic.';
+  String get degreeLevelMasters => 'Magisterskie';
 
   @override
   String get unexpectedError => 'Ojej! Coś poszło nie tak.';
@@ -441,15 +426,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get noGroupsAvailableDescription =>
-      'Dla tych ustawień nie ma opublikowanego planu. Od drugiego roku zajęcia są zwykle przypisane do specjalizacji — sprawdź, czy wybrałeś(aś) właściwą. Możesz też kontynuować bez grup i zobaczyć plan całego rocznika.';
-
-  @override
-  String noGroupsAvailableSettings(String settings) {
-    return 'Wybrane ustawienia: $settings';
-  }
-
-  @override
-  String get changeStudyDetails => 'Zmień dane studiów';
+      'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?';
 
   @override
   String get announcementDismiss => 'Rozumiem';

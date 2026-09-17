@@ -70,40 +70,6 @@ Notifery (`lib/global/notifiers/`):
 
 Tryb persystowany w SharedPreferences, ładowany w `app_initialization.dart`.
 
-**Dostępność kombinacji studiów (onboarding):**
-
-`ProgramAvailability` ([`lib/service/program_availability.dart`](frontend/lib/service/program_availability.dart))
-łączy drzewko struktury (`v_academic_structure`) z planami, które **mają grupy**
-(`v_unique_groups`), i to po tym kaskaduje `InputPage` — nie po samym drzewku.
-Powód: od 2. roku plan jest wystawiany pod nazwą **specjalizacji**, nie kierunku,
-więc z samego drzewka dało się złożyć zestaw bez ani jednej grupy.
-
-- Dopasowanie idzie po nazwie (jedyny wspólny klucz): normalizacja białych znaków
-  + lowercase, a końcówka językowa (`ang.`) odcinana do osobnego wariantu.
-- Zapisujemy `programName` z bazy **1:1** (`Student.specialisation`/`degreeCourse`),
-  żeby `.eq("program_name", …)` trafiało też przy nazwie z podwójną spacją.
-- Wymiar z jedną możliwą wartością wybiera się sam; niedostępne lata/stopnie/tryby
-  są wyszarzone, nie ukryte.
-- Plan, którego nazwa nie pasuje do żadnego węzła struktury, trafia do
-  `unmatchedProgramNames` — to samo liczy backendowy `structure_check`.
-- Testy: [`test/program_availability_test.dart`](frontend/test/program_availability_test.dart)
-  — jeden test na każdy kierunek, na snapshocie produkcji
-  (`test/fixtures/availability_snapshot.json`, regeneracja:
-  `backend/scripts/dump_availability_fixture.py`).
-
-**Wybór grup (`group_categories.dart`):**
-
-Kod grupy to `KOD/PULA/ROCZNIK`, np. `P0A04/WIET/2024/2025 ZS`.
-[`buildGroupSections`](frontend/lib/service/group_categories.dart) dzieli grupy na sekcje:
-audytorium / ćwiczenia / laboratoria / projekt / symulator (pojedynczy wybór — student
-należy do jednej grupy) oraz **przedmioty obieralne** (pula `WIET`, kod `P0<litera><numer>`)
-— jedyna sekcja **wielokrotnego wyboru**. Wcześniej kategoria brała pierwszą literę kodu,
-więc grupa projektowa i cała pula obieralnych trafiały do jednego worka „Inne" z jednym
-slotem, a plan wychodził niepełny (3 zgłoszenia). Zapytanie o zajęcia już wcześniej
-używało `inFilter("group", …)`, więc backend nie wymagał zmian.
-Testy: [`test/group_categories_test.dart`](frontend/test/group_categories_test.dart) —
-po jednym teście na każdy plan z obieralnymi, na kodach ze snapshotu produkcji.
-
 **Przepływ danych:**
 ```
 BackendService.fetchLectures() [Supabase]
@@ -267,7 +233,6 @@ Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`).
 python main.py [--workers N]      # pełny pipeline (domyślnie 10 workerów)
 python -m json2db.json2db --input ./output/parser.json [--clear] [--dry-run]
 python -m structure_updater.structure_updater [--dry-run]
-python -m structure_check.structure_check [--no-notify] [--strict]
 python -m admin.app               # panel admina pod localhost:5050
 python -m mcp_server.server        # MCP server (stdio) do sterowania backendem przez agenta
 ```
@@ -312,17 +277,6 @@ Zabezpieczenia (`@app.before_request`): odrzuca żądania, których `Sec-Fetch-S
 
 FastMCP (`plan-pm-backend`), narzędzia agenta do sterowania backendem: `run_pipeline_step` (kroki: `mapper|scrapper|parser|json2db|structure`), `run_full_pipeline`, `get_logs`, `list_news`/`create_news`/`delete_news`, `get_env_mode`/`set_env_mode`. Narzędzia pipeline'owe i newsowe przyjmują `env="prod"|"test"` (**domyślnie `prod`**, niezależnie od `.env_mode`!) i propagują je do podprocesów przez `PLANPM_ENV`; `get_logs` i `get_env_mode`/`set_env_mode` nie mają parametru `env`.
 
-### Structure check (`structure_check/`)
-
-Strażnik: aplikacja dopasowuje studenta do planu po **nazwie**, więc plan, którego
-nazwy nie ma w drzewku struktury, jest dla studenta niewidoczny (tak przez miesiące
-znikał rocznik z `Inżynieria i Bezpieczeństwo  w Transporcie Drogowym` — podwójna
-spacja). Moduł odtwarza reguły dopasowania z `program_availability.dart`
-(normalizacja spacji, lowercase, końcówka językowa) i raportuje rozjazdy: log +
-Discord. Wołany automatycznie na końcu `main.py` oraz jako osobny etap w Jenkinsie;
-**nie przerywa pipeline'u** — dane są poprawne, rozjechała się nazwa. `--strict`
-zwraca kod 1 (do CI).
-
 ### Powiadomienia (`notifier.py`)
 
 `notify_discord(...)` wysyła embed na webhook z `DISCORD_WEBHOOK_URL` (brak zmiennej = no-op). Współdzielony przez admin panel i MCP dla operacji destrukcyjnych (zapisy do DB). Błędy powiadomienia nigdy nie przerywają operacji. `structure_updater` powiadamia się sam — nie dubluj.
@@ -336,14 +290,6 @@ zwraca kod 1 (do CI).
 ```
 feature/*  ──PR──►  main  ──PR──►  deployment  ──push──►  App Store / Play Store
 ```
-
-### Jenkins — dzienna propagacja ([`Jenkinsfile`](Jenkinsfile))
-
-`Checkout → Set up Python → Scrape → Sanity gate → Refresh structure → Load into
-production → Structure check`. Dwa ostatnie etapy pilnują tego, co widzi student:
-`structure_updater` odświeża listy w onboardingu (bez tego nowa specjalizacja jest
-niewybieralna), a `structure_check` raportuje plany, których nazwa wypadła z drzewka.
-Żaden z nich nie czyści zajęć — bramka bezpieczeństwa dotyczy wyłącznie `json2db`.
 
 ### Workflow checks
 

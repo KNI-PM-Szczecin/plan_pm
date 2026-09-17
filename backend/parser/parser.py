@@ -25,19 +25,6 @@ MAP = {"Plan dla toku" : "program", "Przedmiot" : "subject", "Grupy" : "group", 
 
 DEBUG = False
 
-
-def normalize_name(name: str) -> str:
-    """Collapse whitespace in a program name.
-
-    The schedule site occasionally serves names with a doubled or non-breaking
-    space ("Inżynieria i Bezpieczeństwo  w Transporcie Drogowym"), while the
-    structure combobox serves the same name with single spaces. The app matches
-    the two with an exact `.eq()`, so anything but identical strings hides a
-    whole specialisation from students. Normalize here, at the single point
-    where a program name is produced.
-    """
-    return " ".join(name.replace("\xa0", " ").split())
-
 ### DEBUG TOOL
 def printTok(tok):
     if not DEBUG:
@@ -151,7 +138,7 @@ class Parser:
 
         if not tok["degree_level"]:
             print(f"Error processing course (unknown degree level): {original}")
-            tok["name"] = normalize_name(original)
+            tok["name"] = original.strip()
             return tok
 
         temp = original.split(tok['degree_level'], 1)
@@ -163,21 +150,15 @@ class Parser:
                 break
 
 
-        # The language marker stays in the name on purpose. v_unique_groups has
-        # no `language` column, so the suffix is the only thing that lets the app
-        # tell an English-taught cohort from the Polish one ("Transport Morski
-        # ang." vs "Transport Morski"). Until now the detection was
-        # case-insensitive but the stripping was not, so "ANG" was cut off the
-        # name while "ang." stayed — the same specialisation was a separate
-        # entry one year and silently merged the next.
         for language in LANGUAGE:
-            if language in temp[0][-6:].upper():
+            if f'{language}' in temp[0][-6:].upper():
                 tok["language"] = language
+                temp[0] = temp[0].split(language)[0].strip()
                 break
 
         try:
             parts = temp
-            tok["name"] = normalize_name(parts[0])
+            tok["name"] = parts[0].strip()
             length_season = parts[1].strip().split(' ')
             tok["course_length"] = length_season[0]
             tok["academic_year"] = ' '.join(length_season[1:])

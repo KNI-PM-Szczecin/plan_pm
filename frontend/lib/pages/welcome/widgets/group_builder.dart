@@ -1,36 +1,36 @@
-// Siatka przycisków grup, pogrupowana w sekcje przez [buildGroupSections].
-//
-// W sekcjach rocznika (audytorium, ćwiczenia, laboratoria, projekt, symulator)
-// obowiązuje pojedynczy wybór — student należy do jednej grupy. Sekcja
-// przedmiotów obieralnych jest wielokrotnego wyboru, bo obieralnych ma się kilka
-// naraz; wcześniej wszystko od "P" wpadało do jednego worka z jednym slotem i
-// plan wychodził niepełny (trzy zgłoszenia od studentów WIET).
+// Siatka przycisków grup pogrupowanych po pierwszej literze (A/C/L/inne).
+// Sortuje kategorie A→C→L→inne i grupy po numerze, potem alfabetycznie.
+// Zaznaczenie grupy odznacza pozostałe w tej samej kategorii (single-select per kategoria).
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-import 'package:plan_pm/service/group_categories.dart';
 
 class GroupBuilder extends StatefulWidget {
-  const GroupBuilder({super.key, required this.sections});
+  const GroupBuilder({super.key, required this.groups});
 
-  final List<GroupSection> sections;
+  final Map<String, dynamic> groups;
 
   @override
   State<GroupBuilder> createState() => _GroupBuilderState();
 }
 
-String groupKindLabel(GroupKind kind, AppLocalizations l10n) =>
-    switch (kind) {
-      GroupKind.auditorium => l10n.groupTypeAuditorium,
-      GroupKind.classes => l10n.groupTypeClasses,
-      GroupKind.labs => l10n.groupTypeLabs,
-      GroupKind.project => l10n.groupTypeProject,
-      GroupKind.simulator => l10n.groupTypeSimulator,
-      GroupKind.elective => l10n.groupTypeElective,
-      GroupKind.other => l10n.groupTypeOther,
-    };
+String convertLetterToGroup(String letter, AppLocalizations l10n) {
+  switch (letter.toLowerCase()) {
+    case "a":
+      return l10n.groupTypeAuditorium;
+
+    case "c":
+      return l10n.groupTypeClasses;
+
+    case "l":
+      return l10n.groupTypeLabs;
+
+    default:
+      return l10n.groupTypeOther;
+  }
+}
 
 class _GroupBuilderState extends State<GroupBuilder> {
   late List<String> selectedGroups;
@@ -41,57 +41,44 @@ class _GroupBuilderState extends State<GroupBuilder> {
     selectedGroups = List.from(Student.selectedGroups ?? []);
   }
 
-  void _toggle(GroupSection section, GroupEntry entry) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      if (selectedGroups.contains(entry.full)) {
-        selectedGroups.remove(entry.full);
-      } else {
-        if (!section.multiSelect) {
-          // Pojedynczy wybór: odznacz pozostałe grupy tej sekcji.
-          for (final other in section.entries) {
-            selectedGroups.remove(other.full);
-          }
-        }
-        selectedGroups.add(entry.full);
-      }
-      Student.selectedGroups = selectedGroups;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    // Sortowanie kategorii grup: A (Audytorium) -> C (Ćwiczenia) -> L (Laboratoria) -> Inne
+    final sortedEntries = widget.groups.entries.toList()
+      ..sort((a, b) {
+        int getPriority(String key) {
+          switch (key.toLowerCase()) {
+            case 'a':
+              return 0;
+            case 'c':
+              return 1;
+            case 'l':
+              return 2;
+            default:
+              return 3;
+          }
+        }
+
+        return getPriority(a.key).compareTo(getPriority(b.key));
+      });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 16,
       children: [
-        for (final section in widget.sections)
-          Column(
+        ...sortedEntries.map(
+          (letter) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 8,
             children: [
-              Row(
-                children: [
-                  Text(
-                    groupKindLabel(section.kind, l10n),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.onBackgroundVariant,
-                    ),
-                  ),
-                  if (section.multiSelect) ...[
-                    const SizedBox(width: 6),
-                    Text(
-                      "· ${l10n.groupTypeElectiveHint}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColor.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ],
+              Text(
+                convertLetterToGroup(letter.key, l10n),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.onBackgroundVariant,
+                ),
               ),
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -104,13 +91,35 @@ class _GroupBuilderState extends State<GroupBuilder> {
                           (spacing * (crossAxisCount - 1))) /
                       crossAxisCount;
 
+                  // Sortowanie grup: najpierw po numerze, potem alfabetycznie
+                  final List<dynamic> sortedGroups = List.from(
+                    letter.value as List,
+                  );
+                  final RegExp regExp = RegExp(r'\d+');
+
+                  sortedGroups.sort((a, b) {
+                    final String nameA = (a['short'] ?? a['long'] ?? '')
+                        .toString();
+                    final String nameB = (b['short'] ?? b['long'] ?? '')
+                        .toString();
+
+                    final Match? matchA = regExp.firstMatch(nameA);
+                    final Match? matchB = regExp.firstMatch(nameB);
+
+                    if (matchA != null && matchB != null) {
+                      final int numA = int.parse(matchA.group(0)!);
+                      final int numB = int.parse(matchB.group(0)!);
+                      if (numA != numB) return numA.compareTo(numB);
+                    }
+
+                    return nameA.compareTo(nameB);
+                  });
+
                   return Wrap(
                     spacing: spacing,
                     runSpacing: spacing,
-                    children: section.entries.map<Widget>((entry) {
-                      final bool isSelected = selectedGroups.contains(
-                        entry.full,
-                      );
+                    children: sortedGroups.map<Widget>((g) {
+                      bool isSelected = selectedGroups.contains(g["long"]);
 
                       final Widget button = OutlinedButton(
                         style: OutlinedButton.styleFrom(
@@ -130,22 +139,31 @@ class _GroupBuilderState extends State<GroupBuilder> {
                                 : AppColor.outline,
                           ),
                         ),
-                        onPressed: () => _toggle(section, entry),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            entry.code,
-                            maxLines: 1,
-                            style: const TextStyle(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          setState(() {
+                            if (isSelected) {
+                              selectedGroups.remove(g["long"]);
+                            } else {
+                              // Odznacz inne grupy w tej samej kategorii literowej
+                              for (var other in letter.value) {
+                                selectedGroups.remove(other["long"]);
+                              }
+                              selectedGroups.add(g["long"]);
+                            }
+                            Student.selectedGroups = selectedGroups;
+                          });
+                        },
+                        child: Text(
+                          g['short'] ?? g['long'] ?? '',
+                          style: TextStyle(fontSize: 16),
+                          textAlign: TextAlign.center,
                         ),
                       );
 
-                      // Jeśli jest tylko jedna grupa, zajmuje całą szerokość,
-                      // w przeciwnym razie 1/4.
+                      // Jeśli jest tylko jedna grupa, zajmuje całą szerokość, w przeciwnym razie 1/4
                       return SizedBox(
-                        width: section.entries.length == 1
+                        width: sortedGroups.length == 1
                             ? constraints.maxWidth
                             : itemWidth,
                         child: button,
@@ -156,6 +174,7 @@ class _GroupBuilderState extends State<GroupBuilder> {
               ),
             ],
           ),
+        ),
       ],
     );
   }

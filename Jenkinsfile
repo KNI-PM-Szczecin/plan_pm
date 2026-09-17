@@ -151,31 +151,6 @@ PY
             }
         }
 
-        stage('Refresh structure') {
-            steps {
-                dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY'),
-                        string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')
-                    ]) {
-                        // The app builds its dropdowns from these tables. Left unrun,
-                        // a specialisation the university opens mid-year is simply not
-                        // selectable — that is how "Logistyka Transportu Zintegrowanego"
-                        // was missing for four months. structure_updater has its own
-                        // floor (2 faculties / 5 degree courses) before it clears.
-                        script {
-                            def dryRun = params.DRY_RUN ? '--dry-run' : ''
-                            sh """
-                                set -eu
-                                "\$PY" -m structure_updater.structure_updater ${dryRun}
-                            """
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Load into production') {
             steps {
                 dir('backend') {
@@ -193,28 +168,6 @@ PY
                                 "\$PY" -m json2db.json2db --input ./output/parser.json --clear ${dryRun}
                             """
                         }
-                    }
-                }
-            }
-        }
-
-        stage('Structure check') {
-            steps {
-                dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY'),
-                        string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')
-                    ]) {
-                        // Every published plan must be reachable from the app's
-                        // dropdowns. Deliberately not --strict: the data is loaded and
-                        // correct, it is a name that drifted, and a red build every
-                        // morning would train everyone to ignore it. The Discord ping
-                        // is the signal.
-                        sh '''
-                            set -eu
-                            "$PY" -m structure_check.structure_check
-                        '''
                     }
                 }
             }
