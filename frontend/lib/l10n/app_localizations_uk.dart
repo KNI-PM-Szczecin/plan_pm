@@ -239,6 +239,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupTypeLabs => 'Лабораторні роботи';
 
   @override
+  String get groupTypeProject => 'Проєкт';
+
+  @override
+  String get groupTypeSimulator => 'Симулятор';
+
+  @override
+  String get groupTypeElective => 'Вибіркові предмети';
+
+  @override
+  String get groupTypeElectiveHint => 'Можна вибрати кілька';
+
+  @override
   String get groupTypeOther => 'Інше';
 
   @override
@@ -419,10 +431,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get degreeLevelLabel => 'Ступінь навчання';
 
   @override
-  String get degreeLevelEngineering => 'Інженерний';
+  String get degreeLevelEngineering => 'Інженер';
 
   @override
-  String get degreeLevelMasters => 'Магістерський';
+  String get degreeLevelMasters => 'Магістр';
+
+  @override
+  String get degreeLevelBachelor => 'Бакалавр';
 
   @override
   String get unexpectedError => 'Упс! Щось пішло не так.';
@@ -436,7 +451,15 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get noGroupsAvailableDescription =>
-      'Для вашого плану не знайдено жодних груп. Ви впевнені, що хочете продовжити?';
+      'Для цих налаштувань розклад ще не опубліковано. З другого року заняття зазвичай прив\'язані до спеціалізації — перевірте, чи правильно її вибрано. Можна також продовжити без груп і побачити розклад усього курсу.';
+
+  @override
+  String noGroupsAvailableSettings(String settings) {
+    return 'Вибрані налаштування: $settings';
+  }
+
+  @override
+  String get changeStudyDetails => 'Змінити дані навчання';
 
   @override
   String get announcementDismiss => 'Зрозуміло';
