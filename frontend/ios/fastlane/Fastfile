@@ -95,6 +95,15 @@ platform :ios do
       read_changelog_locale(version_name, "en-US"),
     ].join("\n\n")
 
+    # A CI machine that has never built this app before needs a way to prove
+    # the whole chain — archive, signing, export — without spending a build
+    # number: TestFlight rejects a re-upload of one, so a failed first attempt
+    # would otherwise force a pubspec bump before the next try.
+    if ENV["PLANPM_SKIP_UPLOAD"] == "true"
+      UI.important("PLANPM_SKIP_UPLOAD is set — built and signed #{version_name} (#{build_number}), not uploading to TestFlight.")
+      next
+    end
+
     upload_to_testflight(
       api_key: api_key,
       changelog: changelog,

@@ -38,6 +38,13 @@ platform :android do
       File.write("#{dir}/#{version_code}.txt", notes)
     end
 
+    # See the iOS lane: lets a new CI machine exercise the signing chain
+    # without consuming a version code Play will not accept twice.
+    if ENV["PLANPM_SKIP_UPLOAD"] == "true"
+      UI.important("PLANPM_SKIP_UPLOAD is set — built and signed #{version_name} (#{version_code}), not uploading to Google Play.")
+      next
+    end
+
     upload_to_play_store(
       track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
