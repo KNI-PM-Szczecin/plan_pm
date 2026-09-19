@@ -1,0 +1,575 @@
+// Builds and ships the Flutter app to TestFlight and Google Play from
+// mac-mini-wiit1. Replaces .github/workflows/deploy.yml.
+//
+// WHY THIS MOVED OFF GITHUB ACTIONS
+// Five of the last nine real runs of deploy.yml failed, and none of the
+// failures were caused by a change in this repository. The workflow pinned
+// nothing but Xcode, so every run resolved the newest Flutter and the newest
+// fastlane on a runner image that also moved underneath it: Flutter 3.44.1
+// broke on IconData, 3.44.8 turned Swift Package Manager on by default, and
+// gym 2.237 moved the export-phase auth flags. A build that only ever runs on
+// a machine nobody controls cannot be reproduced, so each break cost a release
+// cycle of blind pushes to `deployment`.
+//
+// This job inverts that: the toolchain is pinned and lives on one machine, so
+// a build that worked yesterday works today, and when a version does need to
+// move it moves in a commit here rather than silently on Microsoft's runners.
+//
+//   * Flutter — pinned to FLUTTER_VERSION below and provisioned by this job
+//     into a per-version directory. Nothing else on the machine can move it.
+//   * fastlane — pinned in frontend/{ios,android}/Gemfile. 2.237.0 is the
+//     version the last green deploy used, and the iOS Fastfile is written for
+//     it: from 2.237 gym injects -authenticationKey* into `-exportArchive`
+//     itself, so the Fastfile must NOT pass them through `export_xcargs`.
+//     Going back below 2.237 means restoring `export_xcargs` in the same
+//     commit, or the export stops being authorised and signing fails.
+//   * Xcode — the host's `xcode-select` must point at Xcode.app, and the iOS
+//     stage additionally exports DEVELOPER_DIR. Both, because neither is
+//     sufficient on its own:
+//       - DEVELOPER_DIR alone does not reach Dart's native-asset build hooks.
+//         Flutter spawns them with a curated environment that drops it, so
+//         objective_c's hook runs `xcrun --sdk iphoneos`, gets CommandLineTools
+//         (macOS SDKs only), and dies on an empty stdout with a stack trace
+//         naming neither Xcode nor the SDK.
+//       - `xcode-select` alone would put every other tool on the machine behind
+//         Xcode's licence and components; exporting DEVELOPER_DIR in the stage
+//         keeps the build explicit about which Xcode it means.
+//     DEVELOPER_DIR is scoped to the iOS stage rather than the pipeline because
+//     /usr/bin/python3 is a CommandLineTools shim that re-execs through xcrun:
+//     a global DEVELOPER_DIR made an Android-only build fail Xcode's licence
+//     check, in a stage that never touches Xcode.
+//   * Dart and Ruby dependencies — frontend/pubspec.lock and the two
+//     Gemfile.locks are tracked now. frontend/.gitignore inherited `*.lock`
+//     from the Flutter repo's own .gitignore, so every build used to resolve
+//     dependencies from scratch. Proving it: the first build of this job on a
+//     clean machine resolved 44 packages at versions other than the ones the
+//     app is developed against and died on `html` 0.15.6 -> 0.15.7 inside
+//     flutter_html ("Method not found: 'matches'"). The same build with the
+//     lockfile in place succeeded. Pinning Flutter and fastlane alone would
+//     NOT have caught this.
+//
+// LAYOUT
+// iOS and Android run one after another, not in parallel: they share one
+// workspace and one `frontend/build` directory, and a parallel Flutter build
+// would have them overwrite each other's artifacts. They are still independent
+// outcomes — each is wrapped in catchError, so a broken iOS signing chain does
+// not hold back an otherwise fine Android release, exactly like the two
+// separate jobs in the old workflow.
+//
+// CREDENTIALS expected in Jenkins (Manage Jenkins -> Credentials):
+//   planpm-supabase-prod-url        Secret text  -> SUPABASE_PROD_URL
+//   planpm-supabase-prod-anon-key   Secret text  -> SUPABASE_PROD_ANON_KEY
+//   planpm-ios-certificate          Secret file  -> Apple distribution .p12
+//   planpm-ios-certificate-password Secret text
+//   planpm-appstore-key-id          Secret text
+//   planpm-appstore-issuer-id       Secret text
+//   planpm-appstore-private-key     Secret file  -> AuthKey_<KEY_ID>.p8
+//   planpm-android-keystore         Secret file  -> upload-keystore.jks
+//   planpm-android-keystore-password Secret text
+//   planpm-android-key-password     Secret text
+//   planpm-android-key-alias        Secret text
+//   planpm-play-store-json-key      Secret file  -> service account JSON
+//   planpm-discord-webhook          Secret text  (optional; absent = no ping)
+//
+// The old workflow kept the certificate, the keystore and the .p8 as base64
+// Secrets because GitHub has no file secrets. Jenkins does, so they are stored
+// as files: one less encoding to get wrong, and nothing is ever echoed.
+
+pipeline {
+    agent any
+
+    triggers {
+        // The job is configured against */deployment, so this fires on a merge
+        // into the release branch — the same trigger the workflow had. Same
+        // cadence as the other jobs on this machine.
+        pollSCM('* * * * *')
+    }
+
+    parameters {
+        booleanParam(
+            name: 'DEPLOY_IOS',
+            defaultValue: true,
+            description: 'Build and upload the iOS build to TestFlight.'
+        )
+        booleanParam(
+            name: 'DEPLOY_ANDROID',
+            defaultValue: true,
+            description: 'Build and upload the Android bundle to Google Play.'
+        )
+        booleanParam(
+            name: 'DRY_RUN',
+            defaultValue: false,
+            description: 'Build and sign everything, upload nothing. Use this for the first run on a freshly provisioned machine — it exercises the whole chain, including signing, without burning a build number on the stores.'
+        )
+    }
+
+    options {
+        // Two builds would share `frontend/build`, the pinned Flutter checkout
+        // and the temporary keychain.
+        disableConcurrentBuilds()
+        // A cold build provisions the Flutter SDK, resolves gems and runs both
+        // archives; ~25 min warm, well under this.
+        timeout(time: 90, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
+        timestamps()
+    }
+
+    environment {
+        // The Jenkins LaunchAgent inherits a bare PATH (/usr/bin:/bin:/usr/sbin:/sbin),
+        // so Homebrew binaries — ruby, bundler and pod above all — are invisible
+        // to `sh` steps without this. The system ruby is 2.6.10 and cannot run
+        // current fastlane, so /opt/homebrew/opt/ruby/bin must come first. Gems
+        // are reached through `bundle exec`, so the gem bin directory (whose
+        // name carries the ruby ABI version) deliberately stays out of PATH.
+        PATH = "/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:${PATH}"
+
+        // Pinned toolchain. Bump these deliberately, in a commit, and expect to
+        // re-read the header before doing so.
+        FLUTTER_VERSION = '3.44.4'
+        FLUTTER_HOME    = "${HOME}/.jenkins-toolchains/flutter-${FLUTTER_VERSION}"
+
+        // Deliberately NOT exported as DEVELOPER_DIR for the whole pipeline.
+        // /usr/bin/python3 and friends are CommandLineTools shims that re-exec
+        // through xcrun, so a global DEVELOPER_DIR points them at Xcode and they
+        // inherit its licence check: the first Android-only run of this job died
+        // at `python3` with "You have not agreed to the Xcode license
+        // agreements" (exit 69), in a stage that has nothing to do with Xcode.
+        // Only the iOS stage exports it, so an Android release no longer depends
+        // on the state of an Xcode licence.
+        XCODE_DEVELOPER_DIR = '/Applications/Xcode.app/Contents/Developer'
+        JAVA_HOME        = '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home'
+        ANDROID_HOME     = "${HOME}/Library/Android/sdk"
+        ANDROID_SDK_ROOT = "${HOME}/Library/Android/sdk"
+
+        // Shared across builds so a rebuild does not re-download the world.
+        PUB_CACHE = "${HOME}/.pub-cache"
+
+        // fastlane aborts on a non-UTF-8 locale, which is exactly what a
+        // LaunchAgent hands it.
+        LANG   = 'en_US.UTF-8'
+        LC_ALL = 'en_US.UTF-8'
+
+        FASTLANE_SKIP_UPDATE_CHECK = '1'
+        FASTLANE_HIDE_CHANGELOG    = '1'
+        FASTLANE_DISABLE_COLORS    = '1'
+        // Non-interactive: never prompt for a missing value, fail instead.
+        FASTLANE_OPT_OUT_USAGE     = '1'
+
+        // Selects the Fastfile's CI branch: create a throwaway keychain and
+        // import the distribution certificate into it. Without this the lane
+        // expects a signed-in Xcode and an unlocked login keychain.
+        CI = 'true'
+
+        // Named here as well as in the Fastfile so `post` can clean it up even
+        // when the lane dies half-way through.
+        CI_KEYCHAIN = 'ci_keychain'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Preflight') {
+            steps {
+                // Everything this job needs but does not install itself. A
+                // missing tool must say which brew command fixes it, because
+                // the person reading this log is usually not at the machine —
+                // it lives in a basement and answers over Tailscale.
+                sh '''
+                    set -eu
+
+                    fail() { echo "PREFLIGHT: $1" >&2; echo "  fix: $2" >&2; exit 1; }
+
+                    command -v ruby   >/dev/null 2>&1 || fail "ruby not on PATH ($PATH)" "brew install ruby"
+                    command -v bundle >/dev/null 2>&1 || fail "bundler not on PATH"      "brew install ruby"
+                    command -v pod    >/dev/null 2>&1 || fail "CocoaPods not on PATH"    "brew install cocoapods"
+                    command -v git    >/dev/null 2>&1 || fail "git not on PATH"          "xcode-select --install"
+
+                    # System ruby is 2.6.10 and current fastlane will not load on
+                    # it. Catch the PATH regression here rather than 20 minutes
+                    # into an archive.
+                    ruby_major=$(ruby -e 'print RUBY_VERSION.split(".").first')
+                    [ "$ruby_major" -ge 3 ] || fail "ruby $(ruby -e 'print RUBY_VERSION') is too old for fastlane" "brew install ruby, then make sure /opt/homebrew/opt/ruby/bin precedes /usr/bin in PATH"
+
+                    # File tests only. Running xcodebuild here would drag the
+                    # licence check into every build, including Android-only ones.
+                    [ -x "$XCODE_DEVELOPER_DIR/usr/bin/xcodebuild" ] || fail "no Xcode at $XCODE_DEVELOPER_DIR" "install Xcode from the App Store"
+                    [ -x "$JAVA_HOME/bin/java" ]               || fail "no JDK at $JAVA_HOME"        "brew install openjdk@21"
+                    [ -d "$ANDROID_HOME" ]                     || fail "no Android SDK at $ANDROID_HOME" "install it through Android Studio, or brew install --cask android-commandlinetools"
+
+                    # A release appbundle is stripped of debug symbols, and
+                    # both of these are needed for that. Flutter reports their
+                    # absence as "Release app bundle failed to strip debug
+                    # symbols from native libraries. Please run flutter doctor",
+                    # which names neither and sends you to a doctor run that
+                    # reports no issues. The real message ("Failed to find
+                    # cmdline-tools") only appears under `flutter build -v`.
+                    # Note cmdline-tools must live INSIDE the SDK root — the
+                    # Homebrew cask puts them somewhere Flutter never looks.
+                    ndk_version=$(awk -F'"' '/ndkVersion/ { print $2; exit }' frontend/android/app/build.gradle.kts)
+                    [ -d "$ANDROID_HOME/ndk/$ndk_version" ] || fail "no NDK $ndk_version (required by app/build.gradle.kts)" "\"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager\" --sdk_root=\"$ANDROID_HOME\" 'ndk;$ndk_version'"
+                    [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" ] || fail "no cmdline-tools inside $ANDROID_HOME" "sdkmanager --sdk_root=\"$ANDROID_HOME\" 'cmdline-tools;latest'"
+
+                    echo "Ruby:   $(ruby -v)"
+                    echo "Java:   $("$JAVA_HOME/bin/java" -version 2>&1 | head -1)"
+                '''
+            }
+        }
+
+        stage('Provision Flutter') {
+            steps {
+                // The SDK is a git checkout at a tag, kept in a directory named
+                // after that tag. Bumping FLUTTER_VERSION therefore provisions a
+                // second SDK beside the first instead of mutating the one that
+                // currently produces working builds — the previous version stays
+                // one parameter away if a release has to go out on it.
+                sh '''
+                    set -eu
+
+                    if [ ! -d "$FLUTTER_HOME/.git" ]; then
+                        echo "Provisioning Flutter $FLUTTER_VERSION (first use of this version)"
+                        rm -rf "$FLUTTER_HOME"
+                        mkdir -p "$(dirname "$FLUTTER_HOME")"
+                        git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$FLUTTER_HOME"
+                    fi
+
+                    # Jenkins and the interactive shell are the same user here,
+                    # but say so explicitly: a mismatch makes every git call in
+                    # the SDK fail with "dubious ownership" and the errors the
+                    # flutter tool prints for that are unhelpful.
+                    git config --global --add safe.directory "$FLUTTER_HOME" || true
+
+                    # An interrupted build can leave the SDK dirty; the tool then
+                    # reports itself as an unknown version and refuses to run.
+                    git -C "$FLUTTER_HOME" reset --hard --quiet
+                    git -C "$FLUTTER_HOME" clean -fd --quiet
+
+                    "$FLUTTER_HOME/bin/flutter" --version
+
+                    # Runner.xcodeproj integrates plugins through CocoaPods and
+                    # has no Swift package references. Flutter >= 3.44.8 routes
+                    # SPM-capable plugins out of the Podfile by default, which
+                    # ends in "Module 'app_links' not found". Redundant on the
+                    # pinned 3.44.4, kept so a bump cannot quietly reintroduce it.
+                    "$FLUTTER_HOME/bin/flutter" config --no-enable-swift-package-manager
+
+                    "$FLUTTER_HOME/bin/flutter" precache --ios --android
+                '''
+            }
+        }
+
+        stage('Release metadata') {
+            steps {
+                script {
+                    // pubspec is the single source of truth for both stores; the
+                    // Fastfiles read it again themselves. Read it here too so the
+                    // build description says what shipped without opening a log.
+                    env.APP_VERSION = sh(
+                        script: "awk '/^version:/ { print \$2; exit }' frontend/pubspec.yaml",
+                        returnStdout: true
+                    ).trim()
+
+                    // The skip markers live in the commit body, not the PR title,
+                    // because that is what a merge commit carries onto this
+                    // branch. Same three markers the workflow honoured, so the
+                    // habit and the documentation survive the move.
+                    def message = sh(
+                        script: 'git log -1 --pretty=%B',
+                        returnStdout: true
+                    ).trim()
+
+                    def skipAll     = message.contains('[skip deploy]')
+                    def skipIos     = skipAll || message.contains('[skip ios]')
+                    def skipAndroid = skipAll || message.contains('[skip android]')
+
+                    env.RUN_IOS     = (params.DEPLOY_IOS     && !skipIos).toString()
+                    env.RUN_ANDROID = (params.DEPLOY_ANDROID && !skipAndroid).toString()
+
+                    currentBuild.displayName = "#${BUILD_NUMBER} — ${env.APP_VERSION}"
+                    currentBuild.description = "iOS: ${env.RUN_IOS == 'true' ? 'yes' : 'skipped'} · Android: ${env.RUN_ANDROID == 'true' ? 'yes' : 'skipped'}${params.DRY_RUN ? ' · DRY RUN' : ''}"
+
+                    echo "Version ${env.APP_VERSION} | iOS=${env.RUN_IOS} Android=${env.RUN_ANDROID} dryRun=${params.DRY_RUN}"
+                    if (skipAll || skipIos || skipAndroid) {
+                        echo "Skip marker found in the commit message."
+                    }
+                }
+            }
+        }
+
+        stage('Generate secrets.dart') {
+            when {
+                expression { env.RUN_IOS == 'true' || env.RUN_ANDROID == 'true' }
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'planpm-supabase-prod-url', variable: 'SUPABASE_PROD_URL'),
+                    string(credentialsId: 'planpm-supabase-prod-anon-key', variable: 'SUPABASE_PROD_ANON_KEY')
+                ]) {
+                    // lib/secrets.dart is gitignored and generated per build.
+                    // Written by python reading os.environ, never by shell
+                    // interpolation: the anon key is a JWT and any quoting or
+                    // line-wrapping accident produces a file that compiles and
+                    // then fails to authenticate at runtime, on real users'
+                    // phones. Same reason the workflow did it this way.
+                    sh '''
+                        set -eu
+                        /usr/bin/python3 - <<'PY'
+import os
+
+url = os.environ["SUPABASE_PROD_URL"].strip()
+key = os.environ["SUPABASE_PROD_ANON_KEY"].strip()
+
+lines = [
+    "import 'env_config.dart';",
+    "",
+    "class Secrets {",
+    "  static const String supabaseUrl = kSimulateNetworkErrors",
+    '      ? "http://localhost:9999"',
+    f'      : "{url}";',
+    "  static const String supabaseAnonKey = kSimulateNetworkErrors",
+    '      ? "invalid_key"',
+    f'      : "{key}";',
+    "}",
+]
+
+with open("frontend/lib/secrets.dart", "w") as f:
+    f.write("\\n".join(lines) + "\\n")
+PY
+                        test -s frontend/lib/secrets.dart
+                        echo "secrets.dart written ($(wc -l < frontend/lib/secrets.dart) lines)"
+                    '''
+                }
+            }
+        }
+
+        stage('Flutter dependencies') {
+            when {
+                expression { env.RUN_IOS == 'true' || env.RUN_ANDROID == 'true' }
+            }
+            steps {
+                dir('frontend') {
+                    // Also writes ios/Flutter/Generated.xcconfig and
+                    // android/local.properties, both of which the native builds
+                    // read — pod install and settings.gradle.kts fail without them.
+                    sh '''
+                        set -eu
+                        export PATH="$FLUTTER_HOME/bin:$PATH"
+                        flutter pub get
+                    '''
+                }
+            }
+        }
+
+        stage('iOS → TestFlight') {
+            when {
+                expression { env.RUN_IOS == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE', message: 'iOS deploy failed') {
+                    withCredentials([
+                        file(credentialsId: 'planpm-ios-certificate', variable: 'IOS_CERT_FILE'),
+                        string(credentialsId: 'planpm-ios-certificate-password', variable: 'IOS_CERTIFICATE_PASSWORD'),
+                        string(credentialsId: 'planpm-appstore-key-id', variable: 'APP_STORE_KEY_ID'),
+                        string(credentialsId: 'planpm-appstore-issuer-id', variable: 'APP_STORE_ISSUER_ID'),
+                        file(credentialsId: 'planpm-appstore-private-key', variable: 'APP_STORE_KEY_FILE')
+                    ]) {
+                        dir('frontend/ios') {
+                            sh '''
+                                set -eu
+                                export PATH="$FLUTTER_HOME/bin:$PATH"
+
+                                # Scoped to this stage — see the note on
+                                # XCODE_DEVELOPER_DIR in `environment`.
+                                export DEVELOPER_DIR="$XCODE_DEVELOPER_DIR"
+
+                                # Everything below reaches xcodebuild one way or
+                                # another, and an unaccepted licence makes each of
+                                # them fail with the same opaque exit 69. Say it
+                                # once, here, with the command that fixes it.
+                                if ! "$DEVELOPER_DIR/usr/bin/xcodebuild" -checkFirstLaunchStatus >/dev/null 2>&1; then
+                                    echo "Xcode is installed but not usable headlessly on this machine." >&2
+                                    echo "  fix (once, needs sudo, on the Jenkins host):" >&2
+                                    echo "    sudo $DEVELOPER_DIR/usr/bin/xcodebuild -license accept" >&2
+                                    echo "    sudo $DEVELOPER_DIR/usr/bin/xcodebuild -runFirstLaunch" >&2
+                                    exit 1
+                                fi
+
+                                # Dart's native-asset hooks do NOT inherit
+                                # DEVELOPER_DIR, so they resolve SDKs through the
+                                # machine-wide xcode-select. Pointed at
+                                # CommandLineTools, objective_c's hook fails with a
+                                # Dart stack trace that mentions neither Xcode nor
+                                # the SDK. Check it here, where the message can.
+                                active=$(xcode-select -p 2>/dev/null || true)
+                                if [ "$active" != "$DEVELOPER_DIR" ]; then
+                                    echo "xcode-select points at '$active', not '$DEVELOPER_DIR'." >&2
+                                    echo "  Dart native-asset hooks ignore DEVELOPER_DIR and would look for" >&2
+                                    echo "  the iphoneos SDK there, which CommandLineTools does not ship." >&2
+                                    echo "  fix (once, needs sudo, on the Jenkins host):" >&2
+                                    echo "    sudo xcode-select -s $DEVELOPER_DIR" >&2
+                                    exit 1
+                                fi
+
+                                # Xcode 26 ships platforms as separate downloads and
+                                # a missing one is invisible on disk: -showsdks still
+                                # lists iOS and Platforms/iPhoneOS.platform still
+                                # holds an .sdk. Only a device build says so.
+                                if ! xcrun --sdk iphoneos --show-sdk-path >/dev/null 2>&1; then
+                                    echo "The iOS device SDK is not usable." >&2
+                                    echo "  fix (once, on the Jenkins host, no sudo):" >&2
+                                    echo "    $DEVELOPER_DIR/usr/bin/xcodebuild -downloadPlatform iOS" >&2
+                                    exit 1
+                                fi
+
+                                echo "Xcode:  $("$DEVELOPER_DIR/usr/bin/xcodebuild" -version | head -1)"
+                                echo "Pods:   $(pod --version)"
+
+                                # The Fastfile reads ./certificate.p12 relative to
+                                # the ios directory. Copied rather than symlinked
+                                # so `post` can delete it unconditionally.
+                                cp "$IOS_CERT_FILE" certificate.p12
+                                chmod 600 certificate.p12
+
+                                # The lane wants the key's contents, not its path:
+                                # it writes its own copy into TMPDIR for
+                                # -authenticationKeyPath and passes the same text
+                                # to app_store_connect_api_key.
+                                APP_STORE_PRIVATE_KEY="$(cat "$APP_STORE_KEY_FILE")"
+                                export APP_STORE_PRIVATE_KEY
+
+                                # Read by the lane, which archives and signs as
+                                # usual and then stops short of TestFlight.
+                                export PLANPM_SKIP_UPLOAD="$DRY_RUN"
+
+                                pod install
+
+                                bundle config set --local path 'vendor/bundle'
+                                bundle install --quiet
+                                bundle exec fastlane --version
+
+                                bundle exec fastlane ios beta
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Android → Google Play') {
+            when {
+                expression { env.RUN_ANDROID == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE', message: 'Android deploy failed') {
+                    withCredentials([
+                        file(credentialsId: 'planpm-android-keystore', variable: 'ANDROID_KEYSTORE_FILE'),
+                        string(credentialsId: 'planpm-android-keystore-password', variable: 'ANDROID_KEYSTORE_PASSWORD'),
+                        string(credentialsId: 'planpm-android-key-password', variable: 'ANDROID_KEY_PASSWORD'),
+                        string(credentialsId: 'planpm-android-key-alias', variable: 'ANDROID_KEY_ALIAS'),
+                        file(credentialsId: 'planpm-play-store-json-key', variable: 'PLAY_STORE_JSON_KEY_FILE')
+                    ]) {
+                        dir('frontend/android') {
+                            sh '''
+                                set -eu
+                                export PATH="$FLUTTER_HOME/bin:$PATH"
+
+                                # app/build.gradle.kts resolves storeFile against
+                                # the app module, and the Fastfile writes
+                                # storeFile=../upload-keystore.jks — so the
+                                # keystore belongs here, next to key.properties.
+                                cp "$ANDROID_KEYSTORE_FILE" upload-keystore.jks
+                                chmod 600 upload-keystore.jks
+
+                                # upload_to_play_store takes the JSON as a string.
+                                PLAY_STORE_JSON_KEY="$(cat "$PLAY_STORE_JSON_KEY_FILE")"
+                                export PLAY_STORE_JSON_KEY
+
+                                # Read by the lane, which builds and signs the
+                                # bundle as usual and then stops short of Play.
+                                export PLANPM_SKIP_UPLOAD="$DRY_RUN"
+
+                                bundle config set --local path 'vendor/bundle'
+                                bundle install --quiet
+                                bundle exec fastlane --version
+
+                                bundle exec fastlane android deploy
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Everything secret this build materialised on disk. Run before the
+            // artifacts are archived, and unconditionally: a failed lane is
+            // exactly the case where a certificate would otherwise be left in a
+            // workspace on a machine this project does not own.
+            sh '''
+                set +e
+                rm -f frontend/lib/secrets.dart
+                rm -f frontend/ios/certificate.p12
+                rm -f frontend/android/upload-keystore.jks
+                rm -f frontend/android/planpm_deploy_key.json
+                rm -f frontend/android/key.properties
+                rm -f "${TMPDIR:-/tmp}"/AuthKey_*.p8
+
+                # The lane makes this the default keychain for the session.
+                # Leaving it that way would break every other keychain user on
+                # the machine — including a person sitting at it.
+                security default-keychain -s login.keychain-db 2>/dev/null
+                security delete-keychain "$CI_KEYCHAIN" 2>/dev/null
+
+                # The lane rewrites the marketing version and build number into
+                # project.pbxproj. Left behind, the next poll sees a dirty tree.
+                git checkout -- frontend/ios frontend/android 2>/dev/null
+                true
+            '''
+
+            archiveArtifacts artifacts: 'frontend/ios/fastlane/report.xml, frontend/android/fastlane/report.xml, frontend/build/app/outputs/bundle/release/*.aab',
+                             allowEmptyArchive: true,
+                             fingerprint: false
+        }
+
+        failure {
+            // A release that silently did not happen is worse than a failed one:
+            // nobody watches this job, and the first signal is otherwise a user
+            // asking why the update never arrived.
+            withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
+                sh '''
+                    set +e
+                    [ -n "${DISCORD_WEBHOOK_URL:-}" ] || exit 0
+                    /usr/bin/python3 - <<'PY' || true
+import json, os, urllib.request
+
+payload = {
+    "embeds": [{
+        "title": "PlanPM deploy failed",
+        "description": (
+            f"Build {os.environ.get('BUILD_NUMBER', '?')} of version "
+            f"{os.environ.get('APP_VERSION', '?')} did not reach the stores.\\n"
+            f"{os.environ.get('BUILD_URL', '')}"
+        ),
+        "color": 0xE53935,
+    }]
+}
+req = urllib.request.Request(
+    os.environ["DISCORD_WEBHOOK_URL"],
+    data=json.dumps(payload).encode(),
+    # Discord answers 403 to requests without a proper User-Agent; urllib's
+    # default is one of the ones it rejects. backend/notifier.py carries the
+    # same note and the same workaround.
+    headers={"Content-Type": "application/json", "User-Agent": "PlanPM-Jenkins/1.0"},
+)
+urllib.request.urlopen(req, timeout=10).read()
+PY
+                '''
+            }
+        }
+    }
+}
