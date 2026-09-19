@@ -345,7 +345,31 @@ production → Structure check`. Dwa ostatnie etapy pilnują tego, co widzi stud
 niewybieralna), a `structure_check` raportuje plany, których nazwa wypadła z drzewka.
 Żaden z nich nie czyści zajęć — bramka bezpieczeństwa dotyczy wyłącznie `json2db`.
 
-### Workflow checks
+### Jenkins — deploy na store'y ([`Jenkinsfile.deploy`](Jenkinsfile.deploy))
+
+`Checkout → Preflight → Provision Flutter → Release metadata → Generate
+secrets.dart → Flutter dependencies → iOS → Android`. Deploy **zszedł z GitHub
+Actions** (`deploy.yml` usunięty): workflow nie przypinał ani Fluttera, ani
+fastlane'a, więc psuł się od zmian w toolchainie runnera, nie od zmian w repo —
+5 z ostatnich 9 przebiegów padło z tego powodu.
+
+Tu toolchain jest przypięty: Flutter przez `FLUTTER_VERSION` (job sam klonuje SDK
+do `~/.jenkins-toolchains/flutter-<wersja>`), fastlane przez
+`frontend/{ios,android}/Gemfile`, Xcode przez `DEVELOPER_DIR` (globalny
+`xcode-select` na tej maszynie wskazuje CommandLineTools i ma tak zostać).
+
+> **Fastlane ↔ Fastfile są sprzężone.** Od 2.237 gym sam wstrzykuje
+> `-authenticationKey*` do `-exportArchive`, więc `ios/fastlane/Fastfile` podaje
+> je wyłącznie przez `xcargs`. Zejście poniżej 2.237 wymaga przywrócenia
+> `export_xcargs: signing_xcargs` **w tym samym commicie**.
+
+iOS i Android idą sekwencyjnie (jeden workspace, jeden `frontend/build`), ale
+każdy w `catchError` — porażka jednego nie blokuje drugiego. `DRY_RUN` ustawia
+`PLANPM_SKIP_UPLOAD=true`, które oba Fastfile'e honorują tuż przed
+`upload_to_*`; tak puszcza się pierwszy build na nowej maszynie, bo store'y nie
+przyjmą dwa razy tego samego numeru builda.
+
+### Workflow checks (GitHub Actions — zostały tylko bramki PR)
 
 | Workflow | Trigger | Co sprawdza |
 |----------|---------|-------------|
@@ -354,18 +378,21 @@ niewybieralna), a `structure_check` raportuje plany, których nazwa wypadła z d
 | `deployment-changelog-check.yml` | PR → deployment | `CHANGELOG.md` ma wpis dla aktualnej wersji |
 | `version-check.yml` | PR → deployment lub production | wersja w `pubspec.yaml` > bazy |
 | `deployment-source-check.yml` | PR → deployment | źródłowy branch == `main` |
-| `deploy.yml` | push → deployment | buduje iOS + Android, deployuje |
 
 ### Pomijanie deployu
 
-Dodaj do **treści commita** (nie tytułu PR):
-- `[skip ios]` — pomija job iOS
-- `[skip android]` — pomija job Android
+Dodaj do **treści commita** (nie tytułu PR) — czyta to `Jenkinsfile.deploy`:
+- `[skip ios]` — pomija etap iOS
+- `[skip android]` — pomija etap Android
 - `[skip deploy]` — pomija oba
 
 ### Secrets w CI
 
-`secrets.dart` jest generowany w trakcie buildu ze zmiennych GitHub Secrets — nie istnieje w repo. Lokalnie utwórz go ręcznie (skopiuj `lib/secrets_example.dart` i uzupełnij klucze — `switch_env.py` go **nie** generuje).
+`secrets.dart` jest generowany w trakcie buildu z credentiali Jenkinsa
+(`planpm-supabase-prod-url`, `planpm-supabase-prod-anon-key`) — nie istnieje
+w repo i jest kasowany w `post { always }`. Lokalnie utwórz go ręcznie (skopiuj
+`lib/secrets_example.dart` i uzupełnij klucze — `switch_env.py` go **nie**
+generuje). Pełna lista credentiali: [`docs/deployment.md`](docs/deployment.md).
 
 ---
 
