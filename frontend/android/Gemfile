@@ -1,3 +1,10 @@
 source "https://rubygems.org"
 
-gem "fastlane"
+# Pinned on purpose. Unpinned, CI resolves the newest gem on every run, and that
+# is how gym 2.237 silently changed which command receives the App Store Connect
+# auth flags and broke the deploy mid-release. 2.237.0 is the version the last
+# green deploy used and the one ios/fastlane/Fastfile is written against: it
+# injects -authenticationKey* into -exportArchive itself, so the Fastfile passes
+# them only through `xcargs`. Dropping below 2.237 means restoring
+# `export_xcargs: signing_xcargs` there in the same commit.
+gem "fastlane", "2.237.0"
