@@ -16,24 +16,44 @@ import 'package:integration_test/integration_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 
+import 'package:plan_pm/global/utils/extensions.dart';
+import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/main.dart' as app;
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  /// "21 September" -> 21. Zwraca null, gdy etykieta nie zaczyna się liczbą.
-  int? dayOf(String label) => int.tryParse(label.trim().split(' ').first);
-
-  /// "21 September" -> "September"
-  String monthOf(String label) {
-    final parts = label.trim().split(' ');
-    return parts.length > 1 ? parts.sublist(1).join(' ') : '';
-  }
-
-  String readDate(WidgetTester tester) {
+  String readLabel(WidgetTester tester) {
     final finder = find.byKey(const ValueKey('daySelectionDate'));
     expect(finder, findsOneWidget, reason: 'nie znaleziono etykiety z datą');
     return (tester.widget<Text>(finder)).data!;
+  }
+
+  /// Etykieta ("24 Wrzesień", "2 October") -> pełna data.
+  ///
+  /// Etykieta nie ma roku, a nazwę miesiąca buduje l10n w języku aplikacji,
+  /// więc tabelę miesięcy składamy TĄ SAMĄ funkcją co day_selection.dart, a rok
+  /// bierzemy najbliższy [near]. Dzięki temu asercja o 7 dniach działa także
+  /// przez granicę miesiąca i roku — wcześniej wtedy po cichu ją pomijaliśmy.
+  DateTime readDate(WidgetTester tester, DateTime near) {
+    final label = readLabel(tester).trim();
+    final space = label.indexOf(' ');
+    final day = int.parse(label.substring(0, space));
+    final monthName = label.substring(space + 1);
+
+    final context = tester.element(find.byKey(const ValueKey('daySelectionDate')));
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      for (var m = 1; m <= 12; m++) l10n.dateDayMonth(DateTime(2000, m)).toCapitalized,
+    ];
+    final month = months.indexOf(monthName) + 1;
+    expect(month, isPositive, reason: 'nieznana nazwa miesiąca: "$monthName"');
+
+    final candidates = [near.year - 1, near.year, near.year + 1]
+        .map((y) => DateTime(y, month, day))
+        .toList()
+      ..sort((a, b) => a.difference(near).abs().compareTo(b.difference(near).abs()));
+    return candidates.first;
   }
 
   testWidgets('chevrony przesuwają plan o tydzień', (tester) async {
@@ -53,38 +73,34 @@ void main() {
     await tester.drag(find.byType(PreloadPageView), const Offset(-400, 0));
     await tester.pumpAndSettle();
 
-    final before = readDate(tester);
+    final before = readDate(tester, DateTime.now());
     await binding.takeScreenshot('01_classes_before');
+
+    // Różnica w dniach kalendarzowych (UTC — zmiana czasu nie zjada godziny).
+    int daysBetween(DateTime a, DateTime b) =>
+        DateTime.utc(b.year, b.month, b.day)
+            .difference(DateTime.utc(a.year, a.month, a.day))
+            .inDays;
 
     // --- w przód ---
     await tester.tap(find.byIcon(LucideIcons.chevronRight));
     await tester.pumpAndSettle();
-    final afterNext = readDate(tester);
+    final afterNext = readDate(tester, before);
     await binding.takeScreenshot('02_after_next_week');
-
-    expect(afterNext, isNot(before), reason: 'data nie zmieniła się po kliknięciu');
-    if (monthOf(before) == monthOf(afterNext)) {
-      expect(
-        dayOf(afterNext)! - dayOf(before)!,
-        7,
-        reason: 'chevron powinien przesunąć o 7 dni, nie o 1',
-      );
-    }
+    expect(daysBetween(before, afterNext), 7,
+        reason: 'chevron w prawo: $before -> $afterNext, oczekiwano +7 dni');
 
     // --- w tył: powrót do punktu wyjścia ---
     await tester.tap(find.byIcon(LucideIcons.chevronLeft));
     await tester.pumpAndSettle();
-    expect(readDate(tester), before, reason: 'powrót nie wrócił do tej samej daty');
+    expect(readDate(tester, before), before, reason: 'powrót nie wrócił do tej samej daty');
 
     // --- w tył jeszcze raz: tydzień przed startem ---
     await tester.tap(find.byIcon(LucideIcons.chevronLeft));
     await tester.pumpAndSettle();
-    final afterPrev = readDate(tester);
+    final afterPrev = readDate(tester, before);
     await binding.takeScreenshot('03_after_previous_week');
-
-    expect(afterPrev, isNot(before));
-    if (monthOf(before) == monthOf(afterPrev)) {
-      expect(dayOf(before)! - dayOf(afterPrev)!, 7);
-    }
+    expect(daysBetween(before, afterPrev), -7,
+        reason: 'chevron w lewo: $before -> $afterPrev, oczekiwano -7 dni');
   });
 }
