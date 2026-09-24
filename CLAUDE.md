@@ -179,6 +179,14 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 
 **iOS (WidgetKit):**
 - Extension target: `ios/com.piotrwittig.plan_pm.ScheduleWidget/`
+- **`IPHONEOS_DEPLOYMENT_TARGET` extension = `17.0`, aplikacja = `15.0`** — rozjazd
+  jest celowy i wymuszony przez kod. `.containerBackground(for: .widget)` oraz
+  `.contentMarginsDisabled()` są iOS 17+ i użyte **bez** `#available`, więc niżej
+  widget się nie kompiluje (sprawdzone: przy 15.0 cztery błędy, wiążący jest
+  `containerBackground`). Wyższe minimum na extension niż na hoście jest legalne
+  — widget jest po prostu niedostępny poniżej 17. Nie zrównywać z aplikacją bez
+  przepisania tych dwóch wywołań; nie zostawiać też domyślnego z Xcode (było
+  `26.0`, czyli widget dla prawie nikogo).
 - Widget `kind` musi być **dokładnie** `PlanPMScheduleWidget` (matchuje `_iosName` w Dart)
 - App Group: `group.com.piotrwittig.plan_pm` (dodany w `Info.plist` jako `HomeWidgetAppGroupName`)
 - URL scheme `planpm://schedule` (`CFBundleURLTypes` w `Info.plist`) — `widgetURL` na widoku otwiera apkę po tapnięciu
