@@ -365,10 +365,14 @@ dotyczy wyłącznie `json2db`.
 > to `structure_check`). Odwrotnie = onboarding oferuje kombinacje bez zajęć,
 > czyli aplikacja wygląda na zepsutą. Nie zamieniać z powrotem.
 
-> **Powiadomienia Discord w tym jobie.** `json2db` i `structure_updater`
-> raportują się same (własne `finally`), więc ich etapy ustawiają
-> `env.STEP_REPORTED_ITSELF='true'` i `post { failure }` nie dokłada drugiego
-> embeda. `structure_check` milczy o własnym wywrotce — jego etap zeruje flagę.
+> **Powiadomienia Discord w tym jobie.** Tylko prawdziwy (nie dry-run) przebieg
+> `json2db` raportuje swoją porażkę sam (`finally`), więc etap `Load` ustawia
+> `env.STEP_REPORTED_ITSELF='true'` — **wewnątrz** `withCredentials`, tuż przed
+> CLI — i `post { failure }` nie dokłada drugiego embeda. Wcześniej = cisza, gdy
+> credential się nie zbinduje albo przy `DRY_RUN`. `structure_updater` zgłasza
+> **wyłącznie** nieudany zapis do bazy (padnięta strona uczelni, własna bramka
+> i dry-run przechodzą bez słowa), więc jego etap trzyma flagę na `false`;
+> `structure_check` milczy o własnej wywrotce — tak samo `false`.
 > Sam webhook jest **opcjonalny naprawdę**: `withCredentials` rzuca
 > `CredentialNotFoundException` jeszcze przed wejściem w blok, więc jest
 > sondowany raz w `Checkout` (`webhookConfigured()`) i bindowany tylko tam,

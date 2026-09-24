@@ -177,14 +177,16 @@ PY
         stage('Load into production') {
             steps {
                 dir('backend') {
-                    // json2db notifies Discord itself on this path, so
-                    // PLANPM_NOTIFY_HANDLED is deliberately left unset — and so
-                    // post{failure} must not add a second embed for this stage.
-                    script {
-                        env.STEP_REPORTED_ITSELF = 'true'
-                    }
                     withCredentials(supabaseBindings() + discordBinding()) {
                         script {
+                            // json2db notifies Discord itself (PLANPM_NOTIFY_HANDLED is
+                            // deliberately left unset), so post{failure} must not add a
+                            // second embed — but only once json2db can actually run:
+                            //   * set inside withCredentials, because a credential that
+                            //     fails to bind stops the stage before json2db starts;
+                            //   * never on a dry run, which json2db does not report.
+                            // Setting it any earlier turned both cases into silence.
+                            env.STEP_REPORTED_ITSELF = params.DRY_RUN ? 'false' : 'true'
                             def dryRun = params.DRY_RUN ? '--dry-run' : ''
                             sh """
                                 set -eu
@@ -199,10 +201,14 @@ PY
         stage('Refresh structure') {
             steps {
                 dir('backend') {
-                    // structure_updater notifies Discord itself, success and
-                    // failure alike, so this stage owns its own reporting too.
+                    // structure_updater reports ONLY a failed database write. It says
+                    // nothing when the university site is down, when its own floor
+                    // (2 faculties / 5 degree courses) rejects the scrape, or on a dry
+                    // run — the likeliest failures of this stage. So post{failure}
+                    // stays armed here; a failed write costs a second embed, which
+                    // beats silence on a dead site.
                     script {
-                        env.STEP_REPORTED_ITSELF = 'true'
+                        env.STEP_REPORTED_ITSELF = 'false'
                     }
                     withCredentials(supabaseBindings() + discordBinding()) {
                         // The app builds its dropdowns from these tables. Left unrun,
@@ -256,11 +262,12 @@ PY
                              fingerprint: false
         }
         failure {
-            // This is the fallback reporter, for the stages that say nothing for
-            // themselves: Checkout, Set up Python, Scrape, Sanity gate and
-            // Structure check. json2db and structure_updater both notify from
-            // their own `finally`, so reporting here as well produced two embeds
-            // for one failure — the flag is how a stage says "already handled".
+            // This is the fallback reporter for every stage that does not report
+            // its own failure. The one exception is a real (non-dry) json2db
+            // load, which notifies from its own `finally`; reporting here as well
+            // produced two embeds for one failure. STEP_REPORTED_ITSELF is how
+            // that stage says "already handled" — and it is set only once
+            // json2db can actually run (see Load into production).
             script {
                 if (env.STEP_REPORTED_ITSELF == 'true') {
                     echo 'The failed stage already sent its own Discord embed; not sending a second one.'
