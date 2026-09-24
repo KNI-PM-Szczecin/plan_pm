@@ -64,9 +64,19 @@ String groupPoolOf(String group) {
   return parts.length > 1 ? parts[1].trim() : "";
 }
 
+// Uczelnia miejscami wpisuje wielką literę O zamiast zera: "LO2", "AO1", "PO1"
+// (scrape z 24.09.2026, m.in. PSM 2023/24 i cały rocznik OiZwGM). Litera
+// typu się wtedy "wydłuża" ("LO" zamiast "L") i grupa wypadała do "Inne".
+// O przed cyfrą to w kodzie zawsze zero — żaden typ zajęć ani obieralnych nie
+// używa O jako litery. Tylko do KLASYFIKACJI: `full` i etykieta zostają jak w
+// bazie, bo po nich idzie inFilter("group", …) i to widzi student na stronie
+// uczelni.
+String _codeForClassification(String code) =>
+    code.replaceAll(RegExp(r'[Oo](?=\d)'), '0');
+
 /// Typ zajęć wyczytany z kodu grupy.
 GroupKind classifyGroup(String group) {
-  final code = groupCodeOf(group);
+  final code = _codeForClassification(groupCodeOf(group));
   final pool = groupPoolOf(group);
 
   if (_electiveCode.hasMatch(code) ||
