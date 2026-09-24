@@ -19,17 +19,22 @@ args = parser.parse_args()
 start_time = time.time()
 print("Starting PlanPM worker")
 
-Mapper(output="./output/mapper.json").run(minID=0, maxID=600)
-
-workers = args.workers or 10
-HttpScrapper(input="./output/mapper.json", output="./output/scrapper.json").run(max_workers=workers)
-
-Parser(input="scrapper.json").run()
-
-# The destructive safety gate lives inside json2db so every caller (CLI,
-# admin, MCP and this full pipeline) gets exactly the same protection.
+# The report covers the WHOLE pipeline, not just the load. Scoped to json2db
+# alone it stayed silent for every failure in Mapper, HttpScrapper or Parser --
+# exactly the unattended breakages the notification exists to surface. The
+# stats block skips artifacts that were never written, so an early failure
+# still reports how far the run got.
 ok = True
 try:
+    Mapper(output="./output/mapper.json").run(minID=0, maxID=600)
+
+    workers = args.workers or 10
+    HttpScrapper(input="./output/mapper.json", output="./output/scrapper.json").run(max_workers=workers)
+
+    Parser(input="scrapper.json").run()
+
+    # The destructive safety gate lives inside json2db so every caller (CLI,
+    # admin, MCP and this full pipeline) gets exactly the same protection.
     json2db(input="./output/parser.json", clear=True).run()
 except Exception:
     ok = False
