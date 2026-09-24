@@ -14,6 +14,27 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/utils/logger.dart';
 
+/// Pobiera wszystkie wiersze zapytania, strona po stronie.
+///
+/// PostgREST ucina każdą odpowiedź do `max-rows` (w Supabase domyślnie 1000)
+/// po cichu — bez błędu, który ktoś by zauważył; w onboardingu objawiłoby się
+/// to znikaniem kierunków z końca listy. Kończy dopiero na PUSTEJ stronie i
+/// przesuwa się o tyle, ile faktycznie przyszło, więc działa także wtedy, gdy
+/// serwer ma limit niższy niż [pageSize] (kosztem jednego pustego zapytania).
+Future<List<Map<String, dynamic>>> fetchAllPages(
+  Future<List<Map<String, dynamic>>> Function(int from, int to) fetchPage, {
+  int pageSize = 1000,
+}) async {
+  final rows = <Map<String, dynamic>>[];
+  var from = 0;
+  while (true) {
+    final page = await fetchPage(from, from + pageSize - 1);
+    if (page.isEmpty) return rows;
+    rows.addAll(page);
+    from += page.length;
+  }
+}
+
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
 
@@ -186,9 +207,20 @@ class BackendService {
     final structureRows = await Supabase.instance.client
         .from('v_academic_structure')
         .select();
-    final programRows = await Supabase.instance.client
-        .from('v_unique_groups')
-        .select('program_name, year, program_type, degree_level');
+    // Widok ma wiersz na każdą GRUPĘ (516 po scrape'ie z 24.09.2026), a nie na
+    // kombinację studiów, więc bez stron wyrósłby ponad limit odpowiedzi.
+    // Sortowanie po wszystkich kolumnach, żeby strony się nie nakładały.
+    final programRows = await fetchAllPages(
+      (from, to) => Supabase.instance.client
+          .from('v_unique_groups')
+          .select('program_name, year, program_type, degree_level')
+          .order('program_name')
+          .order('year')
+          .order('program_type')
+          .order('degree_level')
+          .order('group')
+          .range(from, to),
+    );
 
     final availability = ProgramAvailability.from(
       structure: structureRows
