@@ -166,4 +166,47 @@ void main() {
       expect(buildGroupSections(['', '   ']), isEmpty);
     });
   });
+
+  // Uczelnia miejscami wpisuje wielką literę O zamiast zera. Kody poniżej są
+  // 1:1 ze scrape'u z 24.09.2026. Z literą O grupa laboratoryjna lądowała w
+  // "Inne" (zgłoszenie z TestFlight, PSM 4. rok), a rocznik OiZwGM, w którym
+  // O mają WSZYSTKIE kody, dostawał jedną sekcję "Inne" z pojedynczym wyborem.
+  group('litera O zamiast zera w kodzie', () {
+    test('PSM 4. rok: LO2 i LO3 są laboratoriami, obok L01', () {
+      final sections = buildGroupSections([
+        'A01/PSM/2023/2024 ZS',
+        'L01/PSM/2023/2024 ZS',
+        'LO2/PSM/2023/2024 ZS',
+        'LO3/PSM/2023/2024 ZS',
+      ]);
+      expect(sections.map((s) => s.kind), [GroupKind.auditorium, GroupKind.labs]);
+      expect(
+        sections.last.entries.map((e) => e.code),
+        ['L01', 'LO2', 'LO3'],
+        reason: 'etykieta zostaje taka, jak na stronie uczelni',
+      );
+    });
+
+    test('OiZwGM: każdy kod z O trafia do swojej sekcji', () {
+      final sections = buildGroupSections([
+        'AO1/OiZwGM/2024/2025 ZS',
+        'CO1/OiZwGM/2024/2025 ZS',
+        'LO1/OiZwGM/2024/2025 ZS',
+        'PO1/OiZwGM/2024/2025 ZS',
+      ]);
+      expect(sections.map((s) => s.kind), [
+        GroupKind.auditorium,
+        GroupKind.classes,
+        GroupKind.labs,
+        GroupKind.project,
+      ]);
+    });
+
+    test('wartość z bazy zostaje nietknięta', () {
+      // Po niej idzie inFilter("group", …) — poprawiona "L02" nie trafiłaby
+      // w żaden wiersz.
+      final entry = buildGroupSections(['LO2/PSM/2023/2024 ZS']).single.entries.single;
+      expect(entry.full, 'LO2/PSM/2023/2024 ZS');
+    });
+  });
 }

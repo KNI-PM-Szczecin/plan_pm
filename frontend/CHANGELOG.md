@@ -1,3 +1,13 @@
+## 1.3.1
+
+### pl-PL
+
+- Grupy zapisane przez uczelnię z literą O zamiast zera (np. LO2) trafiają już do właściwej sekcji. Wcześniej lądowały w „Inne” i nie dało się wybrać wszystkich swoich grup
+
+### en-US
+
+- Groups the university wrote with a letter O instead of a zero (e.g. LO2) now appear in the right section. They used to land in "Other", so some students could not select all their groups
+
 ## 1.3.0
 
 ### pl-PL

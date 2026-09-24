@@ -108,6 +108,13 @@ używało `inFilter("group", …)`, więc backend nie wymagał zmian.
 Testy: [`test/group_categories_test.dart`](frontend/test/group_categories_test.dart) —
 po jednym teście na każdy plan z obieralnymi, na kodach ze snapshotu produkcji.
 
+**Litera O zamiast zera:** uczelnia miejscami wpisuje `LO2`, `AO1`, `PO1` (m.in.
+PSM 2023/24, cały rocznik OiZwGM). Przy klasyfikacji O przed cyfrą czytamy jak
+zero, ale `full` i etykieta zostają surowe. **Nie normalizować tego w parserze**:
+kod grupy jest kluczem `inFilter("group", …)` i siedzi zapisany u studentów —
+zmiana w bazie po cichu wycięłaby im zajęcia tej grupy z planu (regresja 1.3.0,
+naprawiona w 1.3.1).
+
 **Przepływ danych:**
 ```
 BackendService.fetchLectures() [Supabase]
