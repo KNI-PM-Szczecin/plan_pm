@@ -520,6 +520,30 @@ abstract class AppLocalizations {
   /// **'Laboratoria'**
   String get groupTypeLabs;
 
+  /// group_builder.dart - Section header for project groups (P01).
+  ///
+  /// In pl, this message translates to:
+  /// **'Projekt'**
+  String get groupTypeProject;
+
+  /// group_builder.dart - Section header for simulator groups (SYM01).
+  ///
+  /// In pl, this message translates to:
+  /// **'Symulator'**
+  String get groupTypeSimulator;
+
+  /// group_builder.dart - Section header for the faculty-wide elective pool (P0A04/WIET).
+  ///
+  /// In pl, this message translates to:
+  /// **'Przedmioty obieralne'**
+  String get groupTypeElective;
+
+  /// group_builder.dart - Hint under the elective header: this is the only multi-select section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możesz zaznaczyć kilka'**
+  String get groupTypeElectiveHint;
+
   /// group_builder.dart - Default name for unmapped group types.
   ///
   /// In pl, this message translates to:
@@ -817,14 +841,20 @@ abstract class AppLocalizations {
   /// input_page.dart - Button label for engineering degree level.
   ///
   /// In pl, this message translates to:
-  /// **'Inżynierskie'**
+  /// **'Inż.'**
   String get degreeLevelEngineering;
 
   /// input_page.dart - Button label for masters degree level.
   ///
   /// In pl, this message translates to:
-  /// **'Magisterskie'**
+  /// **'Mgr'**
   String get degreeLevelMasters;
+
+  /// input_page.dart - Button label for bachelor degree level.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lic.'**
+  String get degreeLevelBachelor;
 
   /// Ogólny komunikat wyświetlany, gdy w kodzie wystąpi wyjątek.
   ///
@@ -847,8 +877,20 @@ abstract class AppLocalizations {
   /// group_selection_page.dart - Description shown when no groups exist for the selected study settings.
   ///
   /// In pl, this message translates to:
-  /// **'Nie znaleziono żadnych grup dla Twojego planu. Czy na pewno chcesz kontynuować?'**
+  /// **'Dla tych ustawień nie ma opublikowanego planu. Od drugiego roku zajęcia są zwykle przypisane do specjalizacji — sprawdź, czy wybrałeś(aś) właściwą. Możesz też kontynuować bez grup i zobaczyć plan całego rocznika.'**
   String get noGroupsAvailableDescription;
+
+  /// group_selection_page.dart - Summary of the study settings that returned no groups.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybrane ustawienia: {settings}'**
+  String noGroupsAvailableSettings(String settings);
+
+  /// group_selection_page.dart - Button that returns to the study details form when no groups were found.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zmień dane studiów'**
+  String get changeStudyDetails;
 
   /// No description provided for @announcementDismiss.
   ///

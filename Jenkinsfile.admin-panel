@@ -1,0 +1,252 @@
+// Deploys the plan_pm admin panel as a supervised launchd service on
+// mac-mini-wiit1. This job is a DEPLOYER, not a host: it installs/reloads the
+// service and exits. launchd keeps the panel alive across crashes and reboots.
+//
+// Same split as the kni-web job on this machine, where Jenkins builds and
+// deploys while `--restart unless-stopped` does the supervising. Hosting the
+// Flask process inside the build would repeat the cloudflared 504 incident:
+// a manually-started process that dies with its session.
+//
+// ACCESS: the panel answers on the tailnet address, so any tailnet member can
+// just open http://100.99.241.45:5050 — no tunnel.
+//
+// ⚠️ THE PANEL HAS NO AUTHENTICATION. Everyone who can reach it can publish news
+// to production, switch .env_mode and run `json2db --clear` against the
+// production database. The tailnet IS the authentication boundary here, so
+// whoever administers the tailnet is effectively administering production.
+//
+// Two deliberate narrowings keep that boundary meaningful:
+//   * TAILNET_IP, not 0.0.0.0 — the panel never listens on the university LAN.
+//   * ADMIN_ALLOWED_HOSTS is an explicit allowlist, not a wildcard, so DNS
+//     rebinding still fails: an attacker-owned domain does not match.
+// The Verify stage asserts both. Do not replace them with a blanket "allow all".
+
+pipeline {
+    // Pinned rather than `agent any`: this job writes a launchd plist into
+    // ~/Library/LaunchAgents and bootstraps it, and the Verify stage then asserts
+    // the panel answers on THIS machine's tailnet address. Run anywhere else it
+    // would install the service on the wrong host and still fail — but only
+    // after having modified that host. `built-in` is the controller's self-label.
+    agent { label 'built-in' }
+
+    triggers {
+        // Same cadence as the kni-web and ALEKSY jobs on this machine.
+        pollSCM('* * * * *')
+    }
+
+    parameters {
+        booleanParam(
+            name: 'RESTART_ONLY',
+            defaultValue: false,
+            description: 'Skip dependency sync and just reload the launchd service.'
+        )
+    }
+
+    options {
+        disableConcurrentBuilds()
+        timeout(time: 15, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        timestamps()
+    }
+
+    environment {
+        // The Jenkins LaunchAgent inherits a bare PATH (/usr/bin:/bin:/usr/sbin:/sbin),
+        // so Homebrew binaries — uv above all — are invisible to `sh` steps without this.
+        PATH          = "/opt/homebrew/bin:${PATH}"
+
+        SERVICE_LABEL = 'com.piotrwittig.planpm.admin'
+        // launchd needs an absolute, stable path. The Jenkins workspace qualifies
+        // as long as this job owns it; disableConcurrentBuilds keeps it stable.
+        APP_DIR       = "${WORKSPACE}/backend"
+        PY            = "${WORKSPACE}/backend/.venv/bin/python"
+        PLIST         = "${HOME}/Library/LaunchAgents/com.piotrwittig.planpm.admin.plist"
+        LOG_DIR       = "${HOME}/Library/Logs/planpm-admin"
+
+        // Tailscale address of mac-mini-wiit1 (tailnet kni.planpm@). Binding to
+        // this rather than 0.0.0.0 keeps the panel off the university LAN.
+        TAILNET_IP    = '100.99.241.45'
+        TAILNET_HOST  = 'mac-mini-wiit1.tailab0a78.ts.net'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Sync dependencies') {
+            when { expression { !params.RESTART_ONLY } }
+            steps {
+                dir('backend') {
+                    // uv provisions the interpreter too. Required: pyproject wants
+                    // Python >=3.13 and this machine's system python3 is 3.9.6, so
+                    // a venv+pip fallback could never satisfy requires-python.
+                    sh '''
+                        set -eu
+                        if ! command -v uv >/dev/null 2>&1; then
+                            echo "uv not found on PATH ($PATH)." >&2
+                            echo "Install it with: brew install uv" >&2
+                            exit 1
+                        fi
+                        uv sync --frozen
+                        "$PY" --version
+                    '''
+                }
+            }
+        }
+
+        stage('Provision .env') {
+            when { expression { !params.RESTART_ONLY } }
+            steps {
+                // backend/.env is gitignored, so it never arrives with the
+                // checkout. Same pattern as the ALEKSY job, which keeps its .env
+                // in the Jenkins workspace and copies it in on every deploy.
+                withCredentials([file(credentialsId: 'planpm-backend-env', variable: 'ENV_FILE')]) {
+                    sh '''
+                        set -eu
+                        install -m 600 "$ENV_FILE" "$APP_DIR/.env"
+                    '''
+                }
+            }
+        }
+
+        stage('Install launchd service') {
+            steps {
+                sh '''
+                    set -eu
+                    mkdir -p "$LOG_DIR" "$(dirname "$PLIST")"
+
+                    cat > "$PLIST" <<PLISTEOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>${SERVICE_LABEL}</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>${PY}</string>
+        <string>-m</string>
+        <string>admin.app</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>${APP_DIR}</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart if the Flask process dies. This is the whole point of using
+         launchd rather than leaving the server parented to a Jenkins build. -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>${LOG_DIR}/stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>${LOG_DIR}/stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+        <key>PYTHONUTF8</key>
+        <string>1</string>
+        <key>PYTHONIOENCODING</key>
+        <string>utf-8</string>
+
+        <!-- Listen on the tailnet address only, never the LAN. -->
+        <key>ADMIN_BIND_HOST</key>
+        <string>${TAILNET_IP}</string>
+        <!-- Admit peers from Tailscale's 100.64.0.0/10 CGNAT range. -->
+        <key>ADMIN_ALLOW_TAILNET</key>
+        <string>true</string>
+        <!-- Explicit Host allowlist; keeps DNS-rebinding protection alive. -->
+        <key>ADMIN_ALLOWED_HOSTS</key>
+        <string>${TAILNET_IP},${TAILNET_HOST}</string>
+    </dict>
+</dict>
+</plist>
+PLISTEOF
+
+                    plutil -lint "$PLIST"
+                '''
+            }
+        }
+
+        stage('Reload service') {
+            steps {
+                sh '''
+                    set -eu
+                    DOMAIN="gui/$(id -u)"
+
+                    # bootout returns non-zero when the service is not loaded yet,
+                    # which is the normal first-run case.
+                    launchctl bootout "$DOMAIN/$SERVICE_LABEL" 2>/dev/null || true
+                    launchctl bootstrap "$DOMAIN" "$PLIST"
+                    launchctl enable "$DOMAIN/$SERVICE_LABEL"
+                    launchctl kickstart -k "$DOMAIN/$SERVICE_LABEL"
+                '''
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh '''
+                    set -eu
+
+                    # 1. The panel actually answers on the tailnet address.
+                    for i in $(seq 1 15); do
+                        if curl -fsS -o /dev/null "http://$TAILNET_IP:5050/"; then
+                            echo "Admin panel is up on $TAILNET_IP:5050"
+                            break
+                        fi
+                        if [ "$i" = "15" ]; then
+                            echo "Panel did not answer within 15s. Recent stderr:" >&2
+                            tail -n 40 "$LOG_DIR/stderr.log" >&2 || true
+                            exit 1
+                        fi
+                        sleep 1
+                    done
+
+                    # 2. The Host allowlist did not degrade into a wildcard.
+                    code=$(curl -s -o /dev/null -w '%{http_code}' \
+                             -H 'Host: evil.example.com' "http://$TAILNET_IP:5050/")
+                    if [ "$code" != "403" ]; then
+                        echo "SECURITY REGRESSION: foreign Host returned $code, expected 403." >&2
+                        exit 1
+                    fi
+                    echo "Host-header guard intact (403)."
+
+                    # 3. The panel is NOT listening on the university LAN. A bind
+                    #    to 0.0.0.0 would make this connection succeed.
+                    lan_ip=$(ipconfig getifaddr en0 2>/dev/null || true)
+                    if [ -n "$lan_ip" ]; then
+                        if curl -s --max-time 5 -o /dev/null "http://$lan_ip:5050/"; then
+                            echo "SECURITY REGRESSION: panel is reachable on LAN address $lan_ip." >&2
+                            exit 1
+                        fi
+                        echo "Not listening on LAN address $lan_ip (correct)."
+                    else
+                        echo "No en0 address found; skipped the LAN exposure check." >&2
+                    fi
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            sh '''
+                set +e
+                echo "--- launchctl print ---"
+                launchctl print "gui/$(id -u)/$SERVICE_LABEL" 2>&1 | head -n 40
+                echo "--- stderr tail ---"
+                tail -n 60 "$LOG_DIR/stderr.log" 2>/dev/null
+                true
+            '''
+        }
+    }
+}

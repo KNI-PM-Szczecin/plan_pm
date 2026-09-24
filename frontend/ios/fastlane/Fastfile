@@ -19,10 +19,20 @@ platform :ios do
       key_content: ENV["APP_STORE_PRIVATE_KEY"],
     )
 
-    # Let Xcode manage the App Group capability and the distribution profiles for
-    # the app + ScheduleWidget extension. A single manually installed profile
-    # cannot cover both bundle IDs, so signing stays automatic on CI too.
-    signing_xcargs = ["-allowProvisioningUpdates"]
+    # Locally, let Xcode manage signing against the signed-in account.
+    #
+    # On CI this stays empty on purpose. -allowProvisioningUpdates asks Xcode
+    # to provision whatever it thinks is missing, and what it decided was
+    # missing was an *Apple Development* certificate for the build machine:
+    # it created one on the account, put the private key in the throwaway CI
+    # keychain, and that keychain is deleted at the end of the build. Every
+    # later build then failed with "your account already has an Apple
+    # Development signing certificate for this machine, but its private key
+    # is not installed in your keychain", and the account collected one dead
+    # "Apple Development: Created via API" certificate per run — there are
+    # three from the old GitHub Actions deploys to prove it. CI signs
+    # manually instead, with the certificate and profiles it was handed.
+    signing_xcargs = ENV["CI"] ? [] : ["-allowProvisioningUpdates"]
 
     # Install the distribution certificate in CI (profiles are fetched on the fly)
     if ENV["CI"]
@@ -44,22 +54,6 @@ platform :ios do
         keychain_password: keychain_password,
       )
 
-      # `api_key` above only authorizes fastlane's own App Store Connect calls.
-      # The archive needs the key on disk as well, otherwise
-      # -allowProvisioningUpdates falls back to Xcode's (nonexistent on CI)
-      # signed-in accounts. gym injects these flags into the *export* command
-      # itself, so they must not be repeated there -- xcodebuild rejects
-      # -authenticationKeyPath when it is passed twice.
-      key_id = ENV["APP_STORE_KEY_ID"]
-      key_path = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
-      File.write(key_path, ENV["APP_STORE_PRIVATE_KEY"].gsub('\n', "\n"))
-      File.chmod(0600, key_path)
-
-      signing_xcargs += [
-        "-authenticationKeyPath '#{key_path}'",
-        "-authenticationKeyID '#{key_id}'",
-        "-authenticationKeyIssuerID '#{ENV["APP_STORE_ISSUER_ID"]}'",
-      ]
     end
 
     signing_xcargs = signing_xcargs.join(" ")
@@ -79,14 +73,69 @@ platform :ios do
       xcodeproj: "Runner.xcodeproj",
     )
 
+    # Export signing.
+    #
+    # Locally this stays automatic: a signed-in Xcode resolves profiles itself.
+    #
+    # On CI it must be manual. Automatic export asks Apple to issue profiles
+    # through cloud signing, and this team's API key is not permitted to do
+    # that -- the export fails with "Cloud signing permission error" followed by
+    # "No profiles for 'com.piotrwittig.planpm' were found", even though the
+    # archive itself signed fine. The app and the ScheduleWidget extension are
+    # separate bundle IDs needing separate profiles, which is why this is a map
+    # rather than a single profile.
+    #
+    # sigh runs with readonly: true, so it only ever downloads what already
+    # exists on the account. Rotating the distribution certificate invalidates
+    # these profiles, so a new certificate means recreating both profiles
+    # against it; nothing here has to change when that happens, because the
+    # lookup is by bundle id.
+    export_opts = { signingStyle: "automatic" }
+
+    if ENV["CI"]
+      # Target name -> bundle id. The extension's Xcode target happens to be
+      # named after its bundle id, but the two strings are not the same.
+      targets = {
+        "Runner" => "com.piotrwittig.planpm",
+        "com.piotrwittig.plan_pm.ScheduleWidgetExtension" =>
+          "com.piotrwittig.planpm.com-piotrwittig-plan-pm-ScheduleWidget",
+      }
+
+      profiles = {}
+      targets.each do |target, bundle|
+        get_provisioning_profile(
+          api_key: api_key,
+          app_identifier: bundle,
+          readonly: true,
+        )
+        profile_name = lane_context[SharedValues::SIGH_NAME]
+        profiles[bundle] = profile_name
+
+        # Pin the archive to this profile and the distribution identity, so
+        # Xcode has nothing left to decide and never reaches for a development
+        # certificate. This rewrites project.pbxproj; the Jenkins job restores
+        # it in `post { always }`.
+        update_code_signing_settings(
+          path: "Runner.xcodeproj",
+          targets: [target],
+          use_automatic_signing: false,
+          team_id: "UYTX3DLBWN",
+          code_sign_identity: "Apple Distribution",
+          bundle_identifier: bundle,
+          profile_name: profile_name,
+        )
+      end
+
+      UI.message("Signing manually with profiles: #{profiles.inspect}")
+      export_opts = { signingStyle: "manual", provisioningProfiles: profiles }
+    end
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
       export_team_id: "UYTX3DLBWN",
-      export_options: {
-        signingStyle: "automatic",
-      },
+      export_options: export_opts,
       xcargs: signing_xcargs,
     )
 
@@ -94,6 +143,15 @@ platform :ios do
       read_changelog_locale(version_name, "pl-PL"),
       read_changelog_locale(version_name, "en-US"),
     ].join("\n\n")
+
+    # A CI machine that has never built this app before needs a way to prove
+    # the whole chain — archive, signing, export — without spending a build
+    # number: TestFlight rejects a re-upload of one, so a failed first attempt
+    # would otherwise force a pubspec bump before the next try.
+    if ENV["PLANPM_SKIP_UPLOAD"] == "true"
+      UI.important("PLANPM_SKIP_UPLOAD is set — built and signed #{version_name} (#{build_number}), not uploading to TestFlight.")
+      next
+    end
 
     upload_to_testflight(
       api_key: api_key,

@@ -9,9 +9,31 @@ import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/service/database_service.dart';
+import 'package:plan_pm/service/program_availability.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:plan_pm/global/utils/logger.dart';
+
+/// Pobiera wszystkie wiersze zapytania, strona po stronie.
+///
+/// PostgREST ucina każdą odpowiedź do `max-rows` (w Supabase domyślnie 1000)
+/// po cichu — bez błędu, który ktoś by zauważył; w onboardingu objawiłoby się
+/// to znikaniem kierunków z końca listy. Kończy dopiero na PUSTEJ stronie i
+/// przesuwa się o tyle, ile faktycznie przyszło, więc działa także wtedy, gdy
+/// serwer ma limit niższy niż [pageSize] (kosztem jednego pustego zapytania).
+Future<List<Map<String, dynamic>>> fetchAllPages(
+  Future<List<Map<String, dynamic>>> Function(int from, int to) fetchPage, {
+  int pageSize = 1000,
+}) async {
+  final rows = <Map<String, dynamic>>[];
+  var from = 0;
+  while (true) {
+    final page = await fetchPage(from, from + pageSize - 1);
+    if (page.isEmpty) return rows;
+    rows.addAll(page);
+    from += page.length;
+  }
+}
 
 class BackendService {
   static final BackendService _backendService = BackendService._internal();
@@ -178,28 +200,60 @@ class BackendService {
     AppLogger.i("[BACKEND-SERVICE] Cache cleared");
   }
 
-  Future<Map<String, Map<String, List<String>>>> fetchStructure() async {
-    final response = await Supabase.instance.client
+  /// Kombinacje studiów, dla których w bazie naprawdę są grupy — drzewko
+  /// struktury złączone z planami po nazwie. Formularz onboardingu kaskaduje
+  /// po tym, żeby nie dało się wybrać zestawu bez ani jednej grupy.
+  Future<ProgramAvailability> fetchProgramAvailability() async {
+    final structureRows = await Supabase.instance.client
         .from('v_academic_structure')
         .select();
+    // Widok ma wiersz na każdą GRUPĘ (516 po scrape'ie z 24.09.2026), a nie na
+    // kombinację studiów, więc bez stron wyrósłby ponad limit odpowiedzi.
+    // Sortowanie po wszystkich kolumnach, żeby strony się nie nakładały.
+    final programRows = await fetchAllPages(
+      (from, to) => Supabase.instance.client
+          .from('v_unique_groups')
+          .select('program_name, year, program_type, degree_level')
+          .order('program_name')
+          .order('year')
+          .order('program_type')
+          .order('degree_level')
+          .order('group')
+          .range(from, to),
+    );
 
-    final Map<String, Map<String, List<String>>> facultiesMap = {};
+    final availability = ProgramAvailability.from(
+      structure: structureRows
+          .map(
+            (row) => StructureEntry(
+              faculty: row['faculty_name'] as String,
+              degreeCourse: row['degree_course_name'] as String,
+              specialisation: row['specialisation_name'] as String?,
+            ),
+          )
+          .toList(),
+      programs: programRows
+          .map(
+            (row) => ProgramRow(
+              programName: row['program_name'] as String,
+              year: (row['year'] as num).toInt(),
+              programType: row['program_type'] as String,
+              degreeLevel: row['degree_level'] as String,
+            ),
+          )
+          .toList(),
+    );
 
-    for (var row in response) {
-      final f = row['faculty_name'] as String;
-      final dc = row['degree_course_name'] as String;
-      final s = row['specialisation_name'] as String?; // Może być null
-
-      facultiesMap.putIfAbsent(f, () => {});
-      facultiesMap[f]!.putIfAbsent(dc, () => []);
-
-      // Dodajemy specjalizację tylko jeśli istnieje i jeszcze jej nie ma na liście
-      if (s != null && !facultiesMap[f]![dc]!.contains(s)) {
-        facultiesMap[f]![dc]!.add(s);
-      }
+    if (availability.unmatchedProgramNames.isNotEmpty) {
+      // Plan, którego nazwa nie pasuje do żadnego węzła struktury, jest dla
+      // studenta niewidoczny. Backend raportuje to samo na Discorda po każdym
+      // przebiegu pipeline'u (structure_check) — tu zostaje ślad w logach.
+      AppLogger.w(
+        "[BACKEND-SERVICE] Plany bez węzła w strukturze: "
+        "${availability.unmatchedProgramNames.join(', ')}",
+      );
     }
-
-    return facultiesMap;
+    return availability;
   }
 
   Future<List<Map<String, dynamic>>> fetchAllTeachers() async {

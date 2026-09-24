@@ -2,6 +2,18 @@
 *.class
 *.lock
 *.log
+
+# ...except the lockfiles that pin what CI builds. This .gitignore was inherited
+# from the Flutter repo's own, where `*.lock` makes sense; here it meant every
+# build resolved dependencies afresh. A clean resolve on 2026-09-18 came back
+# with 44 packages at versions different from the ones this app is developed
+# against, and `html` 0.15.6 -> 0.15.7 alone broke the build inside
+# flutter_html ("Method not found: 'matches'"). That is the same class of
+# failure that repeatedly broke the old GitHub Actions deploy, and no amount of
+# pinning Flutter or fastlane covers it.
+!pubspec.lock
+!ios/Gemfile.lock
+!android/Gemfile.lock
 *.pyc
 *.swp
 .buildlog/
@@ -122,3 +134,6 @@ app.*.symbols
 android/planpm_deploy_key.json
 ios/Runner.ipa
 ios/Runner.app.dSYM.zip
+
+# Zrzuty z testow integracyjnych (flutter drive) - regenerowane na zadanie
+screenshots/

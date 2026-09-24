@@ -5,6 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 
 class OnboardingActionBar extends StatelessWidget {
+  /// Wysokość samych przycisków.
+  static const double barHeight = 50;
+
+  /// Ile miejsca musi zarezerwować na dole przewijana treść strony, żeby jej
+  /// ostatni element dało się przewinąć **nad** pasek. Pasek pływa nad body,
+  /// więc bez tego zapasu ostatni rząd zostaje fizycznie pod przyciskami i
+  /// nie da się go kliknąć — widać to na szerokich/niskich ekranach
+  /// (rozłożony foldable, tablet), gdzie treść kończy się dokładnie na
+  /// wysokości paska.
+  static double reservedSpace(BuildContext context) =>
+      barHeight +
+      kFloatingActionButtonMargin * 2 +
+      MediaQuery.paddingOf(context).bottom;
+
   const OnboardingActionBar({
     super.key,
     required this.skipLabel,
@@ -27,7 +41,7 @@ class OnboardingActionBar extends StatelessWidget {
         children: [
           Expanded(
             child: SizedBox(
-              height: 50,
+              height: barHeight,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   backgroundColor: AppColor.surface,
@@ -43,7 +57,7 @@ class OnboardingActionBar extends StatelessWidget {
           ),
           Expanded(
             child: SizedBox(
-              height: 50,
+              height: barHeight,
               child: FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColor.primary,

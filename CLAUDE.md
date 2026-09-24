@@ -70,6 +70,44 @@ Notifery (`lib/global/notifiers/`):
 
 Tryb persystowany w SharedPreferences, ładowany w `app_initialization.dart`.
 
+**Dostępność kombinacji studiów (onboarding):**
+
+`ProgramAvailability` ([`lib/service/program_availability.dart`](frontend/lib/service/program_availability.dart))
+łączy drzewko struktury (`v_academic_structure`) z planami, które **mają grupy**
+(`v_unique_groups`), i to po tym kaskaduje `InputPage` — nie po samym drzewku.
+Powód: od 2. roku plan jest wystawiany pod nazwą **specjalizacji**, nie kierunku,
+więc z samego drzewka dało się złożyć zestaw bez ani jednej grupy.
+
+- Dopasowanie idzie po nazwie (jedyny wspólny klucz): normalizacja białych znaków
+  + lowercase, a końcówka językowa (`ang.`) odcinana do osobnego wariantu.
+  Znacznik jest **kanonizowany** do `ang.`: uczelnia pisze go w każdym roczniku
+  inaczej (`ANG`, `ANG.`, `ang.` — jedna ścieżka Transportu Morskiego, scrape
+  24.09.2026), a z niego powstaje `specialisationKey`. Surowy dawał trzy pozycje
+  jednej ścieżki. `programName` zostaje 1:1 z bazą.
+- Zapisujemy `programName` z bazy **1:1** (`Student.specialisation`/`degreeCourse`),
+  żeby `.eq("program_name", …)` trafiało też przy nazwie z podwójną spacją.
+- Wymiar z jedną możliwą wartością wybiera się sam; niedostępne lata/stopnie/tryby
+  są wyszarzone, nie ukryte.
+- Plan, którego nazwa nie pasuje do żadnego węzła struktury, trafia do
+  `unmatchedProgramNames` — to samo liczy backendowy `structure_check`.
+- Testy: [`test/program_availability_test.dart`](frontend/test/program_availability_test.dart)
+  — jeden test na każdy kierunek, na snapshocie produkcji
+  (`test/fixtures/availability_snapshot.json`, regeneracja:
+  `backend/scripts/dump_availability_fixture.py`).
+
+**Wybór grup (`group_categories.dart`):**
+
+Kod grupy to `KOD/PULA/ROCZNIK`, np. `P0A04/WIET/2024/2025 ZS`.
+[`buildGroupSections`](frontend/lib/service/group_categories.dart) dzieli grupy na sekcje:
+audytorium / ćwiczenia / laboratoria / projekt / symulator (pojedynczy wybór — student
+należy do jednej grupy) oraz **przedmioty obieralne** (pula `WIET`, kod `P0<litera><numer>`)
+— jedyna sekcja **wielokrotnego wyboru**. Wcześniej kategoria brała pierwszą literę kodu,
+więc grupa projektowa i cała pula obieralnych trafiały do jednego worka „Inne" z jednym
+slotem, a plan wychodził niepełny (3 zgłoszenia). Zapytanie o zajęcia już wcześniej
+używało `inFilter("group", …)`, więc backend nie wymagał zmian.
+Testy: [`test/group_categories_test.dart`](frontend/test/group_categories_test.dart) —
+po jednym teście na każdy plan z obieralnymi, na kodach ze snapshotu produkcji.
+
 **Przepływ danych:**
 ```
 BackendService.fetchLectures() [Supabase]
@@ -145,6 +183,14 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 
 **iOS (WidgetKit):**
 - Extension target: `ios/com.piotrwittig.plan_pm.ScheduleWidget/`
+- **`IPHONEOS_DEPLOYMENT_TARGET` extension = `17.0`, aplikacja = `15.0`** — rozjazd
+  jest celowy i wymuszony przez kod. `.containerBackground(for: .widget)` oraz
+  `.contentMarginsDisabled()` są iOS 17+ i użyte **bez** `#available`, więc niżej
+  widget się nie kompiluje (sprawdzone: przy 15.0 cztery błędy, wiążący jest
+  `containerBackground`). Wyższe minimum na extension niż na hoście jest legalne
+  — widget jest po prostu niedostępny poniżej 17. Nie zrównywać z aplikacją bez
+  przepisania tych dwóch wywołań; nie zostawiać też domyślnego z Xcode (było
+  `26.0`, czyli widget dla prawie nikogo).
 - Widget `kind` musi być **dokładnie** `PlanPMScheduleWidget` (matchuje `_iosName` w Dart)
 - App Group: `group.com.piotrwittig.plan_pm` (dodany w `Info.plist` jako `HomeWidgetAppGroupName`)
 - URL scheme `planpm://schedule` (`CFBundleURLTypes` w `Info.plist`) — `widgetURL` na widoku otwiera apkę po tapnięciu
@@ -233,6 +279,7 @@ Pipeline jest tylko HTTP — `HttpScrapper` (`scrapper/http_scrapper.py`).
 python main.py [--workers N]      # pełny pipeline (domyślnie 10 workerów)
 python -m json2db.json2db --input ./output/parser.json [--clear] [--dry-run]
 python -m structure_updater.structure_updater [--dry-run]
+python -m structure_check.structure_check [--no-notify] [--strict]
 python -m admin.app               # panel admina pod localhost:5050
 python -m mcp_server.server        # MCP server (stdio) do sterowania backendem przez agenta
 ```
@@ -277,6 +324,17 @@ Zabezpieczenia (`@app.before_request`): odrzuca żądania, których `Sec-Fetch-S
 
 FastMCP (`plan-pm-backend`), narzędzia agenta do sterowania backendem: `run_pipeline_step` (kroki: `mapper|scrapper|parser|json2db|structure`), `run_full_pipeline`, `get_logs`, `list_news`/`create_news`/`delete_news`, `get_env_mode`/`set_env_mode`. Narzędzia pipeline'owe i newsowe przyjmują `env="prod"|"test"` (**domyślnie `prod`**, niezależnie od `.env_mode`!) i propagują je do podprocesów przez `PLANPM_ENV`; `get_logs` i `get_env_mode`/`set_env_mode` nie mają parametru `env`.
 
+### Structure check (`structure_check/`)
+
+Strażnik: aplikacja dopasowuje studenta do planu po **nazwie**, więc plan, którego
+nazwy nie ma w drzewku struktury, jest dla studenta niewidoczny (tak przez miesiące
+znikał rocznik z `Inżynieria i Bezpieczeństwo  w Transporcie Drogowym` — podwójna
+spacja). Moduł odtwarza reguły dopasowania z `program_availability.dart`
+(normalizacja spacji, lowercase, końcówka językowa) i raportuje rozjazdy: log +
+Discord. Wołany automatycznie na końcu `main.py` oraz jako osobny etap w Jenkinsie;
+**nie przerywa pipeline'u** — dane są poprawne, rozjechała się nazwa. `--strict`
+zwraca kod 1 (do CI).
+
 ### Powiadomienia (`notifier.py`)
 
 `notify_discord(...)` wysyła embed na webhook z `DISCORD_WEBHOOK_URL` (brak zmiennej = no-op). Współdzielony przez admin panel i MCP dla operacji destrukcyjnych (zapisy do DB). Błędy powiadomienia nigdy nie przerywają operacji. `structure_updater` powiadamia się sam — nie dubluj.
@@ -291,7 +349,60 @@ FastMCP (`plan-pm-backend`), narzędzia agenta do sterowania backendem: `run_pip
 feature/*  ──PR──►  main  ──PR──►  deployment  ──push──►  App Store / Play Store
 ```
 
-### Workflow checks
+### Jenkins — dzienna propagacja ([`Jenkinsfile`](Jenkinsfile))
+
+`Checkout → Set up Python → Scrape → Sanity gate → Load into production →
+Refresh structure → Structure check`. Dwa ostatnie etapy pilnują tego, co widzi
+student: `structure_updater` odświeża listy w onboardingu (bez tego nowa
+specjalizacja jest niewybieralna), a `structure_check` raportuje plany, których
+nazwa wypadła z drzewka. Żaden z nich nie czyści zajęć — bramka bezpieczeństwa
+dotyczy wyłącznie `json2db`.
+
+> **Kolejność `Load` przed `Refresh structure` jest celowa.** To dwa niezależne
+> zapisy destrukcyjne bez wspólnej transakcji, więc jeden może wejść bez
+> drugiego. Zajęcia najpierw + nieodświeżona struktura = nowa specjalizacja
+> jeszcze niewybieralna (stan normalny każdego dnia przed zmianą nazwy, zgłasza
+> to `structure_check`). Odwrotnie = onboarding oferuje kombinacje bez zajęć,
+> czyli aplikacja wygląda na zepsutą. Nie zamieniać z powrotem.
+
+> **Powiadomienia Discord w tym jobie.** Tylko prawdziwy (nie dry-run) przebieg
+> `json2db` raportuje swoją porażkę sam (`finally`), więc etap `Load` ustawia
+> `env.STEP_REPORTED_ITSELF='true'` — **wewnątrz** `withCredentials`, tuż przed
+> CLI — i `post { failure }` nie dokłada drugiego embeda. Wcześniej = cisza, gdy
+> credential się nie zbinduje albo przy `DRY_RUN`. `structure_updater` zgłasza
+> **wyłącznie** nieudany zapis do bazy (padnięta strona uczelni, własna bramka
+> i dry-run przechodzą bez słowa), więc jego etap trzyma flagę na `false`;
+> `structure_check` milczy o własnej wywrotce — tak samo `false`.
+> Sam webhook jest **opcjonalny naprawdę**: `withCredentials` rzuca
+> `CredentialNotFoundException` jeszcze przed wejściem w blok, więc jest
+> sondowany raz w `Checkout` (`webhookConfigured()`) i bindowany tylko tam,
+> gdzie istnieje.
+
+### Jenkins — deploy na store'y ([`Jenkinsfile.deploy`](Jenkinsfile.deploy))
+
+`Checkout → Preflight → Provision Flutter → Release metadata → Generate
+secrets.dart → Flutter dependencies → iOS → Android`. Deploy **zszedł z GitHub
+Actions** (`deploy.yml` usunięty): workflow nie przypinał ani Fluttera, ani
+fastlane'a, więc psuł się od zmian w toolchainie runnera, nie od zmian w repo —
+5 z ostatnich 9 przebiegów padło z tego powodu.
+
+Tu toolchain jest przypięty: Flutter przez `FLUTTER_VERSION` (job sam klonuje SDK
+do `~/.jenkins-toolchains/flutter-<wersja>`), fastlane przez
+`frontend/{ios,android}/Gemfile`, Xcode przez `DEVELOPER_DIR` (globalny
+`xcode-select` na tej maszynie wskazuje CommandLineTools i ma tak zostać).
+
+> **Fastlane ↔ Fastfile są sprzężone.** Od 2.237 gym sam wstrzykuje
+> `-authenticationKey*` do `-exportArchive`, więc `ios/fastlane/Fastfile` podaje
+> je wyłącznie przez `xcargs`. Zejście poniżej 2.237 wymaga przywrócenia
+> `export_xcargs: signing_xcargs` **w tym samym commicie**.
+
+iOS i Android idą sekwencyjnie (jeden workspace, jeden `frontend/build`), ale
+każdy w `catchError` — porażka jednego nie blokuje drugiego. `DRY_RUN` ustawia
+`PLANPM_SKIP_UPLOAD=true`, które oba Fastfile'e honorują tuż przed
+`upload_to_*`; tak puszcza się pierwszy build na nowej maszynie, bo store'y nie
+przyjmą dwa razy tego samego numeru builda.
+
+### Workflow checks (GitHub Actions — zostały tylko bramki PR)
 
 | Workflow | Trigger | Co sprawdza |
 |----------|---------|-------------|
@@ -300,18 +411,21 @@ feature/*  ──PR──►  main  ──PR──►  deployment  ──push─
 | `deployment-changelog-check.yml` | PR → deployment | `CHANGELOG.md` ma wpis dla aktualnej wersji |
 | `version-check.yml` | PR → deployment lub production | wersja w `pubspec.yaml` > bazy |
 | `deployment-source-check.yml` | PR → deployment | źródłowy branch == `main` |
-| `deploy.yml` | push → deployment | buduje iOS + Android, deployuje |
 
 ### Pomijanie deployu
 
-Dodaj do **treści commita** (nie tytułu PR):
-- `[skip ios]` — pomija job iOS
-- `[skip android]` — pomija job Android
+Dodaj do **treści commita** (nie tytułu PR) — czyta to `Jenkinsfile.deploy`:
+- `[skip ios]` — pomija etap iOS
+- `[skip android]` — pomija etap Android
 - `[skip deploy]` — pomija oba
 
 ### Secrets w CI
 
-`secrets.dart` jest generowany w trakcie buildu ze zmiennych GitHub Secrets — nie istnieje w repo. Lokalnie utwórz go ręcznie (skopiuj `lib/secrets_example.dart` i uzupełnij klucze — `switch_env.py` go **nie** generuje).
+`secrets.dart` jest generowany w trakcie buildu z credentiali Jenkinsa
+(`planpm-supabase-prod-url`, `planpm-supabase-prod-anon-key`) — nie istnieje
+w repo i jest kasowany w `post { always }`. Lokalnie utwórz go ręcznie (skopiuj
+`lib/secrets_example.dart` i uzupełnij klucze — `switch_env.py` go **nie**
+generuje). Pełna lista credentiali: [`docs/deployment.md`](docs/deployment.md).
 
 ---
 
@@ -320,7 +434,9 @@ Dodaj do **treści commita** (nie tytułu PR):
 - **Wszystkie artefakty Git po angielsku** — commit subject + body, PR title, PR description (włącznie z sekcjami "Summary"/"Test plan"/"Out of scope" i punktami). Konwersacja z użytkownikiem może być po polsku; tylko historia git i UI GitHuba muszą być po angielsku.
 - Format commita: `type: opis` (fix, feat, chore, refactor, docs)
 - **Nigdy nie commituj/pushuj bez wyraźnej zgody użytkownika** w danej rozmowie. Pull request też wymaga zgody przed `gh pr create`.
-- Nie pushuj bezpośrednio na `main` (branch protected)
+- Push bezpośrednio na `main` jest dozwolony. PR mile widziany przy większych
+  zmianach, ale nie jest wymagany (ochrona zdjęta 15.09.2026 decyzją zespołu).
+  Force push i usunięcie `main` pozostają zablokowane.
 - Nie używaj `git push --force` (na żadnym branchu) bez wyraźnej zgody w danym momencie
 - Nie commituj `.env`, `secrets.dart`, kluczy API
 - Nie dodawaj atrybucji Claude w commitach (`Co-Authored-By: Claude …` ani podobnych)

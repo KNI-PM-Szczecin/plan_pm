@@ -57,7 +57,13 @@ class StudentInfo extends StatelessWidget {
           divider,
           InfoText(
             title: l10n.studyModeLabel,
-            content: Student.studyMode?.displayName,
+            // StudyMode.displayName jest zaszyte po polsku (służy logom), więc
+            // na ekranie bierzemy tłumaczenie — inaczej UA/EN widzą "Stacjonarne".
+            content: switch (Student.studyMode) {
+              StudyMode.stationary => l10n.campusButton,
+              StudyMode.notStationary => l10n.extramuralButton,
+              null => null,
+            },
           ),
         ],
       ),

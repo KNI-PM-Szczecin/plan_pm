@@ -1,3 +1,29 @@
+## 1.3.0
+
+### pl-PL
+
+- Wybór kierunku pokazuje tylko warianty, dla których plan istnieje
+- Dodano studia licencjackie i ścieżki anglojęzyczne
+- Przedmioty obieralne można zaznaczyć naraz — plan nie jest już niepełny
+- Osobne sekcje grup projektowych i symulatorowych
+- Ostatni rząd grup nie chowa się już pod paskiem przycisków
+- Pusta lista grup tłumaczy, czego brakuje
+- Plan można przewijać tydzień po tygodniu
+- We wrześniu plan nie jest już pusty
+- Poprawki nazw kierunków, przez które znikały roczniki
+
+### en-US
+
+- The study form only offers options that really have a schedule
+- Added bachelor programmes and English-taught tracks
+- Electives can be selected together, so the schedule is complete
+- Separate sections for project and simulator groups
+- The last row of groups no longer hides behind the button bar
+- An empty group list explains what is missing
+- The schedule can be moved a week at a time
+- The schedule is no longer empty in September
+- Fixed programme names that made whole cohorts disappear
+
 ## 1.2.2
 
 ### pl-PL

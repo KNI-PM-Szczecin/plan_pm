@@ -9,7 +9,7 @@ from pathlib import Path
 from flask import Blueprint, Response, render_template, session
 
 from admin.db import get_env_mode
-from notifier import notify_discord, pipeline_stats_text
+from notifier import NOTIFY_HANDLED_ENV, notify_discord, pipeline_stats_text
 
 BACKEND_ROOT = Path(__file__).parent.parent.parent
 
@@ -116,6 +116,8 @@ def run(step: str):
                 "PYTHONUTF8": "1",
                 "PYTHONIOENCODING": "utf-8",
                 "PYTHONUNBUFFERED": "1",
+                # We notify below; stop the CLI entry point doing it too.
+                NOTIFY_HANDLED_ENV: "1",
             }
             proc = subprocess.Popen(
                 STEPS[step]["cmd"],
