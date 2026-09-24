@@ -542,13 +542,18 @@ PY
                 # project.pbxproj. Left behind, the next poll sees a dirty tree.
                 git checkout -- frontend/ios frontend/android 2>/dev/null
 
-                # `git checkout` only restores tracked files, and the Android lane
-                # GENERATES frontend/android/metadata/android/<locale>/changelogs/
-                # <version_code>.txt per release. Untracked and un-ignored, those
-                # pile up in a workspace that is reused build after build, one
-                # stale changelog per version ever shipped. Narrow on purpose:
-                # only the directory the lane creates, never a blanket clean.
-                git clean -fdq frontend/android/metadata 2>/dev/null
+                # `git checkout` only restores tracked files, and the lanes leave
+                # untracked output behind in a workspace reused build after build:
+                #   * the Android lane writes one changelog per version code. The
+                #     Fastfile's "metadata/..." is relative to the directory
+                #     fastlane runs Fastfile code in, frontend/android/fastlane —
+                #     NOT frontend/android. Build #10 proved the difference: a
+                #     clean of frontend/android/metadata removed nothing.
+                #   * the iOS lane downloads the App Store provisioning profiles
+                #     into frontend/ios; it fetches them again on every run.
+                # Narrow on purpose: only what the lanes create, never a blanket clean.
+                git clean -fdq frontend/android/fastlane/metadata 2>/dev/null
+                rm -f frontend/ios/AppStore_*.mobileprovision
                 true
             '''
 
