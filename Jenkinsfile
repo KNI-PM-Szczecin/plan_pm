@@ -8,10 +8,16 @@
 // Credentials expected in Jenkins (Manage Jenkins -> Credentials), as Secret text:
 //   planpm-supabase-url          -> SUPABASE_URL          (prod project URL)
 //   planpm-supabase-service-key  -> SUPABASE_SERVICE_KEY  (prod service_role key)
-//   planpm-discord-webhook       -> DISCORD_WEBHOOK_URL   (optional; absent = no embeds)
+//   planpm-discord-webhook       -> DISCORD_WEBHOOK_URL   (optional; absent = no embeds,
+//                                   probed at Checkout and bound only where present)
 
 pipeline {
-    agent any
+    // Pinned, not `agent any`: this job assumes Homebrew under /opt/homebrew and
+    // uv on the controller's PATH. Jenkins currently has no agent nodes, so the
+    // two are the same thing today — but the day one is attached, `any` would
+    // start scheduling production database writes onto whichever machine was
+    // free. `built-in` is the controller's own self-label.
+    agent { label 'built-in' }
 
     triggers {
         // Daily at 04:0x local time, every month except July and August.
@@ -67,6 +73,16 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    // Resolved once and reused: every later binding is conditional
+                    // on it, and probing per stage would only repeat the lookup.
+                    env.HAS_DISCORD_WEBHOOK = webhookConfigured().toString()
+                    if (env.HAS_DISCORD_WEBHOOK != 'true') {
+                        echo 'planpm-discord-webhook is not configured — this build will not send Discord embeds.'
+                    }
+                    // No stage has run yet, so nothing has reported for itself.
+                    env.STEP_REPORTED_ITSELF = 'false'
+                }
             }
         }
 
@@ -111,10 +127,7 @@ pipeline {
         stage('Sanity gate') {
             steps {
                 dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY')
-                    ]) {
+                    withCredentials(supabaseBindings()) {
                         // json2db has its own MIN_CLASSES_TO_CLEAR=100 floor, but 100
                         // is far below a healthy scrape (~3600). If the university
                         // site half-breaks and returns 200 rows, that floor passes and
@@ -151,14 +164,47 @@ PY
             }
         }
 
+        // Classes load BEFORE the structure is refreshed, and the order is the
+        // whole point. These are two independent destructive writes with no
+        // shared transaction, so one of them can land without the other; what
+        // differs is what a student sees in the meantime.
+        //   load first, structure stale  -> a newly opened specialisation is not
+        //       yet selectable. That is the status quo of any day before the
+        //       university renamed anything, and Structure check reports it.
+        //   structure first, load failed -> the dropdowns offer combinations
+        //       backed by stale or empty classes: the app looks broken.
+        // The second is strictly worse, so the reversible-looking step goes last.
+        stage('Load into production') {
+            steps {
+                dir('backend') {
+                    // json2db notifies Discord itself on this path, so
+                    // PLANPM_NOTIFY_HANDLED is deliberately left unset — and so
+                    // post{failure} must not add a second embed for this stage.
+                    script {
+                        env.STEP_REPORTED_ITSELF = 'true'
+                    }
+                    withCredentials(supabaseBindings() + discordBinding()) {
+                        script {
+                            def dryRun = params.DRY_RUN ? '--dry-run' : ''
+                            sh """
+                                set -eu
+                                "\$PY" -m json2db.json2db --input ./output/parser.json --clear ${dryRun}
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Refresh structure') {
             steps {
                 dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY'),
-                        string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')
-                    ]) {
+                    // structure_updater notifies Discord itself, success and
+                    // failure alike, so this stage owns its own reporting too.
+                    script {
+                        env.STEP_REPORTED_ITSELF = 'true'
+                    }
+                    withCredentials(supabaseBindings() + discordBinding()) {
                         // The app builds its dropdowns from these tables. Left unrun,
                         // a specialisation the university opens mid-year is simply not
                         // selectable — that is how "Logistyka Transportu Zintegrowanego"
@@ -176,36 +222,16 @@ PY
             }
         }
 
-        stage('Load into production') {
-            steps {
-                dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY'),
-                        string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')
-                    ]) {
-                        // json2db notifies Discord itself on this path, so
-                        // PLANPM_NOTIFY_HANDLED is deliberately left unset.
-                        script {
-                            def dryRun = params.DRY_RUN ? '--dry-run' : ''
-                            sh """
-                                set -eu
-                                "\$PY" -m json2db.json2db --input ./output/parser.json --clear ${dryRun}
-                            """
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Structure check') {
             steps {
                 dir('backend') {
-                    withCredentials([
-                        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
-                        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY'),
-                        string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')
-                    ]) {
+                    // structure_check only notifies about names it could not
+                    // match; it says nothing when it crashes, so a failure here
+                    // is post{failure}'s to report.
+                    script {
+                        env.STEP_REPORTED_ITSELF = 'false'
+                    }
+                    withCredentials(supabaseBindings() + discordBinding()) {
                         // Every published plan must be reachable from the app's
                         // dropdowns. Deliberately not --strict: the data is loaded and
                         // correct, it is a name that drifted, and a red build every
@@ -230,21 +256,62 @@ PY
                              fingerprint: false
         }
         failure {
-            // json2db only reports once it starts; a failure in scrape or at the
-            // gate would otherwise be silent.
-            withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
-                dir('backend') {
-                    sh '''
-                        set +e
-                        "$PY" -c "
+            // This is the fallback reporter, for the stages that say nothing for
+            // themselves: Checkout, Set up Python, Scrape, Sanity gate and
+            // Structure check. json2db and structure_updater both notify from
+            // their own `finally`, so reporting here as well produced two embeds
+            // for one failure — the flag is how a stage says "already handled".
+            script {
+                if (env.STEP_REPORTED_ITSELF == 'true') {
+                    echo 'The failed stage already sent its own Discord embed; not sending a second one.'
+                } else if (env.HAS_DISCORD_WEBHOOK == 'true') {
+                    withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
+                        dir('backend') {
+                            sh '''
+                                set +e
+                                "$PY" -c "
 from notifier import notify_discord
 notify_discord('Daily propagation', success=False,
                detail='Jenkins build ''' + '${BUILD_NUMBER}' + ''' failed before or during the DB load. See ''' + '${BUILD_URL}' + '''',
                env='prod')
 " || true
-                    '''
+                            '''
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// planpm-discord-webhook is documented as optional ("absent = no embeds"), but
+// withCredentials raises CredentialNotFoundException before it ever enters the
+// block. Binding it unconditionally therefore made the credential mandatory in
+// practice: on a Jenkins without it, every stage below the sanity gate failed —
+// and so did the post{failure} block trying to report that failure.
+//
+// Probe it once, with an empty body so nothing can happen inside the try but
+// the binding itself, and bind it afterwards only where it exists.
+// ---------------------------------------------------------------------------
+def webhookConfigured() {
+    try {
+        withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'PROBE')]) { }
+        return true
+    } catch (ignored) {
+        return false
+    }
+}
+
+def discordBinding() {
+    return env.HAS_DISCORD_WEBHOOK == 'true'
+        ? [string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]
+        : []
+}
+
+def supabaseBindings() {
+    return [
+        string(credentialsId: 'planpm-supabase-url', variable: 'SUPABASE_URL'),
+        string(credentialsId: 'planpm-supabase-service-key', variable: 'SUPABASE_SERVICE_KEY')
+    ]
 }

@@ -347,11 +347,28 @@ feature/*  ──PR──►  main  ──PR──►  deployment  ──push─
 
 ### Jenkins — dzienna propagacja ([`Jenkinsfile`](Jenkinsfile))
 
-`Checkout → Set up Python → Scrape → Sanity gate → Refresh structure → Load into
-production → Structure check`. Dwa ostatnie etapy pilnują tego, co widzi student:
-`structure_updater` odświeża listy w onboardingu (bez tego nowa specjalizacja jest
-niewybieralna), a `structure_check` raportuje plany, których nazwa wypadła z drzewka.
-Żaden z nich nie czyści zajęć — bramka bezpieczeństwa dotyczy wyłącznie `json2db`.
+`Checkout → Set up Python → Scrape → Sanity gate → Load into production →
+Refresh structure → Structure check`. Dwa ostatnie etapy pilnują tego, co widzi
+student: `structure_updater` odświeża listy w onboardingu (bez tego nowa
+specjalizacja jest niewybieralna), a `structure_check` raportuje plany, których
+nazwa wypadła z drzewka. Żaden z nich nie czyści zajęć — bramka bezpieczeństwa
+dotyczy wyłącznie `json2db`.
+
+> **Kolejność `Load` przed `Refresh structure` jest celowa.** To dwa niezależne
+> zapisy destrukcyjne bez wspólnej transakcji, więc jeden może wejść bez
+> drugiego. Zajęcia najpierw + nieodświeżona struktura = nowa specjalizacja
+> jeszcze niewybieralna (stan normalny każdego dnia przed zmianą nazwy, zgłasza
+> to `structure_check`). Odwrotnie = onboarding oferuje kombinacje bez zajęć,
+> czyli aplikacja wygląda na zepsutą. Nie zamieniać z powrotem.
+
+> **Powiadomienia Discord w tym jobie.** `json2db` i `structure_updater`
+> raportują się same (własne `finally`), więc ich etapy ustawiają
+> `env.STEP_REPORTED_ITSELF='true'` i `post { failure }` nie dokłada drugiego
+> embeda. `structure_check` milczy o własnym wywrotce — jego etap zeruje flagę.
+> Sam webhook jest **opcjonalny naprawdę**: `withCredentials` rzuca
+> `CredentialNotFoundException` jeszcze przed wejściem w blok, więc jest
+> sondowany raz w `Checkout` (`webhookConfigured()`) i bindowany tylko tam,
+> gdzie istnieje.
 
 ### Jenkins — deploy na store'y ([`Jenkinsfile.deploy`](Jenkinsfile.deploy))
 

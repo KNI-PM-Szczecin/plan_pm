@@ -76,7 +76,14 @@
 // as files: one less encoding to get wrong, and nothing is ever echoed.
 
 pipeline {
-    agent any
+    // Pinned rather than `agent any`. Everything below is macOS-and-this-machine
+    // specific: Xcode at a fixed path, Homebrew ruby under /opt/homebrew, the
+    // login keychain, the Android SDK and the provisioned Flutter toolchain in
+    // $HOME. On a second node `any` would not fail fast — it would fail deep,
+    // after the certificate and the keystore had already been written to disk
+    // there. `built-in` is the controller's own self-label; Jenkins has no agent
+    // nodes today, which is exactly why this is cheap to pin now.
+    agent { label 'built-in' }
 
     triggers {
         // The job is configured against */deployment, so this fires on a merge
@@ -169,6 +176,12 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    env.HAS_DISCORD_WEBHOOK = webhookConfigured().toString()
+                    if (env.HAS_DISCORD_WEBHOOK != 'true') {
+                        echo 'planpm-discord-webhook is not configured — a failed deploy will not ping Discord.'
+                    }
+                }
             }
         }
 
@@ -528,6 +541,14 @@ PY
                 # The lane rewrites the marketing version and build number into
                 # project.pbxproj. Left behind, the next poll sees a dirty tree.
                 git checkout -- frontend/ios frontend/android 2>/dev/null
+
+                # `git checkout` only restores tracked files, and the Android lane
+                # GENERATES frontend/android/metadata/android/<locale>/changelogs/
+                # <version_code>.txt per release. Untracked and un-ignored, those
+                # pile up in a workspace that is reused build after build, one
+                # stale changelog per version ever shipped. Narrow on purpose:
+                # only the directory the lane creates, never a blanket clean.
+                git clean -fdq frontend/android/metadata 2>/dev/null
                 true
             '''
 
@@ -540,8 +561,16 @@ PY
             // A release that silently did not happen is worse than a failed one:
             // nobody watches this job, and the first signal is otherwise a user
             // asking why the update never arrived.
-            withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
-                sh '''
+            //
+            // Conditional because the webhook is optional: withCredentials throws
+            // CredentialNotFoundException before running its body, so binding it
+            // unconditionally meant this block could fail while reporting the
+            // failure it exists to report — and the deploy's own error would be
+            // buried under a credentials stack trace.
+            script {
+              if (env.HAS_DISCORD_WEBHOOK == 'true') {
+                withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
+                    sh '''
                     set +e
                     [ -n "${DISCORD_WEBHOOK_URL:-}" ] || exit 0
                     /usr/bin/python3 - <<'PY' || true
@@ -568,8 +597,22 @@ req = urllib.request.Request(
 )
 urllib.request.urlopen(req, timeout=10).read()
 PY
-                '''
+                    '''
+                }
+              }
             }
         }
+    }
+}
+
+// See the same helper in Jenkinsfile: planpm-discord-webhook is optional, and
+// withCredentials makes an optional credential mandatory unless it is probed
+// first. The probe body is empty, so nothing but the binding runs inside try.
+def webhookConfigured() {
+    try {
+        withCredentials([string(credentialsId: 'planpm-discord-webhook', variable: 'PROBE')]) { }
+        return true
+    } catch (ignored) {
+        return false
     }
 }

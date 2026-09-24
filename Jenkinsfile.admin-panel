@@ -22,7 +22,12 @@
 // The Verify stage asserts both. Do not replace them with a blanket "allow all".
 
 pipeline {
-    agent any
+    // Pinned rather than `agent any`: this job writes a launchd plist into
+    // ~/Library/LaunchAgents and bootstraps it, and the Verify stage then asserts
+    // the panel answers on THIS machine's tailnet address. Run anywhere else it
+    // would install the service on the wrong host and still fail — but only
+    // after having modified that host. `built-in` is the controller's self-label.
+    agent { label 'built-in' }
 
     triggers {
         // Same cadence as the kni-web and ALEKSY jobs on this machine.
