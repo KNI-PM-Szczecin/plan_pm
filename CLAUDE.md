@@ -80,6 +80,10 @@ więc z samego drzewka dało się złożyć zestaw bez ani jednej grupy.
 
 - Dopasowanie idzie po nazwie (jedyny wspólny klucz): normalizacja białych znaków
   + lowercase, a końcówka językowa (`ang.`) odcinana do osobnego wariantu.
+  Znacznik jest **kanonizowany** do `ang.`: uczelnia pisze go w każdym roczniku
+  inaczej (`ANG`, `ANG.`, `ang.` — jedna ścieżka Transportu Morskiego, scrape
+  24.09.2026), a z niego powstaje `specialisationKey`. Surowy dawał trzy pozycje
+  jednej ścieżki. `programName` zostaje 1:1 z bazą.
 - Zapisujemy `programName` z bazy **1:1** (`Student.specialisation`/`degreeCourse`),
   żeby `.eq("program_name", …)` trafiało też przy nazwie z podwójną spacją.
 - Wymiar z jedną możliwą wartością wybiera się sam; niedostępne lata/stopnie/tryby

@@ -30,14 +30,22 @@ String normalizeProgramName(String value) {
 }
 
 /// Rozdziela "Transport Morski ang." na nazwę bazową i znacznik języka.
+///
+/// Znacznik wraca w postaci kanonicznej ("ang."), nie w tej z bazy: uczelnia
+/// pisze go w każdym roczniku inaczej ("ANG", "ANG.", "ang."), a z niego
+/// powstaje [ProgramOption.specialisationKey]. Surowy dawał trzy prawie
+/// identyczne pozycje jednej ścieżki, z których każda odblokowywała jeden
+/// rocznik. Dokładna nazwa planu zostaje w [ProgramOption.programName].
 ({String base, String? language}) splitLanguageSuffix(String programName) {
   final parts = programName
       .replaceAll("\u00a0", " ")
       .split(RegExp(r"\s+"))
       .where((part) => part.isNotEmpty)
       .toList();
-  if (parts.length > 1 && _languageTokens.contains(parts.last.toLowerCase())) {
-    return (base: parts.sublist(0, parts.length - 1).join(" "), language: parts.last);
+  final token = parts.length > 1 ? parts.last.toLowerCase() : null;
+  if (token != null && _languageTokens.contains(token)) {
+    final canonical = token.endsWith(".") ? token : "$token.";
+    return (base: parts.sublist(0, parts.length - 1).join(" "), language: canonical);
   }
   return (base: parts.join(" "), language: null);
 }

@@ -268,11 +268,58 @@ void main() {
     test('polski znacznik nie tworzy wariantu, angielski tak', () {
       expect(splitLanguageSuffix('Informatyka POL').language, isNull);
       expect(splitLanguageSuffix('Informatyka pol.').language, isNull);
-      expect(splitLanguageSuffix('Informatyka ANG').language, 'ANG');
+      expect(splitLanguageSuffix('Informatyka ANG').language, 'ang.');
       expect(splitLanguageSuffix('Informatyka ang.').language, 'ang.');
       expect(splitLanguageSuffix('Informatyka').language, isNull);
       expect(splitLanguageSuffix('ANG').language, isNull,
           reason: 'sama końcówka nie jest nazwą planu');
+    });
+
+    // Uczelnia pisze znacznik różnie w każdym roczniku. Scrape z 24.09.2026
+    // zwrócił jedną ścieżkę angielską Transportu Morskiego w trzech
+    // pisowniach — po jednej na rocznik. Parser zostawia je 1:1 (i dobrze,
+    // `.eq("program_name", …)` potrzebuje dokładnej nazwy), więc to tutaj
+    // musi powstać jeden wariant, a nie trzy prawie identyczne pozycje.
+    test('ścieżka angielska w trzech pisowniach to jedna pozycja na liście', () {
+      final node = snapshot.structure.firstWhere(
+        (e) => e.specialisation == 'Transport Morski',
+      );
+      final scraped = ProgramAvailability.from(
+        structure: snapshot.structure,
+        programs: const [
+          ProgramRow(programName: 'Transport Morski', year: 3, programType: 'S', degreeLevel: 'inż.'),
+          ProgramRow(programName: 'Transport Morski ANG.', year: 3, programType: 'S', degreeLevel: 'inż.'),
+          ProgramRow(programName: 'Transport Morski ANG', year: 2, programType: 'S', degreeLevel: 'inż.'),
+          ProgramRow(programName: 'Transport Morski ang.', year: 1, programType: 'S', degreeLevel: 'inż.'),
+        ],
+      );
+
+      final choices = scraped.specialisationChoices(
+        faculty: node.faculty,
+        degreeCourse: node.degreeCourse,
+      );
+      final english = choices.where((o) => o.specialisation == 'Transport Morski' && o.language != null).toList();
+      expect(english, hasLength(1), reason: 'jedna ścieżka angielska, nie trzy');
+
+      final key = english.single.specialisationKey;
+      expect(
+        scraped.years(faculty: node.faculty, degreeCourse: node.degreeCourse, specialisationKey: key),
+        {1, 2, 3},
+      );
+
+      const expectedName = {1: 'Transport Morski ang.', 2: 'Transport Morski ANG', 3: 'Transport Morski ANG.'};
+      for (final entry in expectedName.entries) {
+        final option = scraped.resolve(
+          faculty: node.faculty,
+          degreeCourse: node.degreeCourse,
+          specialisationKey: key,
+          year: entry.key,
+          programType: 'S',
+          degreeLevel: 'inż.',
+        );
+        expect(option?.programName, entry.value,
+            reason: 'rok ${entry.key} musi trafić w dokładną nazwę z bazy');
+      }
     });
   });
 
