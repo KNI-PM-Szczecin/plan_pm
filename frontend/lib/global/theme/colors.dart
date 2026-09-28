@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 
 class ColorThemes {
-  static const Color lightBackground = Color(0xf7f8faFF);
+  // Color() to ARGB — alfa idzie PIERWSZA. Było `0xf7f8faFF` (zapis RGBA), czyli
+  // tło o kryciu 97%: przy przejściu poprzedni ekran prześwitywał przez nowy,
+  // a po animacji znikał i kolor całego ekranu skakał (flicker od 1.0).
+  static const Color lightBackground = Color(0xFFF7F8FA);
   static const Color lightOnBackground = Colors.black;
   static final Color lightOnBackgroundVariant = Colors.black.withAlpha(150);
   static const Color lightSurface = Colors.white;
