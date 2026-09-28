@@ -4,7 +4,7 @@
 
 | Plik | Używany w |
 |---|---|
-| `logo_light.png` | `lib/global/widgets/sidebar.dart` — logo w nagłówku bocznego panelu nawigacyjnego |
+| `logo_light.png` | `lib/global/widgets/sidebar.dart` — logo w nagłówku bocznego panelu nawigacyjnego; `lib/global/widgets/app_icon_tile.dart` — ikona na ekranie powitalnym |
 | `kni_logo.png` | `lib/pages/settings/about_page.dart` — logo KNI na stronie "O aplikacji" |
 | `theme_light.png` | `lib/pages/settings/appearance_page.dart` — podgląd jasnego motywu |
 | `theme_dark.png` | `lib/pages/settings/appearance_page.dart` — podgląd ciemnego motywu |
@@ -33,12 +33,3 @@ Generowanie: `dart run flutter_native_splash:create`
 |---|---|
 | `background.png` | Tło splash screena (tryb jasny) |
 | `background_dark.png` | Tło splash screena (tryb ciemny) |
-
-## Animacje (`lotties/`)
-
-| Plik | Używany w |
-|---|---|
-| `bell.json` | `lib/pages/welcome/welcome_page.dart` — animacja powiadomień (slajd onboardingu) |
-| `calendar.json` | `lib/pages/welcome/welcome_page.dart` — animacja kalendarza (slajd onboardingu) |
-| `search.json` | `lib/pages/welcome/welcome_page.dart` — animacja wyszukiwania (slajd onboardingu) |
-| `womanschedule.json` | `lib/pages/welcome/welcome_page.dart` — animacja planu zajęć (slajd onboardingu) |

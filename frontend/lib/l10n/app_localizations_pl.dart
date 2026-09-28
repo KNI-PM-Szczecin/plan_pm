@@ -9,31 +9,11 @@ class AppLocalizationsPl extends AppLocalizations {
   AppLocalizationsPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get stage1Title => '';
+  String get welcomeTagline =>
+      'Przejrzysty i szybki plan zajęć z podglądem na żywo.';
 
   @override
-  String get stage1Button => 'Witaj w Plan PM';
-
-  @override
-  String get stage2Title =>
-      'Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.';
-
-  @override
-  String get stage2Button => 'Dalej';
-
-  @override
-  String get stage3Title =>
-      'Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.';
-
-  @override
-  String get stage3Button => 'Dalej';
-
-  @override
-  String get stage4Title =>
-      'Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.';
-
-  @override
-  String get stage4Button => 'Rozpocznij';
+  String get welcomeButton => 'Witaj w Plan PM';
 
   @override
   String get welcomePageSelectionText => 'Powrót do WelcomeScreen';
@@ -246,6 +226,17 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupTypeOther => 'Inne';
 
   @override
+  String get groupsSectionHeader => 'Grupy';
+
+  @override
+  String selectedCount(int count) {
+    return 'Wybrano: $count';
+  }
+
+  @override
+  String get groupNotSelected => 'Nie wybrano';
+
+  @override
   String get pageTitleHome => 'Strona główna';
 
   @override
@@ -437,6 +428,13 @@ class AppLocalizationsPl extends AppLocalizations {
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
 
   @override
+  String get retryButton => 'Spróbuj ponownie';
+
+  @override
+  String get unavailableOptionsHint =>
+      'Niedostępne opcje nie są prowadzone na tym kierunku.';
+
+  @override
   String get noGroupsAvailable => 'Brak dostępnych grup';
 
   @override
@@ -603,6 +601,15 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get roleLecturerButton => 'Jestem wykładowcą';
+
+  @override
+  String get roleStudentSubtitle => 'Plan według kierunku i grupy';
+
+  @override
+  String get roleLecturerSubtitle => 'Plan według prowadzącego';
+
+  @override
+  String get nextButton => 'Dalej';
 
   @override
   String get lecturerSelectionTitle => 'Wybierz prowadzącego';

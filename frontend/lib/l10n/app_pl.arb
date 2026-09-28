@@ -1,36 +1,12 @@
 {
   "@@locale": "pl",
-  "stage1Title": "",
-  "@stage1Title": {
-    "description": "onboarding_screen.dart - Title/Header for the first onboarding step. (Empty value is intentional)"
+  "welcomeTagline": "Przejrzysty i szybki plan zajęć z podglądem na żywo.",
+  "@welcomeTagline": {
+    "description": "welcome_page.dart - App tagline under the app name on the welcome screen."
   },
-  "stage1Button": "Witaj w Plan PM",
-  "@stage1Button": {
-    "description": "onboarding_screen.dart - Action button on the first welcome screen."
-  },
-  "stage2Title": "Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.",
-  "@stage2Title": {
-    "description": "onboarding_screen.dart - Feature description for the second step."
-  },
-  "stage2Button": "Dalej",
-  "@stage2Button": {
-    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
-  },
-  "stage3Title": "Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.",
-  "@stage3Title": {
-    "description": "onboarding_screen.dart - Feature description for the third step."
-  },
-  "stage3Button": "Dalej",
-  "@stage3Button": {
-    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
-  },
-  "stage4Title": "Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.",
-  "@stage4Title": {
-    "description": "onboarding_screen.dart - Feature description for the final step."
-  },
-  "stage4Button": "Rozpocznij",
-  "@stage4Button": {
-    "description": "onboarding_screen.dart - Button to finalize onboarding and start configuration."
+  "welcomeButton": "Witaj w Plan PM",
+  "@welcomeButton": {
+    "description": "welcome_page.dart - Button that finishes the welcome screen and starts setup."
   },
   "welcomePageSelectionText": "Powrót do WelcomeScreen",
   "@welcomePageSelectionText": {
@@ -308,6 +284,23 @@
   "@groupTypeOther": {
     "description": "group_builder.dart - Default name for unmapped group types."
   },
+  "groupsSectionHeader": "Grupy",
+  "@groupsSectionHeader": {
+    "description": "group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...)."
+  },
+  "selectedCount": "Wybrano: {count}",
+  "@selectedCount": {
+    "description": "group_selection_page.dart - Counter next to the electives header.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupNotSelected": "Nie wybrano",
+  "@groupNotSelected": {
+    "description": "group_selection_page.dart - Placeholder and menu option for a group type left without a group."
+  },
   "pageTitleHome": "Strona główna",
   "@pageTitleHome": {
     "description": "main.dart - Title for the Home page in the navigation bar."
@@ -501,6 +494,14 @@
   "@networkErrorDescription": {
     "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
   },
+  "retryButton": "Spróbuj ponownie",
+  "@retryButton": {
+    "description": "input_page.dart - Button that retries loading after a network error."
+  },
+  "unavailableOptionsHint": "Niedostępne opcje nie są prowadzone na tym kierunku.",
+  "@unavailableOptionsHint": {
+    "description": "input_page.dart - Footer under the segmented controls explaining greyed-out options."
+  },
   "noGroupsAvailable": "Brak dostępnych grup",
   "@noGroupsAvailable": {
     "description": "group_selection_page.dart - Title shown when no groups exist for the selected study settings."
@@ -637,6 +638,9 @@
   "roleSelectionSubtitle": "Wybierz rolę, która najlepiej opisuje Twoje potrzeby",
   "roleStudentButton": "Jestem studentem",
   "roleLecturerButton": "Jestem wykładowcą",
+  "roleStudentSubtitle": "Plan według kierunku i grupy",
+  "roleLecturerSubtitle": "Plan według prowadzącego",
+  "nextButton": "Dalej",
   "lecturerSelectionTitle": "Wybierz prowadzącego",
   "lecturerSelectionSubtitle": "Wpisz imię, nazwisko lub nazwę przedmiotu",
   "lecturerSearchNoResults": "Brak wyników",

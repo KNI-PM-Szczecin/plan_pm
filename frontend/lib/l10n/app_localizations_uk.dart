@@ -9,31 +9,11 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get stage1Title => '';
+  String get welcomeTagline =>
+      'Зрозумілий і швидкий розклад занять із переглядом наживо.';
 
   @override
-  String get stage1Button => 'Ласкаво просимо до Plan PM';
-
-  @override
-  String get stage2Title =>
-      'Перегляньте всі заняття у зручному тижневому розкладі.';
-
-  @override
-  String get stage2Button => 'Далі';
-
-  @override
-  String get stage3Title =>
-      'Легко знаходьте свої аудиторії завдяки детальній інформації про місцезнаходження.';
-
-  @override
-  String get stage3Button => 'Далі';
-
-  @override
-  String get stage4Title =>
-      'Отримуйте нагадування перед кожним заняттям, щоб ніколи їх не пропустити.';
-
-  @override
-  String get stage4Button => 'Розпочати';
+  String get welcomeButton => 'Ласкаво просимо до Plan PM';
 
   @override
   String get welcomePageSelectionText => 'Повернутися до WelcomeScreen';
@@ -254,6 +234,17 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupTypeOther => 'Інше';
 
   @override
+  String get groupsSectionHeader => 'Групи';
+
+  @override
+  String selectedCount(int count) {
+    return 'Вибрано: $count';
+  }
+
+  @override
+  String get groupNotSelected => 'Не вибрано';
+
+  @override
   String get pageTitleHome => 'Головна';
 
   @override
@@ -447,6 +438,13 @@ class AppLocalizationsUk extends AppLocalizations {
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
 
   @override
+  String get retryButton => 'Спробувати ще раз';
+
+  @override
+  String get unavailableOptionsHint =>
+      'Недоступні варіанти не пропонуються на цьому напрямі.';
+
+  @override
   String get noGroupsAvailable => 'Немає доступних груп';
 
   @override
@@ -613,6 +611,15 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get roleLecturerButton => 'Я викладач';
+
+  @override
+  String get roleStudentSubtitle => 'Розклад за напрямом і групою';
+
+  @override
+  String get roleLecturerSubtitle => 'Розклад за викладачем';
+
+  @override
+  String get nextButton => 'Далі';
 
   @override
   String get lecturerSelectionTitle => 'Виберіть викладача';

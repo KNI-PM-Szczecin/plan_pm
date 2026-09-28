@@ -9,30 +9,11 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get stage1Title => '';
+  String get welcomeTagline =>
+      'A clear, fast class schedule with a live preview.';
 
   @override
-  String get stage1Button => 'Welcome to Plan PM';
-
-  @override
-  String get stage2Title => 'See all classes in a clear weekly schedule.';
-
-  @override
-  String get stage2Button => 'Next';
-
-  @override
-  String get stage3Title =>
-      'Easily find your rooms with detailed location information.';
-
-  @override
-  String get stage3Button => 'Next';
-
-  @override
-  String get stage4Title =>
-      'Receive reminders before every class so you never miss them.';
-
-  @override
-  String get stage4Button => 'Start';
+  String get welcomeButton => 'Welcome to Plan PM';
 
   @override
   String get welcomePageSelectionText => 'Back to WelcomeScreen';
@@ -251,6 +232,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupTypeOther => 'Other';
 
   @override
+  String get groupsSectionHeader => 'Groups';
+
+  @override
+  String selectedCount(int count) {
+    return 'Selected: $count';
+  }
+
+  @override
+  String get groupNotSelected => 'Not selected';
+
+  @override
   String get pageTitleHome => 'Home';
 
   @override
@@ -440,6 +432,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Check your internet connection and try again.';
 
   @override
+  String get retryButton => 'Try again';
+
+  @override
+  String get unavailableOptionsHint =>
+      'Unavailable options are not offered for this field of study.';
+
+  @override
   String get noGroupsAvailable => 'No groups available';
 
   @override
@@ -605,6 +604,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleLecturerButton => 'I\'m a lecturer';
+
+  @override
+  String get roleStudentSubtitle => 'Schedule by field of study and group';
+
+  @override
+  String get roleLecturerSubtitle => 'Schedule by lecturer';
+
+  @override
+  String get nextButton => 'Next';
 
   @override
   String get lecturerSelectionTitle => 'Select lecturer';

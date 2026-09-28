@@ -100,53 +100,17 @@ abstract class AppLocalizations {
     Locale('uk'),
   ];
 
-  /// onboarding_screen.dart - Title/Header for the first onboarding step. (Empty value is intentional)
+  /// welcome_page.dart - App tagline under the app name on the welcome screen.
   ///
   /// In pl, this message translates to:
-  /// **''**
-  String get stage1Title;
+  /// **'Przejrzysty i szybki plan zajęć z podglądem na żywo.'**
+  String get welcomeTagline;
 
-  /// onboarding_screen.dart - Action button on the first welcome screen.
+  /// welcome_page.dart - Button that finishes the welcome screen and starts setup.
   ///
   /// In pl, this message translates to:
   /// **'Witaj w Plan PM'**
-  String get stage1Button;
-
-  /// onboarding_screen.dart - Feature description for the second step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.'**
-  String get stage2Title;
-
-  /// onboarding_screen.dart - Navigation button to the next onboarding step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Dalej'**
-  String get stage2Button;
-
-  /// onboarding_screen.dart - Feature description for the third step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.'**
-  String get stage3Title;
-
-  /// onboarding_screen.dart - Navigation button to the next onboarding step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Dalej'**
-  String get stage3Button;
-
-  /// onboarding_screen.dart - Feature description for the final step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.'**
-  String get stage4Title;
-
-  /// onboarding_screen.dart - Button to finalize onboarding and start configuration.
-  ///
-  /// In pl, this message translates to:
-  /// **'Rozpocznij'**
-  String get stage4Button;
+  String get welcomeButton;
 
   /// debug_menu.dart - Debug/Navigation link to return to the Welcome screen.
   ///
@@ -550,6 +514,24 @@ abstract class AppLocalizations {
   /// **'Inne'**
   String get groupTypeOther;
 
+  /// group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...).
+  ///
+  /// In pl, this message translates to:
+  /// **'Grupy'**
+  String get groupsSectionHeader;
+
+  /// group_selection_page.dart - Counter next to the electives header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybrano: {count}'**
+  String selectedCount(int count);
+
+  /// group_selection_page.dart - Placeholder and menu option for a group type left without a group.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie wybrano'**
+  String get groupNotSelected;
+
   /// main.dart - Title for the Home page in the navigation bar.
   ///
   /// In pl, this message translates to:
@@ -868,6 +850,18 @@ abstract class AppLocalizations {
   /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
   String get networkErrorDescription;
 
+  /// input_page.dart - Button that retries loading after a network error.
+  ///
+  /// In pl, this message translates to:
+  /// **'Spróbuj ponownie'**
+  String get retryButton;
+
+  /// input_page.dart - Footer under the segmented controls explaining greyed-out options.
+  ///
+  /// In pl, this message translates to:
+  /// **'Niedostępne opcje nie są prowadzone na tym kierunku.'**
+  String get unavailableOptionsHint;
+
   /// group_selection_page.dart - Title shown when no groups exist for the selected study settings.
   ///
   /// In pl, this message translates to:
@@ -1179,6 +1173,24 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Jestem wykładowcą'**
   String get roleLecturerButton;
+
+  /// No description provided for @roleStudentSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan według kierunku i grupy'**
+  String get roleStudentSubtitle;
+
+  /// No description provided for @roleLecturerSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan według prowadzącego'**
+  String get roleLecturerSubtitle;
+
+  /// No description provided for @nextButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dalej'**
+  String get nextButton;
 
   /// No description provided for @lecturerSelectionTitle.
   ///
