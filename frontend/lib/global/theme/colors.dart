@@ -149,6 +149,87 @@ class AppColor {
       ? ColorThemes.lightColorfulAlphaValue
       : ColorThemes.darkColorfulAlphaValue;
 
+  // Role z design systemu (iOS 27 Flat). Półprzezroczyste — leżą na
+  // dowolnym tle i same dopasowują się do niego.
+
+  /// Tekst pomocniczy: podtytuły, opisy pod nagłówkiem.
+  static Color get labelSecondary => _brightness == Brightness.light
+      ? const Color(0x993C3C43)
+      : const Color(0xB2EBEBF5);
+
+  /// Tylko placeholdery i nieaktywny tekst — poniżej 4.5:1, nie na treść.
+  static Color get labelTertiary => _brightness == Brightness.light
+      ? const Color(0x4D3C3C43)
+      : const Color(0x4DEBEBF5);
+
+  /// Tło średnich kontrolek (np. szary przycisk).
+  static Color get fillSecondary => _brightness == Brightness.light
+      ? const Color(0x29787880)
+      : const Color(0x52787880);
+
+  /// Tło nieaktywnej kontrolki, pola wyszukiwania.
+  static Color get fillTertiary => _brightness == Brightness.light
+      ? const Color(0x1F767680)
+      : const Color(0x3D767680);
+
+  /// Stałe kolory systemowe — na kafelki ikon, które mają wyglądać tak samo
+  /// niezależnie od wybranego akcentu (np. rola student / wykładowca).
+  static Color get systemBlue => _brightness == Brightness.light
+      ? const Color(0xFF0088FF)
+      : const Color(0xFF0091FF);
+
+  static Color get systemIndigo => _brightness == Brightness.light
+      ? const Color(0xFF6155F5)
+      : const Color(0xFF6D7CFF);
+
+  /// Najlżejsze wypełnienie — wciśnięty wiersz listy, duże tła.
+  static Color get fillQuaternary => _brightness == Brightness.light
+      ? const Color(0x14747480)
+      : const Color(0x2E767680);
+
+  /// Tło strony z listami grupowanymi (Ustawienia, O aplikacji, menu boczne).
+  static Color get groupedBackground => _brightness == Brightness.light
+      ? const Color(0xFFF2F2F7)
+      : const Color(0xFF000000);
+
+  /// Karta sekcji na [groupedBackground] i tło okienek dialogowych.
+  static Color get groupedSurface => _brightness == Brightness.light
+      ? const Color(0xFFFFFFFF)
+      : const Color(0xFF1C1C1E);
+
+  /// Zaznaczony segment w [AppSegmentedControl].
+  static Color get segmentedSelected => _brightness == Brightness.light
+      ? const Color(0xFFFFFFFF)
+      : const Color(0x45FFFFFF);
+
+  /// Przyciemnienie strony pod okienkiem dialogowym i menu bocznym.
+  static Color get overlay => _brightness == Brightness.light
+      ? const Color(0x33000000)
+      : const Color(0x7A000000);
+
+  static Color get systemGreen => _brightness == Brightness.light
+      ? const Color(0xFF34C759)
+      : const Color(0xFF30D158);
+
+  static Color get systemOrange => _brightness == Brightness.light
+      ? const Color(0xFFFF8D28)
+      : const Color(0xFFFF9230);
+
+  static Color get systemRed => _brightness == Brightness.light
+      ? const Color(0xFFFF383C)
+      : const Color(0xFFFF4245);
+
+  static Color get systemPurple => _brightness == Brightness.light
+      ? const Color(0xFFCB30E0)
+      : const Color(0xFFDB34F2);
+
+  static Color get systemGray => const Color(0xFF8E8E93);
+
+  /// Cienka linia: separator wierszy, obrys kafelka.
+  static Color get separator => _brightness == Brightness.light
+      ? const Color(0x1F000000)
+      : const Color(0x2BFFFFFF);
+
   static Color rectorHoursBackground(Brightness brightness) => 
       brightness == Brightness.dark 
           ? Color.lerp(Colors.grey.shade900, Colors.black, 0.1)! 

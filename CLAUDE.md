@@ -174,7 +174,18 @@ lib/pages/
 - Oba używają `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)`
 - Ramka `AppColor.outline` musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem
 
-**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` — iOS daje `CNButton.icon(glass)`, Android daje `IconButton`.
+**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` — iOS daje płaskie kółko 44 pt z chevronem (iOS 27 Flat, bez Liquid Glass), Android daje `IconButton` ze strzałką ←.
+
+**Komponenty redesignu (`lib/global/widgets/app_*.dart`, design: Claude Design „PlanPM Redesign"):**
+nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGroupedSection`,
+`AppSection` (nagłówek/akcja/stopka), `AppMenuField`, `AppSegmentedControl`,
+`AppBottomActions`, `AppDialog`, `AppStateCard`, `AppScreenHeader`. Design jest jeden,
+**zachowanie zależy od platformy** i siedzi wyłącznie w komponentach (`AppPressable`:
+iOS przygaszenie/podświetlenie, Android ripple; nagłówki sekcji na iOS wersalikami,
+na Androidzie zdaniem w akcencie) — ekrany nie sprawdzają platformy same.
+Tło podawaj przez `AppPressable.color`, nie w dziecku (inaczej ripple jest pod spodem).
+`GenericNoResource`/`GenericLoading` zostają **tylko** dla ekranów zajęć — redesign
+nie obejmuje zajęć ani dolnego paska (`navigation_bar.dart`), nie ruszać ich.
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
