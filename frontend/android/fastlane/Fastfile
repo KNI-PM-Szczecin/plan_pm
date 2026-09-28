@@ -10,6 +10,38 @@ def read_changelog_locale(version, locale)
   locale_match ? locale_match[1].strip : "Bug fixes and improvements"
 end
 
+# The APK attached to the GitHub release. Deliberately the universal APK Google
+# generates from the uploaded bundle, not a local `flutter build apk`: Play App
+# Signing re-signs the app with Google's key, so a locally built APK carries the
+# upload key instead and cannot be installed over the Play Store version (nor
+# the other way round) without uninstalling and losing the user's settings.
+#
+# Never fails the lane — by now the release is already on Play. A missing file
+# is what the Jenkins release stage reports, as an unstable build.
+def download_play_apk(version_name, version_code)
+  destination = File.expand_path("../../build/app/outputs/universal-apk/plan_pm-#{version_name}.apk")
+  FileUtils.rm_f(destination)
+
+  # Play generates the APK while it processes the bundle, so it can lag the
+  # upload by a minute or two; until then the API answers with an error.
+  attempts = 10
+  attempts.times do |i|
+    begin
+      download_universal_apk_from_google_play(
+        package_name: "com.piotrwittig.plan_pm",
+        version_code: version_code.to_i,
+        json_key_data: ENV["PLAY_STORE_JSON_KEY"],
+        destination: destination,
+      )
+      return
+    rescue => e
+      UI.important("Universal APK not available yet (attempt #{i + 1}/#{attempts}): #{e.message}")
+      sleep(30) if i + 1 < attempts
+    end
+  end
+  UI.important("Gave up on the universal APK for #{version_name} (#{version_code}); the GitHub release will be missing.")
+end
+
 platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
@@ -54,6 +86,8 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
     )
+
+    download_play_apk(version_name, version_code)
   end
 
   desc "Promote internal build to production"

@@ -95,7 +95,7 @@ jest przypięty i zmienia się tylko commitem.
 ### Przebieg
 
 `Checkout → Preflight → Provision Flutter → Release metadata → Generate
-secrets.dart → Flutter dependencies → iOS → Android`.
+secrets.dart → Flutter dependencies → iOS → Android → GitHub release`.
 
 - **Preflight** sprawdza toolchain maszyny i przy braku podaje komendę `brew`,
   która to naprawia (log czyta się zwykle zdalnie, maszyna stoi w piwnicy).
@@ -106,6 +106,15 @@ secrets.dart → Flutter dependencies → iOS → Android`.
   `key.properties`, `.p8` z `TMPDIR`, usuwa keychain CI i przywraca domyślny
   keychain maszyny. Bez tego build zostawiałby certyfikat dystrybucyjny
   w workspace na maszynie, która nie należy do projektu.
+- **GitHub release** — po udanym uploadzie na Play lane pobiera z Google Play
+  *universal APK* (`download_universal_apk_from_google_play`) i job publikuje
+  go jako release `vX.Y.Z` z notatkami z `CHANGELOG.md`. To APK **podpisane
+  kluczem Google (Play App Signing)**, nie lokalny `flutter build apk` — ten
+  miałby podpis kluczem uploadowym i nie dałby się zainstalować na wersję ze
+  sklepu bez odinstalowania. Porażka tego etapu daje build `UNSTABLE`, nie
+  `FAILURE` (apka jest już w sklepie), więc nie wysyła pingu na Discord.
+  Ponowny przebieg tej samej wersji podmienia asset w istniejącym release.
+  Pomijany przy `DRY_RUN` i gdy etap Androida padł.
 
 ### Parametry
 
@@ -149,6 +158,7 @@ pomylenia i nic nie przechodzi przez `echo`.
 | `planpm-android-key-password` | Secret text | `ANDROID_KEY_PASSWORD` |
 | `planpm-android-key-alias` | Secret text | `ANDROID_KEY_ALIAS` |
 | `planpm-play-store-json-key` | Secret file | service account Play |
+| `planpm-github-token` | Secret text | `GH_TOKEN` — fine-grained token z `Contents: read and write` na `KNI-PM-Szczecin/plan_pm`, do GitHub release |
 | `planpm-discord-webhook` | Secret text | opcjonalny ping o porażce; brak = cisza |
 
 > ⚠️ Mac mini należy do Koła Naukowego i dostęp do niego jest tymczasowy.

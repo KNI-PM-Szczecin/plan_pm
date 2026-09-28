@@ -69,6 +69,8 @@
 //   planpm-android-key-password     Secret text
 //   planpm-android-key-alias        Secret text
 //   planpm-play-store-json-key      Secret file  -> service account JSON
+//   planpm-github-token             Secret text  -> GH_TOKEN; contents:write on
+//                                                   the repo, for the GitHub release
 //   planpm-discord-webhook          Secret text  (optional; absent = no ping)
 //
 // The old workflow kept the certificate, the keystore and the .p8 as base64
@@ -170,6 +172,10 @@ pipeline {
         // Named here as well as in the Fastfile so `post` can clean it up even
         // when the lane dies half-way through.
         CI_KEYCHAIN = 'ci_keychain'
+
+        // Where the Android release APK is published. gh never prompts in CI.
+        GITHUB_REPO        = 'KNI-PM-Szczecin/plan_pm'
+        GH_PROMPT_DISABLED = '1'
     }
 
     stages {
@@ -511,6 +517,54 @@ PY
                                 bundle exec fastlane android deploy
                             '''
                         }
+                    }
+                    // Reached only when the lane succeeded; the GitHub release
+                    // must not advertise a version Play never received.
+                    script { env.ANDROID_UPLOADED = 'true' }
+                }
+            }
+        }
+
+        stage('Android → GitHub release') {
+            when {
+                expression { env.ANDROID_UPLOADED == 'true' && !params.DRY_RUN }
+            }
+            steps {
+                // UNSTABLE, not FAILURE: the app already reached Play, and a
+                // failure here would fire the "did not reach the stores" ping.
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE', message: 'GitHub release failed') {
+                    withCredentials([string(credentialsId: 'planpm-github-token', variable: 'GH_TOKEN')]) {
+                        // The APK is the universal one Google generated from the
+                        // bundle, downloaded by the lane — see download_play_apk
+                        // in the Android Fastfile for why not a local build.
+                        sh '''
+                            set -eu
+
+                            # Checked here, not in Preflight: a missing gh must
+                            # not hold back the store deploys themselves.
+                            command -v gh >/dev/null 2>&1 || { echo "GitHub CLI not on PATH ($PATH)" >&2; echo "  fix: brew install gh" >&2; exit 1; }
+
+                            version="${APP_VERSION%%+*}"
+                            tag="v$version"
+                            apk="frontend/build/app/outputs/universal-apk/plan_pm-$version.apk"
+
+                            [ -s "$apk" ] || { echo "No universal APK at $apk — Play did not hand it out in time; see the Android stage log." >&2; exit 1; }
+
+                            # Both locales of this version, the same text Play shows.
+                            notes="$(mktemp)"
+                            awk -v v="## $version" '$0 == v { f = 1; next } /^## / { if (f) exit } f' frontend/CHANGELOG.md | sed '/./,$!d' > "$notes"
+
+                            if gh release view "$tag" -R "$GITHUB_REPO" >/dev/null 2>&1; then
+                                # A rerun of the same version: replace the asset,
+                                # keep the release and its notes.
+                                gh release upload "$tag" "$apk" -R "$GITHUB_REPO" --clobber
+                            else
+                                gh release create "$tag" "$apk" -R "$GITHUB_REPO" \\
+                                    --target "$GIT_COMMIT" --title "$version" \\
+                                    --notes-file "$notes" --latest
+                            fi
+                            rm -f "$notes"
+                        '''
                     }
                 }
             }

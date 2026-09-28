@@ -388,7 +388,7 @@ dotyczy wyłącznie `json2db`.
 ### Jenkins — deploy na store'y ([`Jenkinsfile.deploy`](Jenkinsfile.deploy))
 
 `Checkout → Preflight → Provision Flutter → Release metadata → Generate
-secrets.dart → Flutter dependencies → iOS → Android`. Deploy **zszedł z GitHub
+secrets.dart → Flutter dependencies → iOS → Android → GitHub release`. Deploy **zszedł z GitHub
 Actions** (`deploy.yml` usunięty): workflow nie przypinał ani Fluttera, ani
 fastlane'a, więc psuł się od zmian w toolchainie runnera, nie od zmian w repo —
 5 z ostatnich 9 przebiegów padło z tego powodu.
@@ -408,6 +408,13 @@ każdy w `catchError` — porażka jednego nie blokuje drugiego. `DRY_RUN` ustaw
 `PLANPM_SKIP_UPLOAD=true`, które oba Fastfile'e honorują tuż przed
 `upload_to_*`; tak puszcza się pierwszy build na nowej maszynie, bo store'y nie
 przyjmą dwa razy tego samego numeru builda.
+
+**GitHub release z APK:** po uploadzie na Play lane pobiera universal APK
+wygenerowane przez Google (`download_play_apk` w Android Fastfile) i job
+publikuje je jako release `vX.Y.Z` (credential `planpm-github-token`). Celowo
+nie lokalny `flutter build apk`: Play App Signing podpisuje apkę kluczem
+Google, więc APK z kluczem uploadowym nie instaluje się na wersję ze sklepu.
+Porażka etapu = `UNSTABLE`, nie `FAILURE`.
 
 ### Workflow checks (GitHub Actions — zostały tylko bramki PR)
 
