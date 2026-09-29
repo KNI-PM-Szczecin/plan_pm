@@ -196,8 +196,12 @@ nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGrouped
 iOS przygaszenie/podświetlenie, Android ripple; nagłówki sekcji na iOS wersalikami,
 na Androidzie zdaniem w akcencie) — ekrany nie sprawdzają platformy same.
 Tło podawaj przez `AppPressable.color`, nie w dziecku (inaczej ripple jest pod spodem).
-`GenericNoResource`/`GenericLoading` zostają **tylko** dla ekranów zajęć — redesign
-nie obejmuje zajęć ani dolnego paska (`navigation_bar.dart`), nie ruszać ich.
+Widok zajęć też jest przerobiony (nagłówek z datą, wybór dnia z animacją zmiany
+tygodnia, stany przez `AppStateCard`) i karta `Lecture`: promień 22 jak inne karty,
+typografia z `AppTextStyle`, kolory pochodne od koloru tekstu (pastel), **bez własnego
+marginesu** — odstępy między kartami ustawia lista (12 pt). Dzienne gradienty kart i
+wyboru dnia zostają. `GenericNoResource`/`GenericLoading` zostały tylko w
+`today_lectures.dart` (Home). **Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
