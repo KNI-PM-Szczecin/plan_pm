@@ -238,7 +238,8 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 - Czyta z `HomeWidgetPreferences` shared preferences plik, klucz `schedule_data` (**nie** `flutter.schedule_data` z `FlutterSharedPreferences`)
 - Każdy wpis `schedule_data` ma datę `yyyy-MM-dd`; provider odrzuca stare lub bezdatowe dane po północy. Cały `widget_box` ma `PendingIntent` otwierający `planpm://schedule`.
 - **Progress bar statyczny** — RemoteViews nie obsługuje live timerów. Pasek odświeża się przy `updateAppWidget` (push z apki, resize, kolejny entry timeline w iOS-sty­lu nie istnieje)
-- **Glance dependency exclusion w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** `home_widget` transitively wymaga `glance-appwidget` (AGP 9.1+, compileSdk 37+). Wykluczone bo używamy klasycznego `AppWidgetProvider`, nie Glance. Nie odblokowywuj bez upgradeu całego toolchainu.
+- **Glance przypięty do 1.2.0 w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** sami używamy klasycznego `AppWidgetProvider`, ale `home_widget` 0.10.0 woła Glance już w `onAttachedToEngine` (`HomeWidgetPreviews`) — **wykluczenie `glance-appwidget` = crash aplikacji przy starcie** (`NoClassDefFoundError`). Dlatego `resolutionStrategy.force(...:1.2.0)` (wersja deklarowana przez plugin) + wykluczony `remote-creation-android` (nowsze alpha Glance'a ciągną go i wymagają AGP 9.1+, compileSdk 37).
+- **`android.builtInKotlin=false`** (jak szablon Fluttera 3.44.4): KGP nakłada sam Flutter Gradle Plugin na każdy moduł, także na aplikację. Przy `true` AGP 9 odrzuca to na czysto javowych pluginach (`app_links`) i build pada.
 
 ### Lokalizacja
 
