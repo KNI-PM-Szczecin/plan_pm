@@ -376,6 +376,18 @@ abstract class AppLocalizations {
   /// **'Nd'**
   String get daysShortSun;
 
+  /// day_selection.dart - Accessibility label of the previous-week button.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poprzedni tydzień'**
+  String get previousWeek;
+
+  /// day_selection.dart - Accessibility label of the next-week button.
+  ///
+  /// In pl, this message translates to:
+  /// **'Następny tydzień'**
+  String get nextWeek;
+
   /// day_selection.dart - Full lowercase name for Monday.
   ///
   /// In pl, this message translates to:

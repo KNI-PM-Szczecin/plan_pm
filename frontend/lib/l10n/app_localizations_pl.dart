@@ -155,6 +155,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get daysShortSun => 'Nd';
 
   @override
+  String get previousWeek => 'Poprzedni tydzień';
+
+  @override
+  String get nextWeek => 'Następny tydzień';
+
+  @override
   String get daysMon => 'poniedziałek';
 
   @override

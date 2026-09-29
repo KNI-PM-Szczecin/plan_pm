@@ -46,6 +46,8 @@
   "daysShortFri": "Fri",
   "daysShortSat": "Sat",
   "daysShortSun": "Sun",
+  "previousWeek": "Previous week",
+  "nextWeek": "Next week",
   "daysMon": "monday",
   "daysTue": "tuesday",
   "daysWed": "wednesday",

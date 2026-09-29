@@ -46,6 +46,8 @@
   "daysShortFri": "Пт",
   "daysShortSat": "Сб",
   "daysShortSun": "Нд",
+  "previousWeek": "Попередній тиждень",
+  "nextWeek": "Наступний тиждень",
   "daysMon": "понеділок",
   "daysTue": "вівторок",
   "daysWed": "середа",

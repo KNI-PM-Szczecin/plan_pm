@@ -190,6 +190,14 @@
   "@daysShortSun": {
     "description": "day_selection.dart - Short name for Sunday (Niedziela)."
   },
+  "previousWeek": "Poprzedni tydzień",
+  "@previousWeek": {
+    "description": "day_selection.dart - Accessibility label of the previous-week button."
+  },
+  "nextWeek": "Następny tydzień",
+  "@nextWeek": {
+    "description": "day_selection.dart - Accessibility label of the next-week button."
+  },
   "daysMon": "poniedziałek",
   "@daysMon": {
     "description": "day_selection.dart - Full lowercase name for Monday."

@@ -163,6 +163,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get daysShortSun => 'Нд';
 
   @override
+  String get previousWeek => 'Попередній тиждень';
+
+  @override
+  String get nextWeek => 'Наступний тиждень';
+
+  @override
   String get daysMon => 'понеділок';
 
   @override
