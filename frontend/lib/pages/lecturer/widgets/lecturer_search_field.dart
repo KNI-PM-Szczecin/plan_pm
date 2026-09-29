@@ -21,7 +21,8 @@ class LecturerSearchField extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      // Z prawej mniej — przycisk czyszczenia ma własne pole dotyku.
+      padding: const EdgeInsets.only(left: 12, right: 4),
       decoration: ShapeDecoration(
         color: AppColor.fillTertiary,
         shape: const StadiumBorder(),
@@ -48,15 +49,25 @@ class LecturerSearchField extends StatelessWidget {
             ),
           ),
           if (controller.text.isNotEmpty)
-            GestureDetector(
-              onTap: () {
-                controller.clear();
-                onChanged('');
-              },
-              child: Icon(
-                LucideIcons.xCircle,
-                size: 18,
-                color: AppColor.labelSecondary,
+            // Przycisk dla czytników ekranu, pole dotyku na całą wysokość pola.
+            Semantics(
+              button: true,
+              label: MaterialLocalizations.of(context).clearButtonTooltip,
+              excludeSemantics: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  controller.clear();
+                  onChanged('');
+                },
+                child: SizedBox.square(
+                  dimension: 40,
+                  child: Icon(
+                    LucideIcons.xCircle,
+                    size: 18,
+                    color: AppColor.labelSecondary,
+                  ),
+                ),
               ),
             ),
         ],

@@ -267,6 +267,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNews => 'No news';
 
   @override
+  String get universityStructureEmptyTitle => 'No university data';
+
+  @override
   String get universityStructureEmpty =>
       'The university structure is empty. Are you connected to the internet?';
 

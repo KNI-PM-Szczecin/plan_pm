@@ -263,6 +263,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noNews => 'Brak aktualności';
 
   @override
+  String get universityStructureEmptyTitle => 'Brak danych o uczelni';
+
+  @override
   String get universityStructureEmpty =>
       'Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?';
 

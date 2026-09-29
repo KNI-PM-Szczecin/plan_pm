@@ -29,7 +29,8 @@ def main() -> int:
         keys = load_keys(path)
         missing = sorted(baseline.keys() - keys.keys())
         extra = sorted(keys.keys() - baseline.keys())
-        empty = sorted(k for k, v in keys.items() if not str(v).strip())
+        # null (None) albo inny typ to też brak tłumaczenia, nie tylko "".
+        empty = sorted(k for k, v in keys.items() if not isinstance(v, str) or not v.strip())
 
         if missing or extra or empty:
             ok = False

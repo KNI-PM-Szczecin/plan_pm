@@ -81,6 +81,7 @@
   "details": "Деталі",
   "universityStructureLoading": "Завантаження структури університету",
   "noNews": "Немає новин",
+  "universityStructureEmptyTitle": "Немає даних про університет",
   "universityStructureEmpty": "Структура університету порожня. Ви підключені до інтернету?",
   "noSpecialisationOption": "Без спеціалізації",
   "noSpecialisationForField": "Немає спеціалізацій для цього напрямку",

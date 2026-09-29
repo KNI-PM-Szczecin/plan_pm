@@ -568,6 +568,12 @@ abstract class AppLocalizations {
   /// **'Brak aktualności'**
   String get noNews;
 
+  /// input_page.dart - Title of the empty state when the university structure has no entries.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak danych o uczelni'**
+  String get universityStructureEmptyTitle;
+
   /// university_structure.dart - Message shown when the university structure couldn't be loaded; suggests checking internet connection.
   ///
   /// In pl, this message translates to:

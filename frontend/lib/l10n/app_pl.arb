@@ -322,6 +322,10 @@
   "@noNews": {
     "description": "news_page.dart - Message shown when there are no news items."
   },
+  "universityStructureEmptyTitle": "Brak danych o uczelni",
+  "@universityStructureEmptyTitle": {
+    "description": "input_page.dart - Title of the empty state when the university structure has no entries."
+  },
   "universityStructureEmpty": "Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?",
   "@universityStructureEmpty": {
     "description": "university_structure.dart - Message shown when the university structure couldn't be loaded; suggests checking internet connection."

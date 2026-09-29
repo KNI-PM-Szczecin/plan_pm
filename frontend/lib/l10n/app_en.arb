@@ -78,6 +78,7 @@
   "details": "Details",
   "universityStructureLoading": "Loading university structure...",
   "noNews": "No news",
+  "universityStructureEmptyTitle": "No university data",
   "universityStructureEmpty": "The university structure is empty. Are you connected to the internet?",
   "noSpecialisationOption": "No specialisation",
   "noSpecialisationForField": "No specialisation available for this field",

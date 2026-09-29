@@ -272,6 +272,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get noNews => 'Немає новин';
 
   @override
+  String get universityStructureEmptyTitle => 'Немає даних про університет';
+
+  @override
   String get universityStructureEmpty =>
       'Структура університету порожня. Ви підключені до інтернету?';
 

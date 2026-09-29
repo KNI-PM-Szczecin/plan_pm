@@ -335,7 +335,7 @@ class _InputPageState extends State<InputPage> {
                       else if (availability == null || availability.isEmpty)
                         AppStateCard(
                           icon: LucideIcons.calendarX,
-                          title: l10n.noNews,
+                          title: l10n.universityStructureEmptyTitle,
                           message: l10n.universityStructureEmpty,
                           actionLabel: l10n.retryButton,
                           onAction: _retry,
