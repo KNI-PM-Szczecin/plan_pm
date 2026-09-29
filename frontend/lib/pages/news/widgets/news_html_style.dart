@@ -25,6 +25,10 @@ Map<String, Style> newsHtmlStyle() {
     "p": Style(margin: Margins.only(bottom: 12), padding: HtmlPaddings.zero),
     "strong": Style(fontWeight: FontWeight.w600, color: AppColor.onBackground),
     "b": Style(fontWeight: FontWeight.w600, color: AppColor.onBackground),
+    // Kursywa SF Pro na treści 17 pt wygląda ciężko — wyróżniamy kolorem
+    // (pełny zamiast drugorzędnego), bez pochylenia i bez pogrubienia.
+    "em": Style(fontStyle: FontStyle.normal, color: AppColor.onBackground),
+    "i": Style(fontStyle: FontStyle.normal, color: AppColor.onBackground),
     "a": Style(color: AppColor.primary, textDecoration: TextDecoration.none),
     "h1": heading,
     "h2": heading,
