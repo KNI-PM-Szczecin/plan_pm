@@ -595,6 +595,18 @@
   "createdBy": "Stworzono przez",
   "kniName": "Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie",
   "openSourceInfo": "Ta aplikacja jest open-source",
+  "openSourceHeader": "Open source",
+  "@openSourceHeader": {
+    "description": "about_page.dart - Header of the section with the repository link."
+  },
+  "themeSystemHint": "Systemowy przełącza się razem z ustawieniami telefonu.",
+  "@themeSystemHint": {
+    "description": "appearance_page.dart - Footer under the theme picker explaining the System option."
+  },
+  "themeHeader": "Motyw",
+  "@themeHeader": {
+    "description": "appearance_page.dart - Header of the theme picker section."
+  },
   "githubRepo": "Otwórz repozytorium na Github",
   "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
   "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",

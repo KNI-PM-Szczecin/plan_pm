@@ -541,6 +541,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get openSourceInfo => 'Ta aplikacja jest open-source';
 
   @override
+  String get openSourceHeader => 'Open source';
+
+  @override
+  String get themeSystemHint =>
+      'Systemowy przełącza się razem z ustawieniami telefonu.';
+
+  @override
+  String get themeHeader => 'Motyw';
+
+  @override
   String get githubRepo => 'Otwórz repozytorium na Github';
 
   @override

@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
-import 'package:plan_pm/global/widgets/app_bar.dart';
+import 'package:plan_pm/global/widgets/app_grouped_page.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_pressable.dart';
+import 'package:plan_pm/global/widgets/app_radio_indicator.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
+import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/settings/utils/appearance_utils.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/theme_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class AppearancePage extends StatelessWidget {
@@ -15,254 +21,265 @@ class AppearancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final brightness = Theme.of(context).brightness;
 
-    return Scaffold(
-      backgroundColor: AppColor.background,
-      appBar: CustomAppBar(title: l10n.appearanceHeader),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ValueListenableBuilder<ThemeMode>(
-              valueListenable: themeNotifier,
-              builder: (context, currentMode, _) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── Theme picker card ──────────────────────────────
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColor.surface,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            l10n.appearanceHint,
-                            style: TextStyle(
-                              color: AppColor.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ThemeCard(
-                                title: l10n.themeLight,
-                                imageAsset: 'assets/theme_light.png',
-                                isSelected: currentMode == ThemeMode.light,
-                                onTap: () => _selectTheme(ThemeMode.light),
-                              ),
-                              const SizedBox(width: 12),
-                              ThemeCard(
-                                title: l10n.themeDark,
-                                imageAsset: 'assets/theme_dark.png',
-                                isSelected: currentMode == ThemeMode.dark,
-                                onTap: () => _selectTheme(ThemeMode.dark),
-                              ),
-                              const SizedBox(width: 12),
-                              ThemeCard(
-                                title: l10n.themeSystem,
-                                imageAsset: 'assets/theme_mixed.png',
-                                isSelected: currentMode == ThemeMode.system,
-                                onTap: () => _selectTheme(ThemeMode.system),
-                              ),
-                            ],
-                          ),
-                        ],
+    return AppGroupedPage(
+      title: l10n.appearanceHeader,
+      children: [
+        AppSection(
+          header: l10n.themeHeader,
+          footer: l10n.themeSystemHint,
+          child: ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeNotifier,
+            builder: (context, currentMode, _) => _Card(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 14,
+                children: [
+                  for (final (mode, label, asset) in [
+                    (
+                      ThemeMode.light,
+                      l10n.themeLight,
+                      'assets/theme_light.png',
+                    ),
+                    (ThemeMode.dark, l10n.themeDark, 'assets/theme_dark.png'),
+                    (
+                      ThemeMode.system,
+                      l10n.themeSystem,
+                      'assets/theme_mixed.png',
+                    ),
+                  ])
+                    Expanded(
+                      child: _ThemeOption(
+                        label: label,
+                        asset: asset,
+                        selected: currentMode == mode,
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          themeNotifier.setTheme(mode);
+                        },
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // ── Active theme pill ──────────────────────────────
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.surface,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            currentMode == ThemeMode.light
-                                ? LucideIcons.sun
-                                : (currentMode == ThemeMode.dark
-                                    ? LucideIcons.moon
-                                    : LucideIcons.monitor),
-                            color: AppColor.onSurfaceVariant,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: l10n.activeThemeLabel,
-                                  style: TextStyle(
-                                    color: AppColor.onSurfaceVariant,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: getThemeName(currentMode, l10n),
-                                  style: TextStyle(
-                                    color: AppColor.onSurface,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // ── Accent Color (no container) ────────────────────
-                    Text(
-                      l10n.accentColorTitle,
-                      style: TextStyle(
-                        color: AppColor.onSurfaceVariant,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    ValueListenableBuilder<AppAccentColor>(
-                      valueListenable: accentColorNotifier,
-                      builder: (context, currentColor, _) {
-                        return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(opacity: animation, child: child),
-                          child: Row(
-                            key: ValueKey(currentColor),
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: AppAccentColor.values.map((color) {
-                              return GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  accentColorNotifier.setAccentColor(color);
-                                },
-                                child: Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: getAccentColorValue(
-                                      color,
-                                      Theme.of(context).brightness,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: currentColor == color
-                                      ? Icon(
-                                          LucideIcons.check,
-                                          color: Colors.white,
-                                          size: 22,
-                                        )
-                                      : null,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // ── Event Style ────────────────────────────────────
-                    ValueListenableBuilder<EventColorStyle>(
-                      valueListenable: eventColorStyleNotifier,
-                      builder: (context, currentStyle, _) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.eventStyleTitle.toUpperCase(),
-                              style: TextStyle(
-                                color: AppColor.onSurfaceVariant,
-                                fontSize: 12,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.surface,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Column(
-                                  children: () {
-                                    final styles = EventColorStyle.values;
-                                    final List<Widget> rows = [];
-                                    for (int i = 0; i < styles.length; i++) {
-                                      final style = styles[i];
-                                      final isSelected = style == currentStyle;
-                                      if (i > 0) {
-                                        rows.add(Divider(height: 1, color: AppColor.outline, indent: 16, endIndent: 16));
-                                      }
-                                      rows.add(
-                                        GestureDetector(
-                                          onTap: () {
-                                            HapticFeedback.selectionClick();
-                                            eventColorStyleNotifier.setEventStyle(style);
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    getEventStyleName(style, l10n),
-                                                    style: TextStyle(color: AppColor.onSurface, fontSize: 16),
-                                                  ),
-                                                ),
-                                                AnimatedSwitcher(
-                                                  duration: const Duration(milliseconds: 200),
-                                                  transitionBuilder: (child, animation) => ScaleTransition(
-                                                    scale: animation,
-                                                    child: FadeTransition(opacity: animation, child: child),
-                                                  ),
-                                                  child: isSelected
-                                                      ? Icon(LucideIcons.check, key: const ValueKey('check'), color: AppColor.primary, size: 20)
-                                                      : const SizedBox(key: ValueKey('empty'), width: 20),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return rows;
-                                  }(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
+                ],
+              ),
             ),
+          ),
+        ),
+        AppSection(
+          header: l10n.accentColorTitle,
+          child: ValueListenableBuilder<AppAccentColor>(
+            valueListenable: accentColorNotifier,
+            builder: (context, currentColor, _) => _Card(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (final color in AppAccentColor.values)
+                    _AccentOption(
+                      color: getAccentColorValue(color, brightness),
+                      selected: currentColor == color,
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        accentColorNotifier.setAccentColor(color);
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AppSection(
+          header: l10n.eventStyleTitle,
+          child: ValueListenableBuilder<EventColorStyle>(
+            valueListenable: eventColorStyleNotifier,
+            builder: (context, currentStyle, _) => AppGroupedSection(
+              children: [
+                for (final style in EventColorStyle.values)
+                  AppListRow(
+                    leading: _StyleSwatches(colors: _swatchesFor(style)),
+                    title: getEventStyleName(style, l10n),
+                    selected: style == currentStyle,
+                    accessory: style == currentStyle
+                        ? AppListRowAccessory.checkmark
+                        : AppListRowAccessory.none,
+                    onTap: () => eventColorStyleNotifier.setEventStyle(style),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Trzy pierwsze kolory kart zajęć w danym stylu — z tych samych list, z których
+  /// rysuje je karta, więc podgląd nie rozjedzie się z planem.
+  static List<Color> _swatchesFor(EventColorStyle style) {
+    final List<LinearGradient>? gradients = switch (style) {
+      EventColorStyle.current => defaultGradients,
+      EventColorStyle.pastel => pastelGradients,
+      EventColorStyle.vibrant => vibrantGradients,
+      EventColorStyle.monochrome => null,
+    };
+    if (gradients == null) return List.filled(3, AppColor.primary);
+    return [
+      for (var i = 0; i < 3; i++) gradients[i % gradients.length].colors.first,
+    ];
+  }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.child, required this.padding});
+
+  final Widget child;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      decoration: ShapeDecoration(
+        color: AppColor.groupedSurface,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(AppGroupedSection.radius),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.label,
+    required this.asset,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String asset;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      label: label,
+      child: AppPressable(
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Column(
+          spacing: 10,
+          children: [
+            AspectRatio(
+              aspectRatio: 0.72,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: const EdgeInsets.all(3),
+                decoration: ShapeDecoration(
+                  shape: RoundedSuperellipseBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      width: 2,
+                      color: selected ? AppColor.primary : AppColor.separator,
+                    ),
+                  ),
+                ),
+                child: ClipRSuperellipse(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    asset,
+                    fit: BoxFit.cover,
+                    excludeFromSemantics: true,
+                  ),
+                ),
+              ),
+            ),
+            Text(
+              label,
+              style: AppTextStyle.subheadline.copyWith(
+                color: AppColor.onSurface,
+              ),
+            ),
+            AppRadioIndicator(selected: selected),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AccentOption extends StatelessWidget {
+  const _AccentOption({
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      child: AppPressable(
+        onTap: onTap,
+        shape: const CircleBorder(),
+        // Obwódka odsunięta o 3 pt od koła, jak outline-offset w makiecie.
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 50,
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              width: 2,
+              color: selected ? color : Colors.transparent,
+            ),
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            child: selected
+                ? const Icon(LucideIcons.check, color: Colors.white, size: 22)
+                : null,
           ),
         ),
       ),
     );
   }
+}
 
-  void _selectTheme(ThemeMode mode) {
-    HapticFeedback.selectionClick();
-    themeNotifier.setTheme(mode);
+class _StyleSwatches extends StatelessWidget {
+  const _StyleSwatches({required this.colors});
+
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 3,
+      children: [
+        for (final color in colors)
+          Container(
+            width: 8,
+            height: 20,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+      ],
+    );
   }
 }

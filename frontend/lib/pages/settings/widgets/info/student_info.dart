@@ -1,13 +1,11 @@
-// Karta z danymi akademickimi studenta — wydział, kierunek, specjalizacja, rok, tryb studiów.
-// Przycisk "Edytuj" otwiera [InputPage].
+// Sekcja z danymi akademickimi studenta — wydział, kierunek, specjalizacja, rok, tryb studiów.
+// Akcja "Edytuj" otwiera [InputPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/pages/settings/widgets/info/info_text.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';
-import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
@@ -17,54 +15,39 @@ class StudentInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final divider = Divider(
-      height: 1,
-      thickness: 1,
-      indent: 12,
-      color: AppColor.outline,
-    );
-    return MenuSection(
-      title: l10n.academicInfoHeader,
-      action: [
-        ThemedOutlineButton(
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const InputPage()),
-            );
-          },
-          label: l10n.editButton,
-          icon: LucideIcons.edit3,
-        ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final rows = [
+      (l10n.facultyLabel, Student.faculty),
+      (l10n.fieldLabel, Student.degreeCourse),
+      (l10n.specialisationLabel, Student.specialisation),
+      (l10n.yearLabel, l10n.studyYear(Student.year ?? 0)),
+      (
+        l10n.studyModeLabel,
+        // StudyMode.displayName jest zaszyte po polsku (służy logom), więc
+        // na ekranie bierzemy tłumaczenie — inaczej UA/EN widzą "Stacjonarne".
+        switch (Student.studyMode) {
+          StudyMode.stationary => l10n.campusButton,
+          StudyMode.notStationary => l10n.extramuralButton,
+          null => null,
+        },
+      ),
+    ];
+    return AppSection(
+      header: l10n.academicInfoHeader,
+      actionLabel: l10n.editButton,
+      onAction: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const InputPage()),
+        );
+      },
+      child: AppGroupedSection(
         children: [
-          InfoText(title: l10n.facultyLabel, content: Student.faculty),
-          divider,
-          InfoText(title: l10n.fieldLabel, content: Student.degreeCourse),
-          divider,
-          InfoText(
-            title: l10n.specialisationLabel,
-            content: Student.specialisation,
-          ),
-          divider,
-          InfoText(
-            title: l10n.yearLabel,
-            content: l10n.studyYear(Student.year ?? 0),
-          ),
-          divider,
-          InfoText(
-            title: l10n.studyModeLabel,
-            // StudyMode.displayName jest zaszyte po polsku (służy logom), więc
-            // na ekranie bierzemy tłumaczenie — inaczej UA/EN widzą "Stacjonarne".
-            content: switch (Student.studyMode) {
-              StudyMode.stationary => l10n.campusButton,
-              StudyMode.notStationary => l10n.extramuralButton,
-              null => null,
-            },
-          ),
+          for (final (label, value) in rows)
+            AppListRow(
+              title: label,
+              value: (value == null || value.isEmpty) ? l10n.dataNaN : value,
+            ),
         ],
       ),
     );

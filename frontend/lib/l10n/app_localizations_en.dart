@@ -544,6 +544,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSourceInfo => 'This app is open-source';
 
   @override
+  String get openSourceHeader => 'Open source';
+
+  @override
+  String get themeSystemHint => 'System follows your phone\'s settings.';
+
+  @override
+  String get themeHeader => 'Theme';
+
+  @override
   String get githubRepo => 'Open repository on Github';
 
   @override

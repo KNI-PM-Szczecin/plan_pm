@@ -1,14 +1,13 @@
-// Karta z danymi wykładowcy — imię i nazwisko z tytułem.
-// Przycisk "Edytuj" pobiera listę wykładowców i otwiera [LecturerSelectionPage].
+// Sekcja z danymi wykładowcy — imię i nazwisko z tytułem.
+// Akcja "Edytuj" pobiera listę wykładowców i otwiera [LecturerSelectionPage].
 // Po wyborze zapisuje dane, synchronizuje plan i wraca do ekranu głównego.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';
-import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
-import 'package:plan_pm/pages/settings/widgets/info/info_text.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -64,20 +63,16 @@ class _LecturerInfoState extends State<LecturerInfo> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return MenuSection(
-      title: l10n.lecturerInfoHeader,
-      action: [
-        ThemedOutlineButton(
-          onPressed: _editLecturer,
-          label: l10n.editButton,
-          icon: LucideIcons.edit3,
-        ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return AppSection(
+      header: l10n.lecturerInfoHeader,
+      actionLabel: l10n.editButton,
+      onAction: _editLecturer,
+      child: AppGroupedSection(
         children: [
-          InfoText(title: l10n.lecturerLabel, content: Lecturer.displayName),
-          const SizedBox(height: 5),
+          AppListRow(
+            title: l10n.lecturerLabel,
+            value: Lecturer.displayName ?? l10n.dataNaN,
+          ),
         ],
       ),
     );

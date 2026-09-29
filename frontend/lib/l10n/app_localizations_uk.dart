@@ -551,6 +551,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get openSourceInfo => 'Цей додаток має відкритий вихідний код';
 
   @override
+  String get openSourceHeader => 'Відкритий код';
+
+  @override
+  String get themeSystemHint =>
+      'Системна змінюється разом із налаштуваннями телефону.';
+
+  @override
+  String get themeHeader => 'Тема';
+
+  @override
   String get githubRepo => 'Відкрити репозиторій на Github';
 
   @override

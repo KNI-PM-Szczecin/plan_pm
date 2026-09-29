@@ -1066,6 +1066,24 @@ abstract class AppLocalizations {
   /// **'Ta aplikacja jest open-source'**
   String get openSourceInfo;
 
+  /// about_page.dart - Header of the section with the repository link.
+  ///
+  /// In pl, this message translates to:
+  /// **'Open source'**
+  String get openSourceHeader;
+
+  /// appearance_page.dart - Footer under the theme picker explaining the System option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Systemowy przełącza się razem z ustawieniami telefonu.'**
+  String get themeSystemHint;
+
+  /// appearance_page.dart - Header of the theme picker section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Motyw'**
+  String get themeHeader;
+
   /// No description provided for @githubRepo.
   ///
   /// In pl, this message translates to:
