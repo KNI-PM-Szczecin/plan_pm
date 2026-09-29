@@ -273,7 +273,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get lengthLabel => 'Czas trwania';
 
   @override
-  String get additionalInformation => 'INFORMACJE DODATKOWE';
+  String get additionalInformation => 'Informacje dodatkowe';
 
   @override
   String get notesLabel => 'Notatki';

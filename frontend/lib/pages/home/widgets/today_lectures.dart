@@ -141,15 +141,27 @@ class _TodayLecturesState extends State<TodayLectures> {
                       );
                     }).toList();
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.dateWithWeekday(groups.keys.toList()[index]),
-                          style: TextStyle(color: AppColor.onBackgroundVariant),
-                        ),
-                        ...lecturesWidgets,
-                      ],
+                    // Karty nie mają własnego marginesu — odstępy ustawiamy
+                    // tu: 8 pt od daty, 12 pt między kartami, 16 pt między dniami.
+                    return Padding(
+                      padding: EdgeInsets.only(top: index == 0 ? 0 : 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 8,
+                        children: [
+                          Text(
+                            l10n.dateWithWeekday(groups.keys.toList()[index]),
+                            style: TextStyle(
+                              color: AppColor.onBackgroundVariant,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            spacing: 12,
+                            children: lecturesWidgets,
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

@@ -346,7 +346,7 @@
     "description": "lecture.dart - Label for the lecture wiget group header."
   },
   "lengthLabel": "Czas trwania",
-  "additionalInformation": "INFORMACJE DODATKOWE",
+  "additionalInformation": "Informacje dodatkowe",
   "@lengthLabel": {
     "description": "lecture.dart - Label for the lecture wiget lecture length header."
   },

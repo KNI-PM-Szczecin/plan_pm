@@ -281,7 +281,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get lengthLabel => 'Тривалість';
 
   @override
-  String get additionalInformation => 'ДОДАТКОВА ІНФОРМАЦІЯ';
+  String get additionalInformation => 'Додаткова інформація';
 
   @override
   String get notesLabel => 'Нотатки';

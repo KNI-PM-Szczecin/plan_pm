@@ -201,7 +201,7 @@ class _LecturesPageState extends State<LecturesPage> {
                   ),
                   itemCount: lectures.length,
                   separatorBuilder: (context, index) {
-                    return const SizedBox(height: 8);
+                    return const SizedBox(height: 12);
                   },
                   itemBuilder: (context, index) {
                     final lecture = lectures[index];

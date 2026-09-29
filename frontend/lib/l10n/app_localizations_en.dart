@@ -279,7 +279,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lengthLabel => 'Duration';
 
   @override
-  String get additionalInformation => 'ADDITIONAL INFORMATION';
+  String get additionalInformation => 'Additional information';
 
   @override
   String get notesLabel => 'Notes';

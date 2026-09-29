@@ -607,7 +607,7 @@ abstract class AppLocalizations {
   /// No description provided for @additionalInformation.
   ///
   /// In pl, this message translates to:
-  /// **'INFORMACJE DODATKOWE'**
+  /// **'Informacje dodatkowe'**
   String get additionalInformation;
 
   /// lecture.dart - Label for the lecture wiget notes header.

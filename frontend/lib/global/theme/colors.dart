@@ -197,7 +197,11 @@ class AppColor {
       ? const Color(0xFFFF8D28)
       : const Color(0xFFFF9230);
 
-  static Color get systemRed => _brightness == Brightness.light
+  static Color get systemYellow => _brightness == Brightness.light
+      ? const Color(0xFFFFCC00)
+      : const Color(0xFFFFD600);
+
+  static Color get systemRed =>_brightness == Brightness.light
       ? const Color(0xFFFF383C)
       : const Color(0xFFFF4245);
 
