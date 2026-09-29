@@ -129,7 +129,9 @@ class AppDialog extends StatelessWidget {
                       ),
                     if (content != null)
                       Padding(
-                        padding: const EdgeInsets.only(top: 12),
+                        // Pod opisem treść odsunięta; bez opisu (np. „Co nowego"
+                        // z numerem wersji w treści) przylega do tytułu.
+                        padding: EdgeInsets.only(top: message != null ? 12 : 0),
                         child: content,
                       ),
                     const SizedBox(height: 12),

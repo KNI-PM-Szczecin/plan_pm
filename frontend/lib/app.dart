@@ -84,6 +84,10 @@ class _AppState extends State<App> {
                         appBarTheme: _appBarThemeForBrightness(
                           Brightness.light,
                         ),
+                        // overlays-default z design systemu — przyciemnienie pod okienkami.
+                        dialogTheme: const DialogThemeData(
+                          barrierColor: Color(0x33000000),
+                        ),
                       ).copyWith(
                         textTheme: _tightTextTheme(
                           ThemeData(brightness: Brightness.light).textTheme,
@@ -100,6 +104,9 @@ class _AppState extends State<App> {
                           brightness: Brightness.dark,
                         ),
                         appBarTheme: _appBarThemeForBrightness(Brightness.dark),
+                        dialogTheme: const DialogThemeData(
+                          barrierColor: Color(0x7A000000),
+                        ),
                       ).copyWith(
                         textTheme: _tightTextTheme(
                           ThemeData(brightness: Brightness.dark).textTheme,
