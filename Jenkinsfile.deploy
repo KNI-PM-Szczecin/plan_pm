@@ -465,6 +465,15 @@ PY
                                 bundle install --quiet
                                 bundle exec fastlane --version
 
+                                # The lane archives straight through Xcode, so no
+                                # `flutter build ios` ever runs. Only that step
+                                # raises FlutterGeneratedPluginSwiftPackage from
+                                # Flutter's default iOS 13.0 to the project's 15.0;
+                                # without it SwiftPM rejects every plugin that
+                                # needs more (cupertino_native_better, home_widget).
+                                # CocoaPods' `pod install` used to hide this.
+                                ( cd .. && flutter build ios --config-only --release --no-codesign )
+
                                 bundle exec fastlane ios beta
                             '''
                         }
