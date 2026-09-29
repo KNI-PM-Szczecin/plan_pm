@@ -204,7 +204,6 @@ pipeline {
 
                     command -v ruby   >/dev/null 2>&1 || fail "ruby not on PATH ($PATH)" "brew install ruby"
                     command -v bundle >/dev/null 2>&1 || fail "bundler not on PATH"      "brew install ruby"
-                    command -v pod    >/dev/null 2>&1 || fail "CocoaPods not on PATH"    "brew install cocoapods"
                     command -v git    >/dev/null 2>&1 || fail "git not on PATH"          "xcode-select --install"
 
                     # System ruby is 2.6.10 and current fastlane will not load on
@@ -268,12 +267,12 @@ pipeline {
 
                     "$FLUTTER_HOME/bin/flutter" --version
 
-                    # Runner.xcodeproj integrates plugins through CocoaPods and
-                    # has no Swift package references. Flutter >= 3.44.8 routes
-                    # SPM-capable plugins out of the Podfile by default, which
-                    # ends in "Module 'app_links' not found". Redundant on the
-                    # pinned 3.44.4, kept so a bump cannot quietly reintroduce it.
-                    "$FLUTTER_HOME/bin/flutter" config --no-enable-swift-package-manager
+                    # iOS plugins are integrated through Swift Package Manager
+                    # only: every plugin ships a Swift package and the project
+                    # has no CocoaPods integration left (no Podfile, no Pods
+                    # xcconfig includes). Set explicitly so the build does not
+                    # depend on this host's global Flutter config.
+                    "$FLUTTER_HOME/bin/flutter" config --enable-swift-package-manager
 
                     "$FLUTTER_HOME/bin/flutter" precache --ios --android
                 '''
@@ -372,7 +371,7 @@ PY
                 dir('frontend') {
                     // Also writes ios/Flutter/Generated.xcconfig and
                     // android/local.properties, both of which the native builds
-                    // read — pod install and settings.gradle.kts fail without them.
+                    // read — the Xcode build and settings.gradle.kts fail without them.
                     sh '''
                         set -eu
                         export PATH="$FLUTTER_HOME/bin:$PATH"
@@ -444,7 +443,6 @@ PY
                                 fi
 
                                 echo "Xcode:  $("$DEVELOPER_DIR/usr/bin/xcodebuild" -version | head -1)"
-                                echo "Pods:   $(pod --version)"
 
                                 # The Fastfile reads ./certificate.p12 relative to
                                 # the ios directory. Copied rather than symlinked
@@ -462,8 +460,6 @@ PY
                                 # Read by the lane, which archives and signs as
                                 # usual and then stops short of TestFlight.
                                 export PLANPM_SKIP_UPLOAD="$DRY_RUN"
-
-                                pod install
 
                                 bundle config set --local path 'vendor/bundle'
                                 bundle install --quiet

@@ -169,7 +169,7 @@ pomylenia i nic nie przechodzi przez `echo`.
 ### Jednorazowe postawienie maszyny
 
 ```bash
-brew install ruby cocoapods openjdk@21
+brew install ruby openjdk@21
 
 # NDK + cmdline-tools MUSZĄ być w środku ANDROID_HOME (cask brew kładzie
 # cmdline-tools gdzie indziej i Flutter ich tam nie znajduje)
