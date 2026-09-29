@@ -168,6 +168,13 @@ class _AppLargeTitleBarState extends State<AppLargeTitleBar>
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
+              // Domyślny layout centruje stary i nowy tytuł względem siebie —
+              // tytuły mają różną szerokość, więc krótszy przez czas przejścia
+              // stał przesunięty i na końcu „skakał" w lewo.
+              layoutBuilder: (current, previous) => Stack(
+                alignment: Alignment.centerLeft,
+                children: [...previous, ?current],
+              ),
               child: Text(
                 widget.title,
                 key: ValueKey(widget.title),
