@@ -185,6 +185,8 @@ Android — pełne tło. Ekran musi mieć `extendBodyBehindAppBar: true`.
 poza zakresem redesignu, nie ruszać.
 
 **Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` (albo `AppNavButton` dla innych ikon, np. menu) — iOS daje natywny `CNButton.icon(glass)` (Liquid Glass zostaje świadomie, mimo płaskich makiet — spójnie z `CNTabBar`), Android daje `IconButton` ze strzałką ←. Szkło daje plugin `cupertino_native_better` (fork `cupertino_native` z obsługą Swift Package Manager — oryginał stoi od 09.2025); wymaga `navigatorObservers: [CNTabBarRouteObserver()]` w `MaterialApp`, inaczej szkło prześwituje przez okienka. W odróżnieniu od oryginału przekazuje rozmiar symbolu do natywnego paska (domyślnie 24 pt), dlatego `CNTabBar` ma `iconSize: 18`.
+**CocoaLumberjack przypięty do 3.9.0** w obu `ios/**/swiftpm/Package.resolved`: `cupertino_native_better` ciągnie SVGKit 3.0.0 (iOS 12), a CocoaLumberjack 3.10.0 wymaga iOS 15 — Xcode 26.5 na Jenkinsie odrzuca archiwizację (lokalny Xcode 27 przepuszcza, więc lokalnie tego nie widać). Nie podbijać przy „Update Packages".
+**`flutter build ios --config-only` przed fastlane'em** (`Jenkinsfile.deploy`): tylko ten krok podnosi `FlutterGeneratedPluginSwiftPackage` z domyślnego iOS 13.0 do 15.0 z projektu — lane archiwizuje prosto przez Xcode.
 
 **Komponenty redesignu (`lib/global/widgets/app_*.dart`, design: Claude Design „PlanPM Redesign"):**
 nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGroupedSection`,
