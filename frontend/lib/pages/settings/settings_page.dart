@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/pages/external_link_page.dart';
+import 'package:plan_pm/global/utils/external_links.dart';
 import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/global/widgets/app_grouped_page.dart';
 import 'package:plan_pm/global/widgets/app_grouped_section.dart';
@@ -107,16 +107,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   color: AppColor.systemGreen,
                 ),
                 title: l10n.sendFeedbackButton,
-                accessory: AppListRowAccessory.chevron,
-                onTap: () => _open(
-                  (context) => ExternalLinkPage(
-                    url: 'https://forms.gle/E8sLgZ1X49kaX5jA6',
-                    icon: LucideIcons.messageSquare,
-                    title: l10n.sendFeedbackButton,
-                    description: l10n.feedbackPageDescription,
-                    buttonLabel: l10n.sendFeedbackButton,
-                  ),
-                ),
+                accessory: AppListRowAccessory.external,
+                onTap: () => openExternalLink(ExternalLinks.feedbackForm),
               ),
             ],
           ),

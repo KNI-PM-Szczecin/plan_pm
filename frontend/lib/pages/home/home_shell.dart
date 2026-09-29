@@ -12,7 +12,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/changelog.dart';
 import 'package:plan_pm/env_config.dart';
-import 'package:plan_pm/global/pages/external_link_page.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/announcement_dialog.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
@@ -23,6 +22,7 @@ import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
+import 'package:plan_pm/global/utils/external_links.dart';
 import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -84,6 +84,11 @@ class _MyHomePageState extends State<MyHomePage>
     _sidebarController.dispose();
     _preloadPageController.dispose();
     super.dispose();
+  }
+
+  void _openExternal(String url) {
+    _closeSidebar();
+    openExternalLink(url);
   }
 
   void _openSidebar() => _sidebarController.forward();
@@ -171,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     final pages = getPages(context);
     final l10n = AppLocalizations.of(context)!;
-    final sidebarWidth = MediaQuery.of(context).size.width * 0.85;
+    final sidebarWidth = MediaQuery.of(context).size.width * 0.84;
 
     return Stack(
       children: [
@@ -316,8 +321,9 @@ class _MyHomePageState extends State<MyHomePage>
                   behavior: HitTestBehavior.opaque,
                   onTap: _closeSidebar,
                   child: Container(
-                    color: Colors.black.withAlpha(
-                      (_sidebarController.value * 150).round(),
+                    // overlays-default z design systemu, narastający z wysunięciem.
+                    color: AppColor.overlay.withValues(
+                      alpha: AppColor.overlay.a * _sidebarController.value,
                     ),
                   ),
                 ),
@@ -341,52 +347,17 @@ class _MyHomePageState extends State<MyHomePage>
                       }
                     },
                     child: Sidebar(
-                      onPeTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://wf-zajecia.am.szczecin.pl/login',
-                              icon: LucideIcons.dumbbell,
-                              title: l10n.pePageTitle,
-                              description: l10n.pePageDescription,
-                              buttonLabel: l10n.pePageButton,
-                            ),
-                          ),
-                        );
-                      },
-                      onStudentIdTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://mlegitymacja.am.szczecin.pl',
-                              icon: LucideIcons.creditCard,
-                              title: l10n.studentIdPageTitle,
-                              description: l10n.studentIdPageDescription,
-                              buttonLabel: l10n.studentIdPageButton,
-                            ),
-                          ),
-                        );
-                      },
-                      onVirtualUniversityTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://wu.pm.szczecin.pl',
-                              icon: LucideIcons.landmark,
-                              title: l10n.virtualUniversityPageTitle,
-                              description:
-                                  l10n.virtualUniversityPageDescription,
-                              buttonLabel: l10n.virtualUniversityPageButton,
-                            ),
-                          ),
-                        );
-                      },
+                      // Skróty z menu to strony uczelni — otwieramy je od razu
+                      // w przeglądarce (strzałka ↗ w menu), bez ekranu pośredniego.
+                      onPeTap: () =>
+                          _openExternal(ExternalLinks.physicalEducation),
+                      onStudentIdTap: () =>
+                          _openExternal(ExternalLinks.studentId),
+                      onVirtualUniversityTap: () =>
+                          _openExternal(ExternalLinks.virtualUniversity),
+                      // Dubel z Ustawień — celowo, żeby nie trzeba było go szukać.
+                      onFeedbackTap: () =>
+                          _openExternal(ExternalLinks.feedbackForm),
                       onSettingsTap: () {
                         _closeSidebar();
                         Navigator.push(

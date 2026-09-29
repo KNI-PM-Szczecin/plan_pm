@@ -55,9 +55,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extramuralButton => 'Part-time';
 
   @override
-  String get continueButton => 'Continue';
-
-  @override
   String get homePageLabel => 'Student data is:';
 
   @override
@@ -306,10 +303,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackPageHeadline => 'Your feedback matters to us!';
 
   @override
-  String get feedbackPageDescription =>
-      'The form will open in your browser so you can sign in securely.';
-
-  @override
   String get feedbackFormOpenGenericError =>
       'Could not open the feedback form.';
 
@@ -376,37 +369,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pePageTitle => 'PE Enrollment';
 
   @override
-  String get pePageDescription =>
-      'Choose your physical education classes for this semester. Remember that enrollment happens periodically.';
-
-  @override
-  String get pePageButton => 'Go to enrollment';
-
-  @override
   String get pePageUrlError => 'Could not open the enrollment page.';
 
   @override
   String get studentIdPageTitle => 'Student ID Card';
 
   @override
-  String get studentIdPageDescription =>
-      'Apply for or renew your student ID card through your university account. Remember that the card is valid for one semester.';
-
-  @override
-  String get studentIdPageButton => 'Go to application';
-
-  @override
   String get studentIdPageUrlError => 'Could not open the student ID page.';
 
   @override
   String get virtualUniversityPageTitle => 'Virtual University';
-
-  @override
-  String get virtualUniversityPageDescription =>
-      'Check your grades, personal information, and handle university matters through the Virtual University portal.';
-
-  @override
-  String get virtualUniversityPageButton => 'Open portal';
 
   @override
   String get virtualUniversityPageUrlError =>
@@ -473,12 +445,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System';
-
-  @override
-  String get appearanceHint => 'Choose the theme that suits you best';
-
-  @override
-  String get activeThemeLabel => 'Active theme: ';
 
   @override
   String get personalizationHeader => 'Personalization';

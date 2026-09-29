@@ -55,9 +55,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get extramuralButton => 'Заочна';
 
   @override
-  String get continueButton => 'Продовжити';
-
-  @override
   String get homePageLabel => 'Дані студента:';
 
   @override
@@ -308,10 +305,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get feedbackPageHeadline => 'Ваш відгук важливий для нас!';
 
   @override
-  String get feedbackPageDescription =>
-      'Форма відкриється у вашому браузері, щоб ви могли безпечно увійти.';
-
-  @override
   String get feedbackFormOpenGenericError =>
       'Не вдалося відкрити форму відгуку.';
 
@@ -381,24 +374,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pePageTitle => 'Запис на фізичне виховання';
 
   @override
-  String get pePageDescription =>
-      'Оберіть заняття з фізичного виховання на цей семестр. Пам\'ятайте, що запис проводиться періодично.';
-
-  @override
-  String get pePageButton => 'Перейти до запису';
-
-  @override
   String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
 
   @override
   String get studentIdPageTitle => 'Студентський квиток';
-
-  @override
-  String get studentIdPageDescription =>
-      'Оформлення або поновлення студентського квитка здійснюється через університетський акаунт. Пам\'ятайте, що квиток дійсний протягом семестру.';
-
-  @override
-  String get studentIdPageButton => 'Перейти до оформлення';
 
   @override
   String get studentIdPageUrlError =>
@@ -406,13 +385,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get virtualUniversityPageTitle => 'Віртуальний університет';
-
-  @override
-  String get virtualUniversityPageDescription =>
-      'Перевіряйте оцінки, особисті дані та вирішуйте університетські справи через портал Віртуального університету.';
-
-  @override
-  String get virtualUniversityPageButton => 'Відкрити портал';
 
   @override
   String get virtualUniversityPageUrlError =>
@@ -479,12 +451,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get themeSystem => 'Системна';
-
-  @override
-  String get appearanceHint => 'Виберіть тему, яка вам найбільше підходить';
-
-  @override
-  String get activeThemeLabel => 'Активна тема: ';
 
   @override
   String get personalizationHeader => 'Персоналізація';

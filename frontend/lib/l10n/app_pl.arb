@@ -60,10 +60,6 @@
   "@extramuralButton": {
     "description": "input_page.dart - Option button for 'Part-time/Extramural' study mode."
   },
-  "continueButton": "Kontynuuj",
-  "@continueButton": {
-    "description": "input_page.dart - Main action button to proceed after data input."
-  },
   "homePageLabel": "Dane studenta to: ",
   "@homePageLabel": {
     "description": "home_page.dart - Header for the student data summary section."
@@ -382,10 +378,6 @@
   "@feedbackPageHeadline": {
     "description": "feedback_page.dart - Main headline encouraging users to share feedback."
   },
-  "feedbackPageDescription": "Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.",
-  "@feedbackPageDescription": {
-    "description": "feedback_page.dart - Explains that the feedback form opens externally in a browser."
-  },
   "feedbackFormOpenGenericError": "Nie udało się otworzyć formularza opinii.",
   "@feedbackFormOpenGenericError": {
     "description": "feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form."
@@ -459,16 +451,10 @@
     "description": "group_selection_page.dart - Message shown when there are no specialisations available for the selected field."
   },
   "pePageTitle": "Zapisy na WF",
-  "pePageDescription": "Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.",
-  "pePageButton": "Przejdź do zapisów",
   "pePageUrlError": "Nie udało się otworzyć strony zapisów.",
   "studentIdPageTitle": "Legitymacja studencka",
-  "studentIdPageDescription": "Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.",
-  "studentIdPageButton": "Przejdź do wyrobienia",
   "studentIdPageUrlError": "Nie udało się otworzyć strony legitymacji.",
   "virtualUniversityPageTitle": "Wirtualna uczelnia",
-  "virtualUniversityPageDescription": "Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.",
-  "virtualUniversityPageButton": "Otwórz portal",
   "virtualUniversityPageUrlError": "Nie udało się otworzyć portalu Wirtualnej Uczelni.",
   "degreeLevelLabel": "Stopień studiów",
   "@degreeLevelLabel": {
@@ -541,14 +527,6 @@
   "themeSystem": "Systemowy",
   "@themeSystem": {
     "description": "settings_page.dart - Label for the system default theme option."
-  },
-  "appearanceHint": "Wybierz motyw, który najbardziej Ci odpowiada",
-  "@appearanceHint": {
-    "description": "appearance_page.dart - Hint text describing the theme selection."
-  },
-  "activeThemeLabel": "Aktywny motyw: ",
-  "@activeThemeLabel": {
-    "description": "appearance_page.dart - Label showing the currently active theme."
   },
   "personalizationHeader": "Personalizacja",
   "@personalizationHeader": {

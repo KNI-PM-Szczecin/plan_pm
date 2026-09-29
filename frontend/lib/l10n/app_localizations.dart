@@ -190,12 +190,6 @@ abstract class AppLocalizations {
   /// **'Zaoczne'**
   String get extramuralButton;
 
-  /// input_page.dart - Main action button to proceed after data input.
-  ///
-  /// In pl, this message translates to:
-  /// **'Kontynuuj'**
-  String get continueButton;
-
   /// home_page.dart - Header for the student data summary section.
   ///
   /// In pl, this message translates to:
@@ -658,12 +652,6 @@ abstract class AppLocalizations {
   /// **'Twoja opinia jest dla nas ważna!'**
   String get feedbackPageHeadline;
 
-  /// feedback_page.dart - Explains that the feedback form opens externally in a browser.
-  ///
-  /// In pl, this message translates to:
-  /// **'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.'**
-  String get feedbackPageDescription;
-
   /// feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form.
   ///
   /// In pl, this message translates to:
@@ -748,18 +736,6 @@ abstract class AppLocalizations {
   /// **'Zapisy na WF'**
   String get pePageTitle;
 
-  /// No description provided for @pePageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.'**
-  String get pePageDescription;
-
-  /// No description provided for @pePageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przejdź do zapisów'**
-  String get pePageButton;
-
   /// No description provided for @pePageUrlError.
   ///
   /// In pl, this message translates to:
@@ -772,18 +748,6 @@ abstract class AppLocalizations {
   /// **'Legitymacja studencka'**
   String get studentIdPageTitle;
 
-  /// No description provided for @studentIdPageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.'**
-  String get studentIdPageDescription;
-
-  /// No description provided for @studentIdPageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przejdź do wyrobienia'**
-  String get studentIdPageButton;
-
   /// No description provided for @studentIdPageUrlError.
   ///
   /// In pl, this message translates to:
@@ -795,18 +759,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Wirtualna uczelnia'**
   String get virtualUniversityPageTitle;
-
-  /// No description provided for @virtualUniversityPageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.'**
-  String get virtualUniversityPageDescription;
-
-  /// No description provided for @virtualUniversityPageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Otwórz portal'**
-  String get virtualUniversityPageButton;
 
   /// No description provided for @virtualUniversityPageUrlError.
   ///
@@ -927,18 +879,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Systemowy'**
   String get themeSystem;
-
-  /// appearance_page.dart - Hint text describing the theme selection.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wybierz motyw, który najbardziej Ci odpowiada'**
-  String get appearanceHint;
-
-  /// appearance_page.dart - Label showing the currently active theme.
-  ///
-  /// In pl, this message translates to:
-  /// **'Aktywny motyw: '**
-  String get activeThemeLabel;
 
   /// settings_page.dart - Header for the personalization section.
   ///

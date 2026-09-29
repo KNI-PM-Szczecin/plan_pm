@@ -55,9 +55,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get extramuralButton => 'Zaoczne';
 
   @override
-  String get continueButton => 'Kontynuuj';
-
-  @override
   String get homePageLabel => 'Dane studenta to: ';
 
   @override
@@ -300,10 +297,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get feedbackPageHeadline => 'Twoja opinia jest dla nas ważna!';
 
   @override
-  String get feedbackPageDescription =>
-      'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.';
-
-  @override
   String get feedbackFormOpenGenericError =>
       'Nie udało się otworzyć formularza opinii.';
 
@@ -371,24 +364,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pePageTitle => 'Zapisy na WF';
 
   @override
-  String get pePageDescription =>
-      'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.';
-
-  @override
-  String get pePageButton => 'Przejdź do zapisów';
-
-  @override
   String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
 
   @override
   String get studentIdPageTitle => 'Legitymacja studencka';
-
-  @override
-  String get studentIdPageDescription =>
-      'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.';
-
-  @override
-  String get studentIdPageButton => 'Przejdź do wyrobienia';
 
   @override
   String get studentIdPageUrlError =>
@@ -396,13 +375,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get virtualUniversityPageTitle => 'Wirtualna uczelnia';
-
-  @override
-  String get virtualUniversityPageDescription =>
-      'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.';
-
-  @override
-  String get virtualUniversityPageButton => 'Otwórz portal';
 
   @override
   String get virtualUniversityPageUrlError =>
@@ -469,12 +441,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get themeSystem => 'Systemowy';
-
-  @override
-  String get appearanceHint => 'Wybierz motyw, który najbardziej Ci odpowiada';
-
-  @override
-  String get activeThemeLabel => 'Aktywny motyw: ';
 
   @override
   String get personalizationHeader => 'Personalizacja';
