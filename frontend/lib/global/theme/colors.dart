@@ -197,11 +197,6 @@ class AppColor {
       ? const Color(0xFFFFFFFF)
       : const Color(0xFF1C1C1E);
 
-  /// Zaznaczony segment w [AppSegmentedControl].
-  static Color get segmentedSelected => _brightness == Brightness.light
-      ? const Color(0xFFFFFFFF)
-      : const Color(0x45FFFFFF);
-
   /// Przyciemnienie strony pod okienkiem dialogowym i menu bocznym.
   static Color get overlay => _brightness == Brightness.light
       ? const Color(0x33000000)

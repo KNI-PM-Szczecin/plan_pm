@@ -1,5 +1,7 @@
 // Przełącznik 2–4 opcji w pigułce (rok, stopień, tryb studiów, rola).
-// Zaznaczenie przesuwa się animowanie; opcje z [disabled] są wyszarzone,
+// Zaznaczenie przesuwa się animowanie i ma kolor akcentu z białym tekstem —
+// świadome odstępstwo od białego segmentu z makiety, żeby wybór wyglądał jak
+// zwykły przycisk (decyzja właściciela). Opcje z [disabled] są wyszarzone,
 // ale widoczne — tak jak w ProgramAvailability niedostępne lata/stopnie.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,7 +62,7 @@ class AppSegmentedControl<T> extends StatelessWidget {
                     width: segmentWidth,
                     child: DecoratedBox(
                       decoration: ShapeDecoration(
-                        color: AppColor.segmentedSelected,
+                        color: AppColor.primary,
                         shape: const StadiumBorder(),
                       ),
                     ),
@@ -101,7 +103,11 @@ class AppSegmentedControl<T> extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyle.subheadlineEmphasized.copyWith(
-              color: isDisabled ? AppColor.labelTertiary : AppColor.onSurface,
+              color: isSelected
+                  ? Colors.white
+                  : isDisabled
+                  ? AppColor.labelTertiary
+                  : AppColor.onSurface,
             ),
           ),
         ),
