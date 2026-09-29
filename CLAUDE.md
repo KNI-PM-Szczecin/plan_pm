@@ -451,6 +451,7 @@ Porażka etapu = `UNSTABLE`, nie `FAILURE`.
 | `check_env_mode.yml` | PR → main | `.env_mode` == `prod` |
 | `deployment-env-check.yml` | PR → deployment | 4 flagi debug == `false` (`kUseTestDb`, `kSimulateNetworkErrors`, `kDebugAnnouncement`, `kDebugWhatsNew` — **pozostałe flagi NIE są sprawdzane przez CI**, weryfikuj ręcznie) |
 | `deployment-changelog-check.yml` | PR → deployment | `CHANGELOG.md` ma wpis dla aktualnej wersji |
+| `deployment-l10n-check.yml` | PR → deployment | każdy `.arb` ma dokładnie te same klucze co `app_en.arb` (baseline; szablon `gen-l10n` to nadal `app_pl.arb`), bez pustych wartości (`scripts/check_l10n.py`, lokalnie: `python scripts/check_l10n.py`) |
 | `version-check.yml` | PR → deployment lub production | wersja w `pubspec.yaml` > bazy |
 | `deployment-source-check.yml` | PR → deployment | źródłowy branch == `main` |
 
