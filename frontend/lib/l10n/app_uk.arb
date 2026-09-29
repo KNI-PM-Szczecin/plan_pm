@@ -78,7 +78,6 @@
   "professorNaN": "Немає професора",
   "roomNaN": "Немає аудиторії",
   "daysAgo": "{days, plural, =0{сьогодні} one{1 день тому} few{{days} дні тому} many{{days} днів тому} other{{days} дня тому}}",
-  "dateWithWeekday": "{date}",
   "details": "Деталі",
   "universityStructureLoading": "Завантаження структури університету",
   "noNews": "Немає новин",

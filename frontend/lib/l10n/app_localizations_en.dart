@@ -258,14 +258,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomNaN => 'No room';
 
   @override
-  String dateWithWeekday(DateTime date) {
-    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMEd(localeName);
-    final String dateString = dateDateFormat.format(date);
-
-    return '$dateString';
-  }
-
-  @override
   String get details => 'Details';
 
   @override

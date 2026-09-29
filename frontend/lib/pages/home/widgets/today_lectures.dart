@@ -2,9 +2,11 @@
 // (maksymalnie 3) pogrupowane po dniu. Obsługuje pull-to-refresh przez
 // [refreshNotifier]. Logika filtrowania wydzielona do [lecture_filters.dart].
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/utils/extensions.dart';
 import 'package:plan_pm/global/widgets/states/generic_loading.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
@@ -150,7 +152,11 @@ class _TodayLecturesState extends State<TodayLectures> {
                         spacing: 8,
                         children: [
                           Text(
-                            l10n.dateWithWeekday(groups.keys.toList()[index]),
+                            // Jak nagłówek w Zajęciach: pełne nazwy, bez
+                            // skrótów z kropkami i bez roku.
+                            DateFormat.MMMMEEEEd(
+                              Localizations.localeOf(context).toLanguageTag(),
+                            ).format(groups.keys.toList()[index]).toCapitalizedFirst,
                             style: TextStyle(
                               color: AppColor.onBackgroundVariant,
                             ),

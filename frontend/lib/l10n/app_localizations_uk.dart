@@ -262,14 +262,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get roomNaN => 'Немає аудиторії';
 
   @override
-  String dateWithWeekday(DateTime date) {
-    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMEd(localeName);
-    final String dateString = dateDateFormat.format(date);
-
-    return '$dateString';
-  }
-
-  @override
   String get details => 'Деталі';
 
   @override

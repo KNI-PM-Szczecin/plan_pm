@@ -312,16 +312,6 @@
   "@roomNaN": {
     "description": "lecture.dart - Message shown when a lecture has no assigned room."
   },
-  "dateWithWeekday": "{date}",
-  "@dateWithWeekday": {
-    "description": "Ogólne — data w formacie dd.MM.yyyy oraz skrócony dzień tygodnia (EEE). Przykład: 16.11.2025 - nie",
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "yMMMEd"
-      }
-    }
-  },
   "details": "Szczegóły",
   "@details": {},
   "universityStructureLoading": "Ładowanie struktury uczelni",

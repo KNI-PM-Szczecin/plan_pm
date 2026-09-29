@@ -75,7 +75,6 @@
   "professorNaN": "No professor",
   "roomNaN": "No room",
   "daysAgo": "{days, plural, =0{today} one{1 day ago} other{{days} days ago}}",
-  "dateWithWeekday": "{date}",
   "details": "Details",
   "universityStructureLoading": "Loading university structure...",
   "noNews": "No news",

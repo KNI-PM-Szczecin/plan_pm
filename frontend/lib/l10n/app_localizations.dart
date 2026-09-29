@@ -550,12 +550,6 @@ abstract class AppLocalizations {
   /// **'Brak sali'**
   String get roomNaN;
 
-  /// Ogólne — data w formacie dd.MM.yyyy oraz skrócony dzień tygodnia (EEE). Przykład: 16.11.2025 - nie
-  ///
-  /// In pl, this message translates to:
-  /// **'{date}'**
-  String dateWithWeekday(DateTime date);
-
   /// No description provided for @details.
   ///
   /// In pl, this message translates to:
