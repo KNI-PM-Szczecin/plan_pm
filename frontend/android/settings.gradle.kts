@@ -18,8 +18,10 @@ pluginManagement {
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.11.1" apply false
-    id("org.jetbrains.kotlin.android") version "2.2.20" apply false
+    id("com.android.application") version "9.0.1" apply false
+    // Nie jest nakładany (wbudowany Kotlin z AGP 9) — ta deklaracja ustala tylko wersję
+    // kompilatora Kotlina, której używa AGP. Wersje = szablon Fluttera 3.44.4.
+    id("org.jetbrains.kotlin.android") version "2.3.20" apply false
 }
 
 include(":app")

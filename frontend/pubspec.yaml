@@ -55,11 +55,11 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   path_provider: ^2.1.5
   url_launcher: ^6.3.2
-  package_info_plus: ^9.0.0
+  package_info_plus: ^10.2.1
   logger: ^2.6.2
   google_fonts: ^8.0.2
   cupertino_native: ^0.1.1
-  home_widget: ^0.9.1
+  home_widget: ^0.10.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
