@@ -1,8 +1,6 @@
 // Główna powłoka nawigacyjna aplikacji — AppBar z hamburgerem, Sidebar, BottomBar i PageView.
 // Sidebar używa AnimationController — treść przesuwa się w prawo, sidebar wsuwa się z lewej.
 
-import 'dart:ui' show ImageFilter;
-
 import 'package:cupertino_native/cupertino_native.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
@@ -14,6 +12,8 @@ import 'package:plan_pm/changelog.dart';
 import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/announcement_dialog.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
+import 'package:plan_pm/global/widgets/back_button.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/global/widgets/sidebar.dart';
 import 'package:plan_pm/global/widgets/whats_new_dialog.dart';
@@ -187,59 +187,17 @@ class _MyHomePageState extends State<MyHomePage>
             extendBody: true,
             extendBodyBehindAppBar: true,
             backgroundColor: AppColor.background,
-            appBar: AppBar(
-              systemOverlayStyle: Theme.of(context).brightness == Brightness.light
-                  ? SystemUiOverlayStyle.dark
-                  : SystemUiOverlayStyle.light,
-              backgroundColor: Colors.transparent,
-              forceMaterialTransparency: true,
-              shape: Border(bottom: BorderSide(color: AppColor.outline)),
-              flexibleSpace: Builder(
-                builder: (context) {
-                  final isLight = Theme.of(context).brightness == Brightness.light;
-                  return ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Container(
-                        color: AppColor.background.withValues(alpha: isLight ? 0.92 : 0.5),
-                      ),
-                    ),
-                  );
+            appBar: AppLargeTitleBar(
+              title: pages[_currentIndex]['title'],
+              resetKey: _currentIndex,
+              leading: AppNavButton(
+                icon: LucideIcons.menu,
+                symbol: 'line.3.horizontal',
+                label: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  _openSidebar();
                 },
-              ),
-              leading: Builder(
-                builder: (ctx) => defaultTargetPlatform == TargetPlatform.iOS
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: CNButton.icon(
-                            icon: const CNSymbol('line.3.horizontal', size: 20),
-                            style: CNButtonStyle.glass,
-                            onPressed: () {
-                              HapticFeedback.selectionClick();
-                              _openSidebar();
-                            },
-                          ),
-                        ),
-                      )
-                    : IconButton(
-                        onPressed: () {
-                          HapticFeedback.selectionClick();
-                          _openSidebar();
-                        },
-                        icon: Icon(
-                          LucideIcons.menu,
-                          color: AppColor.onBackgroundVariant,
-                        ),
-                      ),
-              ),
-              centerTitle: true,
-              title: Text(
-                pages[_currentIndex]['title'],
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.onBackground,
-                ),
               ),
             ),
             bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS

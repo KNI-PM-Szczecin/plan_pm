@@ -13,8 +13,8 @@ class NewsPage extends StatelessWidget {
         bottom:
             kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
         child: NewsBuilder(),
       ),
     );

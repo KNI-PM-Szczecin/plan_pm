@@ -121,14 +121,6 @@ class AppColor {
       ? ColorThemes.lightOnPrimaryVariant
       : ColorThemes.darkOnPrimaryVariant;
 
-  static Color get inverseSurface => _brightness == Brightness.light
-      ? const Color(0xFF1C1C1E)
-      : Colors.white;
-
-  static Color get onInverseSurface => _brightness == Brightness.light
-      ? Colors.white
-      : Colors.black;
-
   static Color get success => ColorThemes.success;
 
   static Color get destructive => ColorThemes.destructive;
@@ -161,11 +153,6 @@ class AppColor {
   static Color get labelTertiary => _brightness == Brightness.light
       ? const Color(0x4D3C3C43)
       : const Color(0x4DEBEBF5);
-
-  /// Tło średnich kontrolek (np. szary przycisk).
-  static Color get fillSecondary => _brightness == Brightness.light
-      ? const Color(0x29787880)
-      : const Color(0x52787880);
 
   /// Tło nieaktywnej kontrolki, pola wyszukiwania.
   static Color get fillTertiary => _brightness == Brightness.light

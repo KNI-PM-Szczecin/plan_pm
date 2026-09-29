@@ -140,7 +140,7 @@ Widgety czytają z DatabaseService → opcjonalnie WidgetService.pushTodayLectur
 ```
 lib/pages/
 ├── home/           # Ekran główny (dzisiejsze zajęcia + newsy)
-│   ├── home_shell.dart        # Główna nawigacja (AppBar blur, BottomBar, Sidebar)
+│   ├── home_shell.dart        # Główna nawigacja (AppLargeTitleBar, BottomBar, Sidebar)
 │   ├── home_page.dart         # RefreshIndicator + TodayLectures + NewsBuilder
 │   └── utils/lecture_filters.dart  # getClosestLectures() — filtruje i sortuje
 ├── lectures/       # Pełny plan (widok dzienny/tygodniowy)
@@ -170,11 +170,21 @@ lib/pages/
 
 ### UI — wzorce
 
-**AppBar i BottomNavBar (blur):**
-- Oba używają `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)`
-- Ramka `AppColor.outline` musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem
+**Górne paski (`app_bar.dart`) — „scroll edge":** `CustomAppBar` (podstrony) i
+`AppLargeTitleBar` (zakładki Home/Zajęcia/Nowości: przycisk menu + duży tytuł) są
+przezroczyste, gdy treść jest na górze, a po przewinięciu pod pasek dostają
+`ScrollEdgeBackground`: iOS — `BackdropFilter(blur 20)` + tło `alpha 0.92/0.5` + linia,
+Android — pełne tło. Ekran musi mieć `extendBodyBehindAppBar: true`.
+- **Nie** owijaj `BackdropFilter` w `Opacity`/`AnimatedOpacity` — na iOS się wtedy nie
+  rysuje; animuj siłę blura i krycie (tak robi `ScrollEdgeBackground`).
+- `flexibleSpace` dostaje luźne ograniczenia — tło musi być w `SizedBox.expand`,
+  inaczej zwija się do 0 px (test: `test/app_bar_scroll_edge_test.dart`).
+- Linia musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem.
 
-**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` — iOS daje płaskie kółko 44 pt z chevronem (iOS 27 Flat, bez Liquid Glass), Android daje `IconButton` ze strzałką ←.
+**BottomNavBar (blur):** `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)` —
+poza zakresem redesignu, nie ruszać.
+
+**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` (albo `AppNavButton` dla innych ikon, np. menu) — iOS daje natywny `CNButton.icon(glass)` (Liquid Glass zostaje świadomie, mimo płaskich makiet — spójnie z `CNTabBar`), Android daje `IconButton` ze strzałką ←. Oba zależą od pluginu `cupertino_native`, który nie wspiera jeszcze Swift Package Manager (ostrzeżenie przy buildzie iOS).
 
 **Komponenty redesignu (`lib/global/widgets/app_*.dart`, design: Claude Design „PlanPM Redesign"):**
 nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGroupedSection`,
@@ -189,7 +199,7 @@ nie obejmuje zajęć ani dolnego paska (`navigation_bar.dart`), nie ruszać ich.
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
-**RefreshIndicator za AppBarem:** Ustaw `edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight` żeby spinner nie chował się za paskiem.
+**RefreshIndicator za AppBarem:** Ustaw `edgeOffset: MediaQuery.of(context).padding.top` — przy `extendBodyBehindAppBar` `padding.top` zawiera już całą wysokość paska (także duży tytuł), więc dokładanie `kToolbarHeight` przesuwa spinner za nisko.
 
 ### Native home screen widgets
 
