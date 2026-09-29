@@ -16,15 +16,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get welcomeButton => 'Witaj w Plan PM';
 
   @override
-  String get welcomePageSelectionText => 'Powrót do WelcomeScreen';
-
-  @override
-  String get inputPageSelectionText => 'Powrót do InputPage';
-
-  @override
-  String get inputPageLabel => 'Twoje Dane Akademickie';
-
-  @override
   String get facultyLabel => 'Wydział';
 
   @override
@@ -55,22 +46,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get extramuralButton => 'Zaoczne';
 
   @override
-  String get homePageLabel => 'Dane studenta to: ';
-
-  @override
-  String get facultyText => 'Wydział';
-
-  @override
-  String get fieldText => 'Kierunek';
-
-  @override
-  String get specialisationText => 'Specjalizacja';
-
-  @override
   String get yearText => 'Rok';
-
-  @override
-  String get typeText => 'Tryb studiów';
 
   @override
   String get dataNaN => 'Brak danych';
@@ -80,12 +56,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get skipButton => 'Pomiń';
-
-  @override
-  String get fullTimeStudy => 'Stacjonarne';
-
-  @override
-  String get partTimeStudy => 'Niestacjonarne';
 
   @override
   String get groupSelection => 'Wybór grupy';
@@ -101,19 +71,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupSettings => 'Ustawienia studiów';
 
   @override
-  String get groupSelectionHintAfterLoad =>
-      'Na podstawie Twoich ustawień studiów pobraliśmy dostępne grupy. Wybierz jedną lub wiele, aby śledzić kilka planów.';
-
-  @override
   String get save => 'Zapisz';
 
   @override
   String get todayDataNaN => 'Brak zajęć na dziś';
-
-  @override
-  String pageErrorMess(Object snapshotError) {
-    return 'Błąd w FutureBuilder $snapshotError';
-  }
 
   @override
   String lectureLength(num lecturesLength) {
@@ -161,28 +122,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get nextWeek => 'Następny tydzień';
 
   @override
-  String get daysMon => 'poniedziałek';
-
-  @override
-  String get daysTue => 'wtorek';
-
-  @override
-  String get daysWed => 'środa';
-
-  @override
-  String get daysThu => 'czwartek';
-
-  @override
-  String get daysFri => 'piątek';
-
-  @override
   String get selectedGroupsHeader => 'Wybrane grupy';
 
   @override
   String get changeGroupsButton => 'Zmień grupy';
-
-  @override
-  String get selectedGroupsLabel => 'Wybrane grupy';
 
   @override
   String get noDataAvailable => 'Brak danych';
@@ -255,15 +198,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get debugHeader => 'Debug';
 
   @override
-  String get returnToLabel => 'Powrót do';
-
-  @override
-  String get welcomeScreenButton => 'Welcome screen';
-
-  @override
-  String get inputPageButton => 'Podaj dane';
-
-  @override
   String get professorLabel => 'Prowadzący';
 
   @override
@@ -300,18 +234,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sendFeedbackButton => 'Prześlij opinie';
 
   @override
-  String get feedbackPageHeadline => 'Twoja opinia jest dla nas ważna!';
-
-  @override
-  String get feedbackFormOpenGenericError =>
-      'Nie udało się otworzyć formularza opinii.';
-
-  @override
-  String feedbackFormOpenError(String error) {
-    return 'Nie udało się otworzyć formularza opinii: $error';
-  }
-
-  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -340,14 +262,6 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String dateDayMonth(DateTime date1) {
-    final intl.DateFormat date1DateFormat = intl.DateFormat.MMMM(localeName);
-    final String date1String = date1DateFormat.format(date1);
-
-    return '$date1String';
-  }
-
-  @override
   String get details => 'Szczegóły';
 
   @override
@@ -370,21 +284,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pePageTitle => 'Zapisy na WF';
 
   @override
-  String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
-
-  @override
   String get studentIdPageTitle => 'Legitymacja studencka';
 
   @override
-  String get studentIdPageUrlError =>
-      'Nie udało się otworzyć strony legitymacji.';
-
-  @override
   String get virtualUniversityPageTitle => 'Wirtualna uczelnia';
-
-  @override
-  String get virtualUniversityPageUrlError =>
-      'Nie udało się otworzyć portalu Wirtualnej Uczelni.';
 
   @override
   String get degreeLevelLabel => 'Stopień studiów';
@@ -474,12 +377,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get accentColorTitle => 'Kolor wiodący';
-
-  @override
-  String get amoledModeTitle => 'Prawdziwa czerń';
-
-  @override
-  String get amoledModeDesc => 'Całkowicie czarne tło w trybie ciemnym';
 
   @override
   String get eventStyleTitle => 'Styl kolorowania zajęć';
@@ -613,9 +510,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get roleStudentViewTitle => 'Widok studenta';
 
   @override
-  String get roleStudentViewSubtitle => 'Przełącz na plan studenta';
-
-  @override
   String get roleViewingAsStudent => 'Przeglądasz aktualnie plan jako student.';
 
   @override
@@ -623,13 +517,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Przeglądasz aktualnie plan jako wykładowca.';
 
   @override
-  String get roleCurrentlyActive => 'Aktualnie aktywny';
-
-  @override
   String get roleLecturerViewTitle => 'Widok wykładowcy';
-
-  @override
-  String get roleLecturerViewSubtitle => 'Przełącz na widok wykładowcy';
 
   @override
   String get debugRoleSelector => 'Wybór roli';
@@ -658,10 +546,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get gdprTitle => 'Prywatność i dane';
-
-  @override
-  String get gdprBody =>
-      'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.';
 
   @override
   String get gdprAccept => 'Rozumiem i akceptuję';

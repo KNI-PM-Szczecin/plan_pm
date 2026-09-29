@@ -18,9 +18,7 @@ class ColorThemes {
   static final Color lightOnSurfaceVariant = Colors.black.withAlpha(100);
   static const Color lightPrimary = Color(0xFF0884ff);
   static const Color lightOnPrimary = Colors.white;
-  static final Color lightOnPrimaryVariant = Colors.black.withAlpha(180);
   static final Color lightOutline = Colors.black.withAlpha(30);
-  static const int lightColorfulAlphaValue = 40;
 
   static const Color darkBackground = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFE0E0E0);
@@ -31,16 +29,10 @@ class ColorThemes {
   static final Color darkOnSurfaceVariant = Colors.white.withAlpha(100);
   static const Color darkPrimary = Color(0xFF409CFF);
   static const Color darkOnPrimary = Colors.white;
-  static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
   static final Color darkOutline = Colors.white.withAlpha(10);
-  static const int darkColorfulAlphaValue = 150;
 
   static const Color success = Color(0xFF30D158);
   static const Color destructive = Color(0xFFFF453A);
-  static const Color neutral = Color(0xFF6B7280);
-  static const Color decorativePurple = Color(0xFF8B5CF6);
-  static const Color decorativeBlue = Color(0xFF0884FF);
-  static const Color decorativeGreen = Color(0xFF10B981);
 }
 
 class AppColor {
@@ -117,29 +109,13 @@ class AppColor {
       ? ColorThemes.lightOnPrimary
       : ColorThemes.darkOnPrimary;
 
-  static Color get onPrimaryVariant => _brightness == Brightness.light
-      ? ColorThemes.lightOnPrimaryVariant
-      : ColorThemes.darkOnPrimaryVariant;
-
   static Color get success => ColorThemes.success;
 
   static Color get destructive => ColorThemes.destructive;
 
-  static Color get neutral => ColorThemes.neutral;
-
-  static Color get decorativePurple => ColorThemes.decorativePurple;
-
-  static Color get decorativeBlue => ColorThemes.decorativeBlue;
-
-  static Color get decorativeGreen => ColorThemes.decorativeGreen;
-
   static Color get outline => _brightness == Brightness.light
       ? ColorThemes.lightOutline
       : ColorThemes.darkOutline;
-
-  static int get colorfulAlphaValue => _brightness == Brightness.light
-      ? ColorThemes.lightColorfulAlphaValue
-      : ColorThemes.darkColorfulAlphaValue;
 
   // Role z design systemu (iOS 27 Flat). Półprzezroczyste — leżą na
   // dowolnym tle i same dopasowują się do niego.
@@ -222,6 +198,4 @@ class AppColor {
           : Colors.grey.shade700;
 
   static Color get rectorHoursBadge => Colors.white.withValues(alpha: 0.1);
-  static Color get rectorHoursDivider => const Color.fromARGB(80, 228, 227, 227);
-  static Color get rectorHoursAdditionalInfo => const Color(0xB3FFFFFF);
 }

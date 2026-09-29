@@ -16,15 +16,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get welcomeButton => 'Ласкаво просимо до Plan PM';
 
   @override
-  String get welcomePageSelectionText => 'Повернутися до WelcomeScreen';
-
-  @override
-  String get inputPageSelectionText => 'Повернутися до InputPage';
-
-  @override
-  String get inputPageLabel => 'Ваші академічні дані';
-
-  @override
   String get facultyLabel => 'Факультет';
 
   @override
@@ -55,22 +46,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get extramuralButton => 'Заочна';
 
   @override
-  String get homePageLabel => 'Дані студента:';
-
-  @override
-  String get facultyText => 'Факультет';
-
-  @override
-  String get fieldText => 'Напрямок';
-
-  @override
-  String get specialisationText => 'Спеціалізація';
-
-  @override
   String get yearText => 'Рік';
-
-  @override
-  String get typeText => 'Форма навчання';
 
   @override
   String get dataNaN => 'Немає даних';
@@ -80,12 +56,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get skipButton => 'Пропустити';
-
-  @override
-  String get fullTimeStudy => 'Стаціонарна';
-
-  @override
-  String get partTimeStudy => 'Нестаціонарна';
 
   @override
   String get groupSelection => 'Вибір групи';
@@ -101,19 +71,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupSettings => 'Налаштування навчання';
 
   @override
-  String get groupSelectionHintAfterLoad =>
-      'На основі ваших налаштувань навчання ми завантажили доступні групи. Виберіть одну або декілька, щоб відстежувати різні розклади.';
-
-  @override
   String get save => 'Зберегти';
 
   @override
   String get todayDataNaN => 'Немає занять на сьогодні';
-
-  @override
-  String pageErrorMess(Object snapshotError) {
-    return 'Помилка у FutureBuilder $snapshotError';
-  }
 
   @override
   String lectureLength(num lecturesLength) {
@@ -169,28 +130,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get nextWeek => 'Наступний тиждень';
 
   @override
-  String get daysMon => 'понеділок';
-
-  @override
-  String get daysTue => 'вівторок';
-
-  @override
-  String get daysWed => 'середа';
-
-  @override
-  String get daysThu => 'четвер';
-
-  @override
-  String get daysFri => 'п\'ятниця';
-
-  @override
   String get selectedGroupsHeader => 'Вибрані групи';
 
   @override
   String get changeGroupsButton => 'Змінити групи';
-
-  @override
-  String get selectedGroupsLabel => 'Вибрані групи';
 
   @override
   String get noDataAvailable => 'Дані недоступні';
@@ -263,15 +206,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get debugHeader => 'Налагодження';
 
   @override
-  String get returnToLabel => 'Повернутися до';
-
-  @override
-  String get welcomeScreenButton => 'Екран привітання';
-
-  @override
-  String get inputPageButton => 'Екран вводу даних';
-
-  @override
   String get professorLabel => 'Професор';
 
   @override
@@ -308,18 +242,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get sendFeedbackButton => 'Надіслати відгук';
 
   @override
-  String get feedbackPageHeadline => 'Ваш відгук важливий для нас!';
-
-  @override
-  String get feedbackFormOpenGenericError =>
-      'Не вдалося відкрити форму відгуку.';
-
-  @override
-  String feedbackFormOpenError(String error) {
-    return 'Не вдалося відкрити форму відгуку: $error';
-  }
-
-  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -348,14 +270,6 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String dateDayMonth(DateTime date1) {
-    final intl.DateFormat date1DateFormat = intl.DateFormat.MMMM(localeName);
-    final String date1String = date1DateFormat.format(date1);
-
-    return '$date1String';
-  }
-
-  @override
   String get details => 'Деталі';
 
   @override
@@ -380,21 +294,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pePageTitle => 'Запис на фізичне виховання';
 
   @override
-  String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
-
-  @override
   String get studentIdPageTitle => 'Студентський квиток';
 
   @override
-  String get studentIdPageUrlError =>
-      'Не вдалося відкрити сторінку студентського квитка.';
-
-  @override
   String get virtualUniversityPageTitle => 'Віртуальний університет';
-
-  @override
-  String get virtualUniversityPageUrlError =>
-      'Не вдалося відкрити портал Віртуального університету.';
 
   @override
   String get degreeLevelLabel => 'Ступінь навчання';
@@ -484,12 +387,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get accentColorTitle => 'Колір акценту';
-
-  @override
-  String get amoledModeTitle => 'AMOLED Чорний';
-
-  @override
-  String get amoledModeDesc => 'Абсолютно чорний фон для темного режиму';
 
   @override
   String get eventStyleTitle => 'Стиль подій';
@@ -623,22 +520,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get roleStudentViewTitle => 'Перегляд студента';
 
   @override
-  String get roleStudentViewSubtitle => 'Переключитися на розклад студента';
-
-  @override
   String get roleViewingAsStudent => 'Ви переглядаєте розклад як студент.';
 
   @override
   String get roleViewingAsLecturer => 'Ви переглядаєте розклад як викладач.';
 
   @override
-  String get roleCurrentlyActive => 'Зараз активний';
-
-  @override
   String get roleLecturerViewTitle => 'Перегляд викладача';
-
-  @override
-  String get roleLecturerViewSubtitle => 'Переключитися на перегляд викладача';
 
   @override
   String get debugRoleSelector => 'Вибір ролі';
@@ -667,10 +555,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get gdprTitle => 'Конфіденційність і дані';
-
-  @override
-  String get gdprBody =>
-      'Додаток Plan PM відображає імена, наукові звання та розклади занять викладачів Морського університету в Щецині. Ці дані отримані з публічно доступних університетських систем та є персональними даними відповідно до Загального регламенту захисту даних (GDPR).\n\nКористуючись додатком, ви підтверджуєте, що розумієте мету відображення цих даних, та надаєте на це згоду.';
 
   @override
   String get gdprAccept => 'Розумію і погоджуюсь';
