@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show SystemChrome, SystemUiOverlayStyle, Brightness;
+import 'package:cupertino_native_better/cupertino_native.dart'
+    show CNTabBarRouteObserver;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:plan_pm/app_initialization.dart';
 import 'package:plan_pm/env_config.dart';
@@ -67,6 +69,10 @@ class _AppState extends State<App> {
               valueListenable: accentColorNotifier,
               builder: (context, _, _) {
                 return MaterialApp(
+                  // Wymagany przez cupertino_native_better: pilnuje kolejności natywnych
+                  // widoków Liquid Glass (CNTabBar, CNButton), żeby szkło nie prześwitywało
+                  // przez okienka i arkusze otwarte nad stroną.
+                  navigatorObservers: [CNTabBarRouteObserver()],
                   locale: currentLocale,
                   themeMode: currentThemeMode,
                   title: 'Plan PM',

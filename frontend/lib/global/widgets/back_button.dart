@@ -1,11 +1,11 @@
 // Przyciski paska nawigacji dopasowane do platformy:
-//   iOS     — natywny przycisk Liquid Glass (CNButton, styl glass). Makiety są
+//   iOS     — natywny przycisk Liquid Glass (CNButton z cupertino_native_better). Makiety są
 //             płaskie, bo kit „iOS 27 Flat" celowo pominął materiały — sam iOS
 //             zostaje przy szkle, a szklany jest też dolny pasek (CNTabBar),
 //   Android — zwykły IconButton, jak w aplikacjach systemowych.
 // [AppBackButton] — powrót (chevron ‹ / strzałka ←), [AppNavButton] — dowolna
 // ikona, np. menu na głównym ekranie.
-import 'package:cupertino_native/cupertino_native.dart';
+import 'package:cupertino_native_better/cupertino_native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -50,7 +50,7 @@ class AppNavButton extends StatelessWidget {
       label: label,
       child: CNButton.icon(
         icon: CNSymbol(symbol, size: 20),
-        style: CNButtonStyle.glass,
+        config: const CNButtonConfig(style: CNButtonStyle.glass),
         onPressed: () {
           HapticFeedback.lightImpact();
           onPressed();

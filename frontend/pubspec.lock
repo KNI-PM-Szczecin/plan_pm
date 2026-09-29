@@ -169,14 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  cupertino_native:
+  cupertino_native_better:
     dependency: "direct main"
     description:
-      name: cupertino_native
-      sha256: "5f42e85a091797afb86bb30a25fffd7188335de97278fa4bb80c0f564c874e89"
+      name: cupertino_native_better
+      sha256: "41c2a8ed69bc3448c2c05e3797e92e04fae340f1443ace396f8163035313903a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "1.6.0"
   dart_jsonwebtoken:
     dependency: transitive
     description:

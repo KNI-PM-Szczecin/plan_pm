@@ -58,7 +58,8 @@ dependencies:
   package_info_plus: ^10.2.1
   logger: ^2.6.2
   google_fonts: ^8.0.2
-  cupertino_native: ^0.1.1
+  # Fork cupertino_native z obsługą Swift Package Manager (oryginał stoi od 09.2025).
+  cupertino_native_better: ^1.6.0
   home_widget: ^0.10.0
 
 dev_dependencies:

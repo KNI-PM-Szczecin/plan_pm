@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "cocoalumberjack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+      "state" : {
+        "revision" : "b75d3c3198a2930b4491b04fd47cb504b359c750",
+        "version" : "3.10.0"
+      }
+    },
+    {
+      "identity" : "svgkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SVGKit/SVGKit.git",
+      "state" : {
+        "revision" : "58152b9f7c85eab239160b36ffdfd364aa43d666",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log",
+      "state" : {
+        "revision" : "9c6fb14227f55d8f711ce3847dc2f419fb0ecacb",
+        "version" : "1.15.1"
+      }
+    }
+  ],
+  "version" : 2
+}

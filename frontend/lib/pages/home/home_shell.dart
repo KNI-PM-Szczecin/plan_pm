@@ -1,7 +1,7 @@
 // Główna powłoka nawigacyjna aplikacji — AppBar z hamburgerem, Sidebar, BottomBar i PageView.
 // Sidebar używa AnimationController — treść przesuwa się w prawo, sidebar wsuwa się z lewej.
 
-import 'package:cupertino_native/cupertino_native.dart';
+import 'package:cupertino_native_better/cupertino_native.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -203,6 +203,10 @@ class _MyHomePageState extends State<MyHomePage>
             bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS
                 ? CNTabBar(
                     tint: AppColor.primary,
+                    // cupertino_native_better przekazuje rozmiar symbolu do
+                    // natywnego paska (domyślnie 24 pt — za duże); stary plugin
+                    // zostawiał systemowy. 18 pt odpowiada dawnemu wyglądowi.
+                    iconSize: 18,
                     currentIndex: _currentIndex,
                     onTap: (newIndex) {
                       setState(() => _currentIndex = newIndex);

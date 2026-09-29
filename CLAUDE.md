@@ -184,7 +184,7 @@ Android — pełne tło. Ekran musi mieć `extendBodyBehindAppBar: true`.
 **BottomNavBar (blur):** `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)` —
 poza zakresem redesignu, nie ruszać.
 
-**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` (albo `AppNavButton` dla innych ikon, np. menu) — iOS daje natywny `CNButton.icon(glass)` (Liquid Glass zostaje świadomie, mimo płaskich makiet — spójnie z `CNTabBar`), Android daje `IconButton` ze strzałką ←. Oba zależą od pluginu `cupertino_native`, który nie wspiera jeszcze Swift Package Manager (ostrzeżenie przy buildzie iOS).
+**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` (albo `AppNavButton` dla innych ikon, np. menu) — iOS daje natywny `CNButton.icon(glass)` (Liquid Glass zostaje świadomie, mimo płaskich makiet — spójnie z `CNTabBar`), Android daje `IconButton` ze strzałką ←. Szkło daje plugin `cupertino_native_better` (fork `cupertino_native` z obsługą Swift Package Manager — oryginał stoi od 09.2025); wymaga `navigatorObservers: [CNTabBarRouteObserver()]` w `MaterialApp`, inaczej szkło prześwituje przez okienka. W odróżnieniu od oryginału przekazuje rozmiar symbolu do natywnego paska (domyślnie 24 pt), dlatego `CNTabBar` ma `iconSize: 18`.
 
 **Komponenty redesignu (`lib/global/widgets/app_*.dart`, design: Claude Design „PlanPM Redesign"):**
 nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGroupedSection`,
