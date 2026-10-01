@@ -20,7 +20,7 @@ class LecturerSearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      height: 40,
+      height: 48,
       // Z prawej mniej — przycisk czyszczenia ma własne pole dotyku.
       padding: const EdgeInsets.only(left: 12, right: 4),
       decoration: ShapeDecoration(
@@ -48,28 +48,29 @@ class LecturerSearchField extends StatelessWidget {
               ),
             ),
           ),
-          if (controller.text.isNotEmpty)
-            // Przycisk dla czytników ekranu, pole dotyku na całą wysokość pola.
-            Semantics(
-              button: true,
-              label: MaterialLocalizations.of(context).clearButtonTooltip,
-              excludeSemantics: true,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  controller.clear();
-                  onChanged('');
-                },
-                child: SizedBox.square(
-                  dimension: 40,
-                  child: Icon(
-                    LucideIcons.xCircle,
-                    size: 18,
-                    color: AppColor.labelSecondary,
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, _) => value.text.isEmpty
+                ? const SizedBox.shrink()
+                : IconButton(
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).clearButtonTooltip,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 48,
+                      height: 48,
+                    ),
+                    onPressed: () {
+                      controller.clear();
+                      onChanged('');
+                    },
+                    icon: Icon(
+                      LucideIcons.xCircle,
+                      size: 18,
+                      color: AppColor.labelSecondary,
+                    ),
                   ),
-                ),
-              ),
-            ),
+          ),
         ],
       ),
     );

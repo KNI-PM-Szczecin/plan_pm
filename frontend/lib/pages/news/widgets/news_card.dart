@@ -8,6 +8,7 @@ import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/widgets/app_pressable.dart';
 import 'package:plan_pm/pages/news/full_news_page.dart';
+import 'package:plan_pm/pages/news/utils/html_preview.dart';
 import 'package:plan_pm/pages/news/widgets/news_cover_image.dart';
 import 'package:plan_pm/pages/news/widgets/news_meta_row.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -31,19 +32,6 @@ class NewsCard extends StatelessWidget {
   final String? imageUrl;
 
   static const double radius = 22;
-
-  /// Zajawka bez znaczników HTML i encji — [Text] z maxLines ucina ją ładnie
-  /// na końcu drugiej linii zamiast w połowie tagu.
-  static String _plainText(String html) => html
-      .replaceAll(RegExp(r'<br\s*/?>|</p>|</h\d>', caseSensitive: false), ' ')
-      .replaceAll(RegExp(r'<[^>]*>'), '')
-      .replaceAll('&nbsp;', ' ')
-      .replaceAll('&amp;', '&')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&quot;', '"')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +76,7 @@ class NewsCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    _plainText(description),
+                    htmlPreviewText(description),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyle.subheadline.copyWith(

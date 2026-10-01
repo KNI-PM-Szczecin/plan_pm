@@ -43,6 +43,7 @@ dependencies:
   collection: ^1.19.1
   flutter_native_splash: ^2.4.7
   flutter_html: ^3.0.0
+  html: ^0.15.6
 
   # Provides localizations and translations for Flutter's built-in widgets.
   flutter_localizations:
