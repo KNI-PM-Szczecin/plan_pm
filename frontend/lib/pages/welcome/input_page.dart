@@ -13,15 +13,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/models/student.dart';
-import 'package:plan_pm/global/widgets/states/generic_loading.dart';
-import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/global/widgets/app_bottom_actions.dart';
+import 'package:plan_pm/global/widgets/app_button.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_menu_field.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
+import 'package:plan_pm/global/widgets/app_segmented_control.dart';
+import 'package:plan_pm/global/widgets/app_state_card.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
-import 'package:plan_pm/pages/welcome/widgets/button_switch.dart';
-import 'package:plan_pm/pages/welcome/widgets/dropdown_menu.dart';
-import 'package:plan_pm/pages/welcome/widgets/onboarding_action_bar.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/service/backend_service.dart';
@@ -59,10 +62,6 @@ class _InputPageState extends State<InputPage> {
   String? selectedDegreeLevel;
   String? selectedProgramType;
 
-  TextEditingController facultyController = TextEditingController();
-  TextEditingController degreeCourseController = TextEditingController();
-  TextEditingController specialisationController = TextEditingController();
-
   final _backendService = BackendService();
 
   late Future<ProgramAvailability> _futureAvailability;
@@ -74,12 +73,11 @@ class _InputPageState extends State<InputPage> {
     _futureAvailability = _backendService.fetchProgramAvailability();
   }
 
-  @override
-  void dispose() {
-    facultyController.dispose();
-    degreeCourseController.dispose();
-    specialisationController.dispose();
-    super.dispose();
+  void _retry() {
+    HapticFeedback.lightImpact();
+    setState(() {
+      _futureAvailability = _backendService.fetchProgramAvailability();
+    });
   }
 
   ProgramOption? _resolved(ProgramAvailability availability) {
@@ -108,7 +106,6 @@ class _InputPageState extends State<InputPage> {
     if (selectedFaculty.isNotEmpty &&
         !availability.faculties().contains(selectedFaculty)) {
       selectedFaculty = "";
-      facultyController.text = "";
     }
     if (selectedFaculty.isEmpty ||
         (selectedDegreeCourse.isNotEmpty &&
@@ -116,7 +113,6 @@ class _InputPageState extends State<InputPage> {
                 .degreeCourses(selectedFaculty)
                 .contains(selectedDegreeCourse))) {
       selectedDegreeCourse = "";
-      degreeCourseController.text = "";
     }
     if (selectedDegreeCourse.isEmpty) {
       selectedYear = null;
@@ -172,10 +168,7 @@ class _InputPageState extends State<InputPage> {
   /// Gdy po zawężeniu został tylko jeden wariant, wybiera go za studenta.
   /// Nie ma tu czego wybierać (alternatywy nie istnieją), a bez tego formularz
   /// wygląda na wypełniony, a przycisk dalej jest szary.
-  void _autoSelectSingletons(
-    ProgramAvailability availability,
-    AppLocalizations l10n,
-  ) {
+  void _autoSelectSingletons(ProgramAvailability availability) {
     if (selectedDegreeCourse.isEmpty) return;
 
     if (selectedYear == null) {
@@ -194,12 +187,6 @@ class _InputPageState extends State<InputPage> {
       );
       if (choices.length == 1) {
         selectedSpecialisationKey = choices.first.specialisationKey;
-        // DropdownMenu wyświetla to, co ma w kontrolerze — sam `selectedValue`
-        // nie odświeży pola przy wyborze zrobionym programowo.
-        specialisationController.text = _specialisationLabel(
-          choices.first,
-          l10n,
-        );
       }
     }
 
@@ -227,7 +214,6 @@ class _InputPageState extends State<InputPage> {
 
   void _clearSpecialisation() {
     selectedSpecialisationKey = null;
-    specialisationController.text = "";
   }
 
   String _specialisationLabel(ProgramOption option, AppLocalizations l10n) {
@@ -282,6 +268,17 @@ class _InputPageState extends State<InputPage> {
     }
   }
 
+  /// Każda zmiana w formularzu: zapisz wybór, wyczyść to, co przestało
+  /// istnieć niżej w kaskadzie, i dobierz opcje bez alternatywy.
+  void _update(ProgramAvailability availability, VoidCallback change) {
+    HapticFeedback.lightImpact();
+    setState(() {
+      change();
+      _clearInvalidSelections(availability);
+      _autoSelectSingletons(availability);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -291,12 +288,10 @@ class _InputPageState extends State<InputPage> {
         final availability = snapshot.data;
         final option = availability == null ? null : _resolved(availability);
         return Scaffold(
-          resizeToAvoidBottomInset: true,
-          backgroundColor: AppColor.background,
+          backgroundColor: AppColor.groupedBackground,
           appBar: CustomAppBar(
             title: l10n.studySettings,
             onBack: () {
-              HapticFeedback.lightImpact();
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
@@ -307,73 +302,86 @@ class _InputPageState extends State<InputPage> {
               }
             },
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.miniCenterFloat,
-          floatingActionButton: OnboardingActionBar(
-            skipLabel: l10n.skipButton,
-            onSkip: () {
-              HapticFeedback.lightImpact();
-              if (widget.isRoleSwitch) {
-                Navigator.pop(context);
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyHomePage(title: "Plan PM"),
-                  ),
-                );
-              }
-            },
-            confirmLabel: l10n.groupSelection,
-            onConfirm: (option != null && !_isSubmitting)
-                ? () => _submit(option)
-                : null,
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                15,
-                15,
-                15,
-                15 + OnboardingActionBar.reservedSpace(context),
-              ),
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(
-                      l10n.groupSelectionHint,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColor.onBackgroundVariant,
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 24,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          l10n.groupSelectionHint,
+                          style: AppTextStyle.subheadline.copyWith(
+                            color: AppColor.labelSecondary,
+                          ),
+                        ),
                       ),
-                    ),
-                    if (snapshot.hasError)
-                      GenericNoResource(
-                        label: l10n.unexpectedError,
-                        icon: LucideIcons.wifiOff,
-                        description: l10n.networkErrorDescription,
-                      )
-                    else if (snapshot.connectionState != ConnectionState.done)
-                      GenericLoading(label: l10n.universityStructureLoading)
-                    else if (availability == null || availability.isEmpty)
-                      GenericNoResource(
-                        label: l10n.noNews,
-                        icon: LucideIcons.calendarX,
-                        description: l10n.universityStructureEmpty,
-                      )
-                    else
-                      _buildForm(availability, l10n),
-                  ],
+                      if (snapshot.hasError)
+                        AppStateCard(
+                          icon: LucideIcons.wifiOff,
+                          title: l10n.unexpectedError,
+                          message: l10n.networkErrorDescription,
+                          actionLabel: l10n.retryButton,
+                          onAction: _retry,
+                        )
+                      else if (snapshot.connectionState != ConnectionState.done)
+                        AppStateCard.loading(
+                          title: l10n.universityStructureLoading,
+                        )
+                      else if (availability == null || availability.isEmpty)
+                        AppStateCard(
+                          icon: LucideIcons.calendarX,
+                          title: l10n.universityStructureEmptyTitle,
+                          message: l10n.universityStructureEmpty,
+                          actionLabel: l10n.retryButton,
+                          onAction: _retry,
+                        )
+                      else
+                        ..._buildForm(availability, l10n),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              AppBottomActions(
+                secondary: AppButton(
+                  label: l10n.skipButton,
+                  variant: AppButtonVariant.gray,
+                  onPressed: () {
+                    if (widget.isRoleSwitch) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MyHomePage(title: "Plan PM"),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                primary: AppButton(
+                  label: l10n.groupSelection,
+                  isLoading: _isSubmitting,
+                  // Nieaktywny, dopóki dane się nie wczytają i zestaw nie jest pełny.
+                  onPressed: option == null ? null : () => _submit(option),
+                ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildForm(ProgramAvailability availability, AppLocalizations l10n) {
+  List<Widget> _buildForm(
+    ProgramAvailability availability,
+    AppLocalizations l10n,
+  ) {
     final faculties = availability.faculties();
     final degreeCourses = selectedFaculty.isNotEmpty
         ? availability.degreeCourses(selectedFaculty)
@@ -386,13 +394,8 @@ class _InputPageState extends State<InputPage> {
             year: selectedYear,
           )
         : <ProgramOption>[];
-    final Map<String, ProgramOption> specialisationsByLabel = {
-      for (final option in specialisationOptions)
-        _specialisationLabel(option, l10n): option,
-    };
-    final selectedSpecialisationLabel = specialisationsByLabel.entries
-        .where((entry) => entry.value.specialisationKey == selectedSpecialisationKey)
-        .map((entry) => entry.key)
+    final selectedSpecialisation = specialisationOptions
+        .where((o) => o.specialisationKey == selectedSpecialisationKey)
         .firstOrNull;
 
     final availableYears = selectedDegreeCourse.isNotEmpty
@@ -419,142 +422,115 @@ class _InputPageState extends State<InputPage> {
           )
         : <String>{};
 
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        FacultyDropDownMenu(
-          controller: facultyController,
-          label: l10n.facultyLabel,
-          icon: LucideIcons.school,
-          hint: l10n.facultyHintText,
-          itemList: faculties,
-          selectedValue: selectedFaculty,
-          onChanged: (value) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              if (selectedFaculty != value) {
-                selectedFaculty = value!;
-                _clearInvalidSelections(availability);
-                _autoSelectSingletons(availability, l10n);
-              }
-            });
-          },
-        ),
-        const SizedBox(height: 20),
-        FacultyDropDownMenu(
-          controller: degreeCourseController,
-          enabled: selectedFaculty.isNotEmpty,
-          label: l10n.fieldLabel,
-          icon: LucideIcons.bookOpen,
-          hint: l10n.fieldHintText,
-          itemList: degreeCourses,
-          selectedValue: selectedDegreeCourse,
-          onChanged: (value) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              if (selectedDegreeCourse != value) {
-                selectedDegreeCourse = value!;
-                _clearInvalidSelections(availability);
-                _autoSelectSingletons(availability, l10n);
-              }
-            });
-          },
-        ),
-        const SizedBox(height: 20),
-        ButtonSwitch(
-          label: l10n.yearLabel,
-          icon: LucideIcons.graduationCap,
-          buttonLabels: const ["I", "II", "III", "IV"],
-          buttonAmount: kMaxYear,
-          selectedIndex: selectedYear == null ? null : selectedYear! - 1,
-          enabledIndices: {for (final year in availableYears) year - 1},
-          onValueChanged: (index) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              selectedYear = index + 1;
-              _clearInvalidSelections(availability);
-              _autoSelectSingletons(availability, l10n);
-            });
-          },
-        ),
-        const SizedBox(height: 10),
-        if (selectedDegreeCourse.isNotEmpty && specialisationsByLabel.isNotEmpty)
-          FacultyDropDownMenu(
-            controller: specialisationController,
-            label: l10n.specialisationLabel,
-            icon: LucideIcons.glasses,
-            hint: l10n.specialisationHintText,
-            itemList: specialisationsByLabel.keys.toList(),
-            selectedValue: selectedSpecialisationLabel ?? "",
-            onChanged: (value) {
-              HapticFeedback.lightImpact();
-              setState(() {
-                selectedSpecialisationKey =
-                    specialisationsByLabel[value]?.specialisationKey;
-                _clearInvalidSelections(availability);
-                _autoSelectSingletons(availability, l10n);
-              });
+    const yearLabels = ["I", "II", "III", "IV"];
+    final levelLabels = [
+      l10n.degreeLevelEngineering,
+      l10n.degreeLevelMasters,
+      l10n.degreeLevelBachelor,
+    ];
+    final typeLabels = [l10n.campusButton, l10n.extramuralButton];
+
+    return [
+      AppGroupedSection(
+        children: [
+          AppMenuField<String>(
+            label: l10n.facultyLabel,
+            placeholder: l10n.facultyHintText,
+            options: faculties,
+            optionLabel: (v) => v,
+            selected: selectedFaculty.isEmpty ? null : selectedFaculty,
+            onSelected: (value) {
+              if (value == selectedFaculty) return;
+              _update(availability, () => selectedFaculty = value);
             },
-          )
-        else if (selectedDegreeCourse.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 16.0,
-            ),
-            child: Text(
-              l10n.noSpecialisationForField,
-              style: TextStyle(color: AppColor.onSurfaceVariant),
-            ),
           ),
-        const SizedBox(height: 10),
-        ButtonSwitch(
-          label: l10n.degreeLevelLabel,
-          icon: LucideIcons.award,
-          buttonLabels: [
-            l10n.degreeLevelEngineering,
-            l10n.degreeLevelMasters,
-            l10n.degreeLevelBachelor,
+          AppMenuField<String>(
+            label: l10n.fieldLabel,
+            placeholder: l10n.fieldHintText,
+            enabled: selectedFaculty.isNotEmpty,
+            options: degreeCourses,
+            optionLabel: (v) => v,
+            selected: selectedDegreeCourse.isEmpty
+                ? null
+                : selectedDegreeCourse,
+            onSelected: (value) {
+              if (value == selectedDegreeCourse) return;
+              _update(availability, () => selectedDegreeCourse = value);
+            },
+          ),
+        ],
+      ),
+      // Rok stoi przed specjalizacją, bo lista specjalizacji zależy od roku
+      // (od 2. roku plan jest wystawiany pod nazwą specjalizacji).
+      AppSection(
+        header: l10n.yearLabel,
+        child: AppSegmentedControl<int>(
+          segments: [
+            for (var year = 1; year <= kMaxYear; year++)
+              AppSegment(value: year, label: yearLabels[year - 1]),
           ],
-          buttonAmount: kDegreeLevelCodes.length,
-          selectedIndex: selectedDegreeLevel == null
-              ? null
-              : kDegreeLevelCodes.indexOf(selectedDegreeLevel!),
-          enabledIndices: {
-            for (final level in availableLevels) kDegreeLevelCodes.indexOf(level),
+          selected: selectedYear,
+          disabled: {
+            for (var year = 1; year <= kMaxYear; year++)
+              if (!availableYears.contains(year)) year,
           },
-          onValueChanged: (index) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              selectedDegreeLevel = kDegreeLevelCodes[index];
-              _clearInvalidSelections(availability);
-              _autoSelectSingletons(availability, l10n);
-            });
-          },
+          onChanged: (year) => _update(availability, () => selectedYear = year),
         ),
-        const SizedBox(height: 10),
-        ButtonSwitch(
-          label: l10n.typeLabel,
-          icon: LucideIcons.graduationCap,
-          buttonLabels: [l10n.campusButton, l10n.extramuralButton],
-          buttonAmount: kProgramTypeCodes.length,
-          selectedIndex: selectedProgramType == null
-              ? null
-              : kProgramTypeCodes.indexOf(selectedProgramType!),
-          enabledIndices: {
-            for (final type in availableTypes) kProgramTypeCodes.indexOf(type),
-          },
-          onValueChanged: (index) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              selectedProgramType = kProgramTypeCodes[index];
-              _clearInvalidSelections(availability);
-              _autoSelectSingletons(availability, l10n);
-            });
-          },
+      ),
+      if (selectedDegreeCourse.isNotEmpty)
+        AppSection(
+          footer: specialisationOptions.isEmpty
+              ? l10n.noSpecialisationForField
+              : null,
+          child: AppGroupedSection(
+            children: [
+              AppMenuField<ProgramOption>(
+                label: l10n.specialisationLabel,
+                placeholder: l10n.specialisationHintText,
+                options: specialisationOptions,
+                optionLabel: (o) => _specialisationLabel(o, l10n),
+                selected: selectedSpecialisation,
+                onSelected: (o) => _update(
+                  availability,
+                  () => selectedSpecialisationKey = o.specialisationKey,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 20),
-      ],
-    );
+      AppSection(
+        header: l10n.degreeLevelLabel,
+        footer: l10n.unavailableOptionsHint,
+        child: AppSegmentedControl<String>(
+          segments: [
+            for (final (i, code) in kDegreeLevelCodes.indexed)
+              AppSegment(value: code, label: levelLabels[i]),
+          ],
+          selected: selectedDegreeLevel,
+          disabled: {
+            for (final code in kDegreeLevelCodes)
+              if (!availableLevels.contains(code)) code,
+          },
+          onChanged: (code) =>
+              _update(availability, () => selectedDegreeLevel = code),
+        ),
+      ),
+      AppSection(
+        header: l10n.typeLabel,
+        child: AppSegmentedControl<String>(
+          segments: [
+            for (final (i, code) in kProgramTypeCodes.indexed)
+              AppSegment(value: code, label: typeLabels[i]),
+          ],
+          selected: selectedProgramType,
+          disabled: {
+            for (final code in kProgramTypeCodes)
+              if (!availableTypes.contains(code)) code,
+          },
+          onChanged: (code) =>
+              _update(availability, () => selectedProgramType = code),
+        ),
+      ),
+    ];
   }
 }
