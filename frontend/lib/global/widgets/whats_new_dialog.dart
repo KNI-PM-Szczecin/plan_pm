@@ -38,15 +38,10 @@ class WhatsNewDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          // Długa lista zmian przewija się w okienku, przycisk zostaje widoczny.
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 320),
-            child: SingleChildScrollView(
-              child: Column(
-                spacing: 10,
-                children: [for (final change in changes) _ChangeItem(change)],
-              ),
-            ),
+          // Treść przewija AppDialog; przyciski pozostają poza przewijaniem.
+          Column(
+            spacing: 10,
+            children: [for (final change in changes) _ChangeItem(change)],
           ),
         ],
       ),

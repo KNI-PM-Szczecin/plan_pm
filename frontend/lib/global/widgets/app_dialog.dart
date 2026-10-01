@@ -84,56 +84,73 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasSecondary = secondaryLabel != null;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 36),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Material(
-            color: AppColor.groupedSurface,
-            shape: RoundedSuperellipseBorder(
-              borderRadius: BorderRadius.circular(radius),
-            ),
-            child: Padding(
-              // Tekstowy przycisk ma własne 44 pt wysokości — dół jest ciaśniejszy.
-              padding: EdgeInsets.fromLTRB(20, 28, 20, hasSecondary ? 12 : 20),
-              child: SingleChildScrollView(
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Material(
+              color: AppColor.groupedSurface,
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(radius),
+              ),
+              child: Padding(
+                // Tekstowy przycisk ma własne 44 pt wysokości — dół jest ciaśniejszy.
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  28,
+                  20,
+                  hasSecondary ? 12 : 20,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   spacing: 6,
                   children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: iconColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(icon, size: 28, color: Colors.white),
-                    ),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyle.headline.copyWith(
-                        color: AppColor.onSurface,
-                      ),
-                    ),
-                    if (message != null)
-                      Text(
-                        message!,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyle.subheadline.copyWith(
-                          color: AppColor.labelSecondary,
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 6,
+                          children: [
+                            Container(
+                              width: 56,
+                              height: 56,
+                              margin: const EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                color: iconColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(icon, size: 28, color: Colors.white),
+                            ),
+                            Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyle.headline.copyWith(
+                                color: AppColor.onSurface,
+                              ),
+                            ),
+                            if (message != null)
+                              Text(
+                                message!,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyle.subheadline.copyWith(
+                                  color: AppColor.labelSecondary,
+                                ),
+                              ),
+                            if (content != null)
+                              Padding(
+                                // Pod opisem treść odsunięta; bez opisu (np. „Co nowego"
+                                // z numerem wersji w treści) przylega do tytułu.
+                                padding: EdgeInsets.only(
+                                  top: message != null ? 12 : 0,
+                                ),
+                                child: content,
+                              ),
+                          ],
                         ),
                       ),
-                    if (content != null)
-                      Padding(
-                        // Pod opisem treść odsunięta; bez opisu (np. „Co nowego"
-                        // z numerem wersji w treści) przylega do tytułu.
-                        padding: EdgeInsets.only(top: message != null ? 12 : 0),
-                        child: content,
-                      ),
+                    ),
                     const SizedBox(height: 12),
                     AppButton(label: primaryLabel, onPressed: onPrimary),
                     if (hasSecondary)

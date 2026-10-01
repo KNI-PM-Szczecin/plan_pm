@@ -267,12 +267,8 @@ pipeline {
 
                     "$FLUTTER_HOME/bin/flutter" --version
 
-                    # iOS plugins are integrated through Swift Package Manager
-                    # only: every plugin ships a Swift package and the project
-                    # has no CocoaPods integration left (no Podfile, no Pods
-                    # xcconfig includes). Set explicitly so the build does not
-                    # depend on this host's global Flutter config.
-                    "$FLUTTER_HOME/bin/flutter" config --enable-swift-package-manager
+                    # Swift Package Manager is enabled per project in
+                    # frontend/pubspec.yaml, shared by local builds and CI.
 
                     "$FLUTTER_HOME/bin/flutter" precache --ios --android
                 '''
