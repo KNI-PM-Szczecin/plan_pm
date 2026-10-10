@@ -1,3 +1,11 @@
+## 1.3.2
+
+### pl-PL
+Naprawa dystrybucji APK: możliwość uruchamiania aplikacji pobranej poza Google Play.
+
+### en-US
+Fix APK distribution so the app can run when downloaded outside Google Play.
+
 ## 1.3.1
 
 ### pl-PL

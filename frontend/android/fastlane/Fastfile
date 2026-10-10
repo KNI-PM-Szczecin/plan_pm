@@ -1,4 +1,6 @@
 require 'fileutils'
+require 'tempfile'
+require_relative 'apk_validator'
 
 default_platform(:android)
 
@@ -10,7 +12,86 @@ def read_changelog_locale(version, locale)
   locale_match ? locale_match[1].strip : "Bug fixes and improvements"
 end
 
+# The APK attached to the GitHub release. Deliberately the universal APK Google
+# generates from the uploaded bundle, verified to have NO installer protection,
+# not a local `flutter build apk`: Play App
+# Signing re-signs the app with Google's key, so a locally built APK carries the
+# upload key instead and cannot be installed over the Play Store version (nor
+# the other way round) without uninstalling and losing the user's settings.
+#
+# Never fails the lane — by now the release is already on Play. A missing file
+# is what the Jenkins release stage reports, as an unstable build.
+def download_play_apk(version_name, version_code)
+  destination = File.expand_path("../../build/app/outputs/universal-apk/plan_pm-#{version_name}.apk")
+  FileUtils.rm_f(destination)
+
+  # Play generates the APK while it processes the bundle, so it can lag the
+  # upload by a minute or two; until then the API answers with an error.
+  attempts = 10
+  attempts.times do |i|
+    begin
+      download_universal_apk_from_google_play(
+        package_name: "com.piotrwittig.plan_pm",
+        version_code: version_code.to_i,
+        json_key_data: ENV["PLAY_STORE_JSON_KEY"],
+        destination: destination,
+      )
+      PlanPmApkValidator.validate!(destination, version_name: version_name, version_code: version_code)
+      return
+    rescue PlanPmApkValidator::InvalidApk => e
+      FileUtils.rm_f(destination)
+      UI.important("APK rejected: #{e.message}. The GitHub APK will not be published.")
+      return
+    rescue => e
+      FileUtils.rm_f(destination)
+      UI.important("Universal APK not available yet (attempt #{i + 1}/#{attempts}): #{e.message}")
+      sleep(30) if i + 1 < attempts
+    end
+  end
+  UI.important("Gave up on the universal APK for #{version_name} (#{version_code}); the GitHub release will be missing.")
+end
+
 platform :android do
+  desc "Download and validate an existing Play version without building or uploading"
+  lane :download_apk do |options|
+    version_name = options[:version_name]
+    version_code = options[:version_code]
+    UI.user_error!('Provide version_name and version_code') if version_name.to_s.empty? || version_code.to_s.empty?
+    download_play_apk(version_name, version_code)
+    destination = File.expand_path("../../build/app/outputs/universal-apk/plan_pm-#{version_name}.apk")
+    UI.user_error!('No validated APK available; see the rejection/download message above') unless File.size?(destination)
+  end
+
+  desc "Publish a validated Play-signed APK to GitHub without uploading to the stores"
+  lane :github do |options|
+    pubspec = YAML.load_file('../../pubspec.yaml')
+    version_name, version_code = pubspec.fetch('version').split('+')
+    version_name = options[:version_name] || version_name
+    version_code = options[:version_code] || version_code
+    download_apk(version_name: version_name, version_code: version_code)
+
+    apk = File.expand_path("../../build/app/outputs/universal-apk/plan_pm-#{version_name}.apk")
+    repo = ENV.fetch('GITHUB_REPO', 'KNI-PM-Szczecin/plan_pm')
+    tag = "v#{version_name}"
+    # Use the list endpoint (HTTP 200 even when the tag is absent); paginate to
+    # keep older releases available to a repair of an existing version. Network
+    # and authentication errors must fail, not masquerade as a missing release.
+    existing_tags = sh('gh', 'api', '--paginate', "repos/#{repo}/releases", '--jq', '.[].tag_name', log: false).lines.map(&:strip)
+    if existing_tags.include?(tag)
+      sh('gh', 'release', 'upload', tag, apk, '-R', repo, '--clobber')
+    else
+      target = ENV['GIT_COMMIT'] || sh('git', 'rev-parse', 'HEAD', log: false).strip
+      changelog = File.read('../../CHANGELOG.md')
+      notes = changelog[/^## #{Regexp.escape(version_name)}\n(.*?)(?=\n^## |\z)/m, 1].to_s.strip
+      Tempfile.create(['planpm-release-notes-', '.md']) do |file|
+        file.write(notes)
+        file.flush
+        sh('gh', 'release', 'create', tag, apk, '-R', repo, '--target', target,
+           '--title', version_name, '--notes-file', file.path, '--latest')
+      end
+    end
+  end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     # Write key.properties from env vars for release signing
@@ -54,6 +135,7 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
     )
+
   end
 
   desc "Promote internal build to production"

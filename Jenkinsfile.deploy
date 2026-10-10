@@ -69,6 +69,8 @@
 //   planpm-android-key-password     Secret text
 //   planpm-android-key-alias        Secret text
 //   planpm-play-store-json-key      Secret file  -> service account JSON
+//   planpm-github-token             Secret text  -> GH_TOKEN; contents:write on
+//                                                   the repo, for the GitHub release
 //   planpm-discord-webhook          Secret text  (optional; absent = no ping)
 //
 // The old workflow kept the certificate, the keystore and the .p8 as base64
@@ -102,6 +104,11 @@ pipeline {
             name: 'DEPLOY_ANDROID',
             defaultValue: true,
             description: 'Build and upload the Android bundle to Google Play.'
+        )
+        booleanParam(
+            name: 'DEPLOY_GITHUB',
+            defaultValue: true,
+            description: 'Download a Play-signed APK, reject installer protection and publish it on GitHub. Can run alone for an existing Play version.'
         )
         booleanParam(
             name: 'DRY_RUN',
@@ -170,6 +177,10 @@ pipeline {
         // Named here as well as in the Fastfile so `post` can clean it up even
         // when the lane dies half-way through.
         CI_KEYCHAIN = 'ci_keychain'
+
+        // Where the Android release APK is published. gh never prompts in CI.
+        GITHUB_REPO        = 'KNI-PM-Szczecin/plan_pm'
+        GH_PROMPT_DISABLED = '1'
     }
 
     stages {
@@ -186,6 +197,9 @@ pipeline {
         }
 
         stage('Preflight') {
+            when {
+                expression { params.DEPLOY_IOS || params.DEPLOY_ANDROID }
+            }
             steps {
                 // Everything this job needs but does not install itself. A
                 // missing tool must say which brew command fixes it, because
@@ -198,7 +212,6 @@ pipeline {
 
                     command -v ruby   >/dev/null 2>&1 || fail "ruby not on PATH ($PATH)" "brew install ruby"
                     command -v bundle >/dev/null 2>&1 || fail "bundler not on PATH"      "brew install ruby"
-                    command -v pod    >/dev/null 2>&1 || fail "CocoaPods not on PATH"    "brew install cocoapods"
                     command -v git    >/dev/null 2>&1 || fail "git not on PATH"          "xcode-select --install"
 
                     # System ruby is 2.6.10 and current fastlane will not load on
@@ -233,6 +246,9 @@ pipeline {
         }
 
         stage('Provision Flutter') {
+            when {
+                expression { params.DEPLOY_IOS || params.DEPLOY_ANDROID }
+            }
             steps {
                 // The SDK is a git checkout at a tag, kept in a directory named
                 // after that tag. Bumping FLUTTER_VERSION therefore provisions a
@@ -262,12 +278,8 @@ pipeline {
 
                     "$FLUTTER_HOME/bin/flutter" --version
 
-                    # Runner.xcodeproj integrates plugins through CocoaPods and
-                    # has no Swift package references. Flutter >= 3.44.8 routes
-                    # SPM-capable plugins out of the Podfile by default, which
-                    # ends in "Module 'app_links' not found". Redundant on the
-                    # pinned 3.44.4, kept so a bump cannot quietly reintroduce it.
-                    "$FLUTTER_HOME/bin/flutter" config --no-enable-swift-package-manager
+                    # Swift Package Manager is enabled per project in
+                    # frontend/pubspec.yaml, shared by local builds and CI.
 
                     "$FLUTTER_HOME/bin/flutter" precache --ios --android
                 '''
@@ -300,11 +312,14 @@ pipeline {
 
                     env.RUN_IOS     = (params.DEPLOY_IOS     && !skipIos).toString()
                     env.RUN_ANDROID = (params.DEPLOY_ANDROID && !skipAndroid).toString()
+                    // The first build after adding this parameter can receive
+                    // null from the old job configuration; default to enabled.
+                    env.RUN_GITHUB  = (params.DEPLOY_GITHUB != false && !skipAll).toString()
 
                     currentBuild.displayName = "#${BUILD_NUMBER} — ${env.APP_VERSION}"
-                    currentBuild.description = "iOS: ${env.RUN_IOS == 'true' ? 'yes' : 'skipped'} · Android: ${env.RUN_ANDROID == 'true' ? 'yes' : 'skipped'}${params.DRY_RUN ? ' · DRY RUN' : ''}"
+                    currentBuild.description = "iOS: ${env.RUN_IOS == 'true' ? 'yes' : 'skipped'} · Android: ${env.RUN_ANDROID == 'true' ? 'yes' : 'skipped'} · GitHub: ${env.RUN_GITHUB == 'true' ? 'yes' : 'skipped'}${params.DRY_RUN ? ' · DRY RUN' : ''}"
 
-                    echo "Version ${env.APP_VERSION} | iOS=${env.RUN_IOS} Android=${env.RUN_ANDROID} dryRun=${params.DRY_RUN}"
+                    echo "Version ${env.APP_VERSION} | iOS=${env.RUN_IOS} Android=${env.RUN_ANDROID} GitHub=${env.RUN_GITHUB} dryRun=${params.DRY_RUN}"
                     if (skipAll || skipIos || skipAndroid) {
                         echo "Skip marker found in the commit message."
                     }
@@ -366,7 +381,7 @@ PY
                 dir('frontend') {
                     // Also writes ios/Flutter/Generated.xcconfig and
                     // android/local.properties, both of which the native builds
-                    // read — pod install and settings.gradle.kts fail without them.
+                    // read — the Xcode build and settings.gradle.kts fail without them.
                     sh '''
                         set -eu
                         export PATH="$FLUTTER_HOME/bin:$PATH"
@@ -438,7 +453,6 @@ PY
                                 fi
 
                                 echo "Xcode:  $("$DEVELOPER_DIR/usr/bin/xcodebuild" -version | head -1)"
-                                echo "Pods:   $(pod --version)"
 
                                 # The Fastfile reads ./certificate.p12 relative to
                                 # the ios directory. Copied rather than symlinked
@@ -457,11 +471,18 @@ PY
                                 # usual and then stops short of TestFlight.
                                 export PLANPM_SKIP_UPLOAD="$DRY_RUN"
 
-                                pod install
-
                                 bundle config set --local path 'vendor/bundle'
                                 bundle install --quiet
                                 bundle exec fastlane --version
+
+                                # The lane archives straight through Xcode, so no
+                                # `flutter build ios` ever runs. Only that step
+                                # raises FlutterGeneratedPluginSwiftPackage from
+                                # Flutter's default iOS 13.0 to the project's 15.0;
+                                # without it SwiftPM rejects every plugin that
+                                # needs more (cupertino_native_better, home_widget).
+                                # CocoaPods' `pod install` used to hide this.
+                                ( cd .. && flutter build ios --config-only --release --no-codesign )
 
                                 bundle exec fastlane ios beta
                             '''
@@ -509,6 +530,40 @@ PY
                                 bundle exec fastlane --version
 
                                 bundle exec fastlane android deploy
+                            '''
+                        }
+                    }
+                    // Reached only when the lane succeeded; the GitHub release
+                    // must not advertise a version Play never received.
+                    script { env.ANDROID_UPLOADED = 'true' }
+                }
+            }
+        }
+
+        stage('APK → GitHub release') {
+            when {
+                expression {
+                    env.RUN_GITHUB == 'true' && !params.DRY_RUN &&
+                        (env.RUN_ANDROID != 'true' || env.ANDROID_UPLOADED == 'true')
+                }
+            }
+            steps {
+                // UNSTABLE, not FAILURE: the app already reached Play, and a
+                // failure here would fire the "did not reach the stores" ping.
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE', message: 'GitHub release failed') {
+                    withCredentials([
+                        string(credentialsId: 'planpm-github-token', variable: 'GH_TOKEN'),
+                        file(credentialsId: 'planpm-play-store-json-key', variable: 'PLAY_STORE_JSON_KEY_FILE')
+                    ]) {
+                        dir('frontend/android') {
+                            sh '''
+                                set -eu
+                                command -v gh >/dev/null 2>&1 || { echo "Install GitHub CLI: brew install gh" >&2; exit 1; }
+                                PLAY_STORE_JSON_KEY="$(cat "$PLAY_STORE_JSON_KEY_FILE")"
+                                export PLAY_STORE_JSON_KEY
+                                bundle config set --local path 'vendor/bundle'
+                                bundle install --quiet
+                                bundle exec fastlane android github
                             '''
                         }
                     }
