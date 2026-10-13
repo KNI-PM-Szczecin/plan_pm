@@ -92,6 +92,15 @@ jest przypięty i zmienia się tylko commitem.
 > wstrzykuje `-authenticationKey*` do `-exportArchive`; wcześniej nie, a podanie
 > ich dwa razy wywala `xcodebuild`.
 
+### Zależności iOS — Swift Package Manager
+
+SwiftPM jest włączony w `frontend/pubspec.yaml` przez
+`flutter.config.enable-swift-package-manager: true`. To ustawienie obowiązuje
+zarówno lokalne `flutter run` / `flutter build ios`, jak i Fastlane/Jenkinsa,
+bez zmiany globalnej konfiguracji Fluttera na maszynie. Używaj Fluttera 3.44.4
+(wersja przypięta w Jenkinsie) lub zgodnego nowszego SDK oraz Xcode na macOS.
+Projekt nie ma już integracji CocoaPods.
+
 ### Przebieg
 
 `Checkout → Preflight → Provision Flutter → Release metadata → Generate
@@ -169,7 +178,7 @@ pomylenia i nic nie przechodzi przez `echo`.
 ### Jednorazowe postawienie maszyny
 
 ```bash
-brew install ruby cocoapods openjdk@21
+brew install ruby openjdk@21
 
 # NDK + cmdline-tools MUSZĄ być w środku ANDROID_HOME (cask brew kładzie
 # cmdline-tools gdzie indziej i Flutter ich tam nie znajduje)

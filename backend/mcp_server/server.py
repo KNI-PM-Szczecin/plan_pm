@@ -31,7 +31,7 @@ STEP_COMMANDS = {
     "mapper":    [sys.executable, "-c", "from mapper import Mapper; Mapper(output='./output/mapper.json').run(minID=0, maxID=600)"],
     "scrapper":  [sys.executable, "-c", "from scrapper import HttpScrapper; HttpScrapper(input='./output/mapper.json', output='./output/scrapper.json').run()"],
     "parser":    [sys.executable, "-c", "from parser import Parser; Parser(input='scrapper.json').run()"],
-    "json2db":   [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', clear=True).run()"],
+    "json2db":   [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', refresh_upcoming=True).run()"],
     "structure": [sys.executable, "-m", "structure_updater.structure_updater"],
 }
 

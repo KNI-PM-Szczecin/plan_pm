@@ -140,7 +140,7 @@ Widgety czytają z DatabaseService → opcjonalnie WidgetService.pushTodayLectur
 ```
 lib/pages/
 ├── home/           # Ekran główny (dzisiejsze zajęcia + newsy)
-│   ├── home_shell.dart        # Główna nawigacja (AppBar blur, BottomBar, Sidebar)
+│   ├── home_shell.dart        # Główna nawigacja (AppLargeTitleBar, BottomBar, Sidebar)
 │   ├── home_page.dart         # RefreshIndicator + TodayLectures + NewsBuilder
 │   └── utils/lecture_filters.dart  # getClosestLectures() — filtruje i sortuje
 ├── lectures/       # Pełny plan (widok dzienny/tygodniowy)
@@ -170,15 +170,42 @@ lib/pages/
 
 ### UI — wzorce
 
-**AppBar i BottomNavBar (blur):**
-- Oba używają `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)`
-- Ramka `AppColor.outline` musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem
+**Górne paski (`app_bar.dart`) — „scroll edge":** `CustomAppBar` (podstrony) i
+`AppLargeTitleBar` (zakładki Home/Zajęcia/Nowości: przycisk menu + duży tytuł) są
+przezroczyste, gdy treść jest na górze, a po przewinięciu pod pasek dostają
+`ScrollEdgeBackground`: iOS — `BackdropFilter(blur 20)` + tło `alpha 0.92/0.5` + linia,
+Android — pełne tło. Ekran musi mieć `extendBodyBehindAppBar: true`.
+- **Nie** owijaj `BackdropFilter` w `Opacity`/`AnimatedOpacity` — na iOS się wtedy nie
+  rysuje; animuj siłę blura i krycie (tak robi `ScrollEdgeBackground`).
+- `flexibleSpace` dostaje luźne ograniczenia — tło musi być w `SizedBox.expand`,
+  inaczej zwija się do 0 px (test: `test/app_bar_scroll_edge_test.dart`).
+- Linia musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem.
 
-**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` — iOS daje `CNButton.icon(glass)`, Android daje `IconButton`.
+**BottomNavBar (blur):** `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)` —
+poza zakresem redesignu, nie ruszać.
+
+**Platform-aware back button:** Zawsze używaj `AppBackButton` z `lib/global/widgets/back_button.dart` (albo `AppNavButton` dla innych ikon, np. menu) — iOS daje natywny `CNButton.icon(glass)` (Liquid Glass zostaje świadomie, mimo płaskich makiet — spójnie z `CNTabBar`), Android daje `IconButton` ze strzałką ←. Szkło daje plugin `cupertino_native_better` (fork `cupertino_native` z obsługą Swift Package Manager — oryginał stoi od 09.2025); wymaga `navigatorObservers: [CNTabBarRouteObserver()]` w `MaterialApp`, inaczej szkło prześwituje przez okienka. W odróżnieniu od oryginału przekazuje rozmiar symbolu do natywnego paska (domyślnie 24 pt), dlatego `CNTabBar` ma `iconSize: 18`.
+**CocoaLumberjack przypięty do 3.9.0** w obu `ios/**/swiftpm/Package.resolved`: `cupertino_native_better` ciągnie SVGKit 3.0.0 (iOS 12), a CocoaLumberjack 3.10.0 wymaga iOS 15 — Xcode 26.5 na Jenkinsie odrzuca archiwizację (lokalny Xcode 27 przepuszcza, więc lokalnie tego nie widać). Nie podbijać przy „Update Packages".
+**`flutter build ios --config-only` przed fastlane'em** (`Jenkinsfile.deploy`): tylko ten krok podnosi `FlutterGeneratedPluginSwiftPackage` z domyślnego iOS 13.0 do 15.0 z projektu — lane archiwizuje prosto przez Xcode.
+
+**Komponenty redesignu (`lib/global/widgets/app_*.dart`, design: Claude Design „PlanPM Redesign"):**
+nowe i przerabiane ekrany składa się z `AppButton`, `AppListRow` w `AppGroupedSection`,
+`AppSection` (nagłówek/akcja/stopka), `AppMenuField`, `AppSegmentedControl`,
+`AppBottomActions`, `AppDialog`, `AppStateCard`, `AppScreenHeader`. Design jest jeden,
+**zachowanie zależy od platformy** i siedzi wyłącznie w komponentach (`AppPressable`:
+iOS przygaszenie/podświetlenie, Android ripple; nagłówki sekcji na iOS wersalikami,
+na Androidzie zdaniem w akcencie) — ekrany nie sprawdzają platformy same.
+Tło podawaj przez `AppPressable.color`, nie w dziecku (inaczej ripple jest pod spodem).
+Widok zajęć też jest przerobiony (nagłówek z datą, wybór dnia z animacją zmiany
+tygodnia, stany przez `AppStateCard`) i karta `Lecture`: promień 22 jak inne karty,
+typografia z `AppTextStyle`, kolory pochodne od koloru tekstu (pastel), **bez własnego
+marginesu** — odstępy między kartami ustawia lista (12 pt). Dzienne gradienty kart i
+wyboru dnia zostają. `GenericNoResource`/`GenericLoading` zostały tylko w
+`today_lectures.dart` (Home). **Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
-**RefreshIndicator za AppBarem:** Ustaw `edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight` żeby spinner nie chował się za paskiem.
+**RefreshIndicator za AppBarem:** Ustaw `edgeOffset: MediaQuery.of(context).padding.top` — przy `extendBodyBehindAppBar` `padding.top` zawiera już całą wysokość paska (także duży tytuł), więc dokładanie `kToolbarHeight` przesuwa spinner za nisko.
 
 ### Native home screen widgets
 
@@ -217,7 +244,8 @@ Architektura "data bridge": Flutter zapisuje JSON do shared storage, natywny wid
 - Czyta z `HomeWidgetPreferences` shared preferences plik, klucz `schedule_data` (**nie** `flutter.schedule_data` z `FlutterSharedPreferences`)
 - Każdy wpis `schedule_data` ma datę `yyyy-MM-dd`; provider odrzuca stare lub bezdatowe dane po północy. Cały `widget_box` ma `PendingIntent` otwierający `planpm://schedule`.
 - **Progress bar statyczny** — RemoteViews nie obsługuje live timerów. Pasek odświeża się przy `updateAppWidget` (push z apki, resize, kolejny entry timeline w iOS-sty­lu nie istnieje)
-- **Glance dependency exclusion w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** `home_widget` transitively wymaga `glance-appwidget` (AGP 9.1+, compileSdk 37+). Wykluczone bo używamy klasycznego `AppWidgetProvider`, nie Glance. Nie odblokowywuj bez upgradeu całego toolchainu.
+- **Glance przypięty do 1.2.0 w [`android/app/build.gradle.kts`](frontend/android/app/build.gradle.kts):** sami używamy klasycznego `AppWidgetProvider`, ale `home_widget` 0.10.0 woła Glance już w `onAttachedToEngine` (`HomeWidgetPreviews`) — **wykluczenie `glance-appwidget` = crash aplikacji przy starcie** (`NoClassDefFoundError`). Dlatego `resolutionStrategy.force(...:1.2.0)` (wersja deklarowana przez plugin) + wykluczony `remote-creation-android` (nowsze alpha Glance'a ciągną go i wymagają AGP 9.1+, compileSdk 37).
+- **`android.builtInKotlin=false`** (jak szablon Fluttera 3.44.4): KGP nakłada sam Flutter Gradle Plugin na każdy moduł, także na aplikację. Przy `true` AGP 9 odrzuca to na czysto javowych pluginach (`app_links`) i build pada.
 
 ### Lokalizacja
 
@@ -423,6 +451,7 @@ Porażka etapu = `UNSTABLE`, nie `FAILURE`.
 | `check_env_mode.yml` | PR → main | `.env_mode` == `prod` |
 | `deployment-env-check.yml` | PR → deployment | 4 flagi debug == `false` (`kUseTestDb`, `kSimulateNetworkErrors`, `kDebugAnnouncement`, `kDebugWhatsNew` — **pozostałe flagi NIE są sprawdzane przez CI**, weryfikuj ręcznie) |
 | `deployment-changelog-check.yml` | PR → deployment | `CHANGELOG.md` ma wpis dla aktualnej wersji |
+| `deployment-l10n-check.yml` | PR → deployment | każdy `.arb` ma dokładnie te same klucze co `app_en.arb` (baseline; szablon `gen-l10n` to nadal `app_pl.arb`), bez pustych wartości (`scripts/check_l10n.py`, lokalnie: `python scripts/check_l10n.py`) |
 | `version-check.yml` | PR → deployment lub production | wersja w `pubspec.yaml` > bazy |
 | `deployment-source-check.yml` | PR → deployment | źródłowy branch == `main` |
 

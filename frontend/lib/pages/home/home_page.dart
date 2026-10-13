@@ -2,7 +2,6 @@
 // Obsługuje pull-to-refresh: odświeża cache (zajęcia + newsy) i sygnalizuje
 // [TodayLectures] przez [_refreshNotifier] aby przebudował swój Future.
 import 'package:flutter/material.dart';
-import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/home/widgets/today_lectures.dart';
@@ -31,7 +30,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return RefreshIndicator(
-      edgeOffset: MediaQuery.of(context).padding.top + kToolbarHeight,
+      // padding.top zawiera już wysokość paska (extendBodyBehindAppBar).
+      edgeOffset: MediaQuery.of(context).padding.top,
       onRefresh: () async {
         AppLogger.d("Refreshing home page elements...");
         try {
@@ -59,8 +59,9 @@ class _HomePageState extends State<HomePage> {
               MediaQuery.of(context).padding.bottom,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 20,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -68,11 +69,8 @@ class _HomePageState extends State<HomePage> {
                 title: l10n.newsSectionLabel,
                 child: ValueListenableBuilder<int>(
                   valueListenable: _refreshNotifier,
-                  builder: (context, refresh, _) => NewsBuilder(
-                    key: ValueKey(refresh),
-                    limit: 1,
-                    descriptionColor: AppColor.onSurfaceVariant,
-                  ),
+                  builder: (context, refresh, _) =>
+                      NewsBuilder(key: ValueKey(refresh), limit: 1),
                 ),
               ),
               TodayLectures(refreshNotifier: _refreshNotifier),

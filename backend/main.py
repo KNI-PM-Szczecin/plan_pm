@@ -35,7 +35,7 @@ try:
 
     # The destructive safety gate lives inside json2db so every caller (CLI,
     # admin, MCP and this full pipeline) gets exactly the same protection.
-    json2db(input="./output/parser.json", clear=True).run()
+    json2db(input="./output/parser.json", refresh_upcoming=True).run()
 except Exception:
     ok = False
     raise

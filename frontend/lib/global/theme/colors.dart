@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 
 class ColorThemes {
-  static const Color lightBackground = Color(0xf7f8faFF);
+  // Color() to ARGB — alfa idzie PIERWSZA. Było `0xf7f8faFF` (zapis RGBA), czyli
+  // tło o kryciu 97%: przy przejściu poprzedni ekran prześwitywał przez nowy,
+  // a po animacji znikał i kolor całego ekranu skakał (flicker od 1.0).
+  static const Color lightBackground = Color(0xFFF7F8FA);
   static const Color lightOnBackground = Colors.black;
   static final Color lightOnBackgroundVariant = Colors.black.withAlpha(150);
   static const Color lightSurface = Colors.white;
@@ -15,9 +18,7 @@ class ColorThemes {
   static final Color lightOnSurfaceVariant = Colors.black.withAlpha(100);
   static const Color lightPrimary = Color(0xFF0884ff);
   static const Color lightOnPrimary = Colors.white;
-  static final Color lightOnPrimaryVariant = Colors.black.withAlpha(180);
   static final Color lightOutline = Colors.black.withAlpha(30);
-  static const int lightColorfulAlphaValue = 40;
 
   static const Color darkBackground = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFE0E0E0);
@@ -28,16 +29,10 @@ class ColorThemes {
   static final Color darkOnSurfaceVariant = Colors.white.withAlpha(100);
   static const Color darkPrimary = Color(0xFF409CFF);
   static const Color darkOnPrimary = Colors.white;
-  static final Color darkOnPrimaryVariant = Colors.white.withAlpha(180);
   static final Color darkOutline = Colors.white.withAlpha(10);
-  static const int darkColorfulAlphaValue = 150;
 
   static const Color success = Color(0xFF30D158);
   static const Color destructive = Color(0xFFFF453A);
-  static const Color neutral = Color(0xFF6B7280);
-  static const Color decorativePurple = Color(0xFF8B5CF6);
-  static const Color decorativeBlue = Color(0xFF0884FF);
-  static const Color decorativeGreen = Color(0xFF10B981);
 }
 
 class AppColor {
@@ -114,37 +109,88 @@ class AppColor {
       ? ColorThemes.lightOnPrimary
       : ColorThemes.darkOnPrimary;
 
-  static Color get onPrimaryVariant => _brightness == Brightness.light
-      ? ColorThemes.lightOnPrimaryVariant
-      : ColorThemes.darkOnPrimaryVariant;
-
-  static Color get inverseSurface => _brightness == Brightness.light
-      ? const Color(0xFF1C1C1E)
-      : Colors.white;
-
-  static Color get onInverseSurface => _brightness == Brightness.light
-      ? Colors.white
-      : Colors.black;
-
   static Color get success => ColorThemes.success;
 
   static Color get destructive => ColorThemes.destructive;
-
-  static Color get neutral => ColorThemes.neutral;
-
-  static Color get decorativePurple => ColorThemes.decorativePurple;
-
-  static Color get decorativeBlue => ColorThemes.decorativeBlue;
-
-  static Color get decorativeGreen => ColorThemes.decorativeGreen;
 
   static Color get outline => _brightness == Brightness.light
       ? ColorThemes.lightOutline
       : ColorThemes.darkOutline;
 
-  static int get colorfulAlphaValue => _brightness == Brightness.light
-      ? ColorThemes.lightColorfulAlphaValue
-      : ColorThemes.darkColorfulAlphaValue;
+  // Role z design systemu (iOS 27 Flat). Półprzezroczyste — leżą na
+  // dowolnym tle i same dopasowują się do niego.
+
+  /// Tekst pomocniczy: podtytuły, opisy pod nagłówkiem.
+  static Color get labelSecondary => _brightness == Brightness.light
+      ? const Color(0x993C3C43)
+      : const Color(0xB2EBEBF5);
+
+  /// Tylko placeholdery i nieaktywny tekst — poniżej 4.5:1, nie na treść.
+  static Color get labelTertiary => _brightness == Brightness.light
+      ? const Color(0x4D3C3C43)
+      : const Color(0x4DEBEBF5);
+
+  /// Tło nieaktywnej kontrolki, pola wyszukiwania.
+  static Color get fillTertiary => _brightness == Brightness.light
+      ? const Color(0x1F767680)
+      : const Color(0x3D767680);
+
+  /// Stałe kolory systemowe — na kafelki ikon, które mają wyglądać tak samo
+  /// niezależnie od wybranego akcentu (np. rola student / wykładowca).
+  static Color get systemBlue => _brightness == Brightness.light
+      ? const Color(0xFF0088FF)
+      : const Color(0xFF0091FF);
+
+  static Color get systemIndigo => _brightness == Brightness.light
+      ? const Color(0xFF6155F5)
+      : const Color(0xFF6D7CFF);
+
+  /// Najlżejsze wypełnienie — wciśnięty wiersz listy, duże tła.
+  static Color get fillQuaternary => _brightness == Brightness.light
+      ? const Color(0x14747480)
+      : const Color(0x2E767680);
+
+  /// Tło strony z listami grupowanymi (Ustawienia, O aplikacji, menu boczne).
+  static Color get groupedBackground => _brightness == Brightness.light
+      ? const Color(0xFFF2F2F7)
+      : const Color(0xFF000000);
+
+  /// Karta sekcji na [groupedBackground] i tło okienek dialogowych.
+  static Color get groupedSurface => _brightness == Brightness.light
+      ? const Color(0xFFFFFFFF)
+      : const Color(0xFF1C1C1E);
+
+  /// Przyciemnienie strony pod okienkiem dialogowym i menu bocznym.
+  static Color get overlay => _brightness == Brightness.light
+      ? const Color(0x33000000)
+      : const Color(0x7A000000);
+
+  static Color get systemGreen => _brightness == Brightness.light
+      ? const Color(0xFF34C759)
+      : const Color(0xFF30D158);
+
+  static Color get systemOrange => _brightness == Brightness.light
+      ? const Color(0xFFFF8D28)
+      : const Color(0xFFFF9230);
+
+  static Color get systemYellow => _brightness == Brightness.light
+      ? const Color(0xFFFFCC00)
+      : const Color(0xFFFFD600);
+
+  static Color get systemRed =>_brightness == Brightness.light
+      ? const Color(0xFFFF383C)
+      : const Color(0xFFFF4245);
+
+  static Color get systemPurple => _brightness == Brightness.light
+      ? const Color(0xFFCB30E0)
+      : const Color(0xFFDB34F2);
+
+  static Color get systemGray => const Color(0xFF8E8E93);
+
+  /// Cienka linia: separator wierszy, obrys kafelka.
+  static Color get separator => _brightness == Brightness.light
+      ? const Color(0x1F000000)
+      : const Color(0x2BFFFFFF);
 
   static Color rectorHoursBackground(Brightness brightness) => 
       brightness == Brightness.dark 
@@ -152,6 +198,4 @@ class AppColor {
           : Colors.grey.shade700;
 
   static Color get rectorHoursBadge => Colors.white.withValues(alpha: 0.1);
-  static Color get rectorHoursDivider => const Color.fromARGB(80, 228, 227, 227);
-  static Color get rectorHoursAdditionalInfo => const Color(0xB3FFFFFF);
 }

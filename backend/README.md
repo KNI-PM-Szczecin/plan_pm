@@ -44,7 +44,7 @@ Normalises raw scrapper data – deduplicates entries, parses teachers, rooms an
 **Output:** `output/parser.json` – structured JSON with keys `programs`, `classes`, `teachers`, `rooms`, `building`, `subjects`, `teachersclasses`
 
 ### 4. `json2db/`
-Reads `parser.json` and upserts all entities into Supabase tables (safe to run multiple times).
+Reads `parser.json` and upserts all entities into Supabase tables. Automated imports replace classes from today onward (Europe/Warsaw), retaining earlier classes, their teacher links, and lookup tables. Cancelled or moved upcoming classes disappear on the next successful refresh.
 
 ---
 
@@ -89,15 +89,17 @@ python main.py                          # HTTP scrapper, 10 workers (default)
 python main.py --workers 20             # increase parallelism
 ```
 
-The full pipeline refuses to clear the DB if parsing produced suspiciously few
-classes (a failed scrape), so a site outage can't wipe the live schedule.
+The full pipeline refuses to replace upcoming classes if parsing produced suspiciously few
+classes (a failed scrape). History from before today is retained. Refreshes are not
+transactional: a database failure after deletion can leave the upcoming schedule incomplete.
+Previously deleted history is not recovered by this change.
 
 ### Re-upload without re-scraping
 
 If `output/parser.json` is already up to date, skip the scraping steps:
 
 ```bash
-python -m json2db.json2db --input ./output/parser.json --clear
+python -m json2db.json2db --input ./output/parser.json --refresh-upcoming
 ```
 
 ### Individual steps
@@ -107,7 +109,8 @@ Each module can be run independently from the command line.
 **json2db** – upload data to the database:
 ```bash
 python -m json2db.json2db --input ./output/parser.json
-python -m json2db.json2db --input ./output/parser.json --clear      # clear DB before writing
+python -m json2db.json2db --input ./output/parser.json --refresh-upcoming  # retain past classes
+python -m json2db.json2db --input ./output/parser.json --clear      # explicit full reset, including history
 python -m json2db.json2db --input ./output/parser.json --dry-run    # preview without writing to DB
 ```
 

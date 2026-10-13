@@ -100,71 +100,17 @@ abstract class AppLocalizations {
     Locale('uk'),
   ];
 
-  /// onboarding_screen.dart - Title/Header for the first onboarding step. (Empty value is intentional)
+  /// welcome_page.dart - App tagline under the app name on the welcome screen.
   ///
   /// In pl, this message translates to:
-  /// **''**
-  String get stage1Title;
+  /// **'Przejrzysty i szybki plan zajęć z podglądem na żywo.'**
+  String get welcomeTagline;
 
-  /// onboarding_screen.dart - Action button on the first welcome screen.
+  /// welcome_page.dart - Button that finishes the welcome screen and starts setup.
   ///
   /// In pl, this message translates to:
   /// **'Witaj w Plan PM'**
-  String get stage1Button;
-
-  /// onboarding_screen.dart - Feature description for the second step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.'**
-  String get stage2Title;
-
-  /// onboarding_screen.dart - Navigation button to the next onboarding step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Dalej'**
-  String get stage2Button;
-
-  /// onboarding_screen.dart - Feature description for the third step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.'**
-  String get stage3Title;
-
-  /// onboarding_screen.dart - Navigation button to the next onboarding step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Dalej'**
-  String get stage3Button;
-
-  /// onboarding_screen.dart - Feature description for the final step.
-  ///
-  /// In pl, this message translates to:
-  /// **'Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.'**
-  String get stage4Title;
-
-  /// onboarding_screen.dart - Button to finalize onboarding and start configuration.
-  ///
-  /// In pl, this message translates to:
-  /// **'Rozpocznij'**
-  String get stage4Button;
-
-  /// debug_menu.dart - Debug/Navigation link to return to the Welcome screen.
-  ///
-  /// In pl, this message translates to:
-  /// **'Powrót do WelcomeScreen'**
-  String get welcomePageSelectionText;
-
-  /// debug_menu.dart - Debug/Navigation link to return to the Data Input screen.
-  ///
-  /// In pl, this message translates to:
-  /// **'Powrót do InputPage'**
-  String get inputPageSelectionText;
-
-  /// input_page.dart - Header for the screen where the user enters academic data.
-  ///
-  /// In pl, this message translates to:
-  /// **'Twoje Dane Akademickie'**
-  String get inputPageLabel;
+  String get welcomeButton;
 
   /// input_page.dart - Label for the 'Faculty' selection field.
   ///
@@ -226,47 +172,11 @@ abstract class AppLocalizations {
   /// **'Zaoczne'**
   String get extramuralButton;
 
-  /// input_page.dart - Main action button to proceed after data input.
-  ///
-  /// In pl, this message translates to:
-  /// **'Kontynuuj'**
-  String get continueButton;
-
-  /// home_page.dart - Header for the student data summary section.
-  ///
-  /// In pl, this message translates to:
-  /// **'Dane studenta to: '**
-  String get homePageLabel;
-
-  /// home_page.dart - Label for the displayed 'Faculty' value.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wydział'**
-  String get facultyText;
-
-  /// home_page.dart - Label for the displayed 'Field of Study' value.
-  ///
-  /// In pl, this message translates to:
-  /// **'Kierunek'**
-  String get fieldText;
-
-  /// home_page.dart - Label for the displayed 'Specialization' value.
-  ///
-  /// In pl, this message translates to:
-  /// **'Specjalizacja'**
-  String get specialisationText;
-
   /// home_page.dart - Label for the displayed 'Year' value.
   ///
   /// In pl, this message translates to:
   /// **'Rok'**
   String get yearText;
-
-  /// home_page.dart - Label for the displayed 'Study Mode' value.
-  ///
-  /// In pl, this message translates to:
-  /// **'Tryb studiów'**
-  String get typeText;
 
   /// home_page.dart - Message shown when specific academic data is missing.
   ///
@@ -285,18 +195,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Pomiń'**
   String get skipButton;
-
-  /// settings_page.dart - Full name of the Full-time study mode.
-  ///
-  /// In pl, this message translates to:
-  /// **'Stacjonarne'**
-  String get fullTimeStudy;
-
-  /// settings_page.dart - Full name of the Part-time study mode.
-  ///
-  /// In pl, this message translates to:
-  /// **'Niestacjonarne'**
-  String get partTimeStudy;
 
   /// group_selection_page.dart - Title for the Group Selection screen/section.
   ///
@@ -322,12 +220,6 @@ abstract class AppLocalizations {
   /// **'Ustawienia studiów'**
   String get groupSettings;
 
-  /// group_selection_page.dart - Hint/Instruction displayed after groups have been successfully loaded.
-  ///
-  /// In pl, this message translates to:
-  /// **'Na podstawie Twoich ustawień studiów pobraliśmy dostępne grupy. Wybierz jedną lub wiele, aby śledzić kilka planów.'**
-  String get groupSelectionHintAfterLoad;
-
   /// group_selection_page.dart - Action button to save settings or selected groups.
   ///
   /// In pl, this message translates to:
@@ -339,12 +231,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Brak zajęć na dziś'**
   String get todayDataNaN;
-
-  /// No description provided for @pageErrorMess.
-  ///
-  /// In pl, this message translates to:
-  /// **'Błąd w FutureBuilder {snapshotError}'**
-  String pageErrorMess(Object snapshotError);
 
   /// No description provided for @lectureLength.
   ///
@@ -418,35 +304,17 @@ abstract class AppLocalizations {
   /// **'Nd'**
   String get daysShortSun;
 
-  /// day_selection.dart - Full lowercase name for Monday.
+  /// day_selection.dart - Accessibility label of the previous-week button.
   ///
   /// In pl, this message translates to:
-  /// **'poniedziałek'**
-  String get daysMon;
+  /// **'Poprzedni tydzień'**
+  String get previousWeek;
 
-  /// day_selection.dart - Full lowercase name for Tuesday.
+  /// day_selection.dart - Accessibility label of the next-week button.
   ///
   /// In pl, this message translates to:
-  /// **'wtorek'**
-  String get daysTue;
-
-  /// day_selection.dart - Full lowercase name for Wednesday.
-  ///
-  /// In pl, this message translates to:
-  /// **'środa'**
-  String get daysWed;
-
-  /// day_selection.dart - Full lowercase name for Thursday.
-  ///
-  /// In pl, this message translates to:
-  /// **'czwartek'**
-  String get daysThu;
-
-  /// day_selection.dart - Full lowercase name for Friday.
-  ///
-  /// In pl, this message translates to:
-  /// **'piątek'**
-  String get daysFri;
+  /// **'Następny tydzień'**
+  String get nextWeek;
 
   /// group_info.dart - Header for the selected groups section.
   ///
@@ -459,12 +327,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Zmień grupy'**
   String get changeGroupsButton;
-
-  /// group_info.dart - Small label/title above the list of selected group tags.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wybrane grupy'**
-  String get selectedGroupsLabel;
 
   /// group_info.dart - Placeholder text displayed when no groups have been selected.
   ///
@@ -550,6 +412,24 @@ abstract class AppLocalizations {
   /// **'Inne'**
   String get groupTypeOther;
 
+  /// group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...).
+  ///
+  /// In pl, this message translates to:
+  /// **'Grupy'**
+  String get groupsSectionHeader;
+
+  /// group_selection_page.dart - Counter next to the electives header.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybrano: {count}'**
+  String selectedCount(int count);
+
+  /// group_selection_page.dart - Placeholder and menu option for a group type left without a group.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie wybrano'**
+  String get groupNotSelected;
+
   /// main.dart - Title for the Home page in the navigation bar.
   ///
   /// In pl, this message translates to:
@@ -580,24 +460,6 @@ abstract class AppLocalizations {
   /// **'Debug'**
   String get debugHeader;
 
-  /// menu_page.dart - Introductory label for navigation buttons in the debug section (e.g., 'Return to [Welcome screen]').
-  ///
-  /// In pl, this message translates to:
-  /// **'Powrót do'**
-  String get returnToLabel;
-
-  /// menu_page.dart - Label for the button that resets navigation to the Welcome Page.
-  ///
-  /// In pl, this message translates to:
-  /// **'Welcome screen'**
-  String get welcomeScreenButton;
-
-  /// menu_page.dart - Label for the button that resets navigation to the Input Page.
-  ///
-  /// In pl, this message translates to:
-  /// **'Podaj dane'**
-  String get inputPageButton;
-
   /// lecture.dart - Label for the lecture wiget professor header.
   ///
   /// In pl, this message translates to:
@@ -619,7 +481,7 @@ abstract class AppLocalizations {
   /// No description provided for @additionalInformation.
   ///
   /// In pl, this message translates to:
-  /// **'INFORMACJE DODATKOWE'**
+  /// **'Informacje dodatkowe'**
   String get additionalInformation;
 
   /// lecture.dart - Label for the lecture wiget notes header.
@@ -670,30 +532,6 @@ abstract class AppLocalizations {
   /// **'Prześlij opinie'**
   String get sendFeedbackButton;
 
-  /// feedback_page.dart - Main headline encouraging users to share feedback.
-  ///
-  /// In pl, this message translates to:
-  /// **'Twoja opinia jest dla nas ważna!'**
-  String get feedbackPageHeadline;
-
-  /// feedback_page.dart - Explains that the feedback form opens externally in a browser.
-  ///
-  /// In pl, this message translates to:
-  /// **'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.'**
-  String get feedbackPageDescription;
-
-  /// feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie udało się otworzyć formularza opinii.'**
-  String get feedbackFormOpenGenericError;
-
-  /// feedback_page.dart - Snackbar shown when opening the feedback form fails.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie udało się otworzyć formularza opinii: {error}'**
-  String feedbackFormOpenError(String error);
-
   /// General - Relative time label like '1 dzień temu', '0 dni temu (dzisiaj)', '4 dni temu'.
   ///
   /// In pl, this message translates to:
@@ -712,18 +550,6 @@ abstract class AppLocalizations {
   /// **'Brak sali'**
   String get roomNaN;
 
-  /// Ogólne — data w formacie dd.MM.yyyy oraz skrócony dzień tygodnia (EEE). Przykład: 16.11.2025 - nie
-  ///
-  /// In pl, this message translates to:
-  /// **'{date}'**
-  String dateWithWeekday(DateTime date);
-
-  /// Ogólne — pełna nazwa dnia tygodnia (EEEE). Przykład: „poniedziałek”
-  ///
-  /// In pl, this message translates to:
-  /// **'{date1}'**
-  String dateDayMonth(DateTime date1);
-
   /// No description provided for @details.
   ///
   /// In pl, this message translates to:
@@ -741,6 +567,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Brak aktualności'**
   String get noNews;
+
+  /// input_page.dart - Title of the empty state when the university structure has no entries.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak danych o uczelni'**
+  String get universityStructureEmptyTitle;
 
   /// university_structure.dart - Message shown when the university structure couldn't be loaded; suggests checking internet connection.
   ///
@@ -766,71 +598,17 @@ abstract class AppLocalizations {
   /// **'Zapisy na WF'**
   String get pePageTitle;
 
-  /// No description provided for @pePageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.'**
-  String get pePageDescription;
-
-  /// No description provided for @pePageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przejdź do zapisów'**
-  String get pePageButton;
-
-  /// No description provided for @pePageUrlError.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie udało się otworzyć strony zapisów.'**
-  String get pePageUrlError;
-
   /// No description provided for @studentIdPageTitle.
   ///
   /// In pl, this message translates to:
   /// **'Legitymacja studencka'**
   String get studentIdPageTitle;
 
-  /// No description provided for @studentIdPageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.'**
-  String get studentIdPageDescription;
-
-  /// No description provided for @studentIdPageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przejdź do wyrobienia'**
-  String get studentIdPageButton;
-
-  /// No description provided for @studentIdPageUrlError.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie udało się otworzyć strony legitymacji.'**
-  String get studentIdPageUrlError;
-
   /// No description provided for @virtualUniversityPageTitle.
   ///
   /// In pl, this message translates to:
   /// **'Wirtualna uczelnia'**
   String get virtualUniversityPageTitle;
-
-  /// No description provided for @virtualUniversityPageDescription.
-  ///
-  /// In pl, this message translates to:
-  /// **'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.'**
-  String get virtualUniversityPageDescription;
-
-  /// No description provided for @virtualUniversityPageButton.
-  ///
-  /// In pl, this message translates to:
-  /// **'Otwórz portal'**
-  String get virtualUniversityPageButton;
-
-  /// No description provided for @virtualUniversityPageUrlError.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie udało się otworzyć portalu Wirtualnej Uczelni.'**
-  String get virtualUniversityPageUrlError;
 
   /// input_page.dart - Label for the degree level selector.
   ///
@@ -867,6 +645,18 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Sprawdź połączenie z internetem i spróbuj ponownie.'**
   String get networkErrorDescription;
+
+  /// input_page.dart - Button that retries loading after a network error.
+  ///
+  /// In pl, this message translates to:
+  /// **'Spróbuj ponownie'**
+  String get retryButton;
+
+  /// input_page.dart - Footer under the segmented controls explaining greyed-out options.
+  ///
+  /// In pl, this message translates to:
+  /// **'Niedostępne opcje nie są prowadzone na tym kierunku.'**
+  String get unavailableOptionsHint;
 
   /// group_selection_page.dart - Title shown when no groups exist for the selected study settings.
   ///
@@ -934,18 +724,6 @@ abstract class AppLocalizations {
   /// **'Systemowy'**
   String get themeSystem;
 
-  /// appearance_page.dart - Hint text describing the theme selection.
-  ///
-  /// In pl, this message translates to:
-  /// **'Wybierz motyw, który najbardziej Ci odpowiada'**
-  String get appearanceHint;
-
-  /// appearance_page.dart - Label showing the currently active theme.
-  ///
-  /// In pl, this message translates to:
-  /// **'Aktywny motyw: '**
-  String get activeThemeLabel;
-
   /// settings_page.dart - Header for the personalization section.
   ///
   /// In pl, this message translates to:
@@ -999,18 +777,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Kolor wiodący'**
   String get accentColorTitle;
-
-  /// No description provided for @amoledModeTitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Prawdziwa czerń'**
-  String get amoledModeTitle;
-
-  /// No description provided for @amoledModeDesc.
-  ///
-  /// In pl, this message translates to:
-  /// **'Całkowicie czarne tło w trybie ciemnym'**
-  String get amoledModeDesc;
 
   /// No description provided for @eventStyleTitle.
   ///
@@ -1071,6 +837,24 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Ta aplikacja jest open-source'**
   String get openSourceInfo;
+
+  /// about_page.dart - Header of the section with the repository link.
+  ///
+  /// In pl, this message translates to:
+  /// **'Open source'**
+  String get openSourceHeader;
+
+  /// appearance_page.dart - Footer under the theme picker explaining the System option.
+  ///
+  /// In pl, this message translates to:
+  /// **'Systemowy przełącza się razem z ustawieniami telefonu.'**
+  String get themeSystemHint;
+
+  /// appearance_page.dart - Header of the theme picker section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Motyw'**
+  String get themeHeader;
 
   /// No description provided for @githubRepo.
   ///
@@ -1180,6 +964,24 @@ abstract class AppLocalizations {
   /// **'Jestem wykładowcą'**
   String get roleLecturerButton;
 
+  /// No description provided for @roleStudentSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan według kierunku i grupy'**
+  String get roleStudentSubtitle;
+
+  /// No description provided for @roleLecturerSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan według prowadzącego'**
+  String get roleLecturerSubtitle;
+
+  /// No description provided for @nextButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dalej'**
+  String get nextButton;
+
   /// No description provided for @lecturerSelectionTitle.
   ///
   /// In pl, this message translates to:
@@ -1216,12 +1018,6 @@ abstract class AppLocalizations {
   /// **'Widok studenta'**
   String get roleStudentViewTitle;
 
-  /// No description provided for @roleStudentViewSubtitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przełącz na plan studenta'**
-  String get roleStudentViewSubtitle;
-
   /// No description provided for @roleViewingAsStudent.
   ///
   /// In pl, this message translates to:
@@ -1234,23 +1030,11 @@ abstract class AppLocalizations {
   /// **'Przeglądasz aktualnie plan jako wykładowca.'**
   String get roleViewingAsLecturer;
 
-  /// No description provided for @roleCurrentlyActive.
-  ///
-  /// In pl, this message translates to:
-  /// **'Aktualnie aktywny'**
-  String get roleCurrentlyActive;
-
   /// No description provided for @roleLecturerViewTitle.
   ///
   /// In pl, this message translates to:
   /// **'Widok wykładowcy'**
   String get roleLecturerViewTitle;
-
-  /// No description provided for @roleLecturerViewSubtitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Przełącz na widok wykładowcy'**
-  String get roleLecturerViewSubtitle;
 
   /// No description provided for @debugRoleSelector.
   ///
@@ -1305,12 +1089,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Prywatność i dane'**
   String get gdprTitle;
-
-  /// gdpr_consent_page.dart - GDPR consent body text.
-  ///
-  /// In pl, this message translates to:
-  /// **'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.'**
-  String get gdprBody;
 
   /// gdpr_consent_page.dart - Accept button label on the GDPR consent screen.
   ///

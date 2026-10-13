@@ -16,8 +16,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 
-import 'package:plan_pm/global/utils/extensions.dart';
-import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:plan_pm/main.dart' as app;
 
 void main() {
@@ -29,25 +28,31 @@ void main() {
     return (tester.widget<Text>(finder)).data!;
   }
 
-  /// Etykieta ("24 Wrzesień", "2 October") -> pełna data.
+  /// Etykieta ("Środa, 7 października", "Wednesday, October 7") -> pełna data.
   ///
-  /// Etykieta nie ma roku, a nazwę miesiąca buduje l10n w języku aplikacji,
-  /// więc tabelę miesięcy składamy TĄ SAMĄ funkcją co day_selection.dart, a rok
-  /// bierzemy najbliższy [near]. Dzięki temu asercja o 7 dniach działa także
-  /// przez granicę miesiąca i roku — wcześniej wtedy po cichu ją pomijaliśmy.
+  /// Etykieta nie ma roku, a buduje ją intl w języku aplikacji
+  /// (DateFormat.MMMMEEEEd). Dzień i miesiąc odczytujemy więc, formatując tym
+  /// samym wzorcem każdy dzień roku i szukając pasującego, a rok bierzemy
+  /// najbliższy [near]. Dzięki temu asercja o 7 dniach działa także przez
+  /// granicę miesiąca i roku.
   DateTime readDate(WidgetTester tester, DateTime near) {
-    final label = readLabel(tester).trim();
-    final space = label.indexOf(' ');
-    final day = int.parse(label.substring(0, space));
-    final monthName = label.substring(space + 1);
-
+    final label = readLabel(tester).trim().toLowerCase();
     final context = tester.element(find.byKey(const ValueKey('daySelectionDate')));
-    final l10n = AppLocalizations.of(context)!;
-    final months = [
-      for (var m = 1; m <= 12; m++) l10n.dateDayMonth(DateTime(2000, m)).toCapitalized,
-    ];
-    final month = months.indexOf(monthName) + 1;
-    expect(month, isPositive, reason: 'nieznana nazwa miesiąca: "$monthName"');
+    final format = DateFormat.MMMMEEEEd(
+      Localizations.localeOf(context).toLanguageTag(),
+    );
+    // Rok przestępny, żeby 29 lutego też miał kandydata; dzień tygodnia
+    // pomijamy przy porównaniu, bo zależy od roku.
+    String dayMonth(String s) => s.substring(s.indexOf(',') + 1).trim();
+    DateTime? match;
+    for (var d = DateTime(2024); d.year == 2024; d = d.add(const Duration(days: 1))) {
+      if (dayMonth(format.format(d).toLowerCase()) == dayMonth(label)) {
+        match = d;
+        break;
+      }
+    }
+    expect(match, isNotNull, reason: 'nie rozpoznano daty: "$label"');
+    final month = match!.month, day = match.day;
 
     final candidates = [near.year - 1, near.year, near.year + 1]
         .map((y) => DateTime(y, month, day))

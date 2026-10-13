@@ -2,8 +2,8 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // Bez "kotlin-android": nakłada go Flutter Gradle Plugin (szablon Fluttera 3.44.4).
+    // The Flutter Gradle Plugin must be applied after the Android Gradle plugin.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -60,7 +60,11 @@ flutter {
     source = "../.."
 }
 
+// home_widget 0.10.0 woła Glance już przy starcie (HomeWidgetPreviews w
+// onAttachedToEngine), więc wykluczenie glance-appwidget = crash aplikacji.
+// Przypinamy 1.2.0 (tę deklaruje plugin): nowsze alpha ciągną
+// remote-creation-android, które wymaga AGP 9.1+ i compileSdk 37.
 configurations.all {
-    exclude(group = "androidx.glance", module = "glance-appwidget")
+    resolutionStrategy.force("androidx.glance:glance-appwidget:1.2.0")
     exclude(group = "androidx.compose.remote", module = "remote-creation-android")
 }

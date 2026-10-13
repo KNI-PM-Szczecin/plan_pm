@@ -84,6 +84,16 @@ A Flutter application targeting Android and iOS. Fetches schedule data from Supa
 
 **Tech:** Flutter (Dart), Supabase client
 
+For local development, use Flutter 3.44.4 (the version pinned in Jenkins) or a
+compatible newer version. From `frontend/`, run `flutter pub get`, create
+`lib/secrets.dart` using `lib/secrets_example.dart` and your Supabase credentials,
+then run `flutter run`.
+
+iOS builds require macOS and Xcode. Swift Package Manager is enabled for this
+project in `frontend/pubspec.yaml` (`flutter.config.enable-swift-package-manager`),
+so local `flutter run` / `flutter build ios` and CI use the same dependency manager.
+No global `flutter config` command is needed. CocoaPods integration has been removed.
+
 ### Backend — [`backend/`](backend/)
 
 A Python data pipeline that scrapes the university's Virtual Dean's Office website and loads the data into a Supabase database. Also includes a lightweight admin tool for managing in-app news posts.

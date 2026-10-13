@@ -18,7 +18,7 @@ STEPS = {
     "mapper":    {"label": "Mapper",            "cmd": [sys.executable, "-c", "from mapper import Mapper; Mapper(output='./output/mapper.json').run(minID=0, maxID=600)"]},
     "scrapper":  {"label": "Scrapper",          "cmd": [sys.executable, "-c", "from scrapper import HttpScrapper; HttpScrapper(input='./output/mapper.json', output='./output/scrapper.json').run()"]},
     "parser":    {"label": "Parser",            "cmd": [sys.executable, "-c", "from parser import Parser; Parser(input='scrapper.json').run()"]},
-    "json2db":   {"label": "Upload to DB",      "cmd": [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', clear=True).run()"]},
+    "json2db":   {"label": "Upload to DB",      "cmd": [sys.executable, "-c", "from json2db import json2db; json2db(input='./output/parser.json', refresh_upcoming=True).run()"]},
     "structure": {"label": "Structure Updater", "cmd": [sys.executable, "-m", "structure_updater.structure_updater"]},
 }
 

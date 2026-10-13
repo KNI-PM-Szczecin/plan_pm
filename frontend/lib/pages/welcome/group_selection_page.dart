@@ -1,26 +1,44 @@
-// Wybór grup zajęciowych studenta — siatka przycisków pogrupowanych po typie (A/C/L/inne).
-// W każdej kategorii można wybrać dokładnie jedną grupę.
+// Wybór grup zajęciowych studenta, pogrupowanych w sekcje przez
+// [buildGroupSections]:
+//   * „Grupy" — po jednym wierszu na rodzaj zajęć rocznika (audytorium,
+//     ćwiczenia, laboratoria, projekt, symulator), pojedynczy wybór z menu —
+//     student należy do jednej grupy; rodzaj można zostawić bez grupy,
+//   * przedmioty obieralne — lista wielokrotnego wyboru z licznikiem, bo
+//     obieralnych ma się kilka naraz (wcześniej jeden slot = niepełny plan).
 // Po zapisaniu persystuje wybór i synchronizuje dane przez [CacheService].
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
-import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/global/widgets/app_bottom_actions.dart';
+import 'package:plan_pm/global/widgets/app_button.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_menu_field.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
+import 'package:plan_pm/global/widgets/app_state_card.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
-import 'package:plan_pm/pages/welcome/widgets/group_builder.dart';
-import 'package:plan_pm/pages/welcome/widgets/onboarding_action_bar.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/service/backend_service.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_pm/service/cache_service.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:plan_pm/service/group_categories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+
+String groupKindLabel(GroupKind kind, AppLocalizations l10n) => switch (kind) {
+  GroupKind.auditorium => l10n.groupTypeAuditorium,
+  GroupKind.classes => l10n.groupTypeClasses,
+  GroupKind.labs => l10n.groupTypeLabs,
+  GroupKind.project => l10n.groupTypeProject,
+  GroupKind.simulator => l10n.groupTypeSimulator,
+  GroupKind.elective => l10n.groupTypeElective,
+  GroupKind.other => l10n.groupTypeOther,
+};
 
 class GroupSelectionPage extends StatefulWidget {
   const GroupSelectionPage({super.key, this.isRoleSwitch = false});
@@ -33,41 +51,47 @@ class GroupSelectionPage extends StatefulWidget {
 
 class _GroupSelectionPageState extends State<GroupSelectionPage> {
   final BackendService _backendService = BackendService();
+  late Future<List<String>> _futureGroups;
   bool _isSubmitting = false;
+
+  /// Pełne kody wybranych grup (`KOD/PULA/ROCZNIK`) — to trafia do zapytania.
+  final List<String> _selected = [];
 
   @override
   void initState() {
     super.initState();
+    // Celowo od zera — patrz [project_group_selection_reset_by_design]:
+    // pusta lista grup = plan całego rocznika.
     Student.selectedGroups = [];
+    _futureGroups = _backendService.fetchGroups();
   }
 
-  Future<void> _handleConfirm() async {
-    setState(() => _isSubmitting = true);
-    try {
-      HapticFeedback.lightImpact();
-      if (widget.isRoleSwitch) {
-        await AppModeManager.setMode(AppMode.student);
-        sevenDayModeNotifier.value = false;
-        await DatabaseService.instance.clearLectures();
+  void _retry() {
+    HapticFeedback.lightImpact();
+    setState(() => _futureGroups = _backendService.fetchGroups());
+  }
+
+  void _setSingle(GroupSection section, GroupEntry? entry) {
+    HapticFeedback.lightImpact();
+    setState(() {
+      for (final other in section.entries) {
+        _selected.remove(other.full);
       }
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList("groups", Student.selectedGroups ?? []);
-      await CacheService().syncNews();
-      await CacheService().syncLectures();
-      if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyHomePage(title: "Plan PM"),
-        ),
-        (r) => false,
-      );
-    } finally {
-      if (mounted) setState(() => _isSubmitting = false);
-    }
+      if (entry != null) _selected.add(entry.full);
+      Student.selectedGroups = List.of(_selected);
+    });
   }
 
-  Future<void> _handleSkip() async {
+  void _toggleMulti(GroupEntry entry) {
+    setState(() {
+      if (!_selected.remove(entry.full)) _selected.add(entry.full);
+      Student.selectedGroups = List.of(_selected);
+    });
+  }
+
+  /// Zapis i przejście do home. „Pomiń" i „Zapisz" różnią się tylko tym, czy
+  /// student coś zaznaczył — przy pominięciu lista jest pusta.
+  Future<void> _finish() async {
     setState(() => _isSubmitting = true);
     try {
       HapticFeedback.lightImpact();
@@ -120,124 +144,136 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: AppColor.groupedBackground,
       appBar: CustomAppBar(title: l10n.groupSettings),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: OnboardingActionBar(
-        skipLabel: l10n.skipButton,
-        onSkip: () {
-          if (!_isSubmitting) _handleSkip();
-        },
-        confirmLabel: l10n.save,
-        onConfirm: _isSubmitting ? null : _handleConfirm,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            12,
-            12,
-            12,
-            12 + OnboardingActionBar.reservedSpace(context),
-          ),
-          child: Column(
-            spacing: 10,
-            children: [
-              Text(
-                l10n.groupSelectionHint,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColor.onBackgroundVariant,
-                ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 24,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      l10n.groupSelectionHint,
+                      style: AppTextStyle.subheadline.copyWith(
+                        color: AppColor.labelSecondary,
+                      ),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: _futureGroups,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return AppStateCard.loading(title: l10n.groupLoading);
+                      }
+                      if (snapshot.hasError || !snapshot.hasData) {
+                        return AppStateCard(
+                          icon: LucideIcons.wifiOff,
+                          title: l10n.unexpectedError,
+                          message: l10n.networkErrorDescription,
+                          actionLabel: l10n.retryButton,
+                          onAction: _retry,
+                        );
+                      }
+                      final data = snapshot.data!;
+                      if (data.isEmpty) {
+                        return AppStateCard(
+                          icon: LucideIcons.calendarX,
+                          title: l10n.noGroupsAvailable,
+                          message:
+                              "${l10n.noGroupsAvailableSettings(_studySummary(l10n))}"
+                              "\n\n${l10n.noGroupsAvailableDescription}",
+                          actionLabel: Navigator.canPop(context)
+                              ? l10n.changeStudyDetails
+                              : null,
+                          onAction: () => Navigator.pop(context),
+                        );
+                      }
+                      // Podział na sekcje siedzi w [buildGroupSections], żeby dało
+                      // się go przetestować na realnych kodach bez widżetu.
+                      final sections = buildGroupSections(
+                        data.map((g) => g.toString()).toList(),
+                      );
+                      return _buildSections(sections, l10n);
+                    },
+                  ),
+                ],
               ),
-              FutureBuilder(
-                future: _backendService.fetchGroups(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.surface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DottedBorder(
-                        options: RoundedRectDottedBorderOptions(
-                          radius: const Radius.circular(12),
-                          dashPattern: const [10, 5],
-                          color: AppColor.outline,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            spacing: 5,
-                            children: [
-                              LoadingAnimationWidget.progressiveDots(
-                                color: AppColor.onSurfaceVariant,
-                                size: 48,
-                              ),
-                              Text(
-                                l10n.groupLoading,
-                                style: TextStyle(
-                                  color: AppColor.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError || snapshot.data == null) {
-                    return GenericNoResource(
-                      label: l10n.unexpectedError,
-                      icon: LucideIcons.wifiOff,
-                      description: l10n.networkErrorDescription,
-                    );
-                  }
-                  final data = snapshot.data!;
-                  if (data.isEmpty) {
-                    return GenericNoResource(
-                      label: l10n.noGroupsAvailable,
-                      icon: LucideIcons.calendarX,
-                      description:
-                          "${l10n.noGroupsAvailableSettings(_studySummary(l10n))}"
-                          "\n\n${l10n.noGroupsAvailableDescription}",
-                      action: OutlinedButton.icon(
-                        onPressed: Navigator.canPop(context)
-                            ? () {
-                                HapticFeedback.lightImpact();
-                                Navigator.pop(context);
-                              }
-                            : null,
-                        icon: Icon(LucideIcons.pencil, size: 16),
-                        label: Text(l10n.changeStudyDetails),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColor.onSurface,
-                          side: BorderSide(color: AppColor.outline),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  // Podział na sekcje (typ zajęć + osobna pula obieralnych)
-                  // siedzi w [buildGroupSections], żeby dało się go przetestować
-                  // na realnych kodach bez budowania widżetu.
-                  final sections = buildGroupSections(
-                    data.map((g) => g.toString()).toList(),
-                  );
-
-                  return Column(
-                    spacing: 10,
-                    children: [GroupBuilder(sections: sections)],
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+          AppBottomActions(
+            secondary: AppButton(
+              label: l10n.skipButton,
+              variant: AppButtonVariant.gray,
+              onPressed: _isSubmitting ? null : _finish,
+            ),
+            primary: AppButton(
+              label: l10n.save,
+              isLoading: _isSubmitting,
+              onPressed: _finish,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSections(List<GroupSection> sections, AppLocalizations l10n) {
+    final single = sections.where((s) => !s.multiSelect).toList();
+    final multi = sections.where((s) => s.multiSelect).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: AppSection.spacing,
+      children: [
+        if (single.isNotEmpty)
+          AppSection(
+            header: l10n.groupsSectionHeader,
+            child: AppGroupedSection(
+              children: [
+                for (final section in single)
+                  AppMenuField<GroupEntry>(
+                    inline: true,
+                    label: groupKindLabel(section.kind, l10n),
+                    placeholder: l10n.groupNotSelected,
+                    options: section.entries,
+                    optionLabel: (e) => e.code,
+                    selected: section.entries
+                        .where((e) => _selected.contains(e.full))
+                        .firstOrNull,
+                    onSelected: (e) => _setSingle(section, e),
+                    clearLabel: l10n.groupNotSelected,
+                    onCleared: () => _setSingle(section, null),
+                  ),
+              ],
+            ),
+          ),
+        for (final section in multi)
+          AppSection(
+            header: groupKindLabel(section.kind, l10n),
+            headerNote: l10n.selectedCount(
+              section.entries.where((e) => _selected.contains(e.full)).length,
+            ),
+            footer: l10n.groupTypeElectiveHint,
+            child: AppGroupedSection(
+              children: [
+                for (final entry in section.entries)
+                  AppListRow(
+                    title: entry.code,
+                    selected: _selected.contains(entry.full),
+                    accessory: _selected.contains(entry.full)
+                        ? AppListRowAccessory.checkmark
+                        : AppListRowAccessory.none,
+                    onTap: () => _toggleMulti(entry),
+                  ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,48 +1,12 @@
 {
   "@@locale": "pl",
-  "stage1Title": "",
-  "@stage1Title": {
-    "description": "onboarding_screen.dart - Title/Header for the first onboarding step. (Empty value is intentional)"
+  "welcomeTagline": "Przejrzysty i szybki plan zajęć z podglądem na żywo.",
+  "@welcomeTagline": {
+    "description": "welcome_page.dart - App tagline under the app name on the welcome screen."
   },
-  "stage1Button": "Witaj w Plan PM",
-  "@stage1Button": {
-    "description": "onboarding_screen.dart - Action button on the first welcome screen."
-  },
-  "stage2Title": "Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.",
-  "@stage2Title": {
-    "description": "onboarding_screen.dart - Feature description for the second step."
-  },
-  "stage2Button": "Dalej",
-  "@stage2Button": {
-    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
-  },
-  "stage3Title": "Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.",
-  "@stage3Title": {
-    "description": "onboarding_screen.dart - Feature description for the third step."
-  },
-  "stage3Button": "Dalej",
-  "@stage3Button": {
-    "description": "onboarding_screen.dart - Navigation button to the next onboarding step."
-  },
-  "stage4Title": "Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.",
-  "@stage4Title": {
-    "description": "onboarding_screen.dart - Feature description for the final step."
-  },
-  "stage4Button": "Rozpocznij",
-  "@stage4Button": {
-    "description": "onboarding_screen.dart - Button to finalize onboarding and start configuration."
-  },
-  "welcomePageSelectionText": "Powrót do WelcomeScreen",
-  "@welcomePageSelectionText": {
-    "description": "debug_menu.dart - Debug/Navigation link to return to the Welcome screen."
-  },
-  "inputPageSelectionText": "Powrót do InputPage",
-  "@inputPageSelectionText": {
-    "description": "debug_menu.dart - Debug/Navigation link to return to the Data Input screen."
-  },
-  "inputPageLabel": "Twoje Dane Akademickie",
-  "@inputPageLabel": {
-    "description": "input_page.dart - Header for the screen where the user enters academic data."
+  "welcomeButton": "Witaj w Plan PM",
+  "@welcomeButton": {
+    "description": "welcome_page.dart - Button that finishes the welcome screen and starts setup."
   },
   "facultyLabel": "Wydział",
   "@facultyLabel": {
@@ -84,33 +48,9 @@
   "@extramuralButton": {
     "description": "input_page.dart - Option button for 'Part-time/Extramural' study mode."
   },
-  "continueButton": "Kontynuuj",
-  "@continueButton": {
-    "description": "input_page.dart - Main action button to proceed after data input."
-  },
-  "homePageLabel": "Dane studenta to: ",
-  "@homePageLabel": {
-    "description": "home_page.dart - Header for the student data summary section."
-  },
-  "facultyText": "Wydział",
-  "@facultyText": {
-    "description": "home_page.dart - Label for the displayed 'Faculty' value."
-  },
-  "fieldText": "Kierunek",
-  "@fieldText": {
-    "description": "home_page.dart - Label for the displayed 'Field of Study' value."
-  },
-  "specialisationText": "Specjalizacja",
-  "@specialisationText": {
-    "description": "home_page.dart - Label for the displayed 'Specialization' value."
-  },
   "yearText": "Rok",
   "@yearText": {
     "description": "home_page.dart - Label for the displayed 'Year' value."
-  },
-  "typeText": "Tryb studiów",
-  "@typeText": {
-    "description": "home_page.dart - Label for the displayed 'Study Mode' value."
   },
   "dataNaN": "Brak danych",
   "@dataNaN": {
@@ -123,14 +63,6 @@
   "skipButton": "Pomiń",
   "@skipButton": {
     "description": "group_selection_page.dart - Button to skip the current configuration step."
-  },
-  "fullTimeStudy": "Stacjonarne",
-  "@fullTimeStudy": {
-    "description": "settings_page.dart - Full name of the Full-time study mode."
-  },
-  "partTimeStudy": "Niestacjonarne",
-  "@partTimeStudy": {
-    "description": "settings_page.dart - Full name of the Part-time study mode."
   },
   "groupSelection": "Wybór grupy",
   "@groupSelection": {
@@ -148,10 +80,6 @@
   "@groupSettings": {
     "description": "group_selection_page.dart - Header for the study settings context within group selection."
   },
-  "groupSelectionHintAfterLoad": "Na podstawie Twoich ustawień studiów pobraliśmy dostępne grupy. Wybierz jedną lub wiele, aby śledzić kilka planów.",
-  "@groupSelectionHintAfterLoad": {
-    "description": "group_selection_page.dart - Hint/Instruction displayed after groups have been successfully loaded."
-  },
   "save": "Zapisz",
   "@save": {
     "description": "group_selection_page.dart - Action button to save settings or selected groups."
@@ -159,13 +87,6 @@
   "todayDataNaN": "Brak zajęć na dziś",
   "@todayDataNaN": {
     "description": "schedule_view.dart - Message shown on the 'Today' tab when no classes are scheduled."
-  },
-  "pageErrorMess": "Błąd w FutureBuilder {snapshotError}",
-  "@pageErrorMess": {
-    "type": "text",
-    "placeholders": {
-      "snapshotError": {}
-    }
   },
   "lectureLength": "{lecturesLength} zajęcia",
   "@lectureLength": {
@@ -218,25 +139,13 @@
   "@daysShortSun": {
     "description": "day_selection.dart - Short name for Sunday (Niedziela)."
   },
-  "daysMon": "poniedziałek",
-  "@daysMon": {
-    "description": "day_selection.dart - Full lowercase name for Monday."
+  "previousWeek": "Poprzedni tydzień",
+  "@previousWeek": {
+    "description": "day_selection.dart - Accessibility label of the previous-week button."
   },
-  "daysTue": "wtorek",
-  "@daysTue": {
-    "description": "day_selection.dart - Full lowercase name for Tuesday."
-  },
-  "daysWed": "środa",
-  "@daysWed": {
-    "description": "day_selection.dart - Full lowercase name for Wednesday."
-  },
-  "daysThu": "czwartek",
-  "@daysThu": {
-    "description": "day_selection.dart - Full lowercase name for Thursday."
-  },
-  "daysFri": "piątek",
-  "@daysFri": {
-    "description": "day_selection.dart - Full lowercase name for Friday."
+  "nextWeek": "Następny tydzień",
+  "@nextWeek": {
+    "description": "day_selection.dart - Accessibility label of the next-week button."
   },
   "selectedGroupsHeader": "Wybrane grupy",
   "@selectedGroupsHeader": {
@@ -245,10 +154,6 @@
   "changeGroupsButton": "Zmień grupy",
   "@changeGroupsButton": {
     "description": "group_info.dart - Label for the button to navigate to group selection."
-  },
-  "selectedGroupsLabel": "Wybrane grupy",
-  "@selectedGroupsLabel": {
-    "description": "group_info.dart - Small label/title above the list of selected group tags."
   },
   "noDataAvailable": "Brak danych",
   "@noDataAvailable": {
@@ -308,6 +213,23 @@
   "@groupTypeOther": {
     "description": "group_builder.dart - Default name for unmapped group types."
   },
+  "groupsSectionHeader": "Grupy",
+  "@groupsSectionHeader": {
+    "description": "group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...)."
+  },
+  "selectedCount": "Wybrano: {count}",
+  "@selectedCount": {
+    "description": "group_selection_page.dart - Counter next to the electives header.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupNotSelected": "Nie wybrano",
+  "@groupNotSelected": {
+    "description": "group_selection_page.dart - Placeholder and menu option for a group type left without a group."
+  },
   "pageTitleHome": "Strona główna",
   "@pageTitleHome": {
     "description": "main.dart - Title for the Home page in the navigation bar."
@@ -328,18 +250,6 @@
   "@debugHeader": {
     "description": "menu_page.dart - Header for the debug/development section."
   },
-  "returnToLabel": "Powrót do",
-  "@returnToLabel": {
-    "description": "menu_page.dart - Introductory label for navigation buttons in the debug section (e.g., 'Return to [Welcome screen]')."
-  },
-  "welcomeScreenButton": "Welcome screen",
-  "@welcomeScreenButton": {
-    "description": "menu_page.dart - Label for the button that resets navigation to the Welcome Page."
-  },
-  "inputPageButton": "Podaj dane",
-  "@inputPageButton": {
-    "description": "menu_page.dart - Label for the button that resets navigation to the Input Page."
-  },
   "professorLabel": "Prowadzący",
   "@professorLabel": {
     "description": "lecture.dart - Label for the lecture wiget professor header."
@@ -349,7 +259,7 @@
     "description": "lecture.dart - Label for the lecture wiget group header."
   },
   "lengthLabel": "Czas trwania",
-  "additionalInformation": "INFORMACJE DODATKOWE",
+  "additionalInformation": "Informacje dodatkowe",
   "@lengthLabel": {
     "description": "lecture.dart - Label for the lecture wiget lecture length header."
   },
@@ -385,27 +295,6 @@
   "@sendFeedbackButton": {
     "description": "settings_page.dart - Button label to submit feedback/suggestions."
   },
-  "feedbackPageHeadline": "Twoja opinia jest dla nas ważna!",
-  "@feedbackPageHeadline": {
-    "description": "feedback_page.dart - Main headline encouraging users to share feedback."
-  },
-  "feedbackPageDescription": "Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.",
-  "@feedbackPageDescription": {
-    "description": "feedback_page.dart - Explains that the feedback form opens externally in a browser."
-  },
-  "feedbackFormOpenGenericError": "Nie udało się otworzyć formularza opinii.",
-  "@feedbackFormOpenGenericError": {
-    "description": "feedback_page.dart - Snackbar shown when the browser cannot be opened for feedback form."
-  },
-  "feedbackFormOpenError": "Nie udało się otworzyć formularza opinii: {error}",
-  "@feedbackFormOpenError": {
-    "description": "feedback_page.dart - Snackbar shown when opening the feedback form fails.",
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
   "daysAgo": "{days, plural, =0{dzisiaj} one{1 dzień temu} few{{days} dni temu} many{{days} dni temu} other{{days} dni temu}}",
   "@daysAgo": {
     "description": "General - Relative time label like '1 dzień temu', '0 dni temu (dzisiaj)', '4 dni temu'.",
@@ -423,26 +312,6 @@
   "@roomNaN": {
     "description": "lecture.dart - Message shown when a lecture has no assigned room."
   },
-  "dateWithWeekday": "{date}",
-  "@dateWithWeekday": {
-    "description": "Ogólne — data w formacie dd.MM.yyyy oraz skrócony dzień tygodnia (EEE). Przykład: 16.11.2025 - nie",
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "yMMMEd"
-      }
-    }
-  },
-  "dateDayMonth": "{date1}",
-  "@dateDayMonth": {
-    "description": "Ogólne — pełna nazwa dnia tygodnia (EEEE). Przykład: „poniedziałek”",
-    "placeholders": {
-      "date1": {
-        "type": "DateTime",
-        "format": "MMMM"
-      }
-    }
-  },
   "details": "Szczegóły",
   "@details": {},
   "universityStructureLoading": "Ładowanie struktury uczelni",
@@ -452,6 +321,10 @@
   "noNews": "Brak aktualności",
   "@noNews": {
     "description": "news_page.dart - Message shown when there are no news items."
+  },
+  "universityStructureEmptyTitle": "Brak danych o uczelni",
+  "@universityStructureEmptyTitle": {
+    "description": "input_page.dart - Title of the empty state when the university structure has no entries."
   },
   "universityStructureEmpty": "Struktura uczelni jest pusta. Czy jesteś podłączony do internetu?",
   "@universityStructureEmpty": {
@@ -466,17 +339,8 @@
     "description": "group_selection_page.dart - Message shown when there are no specialisations available for the selected field."
   },
   "pePageTitle": "Zapisy na WF",
-  "pePageDescription": "Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.",
-  "pePageButton": "Przejdź do zapisów",
-  "pePageUrlError": "Nie udało się otworzyć strony zapisów.",
   "studentIdPageTitle": "Legitymacja studencka",
-  "studentIdPageDescription": "Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.",
-  "studentIdPageButton": "Przejdź do wyrobienia",
-  "studentIdPageUrlError": "Nie udało się otworzyć strony legitymacji.",
   "virtualUniversityPageTitle": "Wirtualna uczelnia",
-  "virtualUniversityPageDescription": "Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.",
-  "virtualUniversityPageButton": "Otwórz portal",
-  "virtualUniversityPageUrlError": "Nie udało się otworzyć portalu Wirtualnej Uczelni.",
   "degreeLevelLabel": "Stopień studiów",
   "@degreeLevelLabel": {
     "description": "input_page.dart - Label for the degree level selector."
@@ -500,6 +364,14 @@
   "networkErrorDescription": "Sprawdź połączenie z internetem i spróbuj ponownie.",
   "@networkErrorDescription": {
     "description": "Opis wyświetlany gdy żądanie sieciowe zawiedzie."
+  },
+  "retryButton": "Spróbuj ponownie",
+  "@retryButton": {
+    "description": "input_page.dart - Button that retries loading after a network error."
+  },
+  "unavailableOptionsHint": "Niedostępne opcje nie są prowadzone na tym kierunku.",
+  "@unavailableOptionsHint": {
+    "description": "input_page.dart - Footer under the segmented controls explaining greyed-out options."
   },
   "noGroupsAvailable": "Brak dostępnych grup",
   "@noGroupsAvailable": {
@@ -541,14 +413,6 @@
   "@themeSystem": {
     "description": "settings_page.dart - Label for the system default theme option."
   },
-  "appearanceHint": "Wybierz motyw, który najbardziej Ci odpowiada",
-  "@appearanceHint": {
-    "description": "appearance_page.dart - Hint text describing the theme selection."
-  },
-  "activeThemeLabel": "Aktywny motyw: ",
-  "@activeThemeLabel": {
-    "description": "appearance_page.dart - Label showing the currently active theme."
-  },
   "personalizationHeader": "Personalizacja",
   "@personalizationHeader": {
     "description": "settings_page.dart - Header for the personalization section."
@@ -582,8 +446,6 @@
     "description": "language_page.dart - Label showing the currently active language."
   },
   "accentColorTitle": "Kolor wiodący",
-  "amoledModeTitle": "Prawdziwa czerń",
-  "amoledModeDesc": "Całkowicie czarne tło w trybie ciemnym",
   "eventStyleTitle": "Styl kolorowania zajęć",
   "eventStyleCurrent": "Domyślny",
   "eventStylePastel": "Pastelowe",
@@ -594,6 +456,18 @@
   "createdBy": "Stworzono przez",
   "kniName": "Koło Naukowe Informatyki\nPolitechniki Morskiej w Szczecinie",
   "openSourceInfo": "Ta aplikacja jest open-source",
+  "openSourceHeader": "Open source",
+  "@openSourceHeader": {
+    "description": "about_page.dart - Header of the section with the repository link."
+  },
+  "themeSystemHint": "Systemowy przełącza się razem z ustawieniami telefonu.",
+  "@themeSystemHint": {
+    "description": "appearance_page.dart - Footer under the theme picker explaining the System option."
+  },
+  "themeHeader": "Motyw",
+  "@themeHeader": {
+    "description": "appearance_page.dart - Header of the theme picker section."
+  },
   "githubRepo": "Otwórz repozytorium na Github",
   "couldNotOpenRepo": "Nie udało się otworzyć repozytorium",
   "appDescription": "Przejrzysty i szybki plan zajęć z podglądem na żywo. Stworzony specjalnie dla studentów Politechniki Morskiej, aby ułatwić organizację i śledzenie codziennych wykładów.",
@@ -637,18 +511,18 @@
   "roleSelectionSubtitle": "Wybierz rolę, która najlepiej opisuje Twoje potrzeby",
   "roleStudentButton": "Jestem studentem",
   "roleLecturerButton": "Jestem wykładowcą",
+  "roleStudentSubtitle": "Plan według kierunku i grupy",
+  "roleLecturerSubtitle": "Plan według prowadzącego",
+  "nextButton": "Dalej",
   "lecturerSelectionTitle": "Wybierz prowadzącego",
   "lecturerSelectionSubtitle": "Wpisz imię, nazwisko lub nazwę przedmiotu",
   "lecturerSearchNoResults": "Brak wyników",
   "lecturerLabel": "Wykładowca",
   "roleSectionTitle": "Rola",
   "roleStudentViewTitle": "Widok studenta",
-  "roleStudentViewSubtitle": "Przełącz na plan studenta",
   "roleViewingAsStudent": "Przeglądasz aktualnie plan jako student.",
   "roleViewingAsLecturer": "Przeglądasz aktualnie plan jako wykładowca.",
-  "roleCurrentlyActive": "Aktualnie aktywny",
   "roleLecturerViewTitle": "Widok wykładowcy",
-  "roleLecturerViewSubtitle": "Przełącz na widok wykładowcy",
   "debugRoleSelector": "Wybór roli",
   "debugClearCache": "Wyczyść cache",
   "debugCacheCleared": "Cache wyczyszczony",
@@ -663,10 +537,6 @@
   "gdprTitle": "Prywatność i dane",
   "@gdprTitle": {
     "description": "gdpr_consent_page.dart - Title for the GDPR consent screen."
-  },
-  "gdprBody": "Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.",
-  "@gdprBody": {
-    "description": "gdpr_consent_page.dart - GDPR consent body text."
   },
   "gdprAccept": "Rozumiem i akceptuję",
   "@gdprAccept": {

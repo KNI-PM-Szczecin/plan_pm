@@ -1,10 +1,16 @@
-// Strona "O aplikacji" — wersja, logo KNI, link do repozytorium.
+// Strona "O aplikacji" — logo KNI, wersja, opis, twórcy i link do repozytorium.
 // Easter egg: 7 tapnięć w wersję odblokowuje sekcję debug w [SettingsPage].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
-import 'package:plan_pm/global/widgets/app_bar.dart';
+import 'package:plan_pm/global/theme/typography.dart';
+import 'package:plan_pm/global/widgets/app_grouped_page.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_icon_badge.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_pressable.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,196 +171,102 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColor.background,
-      appBar: CustomAppBar(title: l10n.aboutApp),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          // Logo KNI
-                          Container(
-                            width: 160,
-                            height: 160,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withAlpha(20),
-                                  blurRadius: 20,
-                                  spreadRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/kni_logo.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-
-                          // App Name and Version
-                          Text(
-                            "Plan PM",
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.onBackground,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: _onVersionTap,
-                            child: Text(
-                              _version.isNotEmpty
-                                  ? "${l10n.version} $_version"
-                                  : l10n.version,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.onBackgroundVariant,
-                              ),
-                            ),
-                          ),
-                          if (_debugUnlocked) ...[
-                            const SizedBox(height: 12),
-                            GestureDetector(
-                              onTap: _disableDebug,
-                              child: Text(
-                                l10n.debugModeDisable,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-
-                          const SizedBox(height: 16),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: Text(
-                              l10n.appDescription,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.onBackgroundVariant,
-                                height: 1.5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Column(
-                        children: [
-                          Icon(
-                            LucideIcons.code,
-                            color: AppColor.primary,
-                            size: 28,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            l10n.createdBy,
-                            style: TextStyle(
-                              color: AppColor.onBackgroundVariant,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.kniName,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.onBackground,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                              height: 1.4,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: AppColor.surface,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      LucideIcons.heart,
-                                      color: AppColor.destructive,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      l10n.openSourceInfo,
-                                      style: TextStyle(
-                                        color: AppColor.onSurface,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: FilledButton.icon(
-                                    onPressed: () {
-                                      HapticFeedback.lightImpact();
-                                      _launchRepo();
-                                    },
-                                    style: FilledButton.styleFrom(
-                                      backgroundColor: AppColor.inverseSurface,
-                                      foregroundColor:
-                                          AppColor.onInverseSurface,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    icon: Icon(LucideIcons.gitFork, size: 20),
-                                    label: Text(
-                                      l10n.githubRepo,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+    return AppGroupedPage(
+      title: l10n.aboutApp,
+      children: [
+        Column(
+          children: [
+            ClipOval(
+              child: Image.asset(
+                'assets/kni_logo.png',
+                width: 96,
+                height: 96,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Plan PM",
+              style: AppTextStyle.title1Emphasized.copyWith(
+                color: AppColor.onBackground,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Easter egg: 7 tapnięć w wersję odblokowuje debug w Ustawieniach.
+            AppPressable(
+              onTap: _onVersionTap,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                _version.isNotEmpty ? "${l10n.version} $_version" : l10n.version,
+                style: AppTextStyle.subheadline.copyWith(
+                  color: AppColor.labelSecondary,
+                ),
+              ),
+            ),
+            if (_debugUnlocked) ...[
+              const SizedBox(height: 8),
+              AppPressable(
+                onTap: _disableDebug,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  l10n.debugModeDisable,
+                  style: AppTextStyle.footnote.copyWith(
+                    color: AppColor.systemRed,
                   ),
                 ),
               ),
-            );
-          },
+            ],
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                l10n.appDescription,
+                textAlign: TextAlign.center,
+                style: AppTextStyle.subheadline.copyWith(
+                  color: AppColor.labelSecondary,
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
+        AppSection(
+          header: l10n.createdBy,
+          child: AppGroupedSection(
+            children: [
+              AppListRow(
+                leading: AppIconBadge(
+                  icon: LucideIcons.code,
+                  color: AppColor.systemBlue,
+                ),
+                // W tłumaczeniu jest złamanie linii pod stary, wyśrodkowany układ.
+                title: l10n.kniName.replaceAll("\n", " "),
+              ),
+            ],
+          ),
+        ),
+        AppSection(
+          header: l10n.openSourceHeader,
+          footer: l10n.openSourceInfo,
+          child: AppGroupedSection(
+            children: [
+              AppListRow(
+                leading: AppIconBadge(
+                  icon: LucideIcons.gitFork,
+                  color: Colors.black,
+                ),
+                title: l10n.githubRepo,
+                titleColor: AppColor.primary,
+                accessory: AppListRowAccessory.external,
+                onTap: _launchRepo,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
