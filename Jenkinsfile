@@ -2,7 +2,7 @@
 //
 // The pipeline is deliberately split: scraping runs first and touches nothing,
 // a sanity gate inspects the parsed artifact, and only then does the
-// destructive load (json2db clears the classes table before inserting) run.
+// schedule refresh (past classes are retained) run.
 // An unattended daily job must never wipe production on a bad scrape.
 //
 // Credentials expected in Jenkins (Manage Jenkins -> Credentials), as Secret text:
@@ -47,7 +47,7 @@ pipeline {
     }
 
     options {
-        // A second run must never overlap the first: json2db clears the table.
+        // A second run must never overlap the first: json2db replaces upcoming classes.
         disableConcurrentBuilds()
         timeout(time: 45, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
@@ -131,20 +131,23 @@ pipeline {
                         // json2db has its own MIN_CLASSES_TO_CLEAR=100 floor, but 100
                         // is far below a healthy scrape (~3600). If the university
                         // site half-breaks and returns 200 rows, that floor passes and
-                        // production gets wiped. Compare against the live count instead.
+                        // production gets wiped. Compare against the upcoming count, excluding retained history.
                         sh '''
                             set -eu
                             SKIP_GATE="''' + '${SKIP_SANITY_GATE}' + '''" \
                             MAX_DROP="''' + '${MAX_DROP_PERCENT}' + '''" \
                             "$PY" - <<'PY'
 import json, os, sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 with open("./output/parser.json", encoding="utf-8") as f:
     scraped = len(json.load(f)["classes"])
 
 from supabase import create_client
 sb = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"])
-live = sb.table("classes").select("id", count="exact").limit(1).execute().count or 0
+cutoff = datetime.now(ZoneInfo("Europe/Warsaw")).strftime("%Y-%m-%dT00:00:00")
+live = sb.table("classes").select("id", count="exact").gte("startTime", cutoff).limit(1).execute().count or 0
 
 max_drop = float(os.environ.get("MAX_DROP", "30"))
 floor = int(live * (1 - max_drop / 100))
@@ -190,7 +193,7 @@ PY
                             def dryRun = params.DRY_RUN ? '--dry-run' : ''
                             sh """
                                 set -eu
-                                "\$PY" -m json2db.json2db --input ./output/parser.json --clear ${dryRun}
+                                "\$PY" -m json2db.json2db --input ./output/parser.json --refresh-upcoming ${dryRun}
                             """
                         }
                     }
