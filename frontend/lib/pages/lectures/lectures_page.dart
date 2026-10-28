@@ -10,6 +10,7 @@ import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/utils/platform.dart';
 import 'package:plan_pm/global/widgets/app_state_card.dart';
+import 'package:plan_pm/global/widgets/official_schedule_note.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
@@ -155,10 +156,15 @@ class _LecturesPageState extends State<LecturesPage> {
     if (lectures.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: AppStateCard(
-          icon: LucideIcons.calendarX,
-          title: l10n.todayDataNaN,
-          message: l10n.lectureWigetHint,
+        child: Column(
+          children: [
+            AppStateCard(
+              icon: LucideIcons.calendarX,
+              title: l10n.todayDataNaN,
+              message: l10n.lectureWigetHint,
+            ),
+            const OfficialScheduleNote(),
+          ],
         ),
       );
     }
@@ -199,11 +205,15 @@ class _LecturesPageState extends State<LecturesPage> {
                         kBottomNavigationBarHeight +
                         MediaQuery.of(context).padding.bottom,
                   ),
-                  itemCount: lectures.length,
+                  // +1: stopka z oficjalnym źródłem planu pod ostatnią kartą.
+                  itemCount: lectures.length + 1,
                   separatorBuilder: (context, index) {
                     return const SizedBox(height: 12);
                   },
                   itemBuilder: (context, index) {
+                    if (index == lectures.length) {
+                      return const OfficialScheduleNote();
+                    }
                     final lecture = lectures[index];
                     return Lecture(
                       idx: index,

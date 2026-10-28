@@ -572,4 +572,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get gdprRevoke =>
       'You can withdraw your consent at any time in settings.';
+
+  @override
+  String get noticeTitle => 'From students, for students';
+
+  @override
+  String get noticeSubtitle =>
+      'Plan PM is an unofficial app made by members of the Computer Science Student Club (KNI).';
+
+  @override
+  String get noticeAuthorsTitle => 'Made by students';
+
+  @override
+  String get noticeAuthorsBody =>
+      'The app is developed by the Computer Science Student Club of the Maritime University of Szczecin. The university does not supervise it.';
+
+  @override
+  String get noticeSupplementaryTitle => 'A supplementary tool';
+
+  @override
+  String get noticeSupplementaryBody =>
+      'The schedule in the app may be out of date. Using the app does not release you from following announcements on the university\'s official website.';
+
+  @override
+  String get noticeOfficialTitle => 'The university website prevails';
+
+  @override
+  String get noticeOfficialBody =>
+      'The schedule at plany.am.szczecin.pl is the primary source of information. An outdated schedule in the app does not excuse an absence from classes.';
+
+  @override
+  String get noticeOpenOfficial => 'Open the official schedule';
+
+  @override
+  String get noticeAccept => 'I understand';
+
+  @override
+  String get noticeFooter =>
+      'Unofficial KNI app. The schedule at plany.am.szczecin.pl prevails';
+
+  @override
+  String get aboutDataSourceHeader => 'Data source';
+
+  @override
+  String get aboutNoticeRow => 'About this unofficial app';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link';
 }

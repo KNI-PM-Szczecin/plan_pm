@@ -578,4 +578,51 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get gdprRevoke =>
       'Ви можете відкликати згоду в будь-який момент у налаштуваннях.';
+
+  @override
+  String get noticeTitle => 'Від студентів для студентів';
+
+  @override
+  String get noticeSubtitle =>
+      'Plan PM — неофіційний застосунок, створений членами Студентського наукового гуртка інформатики (KNI).';
+
+  @override
+  String get noticeAuthorsTitle => 'Створено студентами';
+
+  @override
+  String get noticeAuthorsBody =>
+      'Застосунок розвиває Студентський науковий гурток інформатики Морського університету в Щецині. Університет не здійснює нагляду за ним.';
+
+  @override
+  String get noticeSupplementaryTitle => 'Допоміжний інструмент';
+
+  @override
+  String get noticeSupplementaryBody =>
+      'Розклад у застосунку може бути неактуальним. Застосунок не звільняє від обов\'язку стежити за повідомленнями на офіційному сайті університету.';
+
+  @override
+  String get noticeOfficialTitle => 'Чинним є сайт університету';
+
+  @override
+  String get noticeOfficialBody =>
+      'Основним джерелом інформації є розклад на plany.am.szczecin.pl. Неактуальний розклад у застосунку не виправдовує відсутності на заняттях.';
+
+  @override
+  String get noticeOpenOfficial => 'Відкрити офіційний розклад';
+
+  @override
+  String get noticeAccept => 'Зрозуміло';
+
+  @override
+  String get noticeFooter =>
+      'Неофіційний застосунок KNI. Чинним є розклад на plany.am.szczecin.pl';
+
+  @override
+  String get aboutDataSourceHeader => 'Джерело даних';
+
+  @override
+  String get aboutNoticeRow => 'Інформація про застосунок';
+
+  @override
+  String get couldNotOpenLink => 'Не вдалося відкрити посилання';
 }

@@ -1,5 +1,5 @@
 // Ekran powitalny — ikona, nazwa i hasło aplikacji oraz jeden przycisk.
-// Zapisuje "skip_welcome" i przechodzi do [RoleSelectionPage].
+// Zapisuje "skip_welcome" i przechodzi przez [NoticePage] do [RoleSelectionPage].
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
@@ -7,6 +7,7 @@ import 'package:plan_pm/global/widgets/app_button.dart';
 import 'package:plan_pm/global/widgets/app_icon_tile.dart';
 import 'package:plan_pm/global/widgets/app_screen_header.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/pages/welcome/notice_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,9 @@ class WelcomePage extends StatelessWidget {
     if (!context.mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RoleSelectionPage()),
+      MaterialPageRoute(
+        builder: (context) => const NoticePage(next: RoleSelectionPage()),
+      ),
     );
   }
 

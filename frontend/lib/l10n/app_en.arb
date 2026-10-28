@@ -144,14 +144,20 @@
   "durationHoursMinutes": "{hours}h {minutes}min",
   "@durationHoursMinutes": {
     "placeholders": {
-      "hours": { "type": "int" },
-      "minutes": { "type": "int" }
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "durationMinutes": "{minutes} min",
   "@durationMinutes": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "roleSelectionTitle": "How do you want to use PlanPM?",
@@ -216,5 +222,19 @@
   "gdprRevoke": "You can withdraw your consent at any time in settings.",
   "@gdprRevoke": {
     "description": "gdpr_consent_page.dart - Footer note below the accept button."
-  }
+  },
+  "noticeTitle": "From students, for students",
+  "noticeSubtitle": "Plan PM is an unofficial app made by members of the Computer Science Student Club (KNI).",
+  "noticeAuthorsTitle": "Made by students",
+  "noticeAuthorsBody": "The app is developed by the Computer Science Student Club of the Maritime University of Szczecin. The university does not supervise it.",
+  "noticeSupplementaryTitle": "A supplementary tool",
+  "noticeSupplementaryBody": "The schedule in the app may be out of date. Using the app does not release you from following announcements on the university's official website.",
+  "noticeOfficialTitle": "The university website prevails",
+  "noticeOfficialBody": "The schedule at plany.am.szczecin.pl is the primary source of information. An outdated schedule in the app does not excuse an absence from classes.",
+  "noticeOpenOfficial": "Open the official schedule",
+  "noticeAccept": "I understand",
+  "noticeFooter": "Unofficial KNI app. The schedule at plany.am.szczecin.pl prevails",
+  "aboutDataSourceHeader": "Data source",
+  "aboutNoticeRow": "About this unofficial app",
+  "couldNotOpenLink": "Could not open the link"
 }

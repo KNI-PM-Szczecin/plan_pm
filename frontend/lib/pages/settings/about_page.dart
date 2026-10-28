@@ -11,7 +11,9 @@ import 'package:plan_pm/global/widgets/app_icon_badge.dart';
 import 'package:plan_pm/global/widgets/app_list_row.dart';
 import 'package:plan_pm/global/widgets/app_pressable.dart';
 import 'package:plan_pm/global/widgets/app_section.dart';
+import 'package:plan_pm/global/widgets/official_schedule_note.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:plan_pm/pages/welcome/notice_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -244,6 +246,36 @@ class _AboutPageState extends State<AboutPage> {
                 ),
                 // W tłumaczeniu jest złamanie linii pod stary, wyśrodkowany układ.
                 title: l10n.kniName.replaceAll("\n", " "),
+              ),
+            ],
+          ),
+        ),
+        AppSection(
+          header: l10n.aboutDataSourceHeader,
+          footer: l10n.noticeSupplementaryBody,
+          child: AppGroupedSection(
+            children: [
+              AppListRow(
+                leading: AppIconBadge(
+                  icon: LucideIcons.calendarDays,
+                  color: AppColor.systemIndigo,
+                ),
+                title: l10n.noticeOpenOfficial,
+                titleColor: AppColor.primary,
+                accessory: AppListRowAccessory.external,
+                onTap: () => openOfficialSchedule(context),
+              ),
+              AppListRow(
+                leading: AppIconBadge(
+                  icon: LucideIcons.info,
+                  color: AppColor.systemOrange,
+                ),
+                title: l10n.aboutNoticeRow,
+                accessory: AppListRowAccessory.chevron,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NoticePage()),
+                ),
               ),
             ],
           ),

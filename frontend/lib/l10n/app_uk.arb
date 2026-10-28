@@ -144,14 +144,20 @@
   "durationHoursMinutes": "{hours}г {minutes}хв",
   "@durationHoursMinutes": {
     "placeholders": {
-      "hours": { "type": "int" },
-      "minutes": { "type": "int" }
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "durationMinutes": "{minutes} хв",
   "@durationMinutes": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "roleSelectionTitle": "Як хочете використовувати PlanPM?",
@@ -216,5 +222,19 @@
   "gdprRevoke": "Ви можете відкликати згоду в будь-який момент у налаштуваннях.",
   "@gdprRevoke": {
     "description": "gdpr_consent_page.dart - Footer note below the accept button."
-  }
+  },
+  "noticeTitle": "Від студентів для студентів",
+  "noticeSubtitle": "Plan PM — неофіційний застосунок, створений членами Студентського наукового гуртка інформатики (KNI).",
+  "noticeAuthorsTitle": "Створено студентами",
+  "noticeAuthorsBody": "Застосунок розвиває Студентський науковий гурток інформатики Морського університету в Щецині. Університет не здійснює нагляду за ним.",
+  "noticeSupplementaryTitle": "Допоміжний інструмент",
+  "noticeSupplementaryBody": "Розклад у застосунку може бути неактуальним. Застосунок не звільняє від обов'язку стежити за повідомленнями на офіційному сайті університету.",
+  "noticeOfficialTitle": "Чинним є сайт університету",
+  "noticeOfficialBody": "Основним джерелом інформації є розклад на plany.am.szczecin.pl. Неактуальний розклад у застосунку не виправдовує відсутності на заняттях.",
+  "noticeOpenOfficial": "Відкрити офіційний розклад",
+  "noticeAccept": "Зрозуміло",
+  "noticeFooter": "Неофіційний застосунок KNI. Чинним є розклад на plany.am.szczecin.pl",
+  "aboutDataSourceHeader": "Джерело даних",
+  "aboutNoticeRow": "Інформація про застосунок",
+  "couldNotOpenLink": "Не вдалося відкрити посилання"
 }

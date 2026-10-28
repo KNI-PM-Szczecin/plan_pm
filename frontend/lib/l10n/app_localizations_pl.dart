@@ -569,4 +569,51 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get gdprRevoke =>
       'Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.';
+
+  @override
+  String get noticeTitle => 'Od studentów dla studentów';
+
+  @override
+  String get noticeSubtitle =>
+      'Plan PM to nieoficjalna aplikacja tworzona przez członków Koła Naukowego Informatyki.';
+
+  @override
+  String get noticeAuthorsTitle => 'Tworzona przez studentów';
+
+  @override
+  String get noticeAuthorsBody =>
+      'Aplikację rozwija Koło Naukowe Informatyki Politechniki Morskiej w Szczecinie. Uczelnia nie nadzoruje jej działania.';
+
+  @override
+  String get noticeSupplementaryTitle => 'Narzędzie dodatkowe';
+
+  @override
+  String get noticeSupplementaryBody =>
+      'Plan w aplikacji może być nieaktualny. Aplikacja nie zwalnia z obowiązku śledzenia komunikatów na oficjalnej stronie uczelni.';
+
+  @override
+  String get noticeOfficialTitle => 'Obowiązuje strona uczelni';
+
+  @override
+  String get noticeOfficialBody =>
+      'Nadrzędnym źródłem informacji jest plan na plany.am.szczecin.pl. Nieaktualny plan w aplikacji nie usprawiedliwia nieobecności na zajęciach.';
+
+  @override
+  String get noticeOpenOfficial => 'Otwórz oficjalny plan';
+
+  @override
+  String get noticeAccept => 'Rozumiem';
+
+  @override
+  String get noticeFooter =>
+      'Nieoficjalna aplikacja KNI. Obowiązuje plan na plany.am.szczecin.pl';
+
+  @override
+  String get aboutDataSourceHeader => 'Źródło danych';
+
+  @override
+  String get aboutNoticeRow => 'Informacja o aplikacji';
+
+  @override
+  String get couldNotOpenLink => 'Nie udało się otworzyć linku';
 }

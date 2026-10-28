@@ -153,16 +153,23 @@ lib/pages/
 ### Onboarding i przełączanie roli
 
 **Pierwsza instalacja — student:**
-`WelcomePage` → `RoleSelectionPage` → `InputPage` → `GroupSelectionPage` → home
+`WelcomePage` → `NoticePage` → `RoleSelectionPage` → `InputPage` → `GroupSelectionPage` → home
 
 **Pierwsza instalacja — wykładowca:**
-`WelcomePage` → `RoleSelectionPage` → `LecturerSelectionPage` (przy `kDebugGdpr=true` najpierw `GdprConsentPage` — ekran zgody RODO; back = anuluj) → `onContinue`:
+`WelcomePage` → `NoticePage` → `RoleSelectionPage` → `LecturerSelectionPage` (przy `kDebugGdpr=true` najpierw `GdprConsentPage` — ekran zgody RODO; back = anuluj) → `onContinue`:
   1. Zapisz dane w SharedPreferences
   2. `AppModeManager.setMode(AppMode.lecturer)`
   3. `sevenDayModeNotifier.value = true`
   4. `DatabaseService.clearLectures()`
   5. `CacheService().syncLectures()` + `CacheService().syncNews()` ← oba!
   6. Nawiguj do `/home`
+
+**`NoticePage` — wymóg uczelni (10.2026):** warunkowa zgoda JMR na udostępnianie
+aplikacji wymaga informacji „od studentów dla studentów" (logo **KNI**, nie PM) i
+zastrzeżenia, że wiążący jest plan na `plany.am.szczecin.pl`. Ekran z „Rozumiem"
+zapisuje `unofficial_notice_acknowledged`; `app_initialization.dart` pokazuje go
+raz każdemu, kto przeszedł onboarding wcześniej. Stale: `OfficialScheduleNote` pod
+planem i sekcja „Źródło danych" w „O aplikacji". Nie usuwać bez zgody uczelni.
 
 **Przełączanie roli w ustawieniach** (`role_info.dart`):
 - Wykładowca → student: `_switchToStudent()` **nie zmienia trybu od razu** — tylko otwiera `InputPage(isRoleSwitch: true)`. Tryb zmienia się dopiero w `GroupSelectionPage.onConfirm/onSkip`.

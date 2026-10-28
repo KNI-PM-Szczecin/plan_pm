@@ -9,6 +9,7 @@ import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
+import 'package:plan_pm/pages/welcome/notice_page.dart';
 import 'package:plan_pm/pages/welcome/role_selection_page.dart';
 import 'package:plan_pm/pages/welcome/welcome_page.dart';
 import 'package:plan_pm/service/cache_service.dart';
@@ -41,6 +42,17 @@ Future<Widget> _buildTargetPage(SharedPreferences prefs) async {
     return const WelcomePage();
   }
 
+  final target = await _buildOnboardedPage(prefs);
+
+  // Informację o nieoficjalnym charakterze aplikacji musi zobaczyć każdy —
+  // także ci, którzy przeszli onboarding przed jej dodaniem (wymóg uczelni).
+  if (prefs.getBool(kNoticeAcknowledgedKey) != true) {
+    return NoticePage(next: target);
+  }
+  return target;
+}
+
+Future<Widget> _buildOnboardedPage(SharedPreferences prefs) async {
   await AppModeManager.loadFromPrefs();
 
   if (AppModeManager.current == AppMode.lecturer) {

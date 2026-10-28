@@ -1137,6 +1137,90 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.'**
   String get gdprRevoke;
+
+  /// notice_page.dart - Title of the unofficial-app notice screen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Od studentów dla studentów'**
+  String get noticeTitle;
+
+  /// notice_page.dart - Subtitle under the notice title.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan PM to nieoficjalna aplikacja tworzona przez członków Koła Naukowego Informatyki.'**
+  String get noticeSubtitle;
+
+  /// notice_page.dart - Title of the first notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tworzona przez studentów'**
+  String get noticeAuthorsTitle;
+
+  /// notice_page.dart - Body of the first notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aplikację rozwija Koło Naukowe Informatyki Politechniki Morskiej w Szczecinie. Uczelnia nie nadzoruje jej działania.'**
+  String get noticeAuthorsBody;
+
+  /// notice_page.dart - Title of the second notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Narzędzie dodatkowe'**
+  String get noticeSupplementaryTitle;
+
+  /// notice_page.dart - Body of the second notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan w aplikacji może być nieaktualny. Aplikacja nie zwalnia z obowiązku śledzenia komunikatów na oficjalnej stronie uczelni.'**
+  String get noticeSupplementaryBody;
+
+  /// notice_page.dart - Title of the third notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Obowiązuje strona uczelni'**
+  String get noticeOfficialTitle;
+
+  /// notice_page.dart - Body of the third notice row.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nadrzędnym źródłem informacji jest plan na plany.am.szczecin.pl. Nieaktualny plan w aplikacji nie usprawiedliwia nieobecności na zajęciach.'**
+  String get noticeOfficialBody;
+
+  /// Link to plany.am.szczecin.pl (notice screen, About, schedule footer).
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz oficjalny plan'**
+  String get noticeOpenOfficial;
+
+  /// notice_page.dart - Acknowledge button.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozumiem'**
+  String get noticeAccept;
+
+  /// official_schedule_note.dart - Short notice under the schedule.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nieoficjalna aplikacja KNI. Obowiązuje plan na plany.am.szczecin.pl'**
+  String get noticeFooter;
+
+  /// about_page.dart - Header of the official-source section.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło danych'**
+  String get aboutDataSourceHeader;
+
+  /// about_page.dart - Row opening the notice screen again.
+  ///
+  /// In pl, this message translates to:
+  /// **'Informacja o aplikacji'**
+  String get aboutNoticeRow;
+
+  /// Snackbar shown when an external link fails to open.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć linku'**
+  String get couldNotOpenLink;
 }
 
 class _AppLocalizationsDelegate

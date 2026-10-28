@@ -497,14 +497,20 @@
   "durationHoursMinutes": "{hours}h {minutes}min",
   "@durationHoursMinutes": {
     "placeholders": {
-      "hours": { "type": "int" },
-      "minutes": { "type": "int" }
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "durationMinutes": "{minutes} min",
   "@durationMinutes": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "roleSelectionTitle": "Jak chcesz korzystać z PlanPM?",
@@ -569,5 +575,61 @@
   "gdprRevoke": "Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.",
   "@gdprRevoke": {
     "description": "gdpr_consent_page.dart - Footer note below the accept button."
+  },
+  "noticeTitle": "Od studentów dla studentów",
+  "@noticeTitle": {
+    "description": "notice_page.dart - Title of the unofficial-app notice screen."
+  },
+  "noticeSubtitle": "Plan PM to nieoficjalna aplikacja tworzona przez członków Koła Naukowego Informatyki.",
+  "@noticeSubtitle": {
+    "description": "notice_page.dart - Subtitle under the notice title."
+  },
+  "noticeAuthorsTitle": "Tworzona przez studentów",
+  "@noticeAuthorsTitle": {
+    "description": "notice_page.dart - Title of the first notice row."
+  },
+  "noticeAuthorsBody": "Aplikację rozwija Koło Naukowe Informatyki Politechniki Morskiej w Szczecinie. Uczelnia nie nadzoruje jej działania.",
+  "@noticeAuthorsBody": {
+    "description": "notice_page.dart - Body of the first notice row."
+  },
+  "noticeSupplementaryTitle": "Narzędzie dodatkowe",
+  "@noticeSupplementaryTitle": {
+    "description": "notice_page.dart - Title of the second notice row."
+  },
+  "noticeSupplementaryBody": "Plan w aplikacji może być nieaktualny. Aplikacja nie zwalnia z obowiązku śledzenia komunikatów na oficjalnej stronie uczelni.",
+  "@noticeSupplementaryBody": {
+    "description": "notice_page.dart - Body of the second notice row."
+  },
+  "noticeOfficialTitle": "Obowiązuje strona uczelni",
+  "@noticeOfficialTitle": {
+    "description": "notice_page.dart - Title of the third notice row."
+  },
+  "noticeOfficialBody": "Nadrzędnym źródłem informacji jest plan na plany.am.szczecin.pl. Nieaktualny plan w aplikacji nie usprawiedliwia nieobecności na zajęciach.",
+  "@noticeOfficialBody": {
+    "description": "notice_page.dart - Body of the third notice row."
+  },
+  "noticeOpenOfficial": "Otwórz oficjalny plan",
+  "@noticeOpenOfficial": {
+    "description": "Link to plany.am.szczecin.pl (notice screen, About, schedule footer)."
+  },
+  "noticeAccept": "Rozumiem",
+  "@noticeAccept": {
+    "description": "notice_page.dart - Acknowledge button."
+  },
+  "noticeFooter": "Nieoficjalna aplikacja KNI. Obowiązuje plan na plany.am.szczecin.pl",
+  "@noticeFooter": {
+    "description": "official_schedule_note.dart - Short notice under the schedule."
+  },
+  "aboutDataSourceHeader": "Źródło danych",
+  "@aboutDataSourceHeader": {
+    "description": "about_page.dart - Header of the official-source section."
+  },
+  "aboutNoticeRow": "Informacja o aplikacji",
+  "@aboutNoticeRow": {
+    "description": "about_page.dart - Row opening the notice screen again."
+  },
+  "couldNotOpenLink": "Nie udało się otworzyć linku",
+  "@couldNotOpenLink": {
+    "description": "Snackbar shown when an external link fails to open."
   }
 }

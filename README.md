@@ -137,16 +137,9 @@ Open an issue or a PR and let's talk.
 
 ## License
 
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license.
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE).
 
-**In plain words:**
-
-- You are free to use, share, and adapt this project
-- You must give appropriate credit to the original authors
-- **Commercial use is not permitted**
-- This project is and will always remain free — no paywalls, no subscriptions, no monetisation
-
-See the full license at [creativecommons.org/licenses/by-nc/4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+**In plain words:** you are free to use, copy, modify and distribute the code, as long as you keep the copyright and license notice. The software comes without any warranty.
 
 ---
 
