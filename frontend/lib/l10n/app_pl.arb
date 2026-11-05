@@ -369,10 +369,6 @@
   "@retryButton": {
     "description": "input_page.dart - Button that retries loading after a network error."
   },
-  "unavailableOptionsHint": "Niedostępne opcje nie są prowadzone na tym kierunku.",
-  "@unavailableOptionsHint": {
-    "description": "input_page.dart - Footer under the segmented controls explaining greyed-out options."
-  },
   "noGroupsAvailable": "Brak dostępnych grup",
   "@noGroupsAvailable": {
     "description": "group_selection_page.dart - Title shown when no groups exist for the selected study settings."

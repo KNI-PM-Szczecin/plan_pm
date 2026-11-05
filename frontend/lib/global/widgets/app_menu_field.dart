@@ -151,9 +151,14 @@ class AppMenuField<T> extends StatelessWidget {
                 : AppListRow(
                     label: label,
                     title: valueText,
-                    titleColor: hasValue && isEnabled
+                    // Placeholder w labelSecondary: tertiary (30% krycia)
+                    // na ciemnej karcie dawał ok. 2:1 i był nieczytelny.
+                    // Tertiary zostaje tylko dla pola nieaktywnego.
+                    titleColor: !isEnabled
+                        ? AppColor.labelTertiary
+                        : hasValue
                         ? null
-                        : AppColor.labelTertiary,
+                        : AppColor.labelSecondary,
                     accessory: AppListRowAccessory.menu,
                     onTap: toggle,
                   );

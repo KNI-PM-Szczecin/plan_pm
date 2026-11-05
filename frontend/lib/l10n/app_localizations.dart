@@ -652,12 +652,6 @@ abstract class AppLocalizations {
   /// **'Spróbuj ponownie'**
   String get retryButton;
 
-  /// input_page.dart - Footer under the segmented controls explaining greyed-out options.
-  ///
-  /// In pl, this message translates to:
-  /// **'Niedostępne opcje nie są prowadzone na tym kierunku.'**
-  String get unavailableOptionsHint;
-
   /// group_selection_page.dart - Title shown when no groups exist for the selected study settings.
   ///
   /// In pl, this message translates to:

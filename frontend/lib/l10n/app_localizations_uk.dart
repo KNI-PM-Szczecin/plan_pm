@@ -318,10 +318,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get retryButton => 'Спробувати ще раз';
 
   @override
-  String get unavailableOptionsHint =>
-      'Недоступні варіанти не пропонуються на цьому напрямі.';
-
-  @override
   String get noGroupsAvailable => 'Немає доступних груп';
 
   @override

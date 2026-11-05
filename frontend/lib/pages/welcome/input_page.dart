@@ -398,10 +398,13 @@ class _InputPageState extends State<InputPage> {
         .where((o) => o.specialisationKey == selectedSpecialisationKey)
         .firstOrNull;
 
+    // Stopień stoi przed rokiem, więc lata zawężają się po wybranym stopniu
+    // (mgr ma tylko I–II); w drugą stronę stopnie zawężają się po roku.
     final availableYears = selectedDegreeCourse.isNotEmpty
         ? availability.years(
             faculty: selectedFaculty,
             degreeCourse: selectedDegreeCourse,
+            degreeLevel: selectedDegreeLevel,
           )
         : <int>{};
     final availableLevels = selectedDegreeCourse.isNotEmpty
@@ -460,6 +463,22 @@ class _InputPageState extends State<InputPage> {
           ),
         ],
       ),
+      AppSection(
+        header: l10n.degreeLevelLabel,
+        child: AppSegmentedControl<String>(
+          segments: [
+            for (final (i, code) in kDegreeLevelCodes.indexed)
+              AppSegment(value: code, label: levelLabels[i]),
+          ],
+          selected: selectedDegreeLevel,
+          disabled: {
+            for (final code in kDegreeLevelCodes)
+              if (!availableLevels.contains(code)) code,
+          },
+          onChanged: (code) =>
+              _update(availability, () => selectedDegreeLevel = code),
+        ),
+      ),
       // Rok stoi przed specjalizacją, bo lista specjalizacji zależy od roku
       // (od 2. roku plan jest wystawiany pod nazwą specjalizacji).
       AppSection(
@@ -477,42 +496,27 @@ class _InputPageState extends State<InputPage> {
           onChanged: (year) => _update(availability, () => selectedYear = year),
         ),
       ),
-      if (selectedDegreeCourse.isNotEmpty)
-        AppSection(
-          footer: specialisationOptions.isEmpty
-              ? l10n.noSpecialisationForField
-              : null,
-          child: AppGroupedSection(
-            children: [
-              AppMenuField<ProgramOption>(
-                label: l10n.specialisationLabel,
-                placeholder: l10n.specialisationHintText,
-                options: specialisationOptions,
-                optionLabel: (o) => _specialisationLabel(o, l10n),
-                selected: selectedSpecialisation,
-                onSelected: (o) => _update(
-                  availability,
-                  () => selectedSpecialisationKey = o.specialisationKey,
-                ),
-              ),
-            ],
-          ),
-        ),
+      // Zawsze widoczna (nieaktywna do wyboru kierunku), żeby formularz nie
+      // zmieniał układu w trakcie wypełniania.
       AppSection(
-        header: l10n.degreeLevelLabel,
-        footer: l10n.unavailableOptionsHint,
-        child: AppSegmentedControl<String>(
-          segments: [
-            for (final (i, code) in kDegreeLevelCodes.indexed)
-              AppSegment(value: code, label: levelLabels[i]),
+        footer: selectedDegreeCourse.isNotEmpty && specialisationOptions.isEmpty
+            ? l10n.noSpecialisationForField
+            : null,
+        child: AppGroupedSection(
+          children: [
+            AppMenuField<ProgramOption>(
+              label: l10n.specialisationLabel,
+              placeholder: l10n.specialisationHintText,
+              enabled: selectedDegreeCourse.isNotEmpty,
+              options: specialisationOptions,
+              optionLabel: (o) => _specialisationLabel(o, l10n),
+              selected: selectedSpecialisation,
+              onSelected: (o) => _update(
+                availability,
+                () => selectedSpecialisationKey = o.specialisationKey,
+              ),
+            ),
           ],
-          selected: selectedDegreeLevel,
-          disabled: {
-            for (final code in kDegreeLevelCodes)
-              if (!availableLevels.contains(code)) code,
-          },
-          onChanged: (code) =>
-              _update(availability, () => selectedDegreeLevel = code),
         ),
       ),
       AppSection(

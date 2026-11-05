@@ -308,10 +308,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get retryButton => 'Spróbuj ponownie';
 
   @override
-  String get unavailableOptionsHint =>
-      'Niedostępne opcje nie są prowadzone na tym kierunku.';
-
-  @override
   String get noGroupsAvailable => 'Brak dostępnych grup';
 
   @override

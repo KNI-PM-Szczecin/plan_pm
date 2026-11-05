@@ -313,10 +313,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryButton => 'Try again';
 
   @override
-  String get unavailableOptionsHint =>
-      'Unavailable options are not offered for this field of study.';
-
-  @override
   String get noGroupsAvailable => 'No groups available';
 
   @override
