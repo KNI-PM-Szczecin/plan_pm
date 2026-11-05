@@ -176,15 +176,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupTypeOther => 'Other';
 
   @override
-  String get groupsSectionHeader => 'Groups';
+  String get selectAllButton => 'Select all';
+
+  @override
+  String get deselectAllButton => 'Deselect all';
 
   @override
   String selectedCount(int count) {
     return 'Selected: $count';
   }
-
-  @override
-  String get groupNotSelected => 'Not selected';
 
   @override
   String get pageTitleHome => 'Home';

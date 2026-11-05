@@ -1,11 +1,12 @@
 // Wybór grup zajęciowych studenta, pogrupowanych w sekcje przez
 // [buildGroupSections] (audytorium, ćwiczenia, laboratoria, projekt,
-// symulator, inne, obieralne). Jedna sekcja „Grupy", po jednym wierszu na
-// rodzaj zajęć z wysuwanym menu WIELOKROTNEGO wyboru ([AppMultiMenuField]):
-// uczelnia dzieli grupy per przedmiot, więc student bywa w kilku grupach
-// jednego rodzaju (wcześniej jeden slot = niepełny plan), a obieralnych i tak
-// ma się kilka. Po zapisaniu persystuje wybór i synchronizuje dane przez
-// [CacheService].
+// symulator, inne, obieralne). Każdy rodzaj zajęć to osobna sekcja z
+// pastylkami ([AppGroupChip]) WIELOKROTNEGO wyboru i akcją „Zaznacz
+// wszystkie" w nagłówku: uczelnia dzieli grupy per przedmiot, więc student
+// bywa w kilku grupach jednego rodzaju (wcześniej jeden slot = niepełny plan),
+// a obieralnych i tak ma się kilka. Pastylki zastąpiły menu z redesignu —
+// przy kilku zaznaczonych kodach menu chowało wybór i wymagało wielu tapnięć.
+// Po zapisaniu persystuje wybór i synchronizuje dane przez [CacheService].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -15,8 +16,7 @@ import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/widgets/app_bottom_actions.dart';
 import 'package:plan_pm/global/widgets/app_button.dart';
-import 'package:plan_pm/global/widgets/app_grouped_section.dart';
-import 'package:plan_pm/global/widgets/app_menu_field.dart';
+import 'package:plan_pm/global/widgets/app_group_chip.dart';
 import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/global/widgets/app_state_card.dart';
 import 'package:plan_pm/pages/home/home_shell.dart';
@@ -40,9 +40,16 @@ String groupKindLabel(GroupKind kind, AppLocalizations l10n) => switch (kind) {
 };
 
 class GroupSelectionPage extends StatefulWidget {
-  const GroupSelectionPage({super.key, this.isRoleSwitch = false});
+  const GroupSelectionPage({
+    super.key,
+    this.isRoleSwitch = false,
+    this.loadGroups,
+  });
 
   final bool isRoleSwitch;
+
+  /// Źródło listy grup; domyślnie [BackendService.fetchGroups]. Do testów.
+  final Future<List<String>> Function()? loadGroups;
 
   @override
   State<GroupSelectionPage> createState() => _GroupSelectionPageState();
@@ -53,38 +60,52 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
   late Future<List<String>> _futureGroups;
   bool _isSubmitting = false;
 
+  static const int _chipsPerRow = 4;
+  static const double _chipSpacing = 8;
+
   /// Pełne kody wybranych grup (`KOD/PULA/ROCZNIK`) — to trafia do zapytania.
   final List<String> _selected = [];
 
+  // Wybór startuje od zera (celowo: pusta lista grup = plan całego rocznika),
+  // ale do [Student.selectedGroups] trafia dopiero w [_finish]. Wcześniej
+  // każde tapnięcie (i samo wejście, które czyściło listę) od razu nadpisywało
+  // stan w pamięci, więc po wyjściu „wstecz" bez zapisu ustawienia pokazywały
+  // niezapisane grupy, a pull-to-refresh pobierał plan pod nie, choć w prefs
+  // zostały stare — do restartu aplikacji.
   @override
   void initState() {
     super.initState();
-    // Celowo od zera — patrz [project_group_selection_reset_by_design]:
-    // pusta lista grup = plan całego rocznika.
-    Student.selectedGroups = [];
-    _futureGroups = _backendService.fetchGroups();
+    _futureGroups = _loadGroups();
   }
+
+  Future<List<String>> _loadGroups() =>
+      widget.loadGroups?.call() ?? _backendService.fetchGroups();
 
   void _retry() {
     HapticFeedback.lightImpact();
-    setState(() => _futureGroups = _backendService.fetchGroups());
+    setState(() => _futureGroups = _loadGroups());
   }
 
   void _toggle(GroupEntry entry) {
     HapticFeedback.selectionClick();
     setState(() {
       if (!_selected.remove(entry.full)) _selected.add(entry.full);
-      Student.selectedGroups = List.of(_selected);
     });
   }
 
-  void _clearSection(GroupSection section) {
+  bool _isSectionFullySelected(GroupSection section) =>
+      section.entries.every((e) => _selected.contains(e.full));
+
+  /// „Zaznacz wszystkie" / „Odznacz wszystkie" — gdy cała sekcja jest już
+  /// zaznaczona, czyści ją; w przeciwnym razie dobiera brakujące grupy.
+  void _toggleSection(GroupSection section) {
     HapticFeedback.selectionClick();
+    final selectAll = !_isSectionFullySelected(section);
     setState(() {
       for (final entry in section.entries) {
         _selected.remove(entry.full);
+        if (selectAll) _selected.add(entry.full);
       }
-      Student.selectedGroups = List.of(_selected);
     });
   }
 
@@ -99,8 +120,9 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
         sevenDayModeNotifier.value = false;
         await DatabaseService.instance.clearLectures();
       }
+      Student.selectedGroups = List.of(_selected);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList("groups", Student.selectedGroups ?? []);
+      await prefs.setStringList("groups", Student.selectedGroups!);
       await CacheService().syncNews();
       await CacheService().syncLectures();
       if (!mounted) return;
@@ -222,26 +244,51 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
   }
 
   Widget _buildSections(List<GroupSection> sections, AppLocalizations l10n) {
-    return AppSection(
-      header: l10n.groupsSectionHeader,
-      child: AppGroupedSection(
-        children: [
-          for (final section in sections)
-            AppMultiMenuField<GroupEntry>(
-              label: groupKindLabel(section.kind, l10n),
-              placeholder: l10n.groupNotSelected,
-              options: section.entries,
-              optionLabel: (e) => e.code,
-              selected: {
-                for (final e in section.entries)
-                  if (_selected.contains(e.full)) e,
-              },
-              onToggled: _toggle,
-              clearLabel: l10n.groupNotSelected,
-              onCleared: () => _clearSection(section),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: AppSection.spacing,
+      children: [
+        for (final section in sections)
+          AppSection(
+            header: groupKindLabel(section.kind, l10n),
+            // Przy jednej grupie „Zaznacz wszystkie" = tapnięcie pastylki.
+            actionLabel: section.entries.length < 2
+                ? null
+                : _isSectionFullySelected(section)
+                ? l10n.deselectAllButton
+                : l10n.selectAllButton,
+            onAction: () => _toggleSection(section),
+            // Pastylki leżą wprost na tle, wyrównane do nagłówka sekcji, w
+            // siatce po [_chipsPerRow] w rzędzie — równe szerokości, kolumny
+            // trzymają się między sekcjami.
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final chipWidth =
+                      (constraints.maxWidth -
+                          _chipSpacing * (_chipsPerRow - 1)) /
+                      _chipsPerRow;
+                  return Wrap(
+                    spacing: _chipSpacing,
+                    runSpacing: _chipSpacing,
+                    children: [
+                      for (final entry in section.entries)
+                        SizedBox(
+                          width: chipWidth,
+                          child: AppGroupChip(
+                            label: entry.code,
+                            selected: _selected.contains(entry.full),
+                            onTap: () => _toggle(entry),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

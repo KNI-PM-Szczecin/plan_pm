@@ -100,9 +100,15 @@ więc z samego drzewka dało się złożyć zestaw bez ani jednej grupy.
 Kod grupy to `KOD/PULA/ROCZNIK`, np. `P0A04/WIET/2024/2025 ZS`.
 [`buildGroupSections`](frontend/lib/service/group_categories.dart) dzieli grupy na sekcje:
 audytorium / ćwiczenia / laboratoria / projekt / symulator / inne oraz **przedmioty
-obieralne** (pula `WIET`, kod `P0<litera><numer>`). Ekran to jedna sekcja „Grupy" z
-wierszem na rodzaj zajęć i wysuwanym menu **wielokrotnego wyboru** (`AppMultiMenuField`:
-haczyki, menu zostaje otwarte, w wierszu kody po przecinku). Wcześniej kategoria brała pierwszą literę
+obieralne** (pula `WIET`, kod `P0<litera><numer>`). Ekran ma sekcję na rodzaj zajęć,
+w niej pastylki z kodami (`AppGroupChip`, te same co w „Wybrane grupy" w ustawieniach)
+**wielokrotnego wyboru**, wprost na tle, w siatce **po 4 w rzędzie** (równe szerokości, zaokrąglone rogi 12,
+za długi kod się zmniejsza), a w nagłówku akcję „Zaznacz wszystkie" / „Odznacz wszystkie"
+(od 2 grup). Pastylki wróciły zamiast menu z redesignu (11.2026): menu chowało wybór
+i przy kilku grupach wymagało wielu tapnięć. Ekran startuje od pustego wyboru (pusta
+lista = plan całego rocznika), ale `Student.selectedGroups` ustawia **dopiero przy
+zapisie** — wyjście „wstecz" zostawia zapisane grupy (test:
+`test/group_selection_page_test.dart`). Wcześniej kategoria brała pierwszą literę
 kodu, więc grupa projektowa i cała pula obieralnych trafiały do jednego worka „Inne"
 z jednym slotem, a plan wychodził niepełny (3 zgłoszenia); potem jeden slot na rodzaj
 zajęć rocznika też okazał się za mały — uczelnia dzieli grupy per przedmiot (AiR 1. rok:

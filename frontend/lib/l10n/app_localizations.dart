@@ -406,23 +406,23 @@ abstract class AppLocalizations {
   /// **'Inne'**
   String get groupTypeOther;
 
-  /// group_selection_page.dart - Header of the section with one multi-select menu per group type (auditorium, classes, labs...).
+  /// group_selection_page.dart - Header action that selects every group of one class type.
   ///
   /// In pl, this message translates to:
-  /// **'Grupy'**
-  String get groupsSectionHeader;
+  /// **'Zaznacz wszystkie'**
+  String get selectAllButton;
+
+  /// group_selection_page.dart - Header action that clears every group of one class type once all are selected.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odznacz wszystkie'**
+  String get deselectAllButton;
 
   /// group_selection_page.dart - Counter next to the electives header.
   ///
   /// In pl, this message translates to:
   /// **'Wybrano: {count}'**
   String selectedCount(int count);
-
-  /// group_selection_page.dart - Placeholder and menu option for a group type left without a group.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie wybrano'**
-  String get groupNotSelected;
 
   /// main.dart - Title for the Home page in the navigation bar.
   ///

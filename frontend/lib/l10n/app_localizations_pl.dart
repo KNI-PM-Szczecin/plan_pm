@@ -170,15 +170,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupTypeOther => 'Inne';
 
   @override
-  String get groupsSectionHeader => 'Grupy';
+  String get selectAllButton => 'Zaznacz wszystkie';
+
+  @override
+  String get deselectAllButton => 'Odznacz wszystkie';
 
   @override
   String selectedCount(int count) {
     return 'Wybrano: $count';
   }
-
-  @override
-  String get groupNotSelected => 'Nie wybrano';
 
   @override
   String get pageTitleHome => 'Strona główna';

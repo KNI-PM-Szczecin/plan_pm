@@ -178,15 +178,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupTypeOther => 'Інше';
 
   @override
-  String get groupsSectionHeader => 'Групи';
+  String get selectAllButton => 'Вибрати всі';
+
+  @override
+  String get deselectAllButton => 'Зняти всі';
 
   @override
   String selectedCount(int count) {
     return 'Вибрано: $count';
   }
-
-  @override
-  String get groupNotSelected => 'Не вибрано';
 
   @override
   String get pageTitleHome => 'Головна';

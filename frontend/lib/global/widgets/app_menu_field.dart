@@ -4,8 +4,6 @@
 // czego wpisywać, jest tylko wybór.
 //
 // [AppMenuField] — jeden wybór (menu zamyka się po tapnięciu).
-// [AppMultiMenuField] — kilka naraz (haczyki, menu zostaje otwarte, w wierszu
-// lista wybranych kodów); używane w wyborze grup.
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
@@ -40,11 +38,9 @@ Widget _menuItem({
   required VoidCallback onPressed,
   required double maxWidth,
   bool muted = false,
-  bool closeOnActivate = true,
 }) {
   return MenuItemButton(
     onPressed: onPressed,
-    closeOnActivate: closeOnActivate,
     leadingIcon: SizedBox(
       width: 20,
       child: checked
@@ -68,80 +64,6 @@ Widget _menuItem({
       ),
     ),
   );
-}
-
-/// Wiersz inline z menu wielokrotnego wyboru: tytuł po lewej, po prawej
-/// wybrane etykiety po przecinku (albo [placeholder]) i ↕. Pozycje menu
-/// przełączają się haczykiem i nie zamykają menu; [clearLabel] odznacza
-/// wszystkie.
-class AppMultiMenuField<T> extends StatelessWidget {
-  const AppMultiMenuField({
-    super.key,
-    required this.label,
-    required this.placeholder,
-    required this.options,
-    required this.optionLabel,
-    required this.selected,
-    required this.onToggled,
-    this.clearLabel,
-    this.onCleared,
-    this.enabled = true,
-  });
-
-  final String label;
-  final String placeholder;
-  final List<T> options;
-  final String Function(T option) optionLabel;
-
-  /// Zaznaczone opcje (podzbiór [options]).
-  final Set<T> selected;
-  final ValueChanged<T> onToggled;
-  final String? clearLabel;
-  final VoidCallback? onCleared;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    final isEnabled = enabled && options.isNotEmpty;
-    final chosen = options.where(selected.contains).map(optionLabel).toList();
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final menuWidth = _inlineMenuWidth.clamp(0.0, constraints.maxWidth);
-        return MenuAnchor(
-          alignmentOffset: Offset(constraints.maxWidth - menuWidth - 8, 0),
-          style: _menuStyle(context, menuWidth),
-          menuChildren: [
-            if (clearLabel != null)
-              _menuItem(
-                label: clearLabel!,
-                checked: chosen.isEmpty,
-                onPressed: onCleared ?? () {},
-                maxWidth: menuWidth,
-                muted: true,
-                closeOnActivate: false,
-              ),
-            for (final option in options)
-              _menuItem(
-                label: optionLabel(option),
-                checked: selected.contains(option),
-                onPressed: () => onToggled(option),
-                maxWidth: menuWidth,
-                closeOnActivate: false,
-              ),
-          ],
-          builder: (context, controller, _) => AppListRow(
-            title: label,
-            value: chosen.isEmpty ? placeholder : chosen.join(', '),
-            accessory: AppListRowAccessory.menu,
-            onTap: isEnabled
-                ? () =>
-                      controller.isOpen ? controller.close() : controller.open()
-                : null,
-          ),
-        );
-      },
-    );
-  }
 }
 
 class AppMenuField<T> extends StatelessWidget {

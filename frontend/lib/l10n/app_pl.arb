@@ -209,9 +209,13 @@
   "@groupTypeOther": {
     "description": "group_builder.dart - Default name for unmapped group types."
   },
-  "groupsSectionHeader": "Grupy",
-  "@groupsSectionHeader": {
-    "description": "group_selection_page.dart - Header of the section with one multi-select menu per group type (auditorium, classes, labs...)."
+  "selectAllButton": "Zaznacz wszystkie",
+  "@selectAllButton": {
+    "description": "group_selection_page.dart - Header action that selects every group of one class type."
+  },
+  "deselectAllButton": "Odznacz wszystkie",
+  "@deselectAllButton": {
+    "description": "group_selection_page.dart - Header action that clears every group of one class type once all are selected."
   },
   "selectedCount": "Wybrano: {count}",
   "@selectedCount": {
@@ -221,10 +225,6 @@
         "type": "int"
       }
     }
-  },
-  "groupNotSelected": "Nie wybrano",
-  "@groupNotSelected": {
-    "description": "group_selection_page.dart - Placeholder and menu option for a group type left without a group."
   },
   "pageTitleHome": "Strona główna",
   "@pageTitleHome": {

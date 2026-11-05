@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/models/student.dart';
+import 'package:plan_pm/global/widgets/app_group_chip.dart';
 import 'package:plan_pm/global/widgets/app_grouped_section.dart';
 import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/pages/welcome/group_selection_page.dart';
@@ -55,23 +56,7 @@ class GroupInfo extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  for (final code in codes)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 5,
-                      ),
-                      decoration: ShapeDecoration(
-                        color: AppColor.fillTertiary,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: Text(
-                        code,
-                        style: AppTextStyle.subheadlineEmphasized.copyWith(
-                          color: AppColor.onSurface,
-                        ),
-                      ),
-                    ),
+                  for (final code in codes) AppGroupChip(label: code),
                 ],
               ),
       ),
