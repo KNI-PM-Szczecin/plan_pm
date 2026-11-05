@@ -71,72 +71,90 @@ class Sidebar extends StatelessWidget {
                   spacing: 14,
                   children: [
                     const AppIconTile(size: 48),
-                    Text(
-                      'Plan PM',
-                      style: AppTextStyle.title2Emphasized.copyWith(
-                        color: AppColor.onBackground,
+                    // Flexible: przy bardzo dużej czcionce systemowej nazwa
+                    // nie ma prawa wypchnąć wiersza poza panel.
+                    Flexible(
+                      child: Text(
+                        'Plan PM',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.title2Emphasized.copyWith(
+                          color: AppColor.onBackground,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+              // Dolna grupa trzyma się dołu, ale gdy brakuje miejsca
+              // (poziom, duża czcionka systemowa) całość się przewija —
+              // wcześniej Ustawienia i „Co nowego" wypadały poza ekran.
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AppGroupedSection(
-                        dividerIndent: indent,
-                        children: [
-                          row(
-                            LucideIcons.activity,
-                            AppColor.systemRed,
-                            l10n.pePageTitle,
-                            onPeTap,
-                            external: true,
-                          ),
-                          row(
-                            LucideIcons.creditCard,
-                            AppColor.systemGreen,
-                            l10n.studentIdPageTitle,
-                            onStudentIdTap,
-                            external: true,
-                          ),
-                          row(
-                            LucideIcons.landmark,
-                            AppColor.systemBlue,
-                            l10n.virtualUniversityPageTitle,
-                            onVirtualUniversityTap,
-                            external: true,
-                          ),
-                        ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight - 24,
                       ),
-                      AppGroupedSection(
-                        dividerIndent: indent,
-                        children: [
-                          row(
-                            LucideIcons.messageSquare,
-                            AppColor.systemGreen,
-                            l10n.sendFeedbackButton,
-                            onFeedbackTap,
-                            external: true,
-                          ),
-                          row(
-                            LucideIcons.sparkles,
-                            AppColor.systemPurple,
-                            l10n.whatsNewTitle,
-                            onWhatsNewTap,
-                          ),
-                          row(
-                            LucideIcons.settings,
-                            AppColor.systemGray,
-                            l10n.pageTitleSettings,
-                            onSettingsTap,
-                          ),
-                        ],
+                      child: IntrinsicHeight(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AppGroupedSection(
+                              dividerIndent: indent,
+                              children: [
+                                row(
+                                  LucideIcons.activity,
+                                  AppColor.systemRed,
+                                  l10n.pePageTitle,
+                                  onPeTap,
+                                  external: true,
+                                ),
+                                row(
+                                  LucideIcons.creditCard,
+                                  AppColor.systemGreen,
+                                  l10n.studentIdPageTitle,
+                                  onStudentIdTap,
+                                  external: true,
+                                ),
+                                row(
+                                  LucideIcons.landmark,
+                                  AppColor.systemBlue,
+                                  l10n.virtualUniversityPageTitle,
+                                  onVirtualUniversityTap,
+                                  external: true,
+                                ),
+                              ],
+                            ),
+                            AppGroupedSection(
+                              dividerIndent: indent,
+                              children: [
+                                row(
+                                  LucideIcons.messageSquare,
+                                  AppColor.systemGreen,
+                                  l10n.sendFeedbackButton,
+                                  onFeedbackTap,
+                                  external: true,
+                                ),
+                                row(
+                                  LucideIcons.sparkles,
+                                  AppColor.systemPurple,
+                                  l10n.whatsNewTitle,
+                                  onWhatsNewTap,
+                                ),
+                                row(
+                                  LucideIcons.settings,
+                                  AppColor.systemGray,
+                                  l10n.pageTitleSettings,
+                                  onSettingsTap,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),

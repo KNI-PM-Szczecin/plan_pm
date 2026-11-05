@@ -15,7 +15,7 @@ import 'package:plan_pm/global/widgets/official_schedule_note.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/welcome/notice_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:plan_pm/global/utils/external_links.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_pm/global/utils/logger.dart';
 
@@ -157,17 +157,11 @@ class _AboutPageState extends State<AboutPage> {
       );
   }
 
-  Future<void> _launchRepo() async {
-    final l10n = AppLocalizations.of(context)!;
-    final Uri url = Uri.parse('https://github.com/KNI-PM-Szczecin/plan_pm');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.couldNotOpenRepo)));
-      }
-    }
-  }
+  Future<void> _launchRepo() => openExternalLinkOrNotify(
+    context,
+    'https://github.com/KNI-PM-Szczecin/plan_pm',
+    message: AppLocalizations.of(context)!.couldNotOpenRepo,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +282,10 @@ class _AboutPageState extends State<AboutPage> {
               AppListRow(
                 leading: AppIconBadge(
                   icon: LucideIcons.gitFork,
-                  color: Colors.black,
+                  // Monochromatyczny jak logo GitHuba: czarny kafelek w jasnym
+                  // motywie, biały w ciemnym — czarny na #1C1C1E znikał.
+                  color: AppColor.onBackground,
+                  foregroundColor: AppColor.background,
                 ),
                 title: l10n.githubRepo,
                 titleColor: AppColor.primary,

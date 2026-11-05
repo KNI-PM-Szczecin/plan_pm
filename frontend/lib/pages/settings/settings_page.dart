@@ -108,7 +108,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 title: l10n.sendFeedbackButton,
                 accessory: AppListRowAccessory.external,
-                onTap: () => openExternalLink(ExternalLinks.feedbackForm),
+                onTap: () =>
+                    openExternalLinkOrNotify(context, ExternalLinks.feedbackForm),
               ),
             ],
           ),

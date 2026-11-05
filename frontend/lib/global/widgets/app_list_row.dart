@@ -157,17 +157,36 @@ class AppListRow extends StatelessWidget {
               spacing: 12,
               children: [
                 ?leading,
-                // Przy parze etykieta/wartość etykieta ma naturalną szerokość,
-                // a resztę dostaje wartość — długa wartość nie łamie etykiety.
-                if (value == null) Expanded(child: _texts()) else _texts(),
-                if (value != null)
+                if (value == null)
+                  Expanded(child: _texts())
+                else
+                  // Para etykieta/wartość: etykieta z lewej w naturalnej
+                  // szerokości, wartość dosunięta do prawej. Oba Flexible
+                  // w wewnętrznym Row ze spaceBetween — przy dużej czcionce
+                  // systemowej i długiej etykiecie (ukraiński) każde dostaje
+                  // najwyżej połowę i zawija, zamiast wypychać wiersz w bok.
+                  // Nie Flexible+Expanded w zewnętrznym Row: niewykorzystane
+                  // miejsce po etykiecie nie wraca do wartości i wartość
+                  // kończy się w połowie wiersza.
                   Expanded(
-                    child: Text(
-                      value!,
-                      textAlign: TextAlign.right,
-                      style: AppTextStyle.body.copyWith(
-                        color: AppColor.labelSecondary,
-                      ),
+                    child: Row(
+                      crossAxisAlignment: alignTop
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      spacing: 12,
+                      children: [
+                        Flexible(child: _texts()),
+                        Flexible(
+                          child: Text(
+                            value!,
+                            textAlign: TextAlign.right,
+                            style: AppTextStyle.body.copyWith(
+                              color: AppColor.labelSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ?trailingWidget,

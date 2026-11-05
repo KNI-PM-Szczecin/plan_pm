@@ -1,5 +1,9 @@
 // Strona wyboru wykładowcy — wyświetla przefiltrowaną listę wykładowców z wyszukiwarką.
 // Przyjmuje gotową listę [LecturerItem] z zewnątrz i zwraca wybrany element przez [onContinue].
+// „Dalej" czeka na [onContinue] ze spinnerem — wcześniej dubel tapnięcia
+// uruchamiał drugie czyszczenie planu w trakcie trwającego syncu.
+// Nagłówek, wyszukiwarka i lista są w jednym CustomScrollView: w poziomie
+// z klawiaturą stały blok nagłówka nie mieścił się na ekranie.
 import 'package:flutter/material.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/theme/colors.dart';
@@ -22,7 +26,7 @@ class LecturerSelectionPage extends StatefulWidget {
   });
 
   final List<LecturerItem> lecturers;
-  final void Function(LecturerItem selected) onContinue;
+  final Future<void> Function(LecturerItem selected) onContinue;
 
   @override
   State<LecturerSelectionPage> createState() => _LecturerSelectionPageState();
@@ -32,6 +36,9 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
   final _searchController = TextEditingController();
   LecturerItem? _selected;
   String _query = '';
+
+  /// Trwa [onContinue] (zapis + sync) — przycisk pokazuje spinner.
+  bool _submitting = false;
 
   @override
   void dispose() {
@@ -51,12 +58,21 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
     if (kDebugGdpr) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) =>
-              GdprConsentPage(onAccepted: () => widget.onContinue(_selected!)),
+          builder: (_) => GdprConsentPage(onAccepted: _submit),
         ),
       );
     } else {
-      widget.onContinue(_selected!);
+      _submit();
+    }
+  }
+
+  Future<void> _submit() async {
+    if (_submitting) return;
+    setState(() => _submitting = true);
+    try {
+      await widget.onContinue(_selected!);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
     }
   }
 
@@ -70,38 +86,44 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
-              children: [
-                Text(
-                  l10n.lecturerSelectionTitle,
-                  style: AppTextStyle.largeTitleEmphasized.copyWith(
-                    color: AppColor.onBackground,
-                  ),
-                ),
-                Text(
-                  l10n.lecturerSelectionSubtitle,
-                  style: AppTextStyle.subheadline.copyWith(
-                    color: AppColor.labelSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: LecturerSearchField(
-              controller: _searchController,
-              onChanged: (v) => setState(() => _query = v),
-            ),
-          ),
           Expanded(
-            child: items.isEmpty
-                ? Align(
-                    alignment: Alignment.topCenter,
+            child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 4,
+                      children: [
+                        Text(
+                          l10n.lecturerSelectionTitle,
+                          style: AppTextStyle.largeTitleEmphasized.copyWith(
+                            color: AppColor.onBackground,
+                          ),
+                        ),
+                        Text(
+                          l10n.lecturerSelectionSubtitle,
+                          style: AppTextStyle.subheadline.copyWith(
+                            color: AppColor.labelSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: LecturerSearchField(
+                      controller: _searchController,
+                      onChanged: (v) => setState(() => _query = v),
+                    ),
+                  ),
+                ),
+                if (items.isEmpty)
+                  SliverToBoxAdapter(
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                       padding: const EdgeInsets.all(16),
@@ -123,26 +145,32 @@ class _LecturerSelectionPageState extends State<LecturerSelectionPage> {
                       ),
                     ),
                   )
-                : ListView.builder(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
+                else
+                  SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                    itemCount: items.length,
-                    itemBuilder: (context, i) {
-                      final item = items[i];
-                      return LecturerTile(
-                        item: item,
-                        isFirst: i == 0,
-                        isLast: i == items.length - 1,
-                        selected: _selected?.id == item.id,
-                        onTap: () => setState(() => _selected = item),
-                      );
-                    },
+                    sliver: SliverList.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        final item = items[i];
+                        return LecturerTile(
+                          item: item,
+                          isFirst: i == 0,
+                          isLast: i == items.length - 1,
+                          selected: _selected?.id == item.id,
+                          onTap: () {
+                            if (!_submitting) setState(() => _selected = item);
+                          },
+                        );
+                      },
+                    ),
                   ),
+              ],
+            ),
           ),
           AppBottomActions(
             primary: AppButton(
               label: l10n.nextButton,
+              isLoading: _submitting,
               onPressed: _selected == null ? null : _continue,
             ),
           ),

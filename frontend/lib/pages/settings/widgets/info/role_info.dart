@@ -3,20 +3,14 @@
 // LecturerSelectionPage; tryb zmienia się dopiero po zakończeniu tamtego flow.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
+import 'package:plan_pm/global/utils/lecturer_flow.dart';
 import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/global/widgets/app_segmented_control.dart';
-import 'package:plan_pm/global/models/lecturer.dart';
-import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
-import 'package:plan_pm/service/backend_service.dart';
-import 'package:plan_pm/service/cache_service.dart';
-import 'package:plan_pm/service/database_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RoleInfo extends StatefulWidget {
   const RoleInfo({super.key});
@@ -26,6 +20,9 @@ class RoleInfo extends StatefulWidget {
 }
 
 class _RoleInfoState extends State<RoleInfo> {
+  /// Trwa pobieranie listy wykładowców — kolejne tapnięcia segmentu ignorujemy.
+  bool _loadingLecturers = false;
+
   Future<void> _switchToStudent() async {
     HapticFeedback.lightImpact();
     if (!mounted) return;
@@ -36,41 +33,18 @@ class _RoleInfoState extends State<RoleInfo> {
   }
 
   Future<void> _switchToLecturer() async {
+    if (_loadingLecturers) return;
     HapticFeedback.lightImpact();
-    final lecturers = await BackendService().fetchTeachers();
-    if (!mounted) return;
+    _loadingLecturers = true;
+    final lecturers = await loadLecturers(context);
+    _loadingLecturers = false;
+    if (lecturers == null || !mounted) return;
     Navigator.push(
       context,
       appRoute(
         (_) => LecturerSelectionPage(
           lecturers: lecturers,
-          onContinue: (LecturerItem selected) async {
-            Lecturer.id = selected.id;
-            Lecturer.name = selected.name;
-            Lecturer.title = selected.title;
-
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('lecturer_id', selected.id);
-            await prefs.setString('lecturer_name', selected.name);
-            if (selected.title != null) {
-              await prefs.setString('lecturer_title', selected.title!);
-            } else {
-              await prefs.remove('lecturer_title');
-            }
-            await prefs.setBool('skip_welcome', true);
-
-            await AppModeManager.setMode(AppMode.lecturer);
-            sevenDayModeNotifier.value = true;
-
-            await DatabaseService.instance.clearLectures();
-            await CacheService().syncLectures();
-            await CacheService().syncNews();
-
-            if (!mounted) return;
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil('/home', (_) => false);
-          },
+          onContinue: (selected) => applyLecturerSelection(context, selected),
         ),
       ),
     );

@@ -10,6 +10,7 @@ class AppIconBadge extends StatelessWidget {
     this.icon,
     this.label,
     this.size = 30,
+    this.foregroundColor = Colors.white,
   }) : assert(
          (icon == null) != (label == null),
          'Podaj dokładnie jedno: icon albo label',
@@ -23,6 +24,10 @@ class AppIconBadge extends StatelessWidget {
 
   /// 30 pt w wierszach list, 36 pt przy dwulinijkowych wierszach wyboru.
   final double size;
+
+  /// Kolor ikony/znaku — biały; zmieniaj tylko, gdy tło kafelka jest jasne
+  /// (np. monochromatyczny kafelek GitHub w ciemnym motywie).
+  final Color foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +43,13 @@ class AppIconBadge extends StatelessWidget {
         ),
       ),
       child: icon != null
-          ? Icon(icon, size: size * 0.6, color: Colors.white)
+          ? Icon(icon, size: size * 0.6, color: foregroundColor)
           : Text(
               label!,
               style: TextStyle(
                 fontSize: size * 0.47,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: foregroundColor,
               ),
             ),
     );

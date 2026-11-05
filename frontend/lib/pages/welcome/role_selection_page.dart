@@ -1,12 +1,12 @@
 // Wybór roli przy onboardingu — lista Student / Wykładowca i przycisk „Dalej".
 // Ścieżka studenta: ustawia tryb → [InputPage].
-// Ścieżka wykładowcy: pobiera listę, persystuje dane, synchronizuje zajęcia → home.
+// Ścieżka wykładowcy: pobiera listę → [LecturerSelectionPage] → [applyLecturerSelection].
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
-import 'package:plan_pm/global/models/lecturer.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/utils/lecturer_flow.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/app_button.dart';
 import 'package:plan_pm/global/widgets/app_grouped_section.dart';
@@ -18,10 +18,6 @@ import 'package:plan_pm/global/widgets/app_screen_header.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
 import 'package:plan_pm/pages/welcome/input_page.dart';
-import 'package:plan_pm/service/backend_service.dart';
-import 'package:plan_pm/service/cache_service.dart';
-import 'package:plan_pm/service/database_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RoleSelectionPage extends StatefulWidget {
   const RoleSelectionPage({super.key});
@@ -54,49 +50,25 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
       return;
     }
 
+    if (_loading) return;
     setState(() => _loading = true);
-    final List<LecturerItem> lecturers;
+    final List<LecturerItem>? lecturers;
     try {
-      lecturers = await BackendService().fetchTeachers();
+      lecturers = await loadLecturers(context);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
-    if (!mounted) return;
+    if (lecturers == null || !mounted) return;
+    final loaded = lecturers;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => LecturerSelectionPage(
-          lecturers: lecturers,
-          onContinue: _onLecturerSelected,
+          lecturers: loaded,
+          onContinue: (selected) => applyLecturerSelection(context, selected),
         ),
       ),
     );
-  }
-
-  Future<void> _onLecturerSelected(LecturerItem selected) async {
-    Lecturer.id = selected.id;
-    Lecturer.name = selected.name;
-    Lecturer.title = selected.title;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('lecturer_id', selected.id);
-    await prefs.setString('lecturer_name', selected.name);
-    if (selected.title != null) {
-      await prefs.setString('lecturer_title', selected.title!);
-    } else {
-      await prefs.remove('lecturer_title');
-    }
-    await prefs.setBool('skip_welcome', true);
-
-    await AppModeManager.setMode(AppMode.lecturer);
-    sevenDayModeNotifier.value = true;
-
-    await DatabaseService.instance.clearLectures();
-    await CacheService().syncLectures();
-    await CacheService().syncNews();
-
-    if (!mounted) return;
-    Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
   }
 
   Widget _roleRow(AppMode mode, String title, String subtitle) {

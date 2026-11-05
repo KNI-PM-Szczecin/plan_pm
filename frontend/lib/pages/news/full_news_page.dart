@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
+import 'package:plan_pm/global/utils/external_links.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/news/widgets/news_card.dart';
@@ -74,7 +75,15 @@ class FullNewsPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Html(data: description, style: newsHtmlStyle()),
+                Html(
+                  data: description,
+                  style: newsHtmlStyle(),
+                  // Linki w treści wyglądają jak linki (akcent), więc muszą
+                  // się otwierać — bez tego tap nic nie robił.
+                  onLinkTap: (url, _, _) {
+                    if (url != null) openExternalLinkOrNotify(context, url);
+                  },
+                ),
               ],
             ),
           );

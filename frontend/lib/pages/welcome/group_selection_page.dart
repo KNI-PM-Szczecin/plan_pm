@@ -158,7 +158,7 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      l10n.groupSelectionHint,
+                      l10n.groupSelectionIntro,
                       style: AppTextStyle.subheadline.copyWith(
                         color: AppColor.labelSecondary,
                       ),
