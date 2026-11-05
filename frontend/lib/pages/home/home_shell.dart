@@ -229,6 +229,14 @@ class _MyHomePageState extends State<MyHomePage>
             bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS
                 ? CNTabBar(
                     tint: AppColor.primary,
+                    // Domyślnie plugin nie maluje natywnego paska, dopóki trwa
+                    // animacja push/pop strony nad nim — po wyjściu z ustawień
+                    // pasek pojawiał się dopiero po zakończeniu przejścia.
+                    // Malujemy go cały czas. Artefakt halo przy przejściach
+                    // (Issue #29 pluginu), dla którego to ukrywanie powstało,
+                    // plugin od 1.5 tłumi natywnie (`setTransitioning`),
+                    // niezależnie od tej flagi.
+                    autoHideOnPageTransition: false,
                     // cupertino_native_better przekazuje rozmiar symbolu do
                     // natywnego paska (domyślnie 24 pt — za duże); stary plugin
                     // zostawiał systemowy. 18 pt odpowiada dawnemu wyglądowi.
