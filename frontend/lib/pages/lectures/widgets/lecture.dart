@@ -62,7 +62,10 @@ class Lecture extends StatefulWidget {
 class _LectureState extends State<Lecture> {
   // Jak pozostałe karty aplikacji (NewsCard.radius) — jeden promień na obu platformach.
   static const double _cardRadius = 22;
-  static const Duration _expandDuration = Duration(milliseconds: 250);
+  // Rozwijanie szczegółów: krótko i z wyhamowaniem (easeOut), żeby karta
+  // reagowała od razu po tapnięciu — 250 ms z easeInOut odczuwalnie „ciągnęło".
+  static const Duration _expandDuration = Duration(milliseconds: 180);
+  static const Curve _expandCurve = Curves.easeOutCubic;
 
   bool expanded = false;
   double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
@@ -332,7 +335,7 @@ class _LectureState extends State<Lecture> {
                                   AnimatedRotation(
                                     turns: expanded ? 0.5 : 0.0,
                                     duration: _expandDuration,
-                                    curve: Curves.easeInOut,
+                                    curve: _expandCurve,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Icon(
@@ -431,7 +434,7 @@ class _LectureState extends State<Lecture> {
                     // Rozwijana sekcja szczegółów
                     AnimatedSize(
                       duration: _expandDuration,
-                      curve: Curves.easeInOut,
+                      curve: _expandCurve,
                       child: expanded
                           ? Padding(
                               padding: const EdgeInsets.only(
