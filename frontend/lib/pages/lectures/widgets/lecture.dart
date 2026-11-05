@@ -63,8 +63,9 @@ class _LectureState extends State<Lecture> {
   // Jak pozostałe karty aplikacji (NewsCard.radius) — jeden promień na obu platformach.
   static const double _cardRadius = 22;
   // Rozwijanie szczegółów: krótko i z wyhamowaniem (easeOut), żeby karta
-  // reagowała od razu po tapnięciu — 250 ms z easeInOut odczuwalnie „ciągnęło".
-  static const Duration _expandDuration = Duration(milliseconds: 180);
+  // reagowała od razu po tapnięciu — 250 ms z easeInOut odczuwalnie „ciągnęło",
+  // 180 ms wciąż było za wolne.
+  static const Duration _expandDuration = Duration(milliseconds: 100);
   static const Curve _expandCurve = Curves.easeOutCubic;
 
   bool expanded = false;

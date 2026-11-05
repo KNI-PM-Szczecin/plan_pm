@@ -251,7 +251,7 @@ tygodnia, stany przez `AppStateCard`) i karta `Lecture`: promień 22 jak inne ka
 typografia z `AppTextStyle`, kolory pochodne od koloru tekstu (pastel), **bez własnego
 marginesu** — odstępy między kartami ustawia lista (12 pt). Dzienne gradienty kart i
 wyboru dnia zostają. `GenericNoResource` został tylko w `today_lectures.dart`
-(Home). Rozwijanie karty: 180 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
+(Home). Rozwijanie karty: 100 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
 **Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
