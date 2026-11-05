@@ -84,6 +84,16 @@ A Flutter application targeting Android and iOS. Fetches schedule data from Supa
 
 **Tech:** Flutter (Dart), Supabase client
 
+For local development, use Flutter 3.44.4 (the version pinned in Jenkins) or a
+compatible newer version. From `frontend/`, run `flutter pub get`, create
+`lib/secrets.dart` using `lib/secrets_example.dart` and your Supabase credentials,
+then run `flutter run`.
+
+iOS builds require macOS and Xcode. Swift Package Manager is enabled for this
+project in `frontend/pubspec.yaml` (`flutter.config.enable-swift-package-manager`),
+so local `flutter run` / `flutter build ios` and CI use the same dependency manager.
+No global `flutter config` command is needed. CocoaPods integration has been removed.
+
 ### Backend — [`backend/`](backend/)
 
 A Python data pipeline that scrapes the university's Virtual Dean's Office website and loads the data into a Supabase database. Also includes a lightweight admin tool for managing in-app news posts.
@@ -127,16 +137,9 @@ Open an issue or a PR and let's talk.
 
 ## License
 
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license.
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE).
 
-**In plain words:**
-
-- You are free to use, share, and adapt this project
-- You must give appropriate credit to the original authors
-- **Commercial use is not permitted**
-- This project is and will always remain free — no paywalls, no subscriptions, no monetisation
-
-See the full license at [creativecommons.org/licenses/by-nc/4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+**In plain words:** you are free to use, copy, modify and distribute the code, as long as you keep the copyright and license notice. The software comes without any warranty.
 
 ---
 

@@ -5,6 +5,10 @@
 extension StringCasingExtension on String {
   String get toCapitalized =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  /// Tylko pierwsza litera wielka, reszta bez zmian ("środa, 7 października"
+  /// → "Środa, 7 października") — w odróżnieniu od [toCapitalized].
+  String get toCapitalizedFirst =>
+      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
   String get toTitleCase => replaceAll(
     RegExp(' +'),
     ' ',

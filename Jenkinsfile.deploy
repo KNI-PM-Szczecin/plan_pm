@@ -204,7 +204,6 @@ pipeline {
 
                     command -v ruby   >/dev/null 2>&1 || fail "ruby not on PATH ($PATH)" "brew install ruby"
                     command -v bundle >/dev/null 2>&1 || fail "bundler not on PATH"      "brew install ruby"
-                    command -v pod    >/dev/null 2>&1 || fail "CocoaPods not on PATH"    "brew install cocoapods"
                     command -v git    >/dev/null 2>&1 || fail "git not on PATH"          "xcode-select --install"
 
                     # System ruby is 2.6.10 and current fastlane will not load on
@@ -268,12 +267,8 @@ pipeline {
 
                     "$FLUTTER_HOME/bin/flutter" --version
 
-                    # Runner.xcodeproj integrates plugins through CocoaPods and
-                    # has no Swift package references. Flutter >= 3.44.8 routes
-                    # SPM-capable plugins out of the Podfile by default, which
-                    # ends in "Module 'app_links' not found". Redundant on the
-                    # pinned 3.44.4, kept so a bump cannot quietly reintroduce it.
-                    "$FLUTTER_HOME/bin/flutter" config --no-enable-swift-package-manager
+                    # Swift Package Manager is enabled per project in
+                    # frontend/pubspec.yaml, shared by local builds and CI.
 
                     "$FLUTTER_HOME/bin/flutter" precache --ios --android
                 '''
@@ -372,7 +367,7 @@ PY
                 dir('frontend') {
                     // Also writes ios/Flutter/Generated.xcconfig and
                     // android/local.properties, both of which the native builds
-                    // read — pod install and settings.gradle.kts fail without them.
+                    // read — the Xcode build and settings.gradle.kts fail without them.
                     sh '''
                         set -eu
                         export PATH="$FLUTTER_HOME/bin:$PATH"
@@ -444,7 +439,6 @@ PY
                                 fi
 
                                 echo "Xcode:  $("$DEVELOPER_DIR/usr/bin/xcodebuild" -version | head -1)"
-                                echo "Pods:   $(pod --version)"
 
                                 # The Fastfile reads ./certificate.p12 relative to
                                 # the ios directory. Copied rather than symlinked
@@ -463,11 +457,18 @@ PY
                                 # usual and then stops short of TestFlight.
                                 export PLANPM_SKIP_UPLOAD="$DRY_RUN"
 
-                                pod install
-
                                 bundle config set --local path 'vendor/bundle'
                                 bundle install --quiet
                                 bundle exec fastlane --version
+
+                                # The lane archives straight through Xcode, so no
+                                # `flutter build ios` ever runs. Only that step
+                                # raises FlutterGeneratedPluginSwiftPackage from
+                                # Flutter's default iOS 13.0 to the project's 15.0;
+                                # without it SwiftPM rejects every plugin that
+                                # needs more (cupertino_native_better, home_widget).
+                                # CocoaPods' `pod install` used to hide this.
+                                ( cd .. && flutter build ios --config-only --release --no-codesign )
 
                                 bundle exec fastlane ios beta
                             '''

@@ -7,8 +7,12 @@
 // Po co osobna klasyfikacja: ekran grupował po PIERWSZEJ LITERZE kodu i pozwalał
 // zaznaczyć jedną pozycję w kategorii. Grupa projektowa ("P01/LTZ") i wszystkie
 // obieralne ("P0A04/WIET") lądowały więc w jednym worku "Inne" i student wybierał
-// jedną z kilkunastu — stąd trzy zgłoszenia o niepełnym planie. Obieralnych ma się
-// kilka naraz, więc ta jedna sekcja jest wielokrotnego wyboru.
+// jedną z kilkunastu — stąd trzy zgłoszenia o niepełnym planie.
+//
+// Każda sekcja jest wielokrotnego wyboru. Początkowo tylko obieralne, ale
+// uczelnia dzieli też zwykłe grupy per przedmiot (np. Automatyka i Robotyka:
+// P01–P06, student jest w kilku projektowych naraz), więc jeden slot na rodzaj
+// zajęć znów dawał niepełny plan.
 
 /// Typ sekcji na ekranie wyboru grup.
 enum GroupKind { auditorium, classes, labs, project, simulator, elective, other }
@@ -41,20 +45,12 @@ class GroupEntry {
   final GroupKind kind;
 }
 
-/// Sekcja ekranu: grupy jednego typu plus informacja, czy wolno zaznaczyć kilka.
+/// Sekcja ekranu: grupy jednego typu. W każdej wolno zaznaczyć kilka.
 class GroupSection {
-  const GroupSection({
-    required this.kind,
-    required this.entries,
-    required this.multiSelect,
-  });
+  const GroupSection({required this.kind, required this.entries});
 
   final GroupKind kind;
   final List<GroupEntry> entries;
-
-  /// true tylko dla przedmiotów obieralnych — w pozostałych sekcjach student
-  /// należy dokładnie do jednej grupy.
-  final bool multiSelect;
 }
 
 String groupCodeOf(String group) => group.split("/").first.trim();
@@ -139,13 +135,7 @@ List<GroupSection> buildGroupSections(List<String> groups) {
     final entries = byKind[kind];
     if (entries == null || entries.isEmpty) continue;
     entries.sort((a, b) => compareGroupCodes(a.code, b.code));
-    sections.add(
-      GroupSection(
-        kind: kind,
-        entries: entries,
-        multiSelect: kind == GroupKind.elective,
-      ),
-    );
+    sections.add(GroupSection(kind: kind, entries: entries));
   }
   return sections;
 }

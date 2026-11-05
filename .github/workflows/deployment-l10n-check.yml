@@ -1,0 +1,19 @@
+name: Localization check
+
+on:
+  pull_request:
+    branches: [deployment]
+
+jobs:
+  l10n-check:
+    name: l10n-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Check ARB files have the same keys
+        run: python scripts/check_l10n.py

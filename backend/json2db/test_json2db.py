@@ -42,6 +42,121 @@ def test_force_allows_small_input_past_safety_gate(tmp_path):
         db.run()
 
 
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_refresh_small_input_never_touches_database(tmp_path, dry_run):
+    path = tmp_path / "small.json"
+    path.write_text(json.dumps({"classes": []}), encoding="utf-8")
+    db = json2db(input=str(path), refresh_upcoming=True, dry_run=dry_run)
+    db.load_env = MagicMock()
+    db.clear_upcoming_classes = MagicMock()
+    if dry_run:
+        db.run()
+    else:
+        with pytest.raises(ValueError, match="Refusing to clear"):
+            db.run()
+    db.load_env.assert_not_called()
+    db.clear_upcoming_classes.assert_not_called()
+
+
+@pytest.mark.parametrize("extra_future_classes", [0, 1001])
+def test_refresh_retains_history_and_replaces_upcoming_without_duplicates(tmp_path, monkeypatch, extra_future_classes):
+    import datetime
+    import importlib
+    from types import SimpleNamespace
+
+    module = importlib.import_module("json2db.json2db")
+
+    class FixedDateTime(datetime.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            # UTC is still Oct 12, but Warsaw is already Oct 13.
+            return cls(2026, 10, 12, 22, 30, tzinfo=datetime.timezone.utc).astimezone(tz)
+
+    monkeypatch.setattr(module.datetime, "datetime", FixedDateTime)
+    rows = {
+        "classes": [
+            {"id": "past", "startTime": "2026-10-12T23:59:59"},
+            {"id": "today", "startTime": "2026-10-13T00:00:00"},
+            {"id": "cancelled", "startTime": "2026-10-14T09:00:00"},
+        ],
+        "teachersclasses": [
+            {"classes": "past", "teachers": "teacher"},
+            {"classes": "today", "teachers": "old-teacher"},
+            {"classes": "cancelled", "teachers": "teacher"},
+        ],
+    }
+    for i in range(extra_future_classes):
+        rows["classes"].append({"id": f"future-{i}", "startTime": "2026-10-15T09:00:00"})
+        rows["teachersclasses"].append({"classes": f"future-{i}", "teachers": "teacher"})
+
+    class Query:
+        def __init__(self, table):
+            self.table = table
+            self.filters = []
+            self.deleting = False
+
+        def select(self, columns):
+            return self
+
+        def gte(self, column, value):
+            self.filters.append(lambda row: row[column] >= value)
+            return self
+
+        def order(self, column):
+            return self
+
+        def range(self, start, end):
+            self.slice = slice(start, end + 1)
+            return self
+
+        def delete(self):
+            self.deleting = True
+            return self
+
+        def in_(self, column, values):
+            self.filters.append(lambda row: row[column] in values)
+            return self
+
+        def execute(self):
+            selected = [r for r in rows[self.table] if all(f(r) for f in self.filters)]
+            if self.deleting:
+                rows[self.table][:] = [r for r in rows[self.table] if r not in selected]
+            else:
+                selected = selected[self.slice]
+            return SimpleNamespace(data=selected)
+
+    path = tmp_path / "input.json"
+    path.write_text("{}", encoding="utf-8")
+    db = json2db(input=str(path), refresh_upcoming=True)
+    db.admin_db = SimpleNamespace(table=Query)
+    for _ in range(2):
+        db.clear_upcoming_classes()
+        assert rows["classes"] == [{"id": "past", "startTime": "2026-10-12T23:59:59"}]
+        assert rows["teachersclasses"] == [{"classes": "past", "teachers": "teacher"}]
+        # Simulate the next import, including a changed teacher.
+        rows["classes"].append({"id": "new-today", "startTime": "2026-10-13T08:00:00"})
+        rows["teachersclasses"].append({"classes": "new-today", "teachers": "new-teacher"})
+    assert len(rows["classes"]) == 2
+    assert len(rows["teachersclasses"]) == 2
+
+
+def test_refresh_run_uses_partial_cleanup_before_loading(tmp_path, monkeypatch):
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps({"classes": [{}] * 100}), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    db = json2db(input=str(path), refresh_upcoming=True)
+    calls = MagicMock()
+    methods = ["load_env", "clear_db", "clear_upcoming_classes", "load_teachers",
+               "load_buildings", "load_rooms", "load_programs", "load_classes",
+               "load_teachers_classes"]
+    for name in methods:
+        method = MagicMock(return_value=0)
+        setattr(db, name, method)
+        calls.attach_mock(method, name)
+    db.run()
+    assert [call[0] for call in calls.mock_calls] == [name for name in methods if name != "clear_db"]
+
+
 # --- Testy weryfikujące błąd w load_classes: room_map oparty tylko na nazwie sali ---
 
 @pytest.fixture

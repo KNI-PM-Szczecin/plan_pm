@@ -6,6 +6,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:plan_pm/env_config.dart';
 import 'package:plan_pm/global/notifiers/locale_notifier.dart';
 import 'package:plan_pm/global/utils/logger.dart';
+import 'package:plan_pm/global/utils/rooms.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lectures/utils/canceled_reason.dart';
 import 'package:plan_pm/service/database_service.dart';
@@ -174,7 +175,7 @@ class WidgetService {
             'name': l.name,
             'start': l.startTime,
             'end': l.endTime,
-            'location': l.location ?? '',
+            'location': compactRooms(l.location),
             'date': _fmtDate(l.date),
             'rector': r.rector,
             'badge': r.badge,
@@ -191,7 +192,7 @@ class WidgetService {
                 'name': l.name,
                 'start': l.startTime,
                 'end': l.endTime,
-                'location': l.location ?? '',
+                'location': compactRooms(l.location),
                 'date': _fmtDate(l.date),
                 'rector': r.rector,
                 'badge': r.badge,
