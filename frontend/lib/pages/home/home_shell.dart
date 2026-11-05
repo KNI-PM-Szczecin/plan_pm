@@ -31,10 +31,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 List<Map<String, dynamic>> getPages(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
+  // `scrollsUnderBar`: czy lista zakładki wjeżdża pod pasek tytułu. Plan
+  // zajęć ma nagłówek z wyborem dnia poniżej paska — jego lista przewija się
+  // pod nagłówkiem, nie pod paskiem, więc tło paska nie ma się tam włączać.
   return [
-    {"widget": const HomePage(), "title": l10n.pageTitleHome},
-    {"widget": const LecturesPage(), "title": l10n.pageTitleLectures},
-    {"widget": const NewsPage(), "title": l10n.pageTitleNews},
+    {
+      "widget": const HomePage(),
+      "title": l10n.pageTitleHome,
+      "scrollsUnderBar": true,
+    },
+    {
+      "widget": const LecturesPage(),
+      "title": l10n.pageTitleLectures,
+      "scrollsUnderBar": false,
+    },
+    {
+      "widget": const NewsPage(),
+      "title": l10n.pageTitleNews,
+      "scrollsUnderBar": true,
+    },
   ];
 }
 
@@ -50,6 +65,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+
+  // Stan „treść pod paskiem" każdej zakładki z osobna — PageView trzyma
+  // wszystkie trzy, więc pasek musi znać stan bieżącej, nie ostatnio
+  // przewijanej (patrz [AppLargeTitleBar]).
+  final Map<int, bool> _scrolledUnder = {};
+
+  void _setScrolledUnder(int index, bool value) {
+    if ((_scrolledUnder[index] ?? false) == value) return;
+    setState(() => _scrolledUnder[index] = value);
+  }
+
   late final AnimationController _sidebarController;
   late final Animation<Offset> _sidebarSlide;
   late final Animation<Offset> _contentSlide;
@@ -88,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _openExternal(String url) {
     _closeSidebar();
-    openExternalLink(url);
+    openExternalLinkOrNotify(context, url);
   }
 
   void _openSidebar() => _sidebarController.forward();
@@ -189,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage>
             backgroundColor: AppColor.background,
             appBar: AppLargeTitleBar(
               title: pages[_currentIndex]['title'],
-              resetKey: _currentIndex,
+              scrolledUnder: _scrolledUnder[_currentIndex] ?? false,
               leading: AppNavButton(
                 icon: LucideIcons.menu,
                 symbol: 'line.3.horizontal',
@@ -246,7 +272,14 @@ class _MyHomePageState extends State<MyHomePage>
               children: [
                 PreloadPageView.builder(
                   itemCount: pages.length,
-                  itemBuilder: (context, index) => pages[index]["widget"],
+                  itemBuilder: (context, index) {
+                    final Widget page = pages[index]["widget"];
+                    if (pages[index]["scrollsUnderBar"] != true) return page;
+                    return ScrollEdgeListener(
+                      onChanged: (value) => _setScrolledUnder(index, value),
+                      child: page,
+                    );
+                  },
                   preloadPagesCount: 2,
                   onPageChanged: (value) {
                     setState(() => _currentIndex = value);

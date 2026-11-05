@@ -99,20 +99,25 @@ class _CustomAppBarState extends State<CustomAppBar> with _ScrollEdgeMixin {
 /// pod nim duży tytuł z lewej. Tytuł nie zwija się przy przewijaniu — to
 /// wymagałoby przebudowy list zakładek (w tym planu zajęć) na slivery;
 /// zamiast tego pod paskiem włącza się to samo tło co w [CustomAppBar].
-class AppLargeTitleBar extends StatefulWidget implements PreferredSizeWidget {
+///
+/// Stan przewinięcia podaje powłoka ([scrolledUnder]) — zakładki żyją w jednym
+/// Scaffoldzie i PageView trzyma je wszystkie, więc pasek nie może sam
+/// nasłuchiwać (jak [CustomAppBar]): słyszałby ostatnio przewijaną zakładkę,
+/// nie bieżącą, a po zmianie zakładki nie wiedziałby, czy nowa jest
+/// przewinięta. Każdą zakładkę owija [ScrollEdgeListener].
+class AppLargeTitleBar extends StatelessWidget implements PreferredSizeWidget {
   const AppLargeTitleBar({
     super.key,
     required this.title,
     required this.leading,
-    this.resetKey,
+    this.scrolledUnder = false,
   });
 
   final String title;
   final Widget leading;
 
-  /// Zmiana tej wartości (np. indeksu zakładki) zeruje stan przewinięcia —
-  /// nowa zakładka zaczyna z przezroczystym paskiem.
-  final Object? resetKey;
+  /// Czy treść bieżącej zakładki wjechała pod pasek.
+  final bool scrolledUnder;
 
   /// Wiersz tytułu: Large Title 41 pt + 8 pt odstępu pod spodem.
   static const double titleHeight = 49;
@@ -120,23 +125,6 @@ class AppLargeTitleBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize =>
       const Size.fromHeight(CustomAppBar.height + titleHeight);
-
-  @override
-  State<AppLargeTitleBar> createState() => _AppLargeTitleBarState();
-}
-
-class _AppLargeTitleBarState extends State<AppLargeTitleBar>
-    with _ScrollEdgeMixin {
-  // Listy zakładek siedzą w PageView (poziomy scrollable = depth 0), więc
-  // ich pionowe przewijanie przychodzi z depth 1.
-  @override
-  int get scrollDepth => 1;
-
-  @override
-  void didUpdateWidget(AppLargeTitleBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.resetKey != widget.resetKey) scrolledUnder = false;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +146,7 @@ class _AppLargeTitleBarState extends State<AppLargeTitleBar>
       leadingWidth: 60,
       leading: Padding(
         padding: const EdgeInsets.only(left: 16),
-        child: Center(child: widget.leading),
+        child: Center(child: leading),
       ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(AppLargeTitleBar.titleHeight),
@@ -176,8 +164,8 @@ class _AppLargeTitleBarState extends State<AppLargeTitleBar>
                 children: [...previous, ?current],
               ),
               child: Text(
-                widget.title,
-                key: ValueKey(widget.title),
+                title,
+                key: ValueKey(title),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.largeTitleEmphasized.copyWith(
@@ -187,6 +175,41 @@ class _AppLargeTitleBarState extends State<AppLargeTitleBar>
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Owija treść jednej zakładki i zgłasza przez [onChanged], czy jej główna
+/// pionowa lista jest przewinięta (treść pod paskiem). Reaguje też na
+/// [ScrollMetricsNotification], więc zakładka zbudowana z już przewiniętą
+/// pozycją (PageStorage, powrót do zakładki) zgłasza stan bez ruchu palcem.
+/// Nasłuchuje tylko listy bezpośrednio w zakładce (`depth == 0`), nie
+/// zagnieżdżonych karuzel.
+class ScrollEdgeListener extends StatelessWidget {
+  const ScrollEdgeListener({
+    super.key,
+    required this.onChanged,
+    required this.child,
+  });
+
+  final ValueChanged<bool> onChanged;
+  final Widget child;
+
+  bool _report(ScrollMetrics metrics, int depth) {
+    if (depth == 0 && metrics.axis == Axis.vertical) {
+      onChanged(metrics.hasPixels && metrics.extentBefore > 0);
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollMetricsNotification>(
+      onNotification: (n) => _report(n.metrics, n.depth),
+      child: NotificationListener<ScrollUpdateNotification>(
+        onNotification: (n) => _report(n.metrics, n.depth),
+        child: child,
       ),
     );
   }
