@@ -135,6 +135,22 @@ Widgety czytają z DatabaseService → opcjonalnie WidgetService.pushTodayLectur
 - `DatabaseService.fetchLectures()` zawsze używa `ORDER BY date ASC, start_time ASC`
 - Kolor karty zajęć zależy od `idx` — licznika incremented w loopie budującym widgety. `idx` **musi być zadeklarowany wewnątrz callbacka FutureBuildera**, nie w `build()` — inaczej stale-while-revalidate przesuwa indeksy między renderami i kolory się zmieniają.
 
+**Pierwsza klatka bez migania (ciepły cache odczytu + szkielety):**
+- `DatabaseService` trzyma ostatni wynik `fetchLectures()`/`fetchNews()`
+  (`lastLectures`, `lastNews(limit)`); `app_initialization.dart` rozgrzewa go
+  po syncu, **zanim zejdzie splash**. `TodayLectures`, `NewsBuilder` i
+  `LecturesPage` podają go jako `initialData`/cache stanu, więc po starcie
+  rysują się od razu z danymi — wcześniej odczyt SQLite dawał 1–2 klatki
+  „ładowania" i treść skakała. `clearLectures()`/`clearNews()` kasują snapshot,
+  żeby po zmianie roli/grup nie mignęły stare dane.
+- Pull-to-refresh na Home **nie tworzy sekcji na nowo** (`NewsBuilder` i
+  `TodayLectures` słuchają `refreshNotifier` i trzymają starą listę do czasu
+  nowej). Nie wracać do `NewsBuilder(key: ValueKey(refresh))`.
+- Zimny start (brak snapshotu: pierwszy onboarding, zmiana roli) pokazuje
+  szkielet o kształcie docelowej listy: `LectureListSkeleton`
+  (`lecture_skeleton.dart` — prawdziwe karty `Lecture` z atrapą pod
+  `Skeletonizer`) i `NewsCard.placeholder()`. `GenericLoading` usunięty.
+
 ### Struktura stron
 
 ```
@@ -175,6 +191,19 @@ planem i sekcja „Źródło danych" w „O aplikacji". Nie usuwać bez zgody uc
 - Wykładowca → student: `_switchToStudent()` **nie zmienia trybu od razu** — tylko otwiera `InputPage(isRoleSwitch: true)`. Tryb zmienia się dopiero w `GroupSelectionPage.onConfirm/onSkip`.
 - Student → wykładowca: `_switchToLecturer()` → `LecturerSelectionPage` → po wyborze: zmień tryb, sync obu cache.
 
+**Wybór wykładowcy — jedna ścieżka** (`lib/global/utils/lecturer_flow.dart`):
+`loadLecturers(context)` (pobranie listy; błąd sieci = snackbar + `null`) i
+`applyLecturerSelection(context, item)` (prefs, tryb, tryb 7-dniowy, clear +
+sync obu cache, `/home`). Używają jej onboarding, `RoleInfo` i `LecturerInfo`
+— wcześniej trzy kopie bez obsługi błędów. `LecturerSelectionPage.onContinue`
+zwraca `Future` i „Dalej" czeka na niego ze spinnerem (dubel tapnięcia robił
+drugie `clearLectures()` w trakcie syncu). Porażka syncu po wyborze **nie cofa
+wyboru** — dane są w prefs, pull-to-refresh dociągnie plan.
+
+**Linki zewnętrzne** (`external_links.dart`): `openExternalLink` łapie też
+`PlatformException` z `launchUrl` (zwraca `false`), a `openExternalLinkOrNotify`
+pokazuje snackbar. Nie wołać `launchUrl` bezpośrednio w ekranach.
+
 ### UI — wzorce
 
 **Górne paski (`app_bar.dart`) — „scroll edge":** `CustomAppBar` (podstrony) i
@@ -182,11 +211,25 @@ planem i sekcja „Źródło danych" w „O aplikacji". Nie usuwać bez zgody uc
 przezroczyste, gdy treść jest na górze, a po przewinięciu pod pasek dostają
 `ScrollEdgeBackground`: iOS — `BackdropFilter(blur 20)` + tło `alpha 0.92/0.5` + linia,
 Android — pełne tło. Ekran musi mieć `extendBodyBehindAppBar: true`.
+- `CustomAppBar` nasłuchuje sam (`ScrollNotificationObserver` Scaffoldu).
+  `AppLargeTitleBar` **dostaje `scrolledUnder` z `home_shell.dart`**: zakładki
+  siedzą w jednym Scaffoldzie i `PreloadPageView` trzyma wszystkie trzy, więc
+  pasek słuchający sam widział ostatnio przewijaną zakładkę, a po zmianie
+  zakładki zerował stan — tytuł „Nowości" lądował na zdjęciu newsa. Każdą
+  zakładkę, której lista wjeżdża pod pasek (`scrollsUnderBar` w `getPages`),
+  owija `ScrollEdgeListener` (reaguje też na `ScrollMetricsNotification`,
+  czyli na listę zbudowaną już przewiniętą). Plan zajęć ma nagłówek pod
+  paskiem, więc tła nie dostaje. Test: `test/scroll_edge_listener_test.dart`.
 - **Nie** owijaj `BackdropFilter` w `Opacity`/`AnimatedOpacity` — na iOS się wtedy nie
   rysuje; animuj siłę blura i krycie (tak robi `ScrollEdgeBackground`).
 - `flexibleSpace` dostaje luźne ograniczenia — tło musi być w `SizedBox.expand`,
   inaczej zwija się do 0 px (test: `test/app_bar_scroll_edge_test.dart`).
 - Linia musi być **na zewnątrz** `ClipRect`/`BackdropFilter`, inaczej blenduje się z tłem.
+
+**Tylko pion:** orientacja zablokowana w trzech miejscach — `Info.plist`
+(`UISupportedInterfaceOrientations`, także `~ipad`), `AndroidManifest.xml`
+(`android:screenOrientation="portrait"`) i `SystemChrome.setPreferredOrientations`
+w `main.dart`. Nie dodawać landscape z powrotem bez decyzji produktowej.
 
 **BottomNavBar (blur):** `BackdropFilter(blur 20) + Container(alpha: isLight ? 0.92 : 0.5)` —
 poza zakresem redesignu, nie ruszać.
@@ -207,8 +250,9 @@ Widok zajęć też jest przerobiony (nagłówek z datą, wybór dnia z animacją
 tygodnia, stany przez `AppStateCard`) i karta `Lecture`: promień 22 jak inne karty,
 typografia z `AppTextStyle`, kolory pochodne od koloru tekstu (pastel), **bez własnego
 marginesu** — odstępy między kartami ustawia lista (12 pt). Dzienne gradienty kart i
-wyboru dnia zostają. `GenericNoResource`/`GenericLoading` zostały tylko w
-`today_lectures.dart` (Home). **Nie ruszać dolnego paska** (`navigation_bar.dart`).
+wyboru dnia zostają. `GenericNoResource` został tylko w `today_lectures.dart`
+(Home). Rozwijanie karty: 180 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
+**Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
