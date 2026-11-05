@@ -12,6 +12,7 @@ import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/global/utils/platform.dart';
+import 'package:plan_pm/global/utils/rooms.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
@@ -185,6 +186,9 @@ class _LectureState extends State<Lecture> {
         ? Colors.white.withValues(alpha: 0.45)
         : Colors.black.withValues(alpha: 0.28);
 
+    // Kilka sal (zajęcia w jednej z nich) — patrz [splitRooms].
+    final List<String> rooms = splitRooms(widget.location);
+
     bool isInProgress =
         widget.isProgressable &&
         _isInProgress &&
@@ -349,7 +353,11 @@ class _LectureState extends State<Lecture> {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              // Wiersz: godzina + sala
+                              // Wiersz: godzina + sala. Jedna sala siedzi obok
+                              // godziny; kilka sal (zajęcia w jednej z nich)
+                              // schodzi do własnego wiersza jako pastylki —
+                              // jeden ciąg „A,B,C,D" zawijał się na trzy
+                              // linijki i zlewał z godziną.
                               Row(
                                 spacing: 5,
                                 children: [
@@ -370,29 +378,67 @@ class _LectureState extends State<Lecture> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
-                                  Icon(
-                                    LucideIcons.mapPin,
-                                    size: 16,
-                                    color: textColor,
-                                  ),
-                                  // Sala — separator z bazy to " , " (spacja-przecinek-spacja),
-                                  // normalizowany do standardowego ", "
-                                  Expanded(
-                                    child: Text(
-                                      widget.location?.replaceAll(
-                                            " , ",
-                                            ", ",
-                                          ) ??
-                                          l10n.roomNaN,
-                                      style: AppTextStyle.subheadline.copyWith(
-                                        color: textColor,
-                                        fontWeight: subTextWeight,
+                                  if (rooms.length <= 1) ...[
+                                    const SizedBox(width: 5),
+                                    Icon(
+                                      LucideIcons.mapPin,
+                                      size: 16,
+                                      color: textColor,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        rooms.isEmpty
+                                            ? l10n.roomNaN
+                                            : rooms.first,
+                                        style: AppTextStyle.subheadline
+                                            .copyWith(
+                                              color: textColor,
+                                              fontWeight: subTextWeight,
+                                            ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ],
                               ),
+                              if (rooms.length > 1) ...[
+                                const SizedBox(height: 6),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 5,
+                                  children: [
+                                    // top: 2 centruje pinezkę z pierwszą
+                                    // linią tekstu.
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Icon(
+                                        LucideIcons.mapPin,
+                                        size: 16,
+                                        color: textColor,
+                                      ),
+                                    ),
+                                    // Linia na budynek: „Willowa – B1 117,
+                                    // B4 104, 107" — patrz [groupRoomsByBuilding].
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          for (final line
+                                              in groupRoomsByBuilding(rooms))
+                                            Text(
+                                              line,
+                                              style: AppTextStyle.subheadline
+                                                  .copyWith(
+                                                    color: textColor,
+                                                    fontWeight: subTextWeight,
+                                                  ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -601,3 +647,6 @@ class _LectureState extends State<Lecture> {
     );
   }
 }
+
+// Pastylka jednej sali na karcie z kilkoma salami. Kolory pochodne od koloru
+// tekstu karty, jak reszta elementów — na pastelu ciemnieje, nie bieleje.

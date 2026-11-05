@@ -264,6 +264,19 @@ wyboru dnia zostają. `GenericNoResource` został tylko w `today_lectures.dart`
 (Home). Rozwijanie karty: 100 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
 **Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
+**Kilka sal w jednym polu** (`lib/global/utils/rooms.dart`): uczelnia wpisuje
+sale po przecinku w dowolnej pisowni (`Willowa B1 117,Willowa B4 104,…`,
+`WChrobrego 19 , WChrobrego 110`, `Willowa B1 14,15`) — zajęcia odbywają się
+w jednej z nich (Nawigacja 2. rok, 11.2026). Backend **celowo nie rozbija**
+tego pola (`parseRooms` dzieli tylko po `", "`, a `sala_idx` i tak bierze
+pierwszą salę — rozbicie gubiłoby pozostałe). Rozbija dopiero aplikacja:
+`splitRooms` (dedupe, goły numer dziedziczy budynek poprzedniego wpisu), karta
+`Lecture` pokazuje kilka sal zwykłym tekstem pod godziną, linia na budynek przez
+`groupRoomsByBuilding` („Willowa – B1 117, B4 104, 107, 119"; powtórzone
+skrzydło pomijane — pastylki per sala były za ciężkie), widżety ekranu głównego
+dostają `compactRooms` („Willowa B1 117 +3").
+Testy: [`test/rooms_test.dart`](frontend/test/rooms_test.dart).
+
 **AnimatedSwitcher na checkmarkach:** Wzorzec `ScaleTransition + FadeTransition` z `ValueKey('check')`/`ValueKey('empty')` — użyty w language_page i appearance_page.
 
 **RefreshIndicator za AppBarem:** Ustaw `edgeOffset: MediaQuery.of(context).padding.top` — przy `extendBodyBehindAppBar` `padding.top` zawiera już całą wysokość paska (także duży tytuł), więc dokładanie `kToolbarHeight` przesuwa spinner za nisko.
