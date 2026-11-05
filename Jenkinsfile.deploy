@@ -106,6 +106,11 @@ pipeline {
             description: 'Build and upload the Android bundle to Google Play.'
         )
         booleanParam(
+            name: 'DEPLOY_GITHUB',
+            defaultValue: true,
+            description: 'Download a Play-signed APK, reject installer protection and publish it on GitHub. Can run alone for an existing Play version.'
+        )
+        booleanParam(
             name: 'DRY_RUN',
             defaultValue: false,
             description: 'Build and sign everything, upload nothing. Use this for the first run on a freshly provisioned machine — it exercises the whole chain, including signing, without burning a build number on the stores.'
@@ -192,6 +197,9 @@ pipeline {
         }
 
         stage('Preflight') {
+            when {
+                expression { params.DEPLOY_IOS || params.DEPLOY_ANDROID }
+            }
             steps {
                 // Everything this job needs but does not install itself. A
                 // missing tool must say which brew command fixes it, because
@@ -238,6 +246,9 @@ pipeline {
         }
 
         stage('Provision Flutter') {
+            when {
+                expression { params.DEPLOY_IOS || params.DEPLOY_ANDROID }
+            }
             steps {
                 // The SDK is a git checkout at a tag, kept in a directory named
                 // after that tag. Bumping FLUTTER_VERSION therefore provisions a
@@ -301,11 +312,14 @@ pipeline {
 
                     env.RUN_IOS     = (params.DEPLOY_IOS     && !skipIos).toString()
                     env.RUN_ANDROID = (params.DEPLOY_ANDROID && !skipAndroid).toString()
+                    // The first build after adding this parameter can receive
+                    // null from the old job configuration; default to enabled.
+                    env.RUN_GITHUB  = (params.DEPLOY_GITHUB != false && !skipAll).toString()
 
                     currentBuild.displayName = "#${BUILD_NUMBER} — ${env.APP_VERSION}"
-                    currentBuild.description = "iOS: ${env.RUN_IOS == 'true' ? 'yes' : 'skipped'} · Android: ${env.RUN_ANDROID == 'true' ? 'yes' : 'skipped'}${params.DRY_RUN ? ' · DRY RUN' : ''}"
+                    currentBuild.description = "iOS: ${env.RUN_IOS == 'true' ? 'yes' : 'skipped'} · Android: ${env.RUN_ANDROID == 'true' ? 'yes' : 'skipped'} · GitHub: ${env.RUN_GITHUB == 'true' ? 'yes' : 'skipped'}${params.DRY_RUN ? ' · DRY RUN' : ''}"
 
-                    echo "Version ${env.APP_VERSION} | iOS=${env.RUN_IOS} Android=${env.RUN_ANDROID} dryRun=${params.DRY_RUN}"
+                    echo "Version ${env.APP_VERSION} | iOS=${env.RUN_IOS} Android=${env.RUN_ANDROID} GitHub=${env.RUN_GITHUB} dryRun=${params.DRY_RUN}"
                     if (skipAll || skipIos || skipAndroid) {
                         echo "Skip marker found in the commit message."
                     }
@@ -526,46 +540,32 @@ PY
             }
         }
 
-        stage('Android → GitHub release') {
+        stage('APK → GitHub release') {
             when {
-                expression { env.ANDROID_UPLOADED == 'true' && !params.DRY_RUN }
+                expression {
+                    env.RUN_GITHUB == 'true' && !params.DRY_RUN &&
+                        (env.RUN_ANDROID != 'true' || env.ANDROID_UPLOADED == 'true')
+                }
             }
             steps {
                 // UNSTABLE, not FAILURE: the app already reached Play, and a
                 // failure here would fire the "did not reach the stores" ping.
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE', message: 'GitHub release failed') {
-                    withCredentials([string(credentialsId: 'planpm-github-token', variable: 'GH_TOKEN')]) {
-                        // The APK is the universal one Google generated from the
-                        // bundle, downloaded by the lane — see download_play_apk
-                        // in the Android Fastfile for why not a local build.
-                        sh '''
-                            set -eu
-
-                            # Checked here, not in Preflight: a missing gh must
-                            # not hold back the store deploys themselves.
-                            command -v gh >/dev/null 2>&1 || { echo "GitHub CLI not on PATH ($PATH)" >&2; echo "  fix: brew install gh" >&2; exit 1; }
-
-                            version="${APP_VERSION%%+*}"
-                            tag="v$version"
-                            apk="frontend/build/app/outputs/universal-apk/plan_pm-$version.apk"
-
-                            [ -s "$apk" ] || { echo "No universal APK at $apk — Play did not hand it out in time; see the Android stage log." >&2; exit 1; }
-
-                            # Both locales of this version, the same text Play shows.
-                            notes="$(mktemp)"
-                            awk -v v="## $version" '$0 == v { f = 1; next } /^## / { if (f) exit } f' frontend/CHANGELOG.md | sed '/./,$!d' > "$notes"
-
-                            if gh release view "$tag" -R "$GITHUB_REPO" >/dev/null 2>&1; then
-                                # A rerun of the same version: replace the asset,
-                                # keep the release and its notes.
-                                gh release upload "$tag" "$apk" -R "$GITHUB_REPO" --clobber
-                            else
-                                gh release create "$tag" "$apk" -R "$GITHUB_REPO" \\
-                                    --target "$GIT_COMMIT" --title "$version" \\
-                                    --notes-file "$notes" --latest
-                            fi
-                            rm -f "$notes"
-                        '''
+                    withCredentials([
+                        string(credentialsId: 'planpm-github-token', variable: 'GH_TOKEN'),
+                        file(credentialsId: 'planpm-play-store-json-key', variable: 'PLAY_STORE_JSON_KEY_FILE')
+                    ]) {
+                        dir('frontend/android') {
+                            sh '''
+                                set -eu
+                                command -v gh >/dev/null 2>&1 || { echo "Install GitHub CLI: brew install gh" >&2; exit 1; }
+                                PLAY_STORE_JSON_KEY="$(cat "$PLAY_STORE_JSON_KEY_FILE")"
+                                export PLAY_STORE_JSON_KEY
+                                bundle config set --local path 'vendor/bundle'
+                                bundle install --quiet
+                                bundle exec fastlane android github
+                            '''
+                        }
                     }
                 }
             }

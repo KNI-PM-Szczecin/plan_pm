@@ -8,3 +8,7 @@ source "https://rubygems.org"
 # them only through `xcargs`. Dropping below 2.237 means restoring
 # `export_xcargs: signing_xcargs` there in the same commit.
 gem "fastlane", "2.237.0"
+
+group :test do
+  gem "minitest", "6.0.0"
+end

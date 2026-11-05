@@ -115,15 +115,56 @@ secrets.dart → Flutter dependencies → iOS → Android → GitHub release`.
   `key.properties`, `.p8` z `TMPDIR`, usuwa keychain CI i przywraca domyślny
   keychain maszyny. Bez tego build zostawiałby certyfikat dystrybucyjny
   w workspace na maszynie, która nie należy do projektu.
-- **GitHub release** — po udanym uploadzie na Play lane pobiera z Google Play
-  *universal APK* (`download_universal_apk_from_google_play`) i job publikuje
+- **Trzy niezależne lane'y:** `ios deploy`, `android deploy`, `android github`.
+  Lane Androida kończy pracę po uploadzie AAB; lane GitHuba nie buduje aplikacji
+  i nie wysyła jej do sklepów.
+- **GitHub release** — osobny lane pobiera z Google Play
+  *universal APK* (`download_universal_apk_from_google_play`), sprawdza podpis,
+  wersję, kompletność architektur i brak kontroli licencji Google Play, a job publikuje
   go jako release `vX.Y.Z` z notatkami z `CHANGELOG.md`. To APK **podpisane
   kluczem Google (Play App Signing)**, nie lokalny `flutter build apk` — ten
   miałby podpis kluczem uploadowym i nie dałby się zainstalować na wersję ze
   sklepu bez odinstalowania. Porażka tego etapu daje build `UNSTABLE`, nie
   `FAILURE` (apka jest już w sklepie), więc nie wysyła pingu na Discord.
   Ponowny przebieg tej samej wersji podmienia asset w istniejącym release.
-  Pomijany przy `DRY_RUN` i gdy etap Androida padł.
+  Pomijany przy `DRY_RUN`, wyłączonym `DEPLOY_GITHUB` i gdy wybrany etap Androida
+  padł. Można uruchomić sam GitHub: `DEPLOY_IOS=false`, `DEPLOY_ANDROID=false`,
+  `DEPLOY_GITHUB=true` — dla wersji już przesłanej do Play.
+
+#### APK instalowany poza Google Play
+
+W Google Play Console dla Plan PM wyłącz **Automatic protection / Installer
+check / Require installation from Google Play** przed przygotowaniem nowego
+wydania. Ta ochrona dodaje `com.pairip.licensecheck` do APK i może blokować
+uruchomienie pliku pobranego z GitHuba zależnie od konta Google użytkownika.
+Samo wyłączenie ustawienia nie usuwa ochrony z już pobranego pliku.
+
+Pipeline odrzuca chroniony APK i usuwa go przed etapem publikacji; wydanie na
+Play pozostaje niezależne, a etap GitHub kończy się `UNSTABLE`. Dla wersji 1.3.1
+(28) API udostępnia tylko niechronione split APK, bez niechronionego standalone
+APK. Nie wolno scalać podpisanych części i udawać kompletnego APK.
+
+Ponowne pobranie istniejącego wydania, bez budowania i wysyłania do Play:
+
+```sh
+cd frontend/android
+# PLAY_STORE_JSON_KEY i ANDROID_HOME dostarcza środowisko CI.
+bundle exec fastlane android download_apk version_name:1.3.1 version_code:28
+```
+
+Ta komenda również odrzuci APK z blokadą. Test kontroli metadanych:
+`ruby frontend/android/fastlane/apk_validator_test.rb`.
+
+Pobranie, weryfikacja i publikacja jako osobny lane (wymaga także `GH_TOKEN`):
+
+```sh
+cd frontend/android
+bundle exec fastlane android github
+```
+
+Wersja pochodzi z `pubspec.yaml`; opcjonalnie można podać `version_name` i
+`version_code`, tak jak w `download_apk`. Błąd autoryzacji lub sieci podczas
+sprawdzania release przerywa publikację.
 
 ### Parametry
 
@@ -131,6 +172,7 @@ secrets.dart → Flutter dependencies → iOS → Android → GitHub release`.
 |----------|-----------|----------|
 | `DEPLOY_IOS` | `true` | wyłącz, żeby pominąć iOS |
 | `DEPLOY_ANDROID` | `true` | wyłącz, żeby pominąć Androida |
+| `DEPLOY_GITHUB` | `true` | pobierz i opublikuj sprawdzony APK; może działać bez budowania aplikacji |
 | `DRY_RUN` | `false` | zbuduj i podpisz wszystko, **nie wysyłaj nigdzie** |
 
 `DRY_RUN` ustawia `PLANPM_SKIP_UPLOAD=true`, które oba Fastfile'e honorują tuż
