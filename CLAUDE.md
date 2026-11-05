@@ -99,12 +99,15 @@ więc z samego drzewka dało się złożyć zestaw bez ani jednej grupy.
 
 Kod grupy to `KOD/PULA/ROCZNIK`, np. `P0A04/WIET/2024/2025 ZS`.
 [`buildGroupSections`](frontend/lib/service/group_categories.dart) dzieli grupy na sekcje:
-audytorium / ćwiczenia / laboratoria / projekt / symulator (pojedynczy wybór — student
-należy do jednej grupy) oraz **przedmioty obieralne** (pula `WIET`, kod `P0<litera><numer>`)
-— jedyna sekcja **wielokrotnego wyboru**. Wcześniej kategoria brała pierwszą literę kodu,
-więc grupa projektowa i cała pula obieralnych trafiały do jednego worka „Inne" z jednym
-slotem, a plan wychodził niepełny (3 zgłoszenia). Zapytanie o zajęcia już wcześniej
-używało `inFilter("group", …)`, więc backend nie wymagał zmian.
+audytorium / ćwiczenia / laboratoria / projekt / symulator / inne oraz **przedmioty
+obieralne** (pula `WIET`, kod `P0<litera><numer>`). Ekran to jedna sekcja „Grupy" z
+wierszem na rodzaj zajęć i wysuwanym menu **wielokrotnego wyboru** (`AppMultiMenuField`:
+haczyki, menu zostaje otwarte, w wierszu kody po przecinku). Wcześniej kategoria brała pierwszą literę
+kodu, więc grupa projektowa i cała pula obieralnych trafiały do jednego worka „Inne"
+z jednym slotem, a plan wychodził niepełny (3 zgłoszenia); potem jeden slot na rodzaj
+zajęć rocznika też okazał się za mały — uczelnia dzieli grupy per przedmiot (AiR 1. rok:
+P01–P06, student jest w kilku projektowych naraz; 11.2026). Zapytanie o zajęcia używa
+`inFilter("group", …)`, więc backend nie wymagał zmian.
 Testy: [`test/group_categories_test.dart`](frontend/test/group_categories_test.dart) —
 po jednym teście na każdy plan z obieralnymi, na kodach ze snapshotu produkcji.
 

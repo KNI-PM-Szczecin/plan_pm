@@ -173,9 +173,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupTypeElective => 'Electives';
 
   @override
-  String get groupTypeElectiveHint => 'You can select several';
-
-  @override
   String get groupTypeOther => 'Other';
 
   @override

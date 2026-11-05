@@ -50,7 +50,6 @@
   "groupTypeProject": "Project",
   "groupTypeSimulator": "Simulator",
   "groupTypeElective": "Electives",
-  "groupTypeElectiveHint": "You can select several",
   "groupTypeOther": "Other",
   "groupsSectionHeader": "Groups",
   "selectedCount": "Selected: {count}",

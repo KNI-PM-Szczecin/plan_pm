@@ -50,7 +50,6 @@
   "groupTypeProject": "Проєкт",
   "groupTypeSimulator": "Симулятор",
   "groupTypeElective": "Вибіркові предмети",
-  "groupTypeElectiveHint": "Можна вибрати кілька",
   "groupTypeOther": "Інше",
   "groupsSectionHeader": "Групи",
   "selectedCount": "Вибрано: {count}",

@@ -175,9 +175,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupTypeElective => 'Вибіркові предмети';
 
   @override
-  String get groupTypeElectiveHint => 'Можна вибрати кілька';
-
-  @override
   String get groupTypeOther => 'Інше';
 
   @override

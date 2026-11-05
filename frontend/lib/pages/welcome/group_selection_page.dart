@@ -1,11 +1,11 @@
 // Wybór grup zajęciowych studenta, pogrupowanych w sekcje przez
-// [buildGroupSections]:
-//   * „Grupy" — po jednym wierszu na rodzaj zajęć rocznika (audytorium,
-//     ćwiczenia, laboratoria, projekt, symulator), pojedynczy wybór z menu —
-//     student należy do jednej grupy; rodzaj można zostawić bez grupy,
-//   * przedmioty obieralne — lista wielokrotnego wyboru z licznikiem, bo
-//     obieralnych ma się kilka naraz (wcześniej jeden slot = niepełny plan).
-// Po zapisaniu persystuje wybór i synchronizuje dane przez [CacheService].
+// [buildGroupSections] (audytorium, ćwiczenia, laboratoria, projekt,
+// symulator, inne, obieralne). Jedna sekcja „Grupy", po jednym wierszu na
+// rodzaj zajęć z wysuwanym menu WIELOKROTNEGO wyboru ([AppMultiMenuField]):
+// uczelnia dzieli grupy per przedmiot, więc student bywa w kilku grupach
+// jednego rodzaju (wcześniej jeden slot = niepełny plan), a obieralnych i tak
+// ma się kilka. Po zapisaniu persystuje wybór i synchronizuje dane przez
+// [CacheService].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -16,7 +16,6 @@ import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/widgets/app_bottom_actions.dart';
 import 'package:plan_pm/global/widgets/app_button.dart';
 import 'package:plan_pm/global/widgets/app_grouped_section.dart';
-import 'package:plan_pm/global/widgets/app_list_row.dart';
 import 'package:plan_pm/global/widgets/app_menu_field.dart';
 import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/global/widgets/app_state_card.dart';
@@ -71,20 +70,20 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
     setState(() => _futureGroups = _backendService.fetchGroups());
   }
 
-  void _setSingle(GroupSection section, GroupEntry? entry) {
-    HapticFeedback.lightImpact();
+  void _toggle(GroupEntry entry) {
+    HapticFeedback.selectionClick();
     setState(() {
-      for (final other in section.entries) {
-        _selected.remove(other.full);
-      }
-      if (entry != null) _selected.add(entry.full);
+      if (!_selected.remove(entry.full)) _selected.add(entry.full);
       Student.selectedGroups = List.of(_selected);
     });
   }
 
-  void _toggleMulti(GroupEntry entry) {
+  void _clearSection(GroupSection section) {
+    HapticFeedback.selectionClick();
     setState(() {
-      if (!_selected.remove(entry.full)) _selected.add(entry.full);
+      for (final entry in section.entries) {
+        _selected.remove(entry.full);
+      }
       Student.selectedGroups = List.of(_selected);
     });
   }
@@ -223,57 +222,26 @@ class _GroupSelectionPageState extends State<GroupSelectionPage> {
   }
 
   Widget _buildSections(List<GroupSection> sections, AppLocalizations l10n) {
-    final single = sections.where((s) => !s.multiSelect).toList();
-    final multi = sections.where((s) => s.multiSelect).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: AppSection.spacing,
-      children: [
-        if (single.isNotEmpty)
-          AppSection(
-            header: l10n.groupsSectionHeader,
-            child: AppGroupedSection(
-              children: [
-                for (final section in single)
-                  AppMenuField<GroupEntry>(
-                    inline: true,
-                    label: groupKindLabel(section.kind, l10n),
-                    placeholder: l10n.groupNotSelected,
-                    options: section.entries,
-                    optionLabel: (e) => e.code,
-                    selected: section.entries
-                        .where((e) => _selected.contains(e.full))
-                        .firstOrNull,
-                    onSelected: (e) => _setSingle(section, e),
-                    clearLabel: l10n.groupNotSelected,
-                    onCleared: () => _setSingle(section, null),
-                  ),
-              ],
+    return AppSection(
+      header: l10n.groupsSectionHeader,
+      child: AppGroupedSection(
+        children: [
+          for (final section in sections)
+            AppMultiMenuField<GroupEntry>(
+              label: groupKindLabel(section.kind, l10n),
+              placeholder: l10n.groupNotSelected,
+              options: section.entries,
+              optionLabel: (e) => e.code,
+              selected: {
+                for (final e in section.entries)
+                  if (_selected.contains(e.full)) e,
+              },
+              onToggled: _toggle,
+              clearLabel: l10n.groupNotSelected,
+              onCleared: () => _clearSection(section),
             ),
-          ),
-        for (final section in multi)
-          AppSection(
-            header: groupKindLabel(section.kind, l10n),
-            headerNote: l10n.selectedCount(
-              section.entries.where((e) => _selected.contains(e.full)).length,
-            ),
-            footer: l10n.groupTypeElectiveHint,
-            child: AppGroupedSection(
-              children: [
-                for (final entry in section.entries)
-                  AppListRow(
-                    title: entry.code,
-                    selected: _selected.contains(entry.full),
-                    accessory: _selected.contains(entry.full)
-                        ? AppListRowAccessory.checkmark
-                        : AppListRowAccessory.none,
-                    onTap: () => _toggleMulti(entry),
-                  ),
-              ],
-            ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

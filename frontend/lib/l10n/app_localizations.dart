@@ -400,19 +400,13 @@ abstract class AppLocalizations {
   /// **'Przedmioty obieralne'**
   String get groupTypeElective;
 
-  /// group_builder.dart - Hint under the elective header: this is the only multi-select section.
-  ///
-  /// In pl, this message translates to:
-  /// **'Możesz zaznaczyć kilka'**
-  String get groupTypeElectiveHint;
-
   /// group_builder.dart - Default name for unmapped group types.
   ///
   /// In pl, this message translates to:
   /// **'Inne'**
   String get groupTypeOther;
 
-  /// group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...).
+  /// group_selection_page.dart - Header of the section with one multi-select menu per group type (auditorium, classes, labs...).
   ///
   /// In pl, this message translates to:
   /// **'Grupy'**

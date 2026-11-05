@@ -167,9 +167,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupTypeElective => 'Przedmioty obieralne';
 
   @override
-  String get groupTypeElectiveHint => 'Możesz zaznaczyć kilka';
-
-  @override
   String get groupTypeOther => 'Inne';
 
   @override

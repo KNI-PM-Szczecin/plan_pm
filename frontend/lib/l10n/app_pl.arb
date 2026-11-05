@@ -205,17 +205,13 @@
   "@groupTypeElective": {
     "description": "group_builder.dart - Section header for the faculty-wide elective pool (P0A04/WIET)."
   },
-  "groupTypeElectiveHint": "Możesz zaznaczyć kilka",
-  "@groupTypeElectiveHint": {
-    "description": "group_builder.dart - Hint under the elective header: this is the only multi-select section."
-  },
   "groupTypeOther": "Inne",
   "@groupTypeOther": {
     "description": "group_builder.dart - Default name for unmapped group types."
   },
   "groupsSectionHeader": "Grupy",
   "@groupsSectionHeader": {
-    "description": "group_selection_page.dart - Header of the section with single-choice groups (auditorium, classes, labs...)."
+    "description": "group_selection_page.dart - Header of the section with one multi-select menu per group type (auditorium, classes, labs...)."
   },
   "selectedCount": "Wybrano: {count}",
   "@selectedCount": {
