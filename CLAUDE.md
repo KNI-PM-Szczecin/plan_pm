@@ -132,6 +132,13 @@ Widgety czytają z DatabaseService → opcjonalnie WidgetService.pushTodayLectur
 
 > **Ważne:** `syncNews()` i `syncLectures()` muszą być wywoływane razem wszędzie, gdzie sync ma miejsce (onboarding, przełączanie roli, app_initialization). Pominięcie `syncNews()` powoduje brak aktualności przy pierwszym uruchomieniu.
 
+> **Pusta odpowiedź backendu = brak zajęć.** `syncLectures()` czyści wtedy cache
+> i widżet, zamiast zostawiać stare wiersze. Wcześniej zostawiał je „na wszelki
+> wypadek", a po zmianie kierunku w `InputPage` stare grupy (np. `LO2/PSM/…`)
+> nie pasowały do nowego zapytania, backend zwracał 0 i student oglądał plan
+> poprzedniego kierunku do skutku. Dlatego `InputPage._continue` przy zmianie
+> planu (kierunek/specjalizacja/rok/tryb/stopień) czyści też `groups` w prefs.
+
 > **Re-entrancy guard:** `CacheService.syncLectures()` i `syncNews()` cache'ują aktualnie trwający `Future`. Równoległe wywołania zwracają to samo Future zamiast startować drugi sync — chroni przed duplikacją w SQLite (każdy sync robi `clearLectures()` + insert loop na auto-incremented ID). Nie obchodź tego mechanizmu wywołując prywatne `_runLecturesSync`.
 
 **Fetchowanie zajęć z SQLite:**

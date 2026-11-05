@@ -225,6 +225,19 @@ class _InputPageState extends State<InputPage> {
     setState(() => _isSubmitting = true);
     try {
       HapticFeedback.lightImpact();
+      // Grupy należą do konkretnego planu: po zmianie kierunku/roku/trybu stare
+      // kody (np. "LO2/PSM/…") nie pasują do nowego zapytania — backend
+      // zwracał 0 zajęć, a apka zostawała ze starym cache poprzedniego
+      // kierunku (restart i odświeżanie powtarzały to w kółko). Czyścimy je
+      // od razu, zanim poleci sync; ekran grup i tak zapisze nowy wybór.
+      final programChanged =
+          Student.degreeCourse != option.degreeCourse ||
+          Student.specialisation !=
+              (option.specialisation == null ? null : option.programName) ||
+          Student.year != option.year ||
+          Student.studyMode?.programType != option.programType ||
+          Student.degreeLevel != option.degreeLevel;
+
       Student.faculty = option.faculty;
       // Gdy plan jest wystawiony pod kierunkiem, to jego nazwa leci do zapytania —
       // dlatego zapisujemy dokładnie `programName`, a nie etykietę z drzewka.
@@ -248,6 +261,10 @@ class _InputPageState extends State<InputPage> {
       await prefs.setInt("year", option.year);
       await prefs.setString("study_mode", option.programType);
       await prefs.setString("degree_level", option.degreeLevel);
+      if (programChanged) {
+        Student.selectedGroups = [];
+        await prefs.setStringList("groups", []);
+      }
       // During lecturer → student switching the app is still in
       // lecturer mode here. Sync only after GroupSelectionPage has
       // committed the new mode, otherwise lecturer data is cached.
