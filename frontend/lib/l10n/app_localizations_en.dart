@@ -65,6 +65,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select your faculty, field, and mode to personalize your schedule';
 
   @override
+  String get groupSelectionIntro =>
+      'Select the groups you belong to — the schedule will show only your classes. Without a selection you will see the whole programme.';
+
+  @override
   String get groupLoading => 'Loading groups...';
 
   @override
@@ -89,9 +93,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentLecture => 'Your 3 upcoming classes';
-
-  @override
-  String get lectureLoading => 'Loading schedule';
 
   @override
   String get todayLecturesNaN => 'No classes for today';
@@ -528,9 +529,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debugSevenDayMode => '7-day mode';
-
-  @override
-  String get newsLoading => 'Loading news';
 
   @override
   String get newsNoDataDescription =>

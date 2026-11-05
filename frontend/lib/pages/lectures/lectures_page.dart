@@ -14,6 +14,7 @@ import 'package:plan_pm/global/widgets/official_schedule_note.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/day_selection.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
+import 'package:plan_pm/pages/lectures/widgets/lecture_skeleton.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
@@ -91,6 +92,9 @@ class _LecturesPageState extends State<LecturesPage> {
         ),
         FutureBuilder<List<LectureModel>>(
           future: databaseService.fetchLectures(),
+          // Ostatni odczyt (rozgrzany przy starcie): plan rysuje się od razu
+          // z danymi; szkielet tylko na zimny start.
+          initialData: databaseService.lastLectures,
           builder: (context, snapshot) {
             final Widget content;
             final Key contentKey;
@@ -109,7 +113,18 @@ class _LecturesPageState extends State<LecturesPage> {
               contentKey = const ValueKey('loading');
               content = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: AppStateCard.loading(title: l10n.lectureLoading),
+                child: LectureListSkeleton(
+                  count: 3,
+                  header: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      l10n.lectureLength(3),
+                      style: AppTextStyle.footnote.copyWith(
+                        color: AppColor.labelSecondary,
+                      ),
+                    ),
+                  ),
+                ),
               );
             } else {
               // Klucz = wybrany dzień: odświeżenie danych tego samego dnia nie

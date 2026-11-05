@@ -1,6 +1,7 @@
 // Strona główna aplikacji — wyświetla najnowszy news i nadchodzące zajęcia.
 // Obsługuje pull-to-refresh: odświeża cache (zajęcia + newsy) i sygnalizuje
-// [TodayLectures] przez [_refreshNotifier] aby przebudował swój Future.
+// [TodayLectures] i [NewsBuilder] przez [_refreshNotifier], aby odczytały bazę
+// ponownie — obie sekcje trzymają starą treść do czasu nowej (bez migania).
 import 'package:flutter/material.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
@@ -67,11 +68,7 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               HomeSection(
                 title: l10n.newsSectionLabel,
-                child: ValueListenableBuilder<int>(
-                  valueListenable: _refreshNotifier,
-                  builder: (context, refresh, _) =>
-                      NewsBuilder(key: ValueKey(refresh), limit: 1),
-                ),
+                child: NewsBuilder(limit: 1, refreshNotifier: _refreshNotifier),
               ),
               TodayLectures(refreshNotifier: _refreshNotifier),
             ],

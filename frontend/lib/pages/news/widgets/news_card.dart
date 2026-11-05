@@ -12,6 +12,7 @@ import 'package:plan_pm/pages/news/utils/html_preview.dart';
 import 'package:plan_pm/pages/news/widgets/news_cover_image.dart';
 import 'package:plan_pm/pages/news/widgets/news_meta_row.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class NewsCard extends StatelessWidget {
   const NewsCard({
@@ -21,14 +22,32 @@ class NewsCard extends StatelessWidget {
     required this.description,
     required this.timestamp,
     this.imageUrl,
-  });
+  }) : _placeholder = false;
+
+  /// Atrapa do szkieletu ([NewsBuilder] pod Skeletonizerem): ta sama karta
+  /// z wymyśloną treścią i pustą okładką o proporcji prawdziwej — wysokość
+  /// jak u docelowej karty, więc lista nie skacze po załadowaniu.
+  const NewsCard.placeholder({super.key})
+    : title = 'Zmiany w planie zajęć od nowego semestru',
+      messageType = 'Ogłoszenie',
+      description =
+          'Od poniedziałku obowiązuje zaktualizowany plan zajęć. Sprawdź '
+          'godziny i sale swoich przedmiotów.',
+      timestamp = null,
+      imageUrl = null,
+      _placeholder = true;
+
+  /// Czy karta jest atrapą (okładka-kość, bez akcji).
+  final bool _placeholder;
 
   final String title;
   final String messageType;
 
   /// Treść w HTML — w karcie pokazujemy z niej tylko początek zwykłym tekstem.
   final String description;
-  final DateTime timestamp;
+
+  /// `null` tylko w atrapie.
+  final DateTime? timestamp;
   final String? imageUrl;
 
   static const double radius = 22;
@@ -41,34 +60,42 @@ class NewsCard extends StatelessWidget {
       shape: RoundedSuperellipseBorder(
         borderRadius: BorderRadius.circular(radius),
       ),
-      onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FullNewsPage(
-              title: title,
-              messageType: messageType,
-              description: description,
-              timestamp: timestamp,
-              imageUrl: imageUrl,
-            ),
-          ),
-        );
-      },
+      onTap: _placeholder
+          ? null
+          : () {
+              HapticFeedback.lightImpact();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FullNewsPage(
+                    title: title,
+                    messageType: messageType,
+                    description: description,
+                    timestamp: timestamp!,
+                    imageUrl: imageUrl,
+                  ),
+                ),
+              );
+            },
       child: ClipRSuperellipse(
         borderRadius: BorderRadius.circular(radius),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (imageUrl != null) NewsCoverImage(imageUrl: imageUrl!),
+            if (_placeholder)
+              const Skeleton.leaf(child: AspectRatio(aspectRatio: 2.5))
+            else if (imageUrl != null)
+              NewsCoverImage(imageUrl: imageUrl!),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 4,
                 children: [
-                  NewsMetaRow(messageType: messageType, timestamp: timestamp),
+                  NewsMetaRow(
+                    messageType: messageType,
+                    timestamp: timestamp ?? DateTime.now(),
+                  ),
                   Text(
                     title,
                     style: AppTextStyle.headline.copyWith(

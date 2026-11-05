@@ -65,6 +65,10 @@ class AppLocalizationsUk extends AppLocalizations {
       'Виберіть свій факультет, напрямок і форму, щоб персоналізувати розклад занять';
 
   @override
+  String get groupSelectionIntro =>
+      'Виберіть групи, до яких ви належите — розклад показуватиме лише ваші заняття. Без вибору ви побачите заняття всього напряму.';
+
+  @override
   String get groupLoading => 'Завантаження груп...';
 
   @override
@@ -91,9 +95,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get recentLecture => 'Ваші 3 найближчі заняття';
-
-  @override
-  String get lectureLoading => 'Завантаження розкладу';
 
   @override
   String get todayLecturesNaN => 'Немає занять на сьогодні';
@@ -534,9 +535,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get debugSevenDayMode => 'Режим 7 днів';
-
-  @override
-  String get newsLoading => 'Завантаження новин';
 
   @override
   String get newsNoDataDescription =>

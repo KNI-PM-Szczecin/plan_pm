@@ -65,6 +65,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'Wybierz swój wydział, kierunek i tryb, aby spersonalizować plan zajęć';
 
   @override
+  String get groupSelectionIntro =>
+      'Wybierz grupy, do których należysz — plan pokaże tylko Twoje zajęcia. Bez wyboru zobaczysz zajęcia całego kierunku.';
+
+  @override
   String get groupLoading => 'Ładowanie grup...';
 
   @override
@@ -83,9 +87,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get recentLecture => 'Twoje 3 najbliższe zajęcia';
-
-  @override
-  String get lectureLoading => 'Ładowanie planu';
 
   @override
   String get todayLecturesNaN => 'Brak zajęć na dziś';
@@ -525,9 +526,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get debugSevenDayMode => 'Tryb 7-dniowy';
-
-  @override
-  String get newsLoading => 'Ładowanie aktualności';
 
   @override
   String get newsNoDataDescription =>

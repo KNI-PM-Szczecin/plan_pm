@@ -7,10 +7,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/utils/extensions.dart';
-import 'package:plan_pm/global/widgets/states/generic_loading.dart';
 import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
+import 'package:plan_pm/pages/lectures/widgets/lecture_skeleton.dart';
 import 'package:plan_pm/service/database_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:collection/collection.dart';
@@ -52,6 +52,9 @@ class _TodayLecturesState extends State<TodayLectures> {
 
   void _fetchData() {
     currentDate = DateTime.now();
+    // Ostatni odczyt z bazy (rozgrzany przy starcie) — pierwsza klatka rysuje
+    // się już z danymi, szkielet zostaje na zimny start.
+    _cachedData ??= DatabaseService.instance.lastLectures;
     _lecturesFuture = DatabaseService.instance.fetchLectures();
   }
 
@@ -76,7 +79,15 @@ class _TodayLecturesState extends State<TodayLectures> {
           }
           if (snapshot.connectionState == ConnectionState.waiting &&
               _cachedData == null) {
-            return GenericLoading(label: l10n.lectureLoading);
+            return LectureListSkeleton(
+              count: 2,
+              header: Text(
+                DateFormat.MMMMEEEEd(
+                  Localizations.localeOf(context).toLanguageTag(),
+                ).format(currentDate).toCapitalizedFirst,
+                style: TextStyle(color: AppColor.onBackgroundVariant),
+              ),
+            );
           }
           final unfilteredLectures = snapshot.data ?? _cachedData ?? [];
           if (unfilteredLectures.isEmpty) {
@@ -111,7 +122,7 @@ class _TodayLecturesState extends State<TodayLectures> {
             spacing: 10,
             children: [
               Skeletonizer(
-                effect: const ShimmerEffect(baseColor: Color(0x4FFFFFFF)),
+                effect: lectureSkeletonEffect,
                 enabled: snapshot.connectionState == ConnectionState.waiting,
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),

@@ -66,16 +66,7 @@ Future<Widget> _buildOnboardedPage(SharedPreferences prefs) async {
 
     sevenDayModeNotifier.value = true;
 
-    try {
-      await CacheService().syncLectures();
-    } catch (error) {
-      AppLogger.e("[APP-INIT] syncLectures error", error);
-    }
-    try {
-      await CacheService().syncNews();
-    } catch (error) {
-      AppLogger.e("[APP-INIT] syncNews error", error);
-    }
+    await _syncAndWarmCache();
 
     return const MyHomePage(title: "Strona główna");
   }
@@ -110,6 +101,16 @@ Future<Widget> _buildOnboardedPage(SharedPreferences prefs) async {
     return const InputPage();
   }
 
+  await _syncAndWarmCache();
+
+  return const MyHomePage(title: "Strona główna");
+}
+
+/// Sync obu cache'ów (zawsze razem — patrz CLAUDE.md) i rozgrzanie odczytu
+/// z bazy, zanim zejdzie splash: strona główna i plan dostają
+/// `DatabaseService.lastLectures`/`lastNews` jako `initialData` i rysują się
+/// od razu z danymi, bez klatki szkieletu i skoku treści.
+Future<void> _syncAndWarmCache() async {
   try {
     await CacheService().syncLectures();
   } catch (error) {
@@ -120,6 +121,12 @@ Future<Widget> _buildOnboardedPage(SharedPreferences prefs) async {
   } catch (error) {
     AppLogger.e("[APP-INIT] syncNews error", error);
   }
-
-  return const MyHomePage(title: "Strona główna");
+  try {
+    await DatabaseService.instance.fetchLectures();
+    await DatabaseService.instance.fetchNews(
+      limit: DatabaseService.newsLimitAll,
+    );
+  } catch (error) {
+    AppLogger.e("[APP-INIT] warm-up read error", error);
+  }
 }

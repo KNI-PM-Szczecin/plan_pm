@@ -2,7 +2,7 @@
 // w szarym kółku, tytułem, opisem i opcjonalną akcją (np. „Spróbuj ponownie").
 // Zajmuje miejsce formularza/listy, bez przerywanej ramki (makieta 5c).
 //
-// Nie mylić z GenericNoResource/GenericLoading — te zostają na ekranach zajęć,
+// Nie mylić z GenericNoResource — ten zostaje na stronie głównej (zajęcia),
 // których redesign nie obejmuje.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

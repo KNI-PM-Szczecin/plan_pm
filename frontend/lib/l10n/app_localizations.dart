@@ -208,6 +208,12 @@ abstract class AppLocalizations {
   /// **'Wybierz swój wydział, kierunek i tryb, aby spersonalizować plan zajęć'**
   String get groupSelectionHint;
 
+  /// Wstęp nad listą grup na ekranie wyboru grup
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz grupy, do których należysz — plan pokaże tylko Twoje zajęcia. Bez wyboru zobaczysz zajęcia całego kierunku.'**
+  String get groupSelectionIntro;
+
   /// group_selection_page.dart - Loading message while fetching available groups.
   ///
   /// In pl, this message translates to:
@@ -243,12 +249,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Twoje 3 najbliższe zajęcia'**
   String get recentLecture;
-
-  /// schedule_view.dart - General loading indicator text for the schedule.
-  ///
-  /// In pl, this message translates to:
-  /// **'Ładowanie planu'**
-  String get lectureLoading;
 
   /// today_lectures.dart - Message shown when there are no lectures for the current day.
   ///
@@ -1059,12 +1059,6 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Tryb 7-dniowy'**
   String get debugSevenDayMode;
-
-  /// No description provided for @newsLoading.
-  ///
-  /// In pl, this message translates to:
-  /// **'Ładowanie aktualności'**
-  String get newsLoading;
 
   /// No description provided for @newsNoDataDescription.
   ///

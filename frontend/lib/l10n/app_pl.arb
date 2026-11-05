@@ -72,6 +72,10 @@
   "@groupSelectionHint": {
     "description": "group_selection_page.dart - Initial hint/instruction for group selection."
   },
+  "groupSelectionIntro": "Wybierz grupy, do których należysz — plan pokaże tylko Twoje zajęcia. Bez wyboru zobaczysz zajęcia całego kierunku.",
+  "@groupSelectionIntro": {
+    "description": "Wstęp nad listą grup na ekranie wyboru grup"
+  },
   "groupLoading": "Ładowanie grup...",
   "@groupLoading": {
     "description": "group_selection_page.dart - Loading message while fetching available groups."
@@ -98,10 +102,6 @@
   "recentLecture": "Twoje 3 najbliższe zajęcia",
   "@recentLecture": {
     "description": "today_lectures.dart - Label for the next upcoming class/lecture."
-  },
-  "lectureLoading": "Ładowanie planu",
-  "@lectureLoading": {
-    "description": "schedule_view.dart - General loading indicator text for the schedule."
   },
   "todayLecturesNaN": "Brak zajęć na dziś",
   "@todayLecturesNaN": {
@@ -533,7 +533,6 @@
   "debugClearCache": "Wyczyść cache",
   "debugCacheCleared": "Cache wyczyszczony",
   "debugSevenDayMode": "Tryb 7-dniowy",
-  "newsLoading": "Ładowanie aktualności",
   "newsNoDataDescription": "Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.",
   "searchHint": "Szukaj...",
   "debugShowGdpr": "Pokaż ekran zgody RODO",
