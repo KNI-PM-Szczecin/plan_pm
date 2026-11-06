@@ -1,9 +1,9 @@
 // Stan zamiast treści: ładowanie, błąd albo brak danych — karta z ikoną
 // w szarym kółku, tytułem, opisem i opcjonalną akcją (np. „Spróbuj ponownie").
 // Zajmuje miejsce formularza/listy, bez przerywanej ramki (makieta 5c).
-//
-// Nie mylić z GenericNoResource — ten zostaje na stronie głównej (zajęcia),
-// których redesign nie obejmuje.
+// Jedyny pusty stan w aplikacji — także „brak zajęć" na stronie głównej
+// (dawny GenericNoResource z przerywaną ramką usunięty 07.11.2026: dwa
+// style tego samego stanu obok siebie).
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';

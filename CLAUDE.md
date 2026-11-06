@@ -266,8 +266,9 @@ Widok zajęć też jest przerobiony (nagłówek z datą, wybór dnia z animacją
 tygodnia, stany przez `AppStateCard`) i karta `Lecture`: promień 22 jak inne karty,
 typografia z `AppTextStyle`, kolory pochodne od koloru tekstu (pastel), **bez własnego
 marginesu** — odstępy między kartami ustawia lista (12 pt). Dzienne gradienty kart i
-wyboru dnia zostają. `GenericNoResource` został tylko w `today_lectures.dart`
-(Home). Rozwijanie karty: 100 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
+wyboru dnia zostają. Pusty stan wszędzie to `AppStateCard` (na ekranach
+niegrupowanych z `color: AppColor.surfaceSecondary`); `GenericNoResource`
+usunięty. Rozwijanie karty: 100 ms `easeOutCubic` (250 ms `easeInOut` „ciągnęło").
 **Nie ruszać dolnego paska** (`navigation_bar.dart`).
 
 **Kilka sal w jednym polu** (`lib/global/utils/rooms.dart`): uczelnia wpisuje

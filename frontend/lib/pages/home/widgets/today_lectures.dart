@@ -7,7 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/lecture_model.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/utils/extensions.dart';
-import 'package:plan_pm/global/widgets/states/generic_no_resource.dart';
+import 'package:plan_pm/global/widgets/app_state_card.dart';
 import 'package:plan_pm/pages/home/widgets/home_section.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture_skeleton.dart';
@@ -71,10 +71,11 @@ class _TodayLecturesState extends State<TodayLectures> {
           if (snapshot.hasData) _cachedData = snapshot.data;
 
           if (snapshot.hasError && _cachedData == null) {
-            return GenericNoResource(
-              label: l10n.unexpectedError,
+            return AppStateCard(
+              color: AppColor.surfaceSecondary,
               icon: LucideIcons.bug,
-              description: snapshot.error.toString(),
+              title: l10n.unexpectedError,
+              message: snapshot.error.toString(),
             );
           }
           if (snapshot.connectionState == ConnectionState.waiting &&
@@ -91,20 +92,22 @@ class _TodayLecturesState extends State<TodayLectures> {
           }
           final unfilteredLectures = snapshot.data ?? _cachedData ?? [];
           if (unfilteredLectures.isEmpty) {
-            return GenericNoResource(
-              label: l10n.todayLecturesNaN,
+            return AppStateCard(
+              color: AppColor.surfaceSecondary,
               icon: LucideIcons.calendarX,
-              description: l10n.lectureWigetHint,
+              title: l10n.todayLecturesNaN,
+              message: l10n.lectureWigetHint,
             );
           }
 
           final lectures = getClosestLectures(unfilteredLectures, currentDate);
 
           if (lectures.isEmpty) {
-            return GenericNoResource(
-              label: l10n.todayLecturesNaN,
+            return AppStateCard(
+              color: AppColor.surfaceSecondary,
               icon: LucideIcons.calendarX,
-              description: l10n.lectureWigetHint,
+              title: l10n.todayLecturesNaN,
+              message: l10n.lectureWigetHint,
             );
           }
 

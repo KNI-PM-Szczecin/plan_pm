@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/theme/typography.dart';
+import 'package:plan_pm/global/utils/logger.dart';
 import 'package:plan_pm/global/widgets/app_bar.dart';
 import 'package:plan_pm/global/models/student.dart';
 import 'package:plan_pm/global/widgets/app_bottom_actions.dart';
@@ -66,6 +67,7 @@ class _InputPageState extends State<InputPage> {
 
   late Future<ProgramAvailability> _futureAvailability;
   bool _isSubmitting = false;
+  bool _isSkipping = false;
 
   @override
   void initState() {
@@ -296,6 +298,35 @@ class _InputPageState extends State<InputPage> {
     });
   }
 
+  /// „Pomiń": strona główna bez danych studenta, ale z nowościami. Wcześniej
+  /// przycisk tylko przechodził do home bez syncu i student oglądał „Brak
+  /// nowości", mimo że newsy nie zależą od kierunku (zgłoszenie 07.11.2026).
+  /// Sync planu idzie w parze (patrz CLAUDE.md); bez kierunku zwraca pusto
+  /// i tylko czyści cache. Błąd sieci nie blokuje wejścia — pull-to-refresh
+  /// dociągnie dane.
+  Future<void> _skip() async {
+    if (widget.isRoleSwitch) {
+      Navigator.pop(context);
+      return;
+    }
+    setState(() => _isSkipping = true);
+    try {
+      await CacheService().syncNews();
+      await CacheService().syncLectures();
+    } catch (error) {
+      AppLogger.e("[INPUT-PAGE] sync after skip failed", error);
+    } finally {
+      if (mounted) setState(() => _isSkipping = false);
+    }
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyHomePage(title: "Plan PM"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -367,19 +398,8 @@ class _InputPageState extends State<InputPage> {
                 secondary: AppButton(
                   label: l10n.skipButton,
                   variant: AppButtonVariant.gray,
-                  onPressed: () {
-                    if (widget.isRoleSwitch) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyHomePage(title: "Plan PM"),
-                        ),
-                      );
-                    }
-                  },
+                  isLoading: _isSkipping,
+                  onPressed: _isSubmitting ? null : _skip,
                 ),
                 primary: AppButton(
                   label: l10n.groupSelection,
