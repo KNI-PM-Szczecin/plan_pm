@@ -20,6 +20,7 @@ class AppNavButton extends StatelessWidget {
     required this.onPressed,
     required this.label,
     this.androidIcon,
+    this.floating = false,
   });
 
   /// Ikona na Androidzie.
@@ -35,13 +36,28 @@ class AppNavButton extends StatelessWidget {
   /// Etykieta dla czytników ekranu (i tooltip na Androidzie).
   final String label;
 
+  /// Przycisk leży na zdjęciu (hero pod przezroczystym paskiem), nie na tle
+  /// strony. iOS: szkło i tak jest czytelne na obrazie. Android: ciemne,
+  /// półprzezroczyste kółko z białą ikoną, bo goła strzałka ginie w kadrze.
+  final bool floating;
+
   @override
   Widget build(BuildContext context) {
     if (!isApplePlatform) {
-      return IconButton(
-        tooltip: label,
-        icon: Icon(androidIcon ?? icon, color: AppColor.onBackground),
-        onPressed: onPressed,
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        decoration: ShapeDecoration(
+          shape: const CircleBorder(),
+          color: floating ? const Color(0x66000000) : Colors.transparent,
+        ),
+        child: IconButton(
+          tooltip: label,
+          icon: Icon(
+            androidIcon ?? icon,
+            color: floating ? Colors.white : AppColor.onBackground,
+          ),
+          onPressed: onPressed,
+        ),
       );
     }
 
@@ -61,9 +77,12 @@ class AppNavButton extends StatelessWidget {
 }
 
 class AppBackButton extends StatelessWidget {
-  const AppBackButton({super.key, this.onPressed});
+  const AppBackButton({super.key, this.onPressed, this.floating = false});
 
   final VoidCallback? onPressed;
+
+  /// Patrz [AppNavButton.floating].
+  final bool floating;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +92,7 @@ class AppBackButton extends StatelessWidget {
       androidIcon: Icons.arrow_back,
       label: MaterialLocalizations.of(context).backButtonTooltip,
       onPressed: onPressed ?? () => Navigator.of(context).maybePop(),
+      floating: floating,
     );
   }
 }

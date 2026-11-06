@@ -55,4 +55,55 @@ void main() {
       expect(_barTarget(tester), 0);
     },
   );
+
+  testWidgets(
+    'z hero pasek dostaje tło i tytuł dopiero za progiem scrollEdgeOffset',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: const CustomAppBar(title: 'Szczegóły', scrollEdgeOffset: 200),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  for (var i = 0; i < 40; i++)
+                    SizedBox(height: 60, child: Text('$i')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      double titleOpacity() => tester
+          .widget<AnimatedOpacity>(
+            find.descendant(
+              of: find.byType(CustomAppBar),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+
+      // Na górze: przezroczysty i bez tytułu (tytuł leżałby na zdjęciu).
+      expect(_barTarget(tester), 0);
+      expect(titleOpacity(), 0);
+
+      // Przewinięcie krótsze niż próg — hero wciąż pod paskiem, nic się nie dzieje.
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -100));
+      await tester.pumpAndSettle();
+      expect(_barTarget(tester), 0);
+      expect(titleOpacity(), 0);
+
+      // Za progiem treść wjeżdża pod pasek: tło i tytuł.
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -200));
+      await tester.pumpAndSettle();
+      expect(_barTarget(tester), 1);
+      expect(titleOpacity(), 1);
+
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, 600));
+      await tester.pumpAndSettle();
+      expect(_barTarget(tester), 0);
+      expect(titleOpacity(), 0);
+    },
+  );
 }

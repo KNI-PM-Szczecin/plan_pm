@@ -30,6 +30,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.bottom,
     this.onBack,
     this.backgroundColor,
+    this.scrollEdgeOffset = 0,
   });
 
   /// `null` = sam przycisk powrotu (ekran ma własny duży nagłówek w treści).
@@ -43,6 +44,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Domyślnie [AppColor.background].
   final Color? backgroundColor;
 
+  /// Treść zaczyna się od elementu na pełną szerokość pod paskiem — okładka
+  /// artykułu (hero). Pasek liczy się za „przewinięty" dopiero, gdy lista
+  /// przejedzie tyle pikseli (hero minus pasek statusu i pasek): do tego
+  /// czasu jest przezroczysty, bez tytułu, a przycisk wstecz pływa nad
+  /// obrazem ([AppBackButton.floating]). 0 = zwykły ekran.
+  final double scrollEdgeOffset;
+
   static const double height = 52;
 
   @override
@@ -55,13 +63,26 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> with _ScrollEdgeMixin {
   @override
+  double get scrollEdgeOffset => widget.scrollEdgeOffset;
+
+  @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final pageColor = widget.backgroundColor ?? AppColor.background;
+    final hero = widget.scrollEdgeOffset > 0;
+    final overHero = hero && !scrolledUnder;
+    final Widget? title = widget.title == null
+        ? null
+        : Text(
+            widget.title!,
+            style: AppTextStyle.headline.copyWith(color: AppColor.onBackground),
+          );
     return AppBar(
-      systemOverlayStyle: brightness == Brightness.light
-          ? SystemUiOverlayStyle.dark
-          : SystemUiOverlayStyle.light,
+      // Nad hero pasek statusu leży na zdjęciu — jasne ikony (okładki
+      // newsów są ciemne); po przewinięciu wraca styl z motywu.
+      systemOverlayStyle: overHero || brightness == Brightness.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
       toolbarHeight: CustomAppBar.height,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
@@ -77,18 +98,20 @@ class _CustomAppBarState extends State<CustomAppBar> with _ScrollEdgeMixin {
       leading: Padding(
         padding: const EdgeInsets.only(left: 16),
         child: Center(
-          child: widget.leading ?? AppBackButton(onPressed: widget.onBack),
+          child:
+              widget.leading ??
+              AppBackButton(onPressed: widget.onBack, floating: overHero),
         ),
       ),
       centerTitle: true,
-      title: widget.title == null
-          ? null
-          : Text(
-              widget.title!,
-              style: AppTextStyle.headline.copyWith(
-                color: AppColor.onBackground,
-              ),
-            ),
+      // Nad hero tytuł leżałby na zdjęciu — pojawia się razem z tłem.
+      title: hero && title != null
+          ? AnimatedOpacity(
+              opacity: scrolledUnder ? 1 : 0,
+              duration: const Duration(milliseconds: 180),
+              child: title,
+            )
+          : title,
       actions: [...?widget.actions, const SizedBox(width: 16)],
       bottom: widget.bottom,
     );
@@ -229,6 +252,10 @@ mixin _ScrollEdgeMixin<T extends StatefulWidget> on State<T> {
   /// Głębokość scrollable, którego słuchamy (0 = bezpośrednio w body).
   int get scrollDepth => 0;
 
+  /// Ile pikseli przewinięcia mieści się „nad" paskiem, zanim treść wjedzie
+  /// pod niego (hero na pełną szerokość). 0 = pasek od razu nad treścią.
+  double get scrollEdgeOffset => 0;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -251,7 +278,7 @@ mixin _ScrollEdgeMixin<T extends StatefulWidget> on State<T> {
     }
     final metrics = notification.metrics;
     if (metrics.axis != Axis.vertical) return;
-    scrolledUnder = metrics.extentBefore > 0;
+    scrolledUnder = metrics.extentBefore > scrollEdgeOffset;
   }
 }
 

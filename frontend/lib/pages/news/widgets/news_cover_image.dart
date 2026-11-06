@@ -1,10 +1,11 @@
 // Okładka wiadomości z cache'owaniem — placeholder skeleton podczas ładowania.
-// [aspectRatio] zamiast stałej wysokości: 2,5 w karcie listy, 1,25 w pełnym
-// widoku (makiety 8a / 6a). [borderRadius] zaokrągla samo zdjęcie w pełnym
-// widoku, gdzie nie leży w karcie.
+// [aspectRatio] zamiast stałej wysokości: 2,5 w karcie listy (makieta 8a);
+// `null` = wypełnia rodzica (hero na pełną szerokość w [FullNewsPage]).
+// [borderRadius] zaokrągla samo zdjęcie tam, gdzie nie leży w karcie.
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/utils/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -17,8 +18,16 @@ class NewsCoverImage extends StatelessWidget {
   });
 
   final String imageUrl;
-  final double aspectRatio;
+  final double? aspectRatio;
   final BorderRadius borderRadius;
+
+  /// Ramka o docelowym rozmiarze: proporcja albo cały rodzic.
+  Widget _frame(Widget child) {
+    final ratio = aspectRatio;
+    return ratio == null
+        ? SizedBox.expand(child: child)
+        : AspectRatio(aspectRatio: ratio, child: child);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +36,17 @@ class NewsCoverImage extends StatelessWidget {
       cacheManager: newsCacheManager,
       imageBuilder: (context, imageProvider) => ClipRRect(
         borderRadius: borderRadius,
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: Image(image: imageProvider, fit: BoxFit.cover),
-        ),
+        child: _frame(Image(image: imageProvider, fit: BoxFit.cover)),
       ),
       placeholder: (context, url) =>
-          Skeleton.leaf(child: AspectRatio(aspectRatio: aspectRatio)),
+          Skeleton.leaf(child: _frame(const SizedBox())),
       errorWidget: (context, url, error) {
         AppLogger.w("[NEWS-CACHE] Nie udało się załadować obrazu: $url", error);
-        return const SizedBox.shrink();
+        // Hero bez obrazu zostaje pustym nagłówkiem w kolorze karty — pasek
+        // i tak dostaje tło dopiero po przewinięciu.
+        return aspectRatio == null
+            ? ColoredBox(color: AppColor.surfaceSecondary)
+            : const SizedBox.shrink();
       },
     );
   }
