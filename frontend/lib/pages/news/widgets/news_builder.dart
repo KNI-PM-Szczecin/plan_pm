@@ -11,6 +11,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/news_model.dart';
+import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/app_state_card.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 import 'package:plan_pm/pages/lectures/widgets/lecture_skeleton.dart';
@@ -66,6 +67,7 @@ class _NewsBuilderState extends State<NewsBuilder> {
 
         if (snapshot.hasError && _cached == null) {
           return AppStateCard(
+            color: AppColor.surfaceSecondary,
             icon: LucideIcons.bug,
             title: l10n.unexpectedError,
             message: snapshot.error.toString(),
@@ -89,6 +91,7 @@ class _NewsBuilderState extends State<NewsBuilder> {
         final data = snapshot.data ?? _cached ?? [];
         if (data.isEmpty) {
           return AppStateCard(
+            color: AppColor.surfaceSecondary,
             icon: LucideIcons.newspaper,
             title: l10n.noNews,
             message: l10n.newsNoDataDescription,

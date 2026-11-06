@@ -7,10 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 
 class ColorThemes {
-  // Color() to ARGB — alfa idzie PIERWSZA. Było `0xf7f8faFF` (zapis RGBA), czyli
-  // tło o kryciu 97%: przy przejściu poprzedni ekran prześwitywał przez nowy,
-  // a po animacji znikał i kolor całego ekranu skakał (flicker od 1.0).
-  static const Color lightBackground = Color(0xFFF7F8FA);
+  // Tło ekranów niegrupowanych (Home, Zajęcia, Nowości, powitanie, artykuł):
+  // `--backgrounds-primary` z iOS 27 Flat. Było `#F7F8FA` sprzed redesignu —
+  // nie ma go w systemie, a biała karta newsa (`groupedSurface`) prawie na nim
+  // znikała; makieta 8a kładzie kartę `--backgrounds-secondary` na białym.
+  // Color() to ARGB — alfa idzie PIERWSZA (kiedyś `0xf7f8faFF`, czyli tło o
+  // kryciu 97% i flicker przy przejściach).
+  static const Color lightBackground = Color(0xFFFFFFFF);
   static const Color lightOnBackground = Colors.black;
   static final Color lightOnBackgroundVariant = Colors.black.withAlpha(150);
   static const Color lightSurface = Colors.white;
@@ -121,8 +124,12 @@ class AppColor {
   // dowolnym tle i same dopasowują się do niego.
 
   /// Tekst pomocniczy: podtytuły, opisy pod nagłówkiem.
+  ///
+  /// Jasny: 75% krycia zamiast systemowych 60% (`#3C3C4399`). Systemowe daje
+  /// 3,4:1 na bieli i 3,3:1 na karcie `#F2F2F7` — poniżej 4,5:1 (WCAG AA dla
+  /// małego tekstu), zajawka newsa była nieczytelna. 75% = 5,2:1 / 4,9:1.
   static Color get labelSecondary => _brightness == Brightness.light
-      ? const Color(0x993C3C43)
+      ? const Color(0xBF3C3C43)
       : const Color(0xB2EBEBF5);
 
   /// Tylko placeholdery i nieaktywny tekst — poniżej 4.5:1, nie na treść.
@@ -154,6 +161,13 @@ class AppColor {
   static Color get groupedBackground => _brightness == Brightness.light
       ? const Color(0xFFF2F2F7)
       : const Color(0xFF000000);
+
+  /// Karta na [background] (ekran niegrupowany): karta newsa, stan pustej
+  /// listy — `--backgrounds-secondary`. W ciemnym motywie to ten sam kolor co
+  /// [groupedSurface], w jasnym odwrotnie: szara karta na białej stronie.
+  static Color get surfaceSecondary => _brightness == Brightness.light
+      ? const Color(0xFFF2F2F7)
+      : const Color(0xFF1C1C1E);
 
   /// Karta sekcji na [groupedBackground] i tło okienek dialogowych.
   static Color get groupedSurface => _brightness == Brightness.light

@@ -56,7 +56,7 @@ class NewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AppPressable(
-      color: AppColor.groupedSurface,
+      color: AppColor.surfaceSecondary,
       shape: RoundedSuperellipseBorder(
         borderRadius: BorderRadius.circular(radius),
       ),

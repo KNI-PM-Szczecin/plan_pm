@@ -65,9 +65,10 @@ class NoticePage extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: AppColor.groupedBackground,
       // Dotychczasowy użytkownik dostaje ekran jako korzeń — nie ma dokąd wrócić.
       appBar: CustomAppBar(
+        backgroundColor: AppColor.groupedBackground,
         leading: Navigator.of(context).canPop()
             ? null
             : const SizedBox.shrink(),

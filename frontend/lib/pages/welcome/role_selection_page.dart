@@ -92,7 +92,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: AppColor.groupedBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

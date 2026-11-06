@@ -20,10 +20,11 @@ class AppStateCard extends StatelessWidget {
     this.message,
     this.actionLabel,
     this.onAction,
+    this.color,
   });
 
   /// Karta ładowania: spinner zamiast ikony, sam tytuł.
-  const AppStateCard.loading({super.key, required this.title})
+  const AppStateCard.loading({super.key, required this.title, this.color})
     : icon = null,
       message = null,
       actionLabel = null,
@@ -37,13 +38,17 @@ class AppStateCard extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
 
+  /// Tło karty. Domyślnie [AppColor.groupedSurface] (strona grupowana);
+  /// na ekranie z [AppColor.background] podaj [AppColor.surfaceSecondary].
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
       decoration: ShapeDecoration(
-        color: AppColor.groupedSurface,
+        color: color ?? AppColor.groupedSurface,
         shape: RoundedSuperellipseBorder(
           borderRadius: BorderRadius.circular(AppGroupedSection.radius),
         ),

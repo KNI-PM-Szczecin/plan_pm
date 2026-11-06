@@ -103,6 +103,7 @@ class _LecturesPageState extends State<LecturesPage> {
               content = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: AppStateCard(
+                  color: AppColor.surfaceSecondary,
                   icon: LucideIcons.bug,
                   title: l10n.unexpectedError,
                   message: snapshot.error.toString(),
@@ -174,6 +175,7 @@ class _LecturesPageState extends State<LecturesPage> {
         child: Column(
           children: [
             AppStateCard(
+              color: AppColor.surfaceSecondary,
               icon: LucideIcons.calendarX,
               title: l10n.todayDataNaN,
               message: l10n.lectureWigetHint,

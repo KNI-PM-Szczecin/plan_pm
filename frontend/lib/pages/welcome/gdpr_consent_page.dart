@@ -29,8 +29,8 @@ class GdprConsentPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColor.background,
-      appBar: const CustomAppBar(),
+      backgroundColor: AppColor.groupedBackground,
+      appBar: CustomAppBar(backgroundColor: AppColor.groupedBackground),
       body: Column(
         children: [
           Expanded(
