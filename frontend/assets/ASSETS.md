@@ -5,7 +5,7 @@
 | Plik | Używany w |
 |---|---|
 | `logo_light.png` | `lib/global/widgets/sidebar.dart` — logo w nagłówku bocznego panelu nawigacyjnego; `lib/global/widgets/app_icon_tile.dart` — ikona na ekranie powitalnym |
-| `kni_logo.png` | `lib/pages/settings/about_page.dart` — logo KNI na stronie "O aplikacji" |
+| `kni_logo.png` | `lib/pages/settings/about_page.dart` — logo KNI na stronie "O aplikacji"; `lib/pages/welcome/notice_page.dart` — nagłówek informacji o nieoficjalnej aplikacji. Okrągłe, 512 px, przezroczyste rogi (źródło: KNI, 11.2026) |
 | `theme_light.png` | `lib/pages/settings/appearance_page.dart` — podgląd jasnego motywu |
 | `theme_dark.png` | `lib/pages/settings/appearance_page.dart` — podgląd ciemnego motywu |
 | `theme_mixed.png` | `lib/pages/settings/appearance_page.dart` — podgląd motywu systemowego |
