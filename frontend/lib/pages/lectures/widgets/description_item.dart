@@ -1,5 +1,6 @@
 // Wiersz szczegółu zajęcia w rozwijanej sekcji karty [Lecture] — kolorowa ikona, etykieta i wartość.
 import 'package:flutter/material.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 
 class DescriptionItem extends StatelessWidget {
   const DescriptionItem({
@@ -8,12 +9,16 @@ class DescriptionItem extends StatelessWidget {
     required this.color,
     required this.name,
     required this.content,
+    required this.textColor,
   });
 
   final IconData icon;
   final Color color;
   final String name;
   final String content;
+
+  /// Kolor tekstu karty — biały albo ciemny na pastelu.
+  final Color textColor;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,13 +36,14 @@ class DescriptionItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(color: Color(0xB3FFFFFF)),
+                  style: AppTextStyle.footnote.copyWith(
+                    color: textColor.withValues(alpha: 0.7),
+                  ),
                 ),
                 Text(
                   content,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  style: AppTextStyle.subheadlineEmphasized.copyWith(
+                    color: textColor,
                   ),
                 ),
               ],

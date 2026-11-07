@@ -29,10 +29,17 @@ class CacheService {
 
   Future<void> _runLecturesSync() async {
     var lectures = await _backendService.fetchLectures();
+    final db = DatabaseService.instance;
     if (lectures.isEmpty) {
+      // Pusta odpowiedź to prawdziwe „brak zajęć" dla tych ustawień (błąd
+      // sieci rzuca wyjątkiem i tu nie dochodzi). Wcześniej zostawialiśmy
+      // stary cache „na wszelki wypadek", przez co po zmianie kierunku
+      // student widział plan poprzedniego kierunku. Czyścimy cache i widżet.
       AppLogger.w(
-        "[CACHE-SERVICE] No lectures found in database. Maybe the user mistyped his info?",
+        "[CACHE-SERVICE] No lectures found for the current settings — clearing cache",
       );
+      await db.clearLectures();
+      await WidgetService.pushTodayLectures();
       return;
     }
 
@@ -40,7 +47,6 @@ class CacheService {
       lectures = mergeLectures(lectures);
     }
 
-    final db = DatabaseService.instance;
     await db.clearLectures();
 
     for (var lecture in lectures) {

@@ -1,3 +1,21 @@
+## 1.4.0
+
+### pl-PL
+
+- Nowy wygląd aplikacji: ekran główny, plan, aktualności, ustawienia i pierwsze uruchomienie
+- Plan działa szybciej: karty i aktualności pojawiają się od razu, bez migania przy starcie i odświeżaniu
+- Informacja o nieoficjalnym charakterze aplikacji i link do oficjalnego planu uczelni
+- Linki w aktualnościach da się otworzyć
+- Menu boczne mieści się na małych ekranach i przy dużej czcionce
+
+### en-US
+
+- New look for the home screen, schedule, news, settings and onboarding
+- Faster schedule: cards and news show up right away, with no flicker on launch or refresh
+- Notice that the app is unofficial, with a link to the official university schedule
+- Links inside news can now be opened
+- The side menu fits small screens and large text sizes
+
 ## 1.3.2
 
 ### pl-PL

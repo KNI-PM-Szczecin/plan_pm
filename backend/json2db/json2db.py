@@ -74,10 +74,13 @@ class json2db:
     db: Any
     data: dict
     
-    def __init__(self, input, dry_run=False, clear=False, force=False):
+    def __init__(self, input, dry_run=False, clear=False, force=False, refresh_upcoming=False):
+        if clear and refresh_upcoming:
+            raise ValueError("Choose either clear or refresh_upcoming, not both")
         self.dry_run = dry_run
         self.clear = clear
         self.force = force
+        self.refresh_upcoming = refresh_upcoming
         self.log("Json2DB loaded.")
         with open(input, encoding="utf8") as file:
             self.data = json.loads(file.read())
@@ -112,6 +115,20 @@ class json2db:
         self.admin_db.table("rooms").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
         self.admin_db.table("teachers").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
         self.admin_db.table("building").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+
+    def clear_upcoming_classes(self):
+        """Replace today's/future schedule while retaining past classes and their links."""
+        cutoff = datetime.datetime.now(WARSAW_TZ).strftime("%Y-%m-%dT00:00:00")
+        classes = _fetch_all(
+            self.admin_db.table("classes").select("id")
+            .gte("startTime", cutoff).order("id")
+        )
+        # Delete links explicitly: do not depend on an ON DELETE CASCADE policy.
+        for offset in range(0, len(classes), 100):
+            ids = [row["id"] for row in classes[offset:offset + 100]]
+            self.admin_db.table("teachersclasses").delete().in_("classes", ids).execute()
+            self.admin_db.table("classes").delete().in_("id", ids).execute()
+        self.log(f"Usunięto {len(classes)} zajęć od {cutoff}; historia pozostaje.")
         
         
     def load_teachers(self):
@@ -356,7 +373,7 @@ class json2db:
             print(json.dumps(self.data, ensure_ascii=False, indent=2))
             return
 
-        if self.clear and not self.force:
+        if (self.clear or self.refresh_upcoming) and not self.force:
             class_count = len(self.data.get("classes", []))
             if class_count < MIN_CLASSES_TO_CLEAR:
                 raise ValueError(
@@ -369,6 +386,8 @@ class json2db:
         self.load_env()
         if self.clear:
             self.clear_db()
+        elif self.refresh_upcoming:
+            self.clear_upcoming_classes()
         written = {
             "teachers": self.load_teachers(),
             "building": self.load_buildings(),
@@ -400,17 +419,23 @@ if __name__ == "__main__":
         "--dry-run", action="store_true",
         help="Wyświetl dane bez zapisywania do bazy danych",
     )
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--clear", action="store_true",
         help="Wyczyść bazę danych przed zapisem (domyślnie: wyłączone)",
     )
+    mode.add_argument(
+        "--refresh-upcoming", action="store_true",
+        help="Odśwież zajęcia od dzisiaj, zachowując historię i słowniki",
+    )
     parser.add_argument(
         "--force", action="store_true",
-        help="Pomiń bramkę minimalnej liczby zajęć dla --clear (niebezpieczne)",
+        help="Pomiń bramkę minimalnej liczby zajęć przed usuwaniem (niebezpieczne)",
     )
     args = parser.parse_args()
 
-    App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear, force=args.force)
+    App = json2db(input=args.input, dry_run=args.dry_run, clear=args.clear,
+                  force=args.force, refresh_upcoming=args.refresh_upcoming)
 
     # A dry run touches nothing, so it is not worth an embed. Otherwise report
     # to Discord unless an outer caller (admin, MCP) already notifies for us.

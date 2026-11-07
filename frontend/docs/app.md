@@ -47,7 +47,7 @@ Supabase (remote) → BackendService → CacheService → SQLite (local)
 
 | File | Description |
 |------|-------------|
-| `pages/welcome/welcome_page.dart` | 4-slide carousel with Lottie animations introducing the app |
+| `pages/welcome/welcome_page.dart` | Single welcome screen: app icon, name, tagline and one button |
 | `pages/welcome/input_page.dart` | Selects faculty, field of study, year, degree level, study mode. Fetches university structure from Supabase |
 | `pages/welcome/group_selection_page.dart` | Selects class groups after study settings are saved |
 

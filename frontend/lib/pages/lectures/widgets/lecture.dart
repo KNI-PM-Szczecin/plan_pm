@@ -10,6 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/global/models/app_mode.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
+import 'package:plan_pm/global/utils/platform.dart';
+import 'package:plan_pm/global/utils/rooms.dart';
 import 'package:plan_pm/global/notifiers/notifiers.dart';
 import 'package:plan_pm/pages/lectures/utils/lecture_utils.dart';
 import 'package:plan_pm/pages/lectures/widgets/description_item.dart';
@@ -58,6 +61,14 @@ class Lecture extends StatefulWidget {
 }
 
 class _LectureState extends State<Lecture> {
+  // Jak pozostałe karty aplikacji (NewsCard.radius) — jeden promień na obu platformach.
+  static const double _cardRadius = 22;
+  // Rozwijanie szczegółów: krótko i z wyhamowaniem (easeOut), żeby karta
+  // reagowała od razu po tapnięciu — 250 ms z easeInOut odczuwalnie „ciągnęło",
+  // 180 ms wciąż było za wolne.
+  static const Duration _expandDuration = Duration(milliseconds: 100);
+  static const Curve _expandCurve = Curves.easeOutCubic;
+
   bool expanded = false;
   double _progress = 0.0; // 0.0–1.0, wypełnienie paska postępu
   bool _isInProgress = false; // czy zajęcia aktualnie trwają
@@ -163,6 +174,21 @@ class _LectureState extends State<Lecture> {
           : AppColor.onPrimary;
     }
 
+    // Kolory pochodne od koloru tekstu — na pastelu (ciemny tekst) ciemnieją
+    // razem z nim, zamiast zostawać białe na jasnym tle.
+    final bool darkText = textColor.computeLuminance() < 0.5;
+    final Color secondaryTextColor = textColor.withValues(alpha: 0.7);
+    final Color separatorColor = textColor.withValues(alpha: 0.2);
+    final Color trackColor = darkText
+        ? Colors.black.withValues(alpha: 0.12)
+        : Colors.white.withValues(alpha: 0.25);
+    final Color detailsBoxColor = darkText
+        ? Colors.white.withValues(alpha: 0.45)
+        : Colors.black.withValues(alpha: 0.28);
+
+    // Kilka sal (zajęcia w jednej z nich) — patrz [splitRooms].
+    final List<String> rooms = splitRooms(widget.location);
+
     bool isInProgress =
         widget.isProgressable &&
         _isInProgress &&
@@ -187,11 +213,10 @@ class _LectureState extends State<Lecture> {
       }
     }
 
-    // Zajęcia aktualnie trwające są wizualnie wyróżnione pogrubieniem
-    FontWeight titleWeight = isInProgress ? FontWeight.w800 : FontWeight.bold;
-    FontWeight subTextWeight = isInProgress
-        ? FontWeight.bold
-        : FontWeight.normal;
+    // Stała grubość — trwające zajęcia wyróżnia pasek postępu. Pogrubianie
+    // poszerzało tekst i potrafiło przerzucić tytuł do nowej linii.
+    const FontWeight titleWeight = FontWeight.bold;
+    const FontWeight subTextWeight = FontWeight.normal;
 
     final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -220,7 +245,7 @@ class _LectureState extends State<Lecture> {
       ),
       child: ClipRRect(
         // ClipRRect, żeby paski nie wychodziły poza zaokrąglone rogi
-        borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
+        borderRadius: BorderRadius.circular(_cardRadius),
         child: Stack(
           children: [
             // --- TŁO Z PASKAMI DLA GODZIN REKTORSKICH ---
@@ -280,12 +305,11 @@ class _LectureState extends State<Lecture> {
                                         const SizedBox(width: 6),
                                         Text(
                                           getBadgeText(),
-                                          style: TextStyle(
+                                          style: AppTextStyle.caption1.copyWith(
                                             color: Colors.white.withValues(
                                               alpha: 0.8,
                                             ),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: AppTextWeight.semibold,
                                           ),
                                         ),
                                       ],
@@ -300,9 +324,8 @@ class _LectureState extends State<Lecture> {
                                   Expanded(
                                     child: Text(
                                       widget.name,
-                                      style: TextStyle(
+                                      style: AppTextStyle.title3Emphasized.copyWith(
                                         fontWeight: titleWeight,
-                                        fontSize: 20,
                                         // Automatycznie przyjmie biały dla zwykłych, a szarawy dla rektorskich
                                         color: textColor,
                                         // Tylko to wymaga warunku:
@@ -316,19 +339,25 @@ class _LectureState extends State<Lecture> {
                                   ),
                                   AnimatedRotation(
                                     turns: expanded ? 0.5 : 0.0,
-                                    duration: const Duration(milliseconds: 100),
-                                    curve: Curves.easeInOut,
+                                    duration: _expandDuration,
+                                    curve: _expandCurve,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Icon(
                                         LucideIcons.chevronDown,
+                                        size: 20,
                                         color: textColor,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              // Wiersz: godzina + sala
+                              const SizedBox(height: 6),
+                              // Wiersz: godzina + sala. Jedna sala siedzi obok
+                              // godziny; kilka sal (zajęcia w jednej z nich)
+                              // schodzi do własnego wiersza jako pastylki —
+                              // jeden ciąg „A,B,C,D" zawijał się na trzy
+                              // linijki i zlewał z godziną.
                               Row(
                                 spacing: 5,
                                 children: [
@@ -338,35 +367,78 @@ class _LectureState extends State<Lecture> {
                                     color: textColor,
                                   ),
                                   Text(
-                                    "${widget.timeFrom} - ${widget.timeTo}",
-                                    style: TextStyle(
+                                    "${widget.timeFrom}–${widget.timeTo}",
+                                    // Cyfry o stałej szerokości — godziny
+                                    // kolejnych kart równają się w pionie.
+                                    style: AppTextStyle.subheadline.copyWith(
                                       color: textColor,
                                       fontWeight: subTextWeight,
+                                      fontFeatures: const [
+                                        FontFeature.tabularFigures(),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
-                                  Icon(
-                                    LucideIcons.mapPin,
-                                    size: 16,
-                                    color: textColor,
-                                  ),
-                                  // Sala — separator z bazy to " , " (spacja-przecinek-spacja),
-                                  // normalizowany do standardowego ", "
-                                  Expanded(
-                                    child: Text(
-                                      widget.location?.replaceAll(
-                                            " , ",
-                                            ", ",
-                                          ) ??
-                                          l10n.roomNaN,
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontWeight: subTextWeight,
+                                  if (rooms.length <= 1) ...[
+                                    const SizedBox(width: 5),
+                                    Icon(
+                                      LucideIcons.mapPin,
+                                      size: 16,
+                                      color: textColor,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        rooms.isEmpty
+                                            ? l10n.roomNaN
+                                            : rooms.first,
+                                        style: AppTextStyle.subheadline
+                                            .copyWith(
+                                              color: textColor,
+                                              fontWeight: subTextWeight,
+                                            ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ],
                               ),
+                              if (rooms.length > 1) ...[
+                                const SizedBox(height: 6),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 5,
+                                  children: [
+                                    // top: 2 centruje pinezkę z pierwszą
+                                    // linią tekstu.
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Icon(
+                                        LucideIcons.mapPin,
+                                        size: 16,
+                                        color: textColor,
+                                      ),
+                                    ),
+                                    // Linia na budynek: „Willowa – B1 117,
+                                    // B4 104, 107" — patrz [groupRoomsByBuilding].
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          for (final line
+                                              in groupRoomsByBuilding(rooms))
+                                            Text(
+                                              line,
+                                              style: AppTextStyle.subheadline
+                                                  .copyWith(
+                                                    color: textColor,
+                                                    fontWeight: subTextWeight,
+                                                  ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -380,9 +452,7 @@ class _LectureState extends State<Lecture> {
                             child: Stack(
                               children: [
                                 // Tło paska (półprzezroczyste)
-                                Container(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                ),
+                                Container(color: trackColor),
                                 // Wypełnienie paska animowane przy każdej zmianie _progress
                                 Align(
                                   alignment: Alignment.centerLeft,
@@ -410,8 +480,8 @@ class _LectureState extends State<Lecture> {
                     ),
                     // Rozwijana sekcja szczegółów
                     AnimatedSize(
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.easeInOut,
+                      duration: _expandDuration,
+                      curve: _expandCurve,
                       child: expanded
                           ? Padding(
                               padding: const EdgeInsets.only(
@@ -422,9 +492,7 @@ class _LectureState extends State<Lecture> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Divider(
-                                    color: Color.fromARGB(80, 228, 227, 227),
-                                  ),
+                                  Divider(color: separatorColor),
                                   const SizedBox(height: 2),
                                   // left: 4 wyrównuje ikonę do lewej krawędzi górnej sekcji (padding 16 vs 12)
                                   Padding(
@@ -439,7 +507,7 @@ class _LectureState extends State<Lecture> {
                                         ),
                                         Text(
                                           "${l10n.lengthLabel}: ${formatDuration(widget.duration, l10n)}",
-                                          style: TextStyle(
+                                          style: AppTextStyle.subheadline.copyWith(
                                             color: textColor,
                                             fontWeight: subTextWeight,
                                           ),
@@ -451,23 +519,28 @@ class _LectureState extends State<Lecture> {
                                   // Nagłówek sekcji dodatkowych szczegółów
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4),
+                                    // Typografia jak nagłówek [AppSection]:
+                                    // wersaliki na iOS, zdanie na Androidzie.
                                     child: Text(
-                                      l10n.additionalInformation,
-                                      style: const TextStyle(
-                                        color: Color(0xB3FFFFFF),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 1.5,
-                                      ),
+                                      isApplePlatform
+                                          ? l10n.additionalInformation
+                                                .toUpperCase()
+                                          : l10n.additionalInformation,
+                                      style:
+                                          (isApplePlatform
+                                                  ? AppTextStyle.footnote
+                                                  : AppTextStyle
+                                                        .footnoteEmphasized)
+                                              .copyWith(
+                                                color: secondaryTextColor,
+                                              ),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
                                   // Ramka z pozostałymi szczegółami zajęcia
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.28,
-                                      ),
+                                      color: detailsBoxColor,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child:
@@ -477,7 +550,8 @@ class _LectureState extends State<Lecture> {
                                             children: [
                                               DescriptionItem(
                                                 icon: LucideIcons.users,
-                                                color: Colors.green,
+                                                color: AppColor.systemGreen,
+                                                textColor: textColor,
                                                 name: l10n.groupLabel,
                                                 content: longToShort(
                                                   widget.group,
@@ -487,7 +561,8 @@ class _LectureState extends State<Lecture> {
                                                 DescriptionItem(
                                                   icon:
                                                       LucideIcons.graduationCap,
-                                                  color: Colors.blue,
+                                                  color: AppColor.systemBlue,
+                                                textColor: textColor,
                                                   name: l10n.yearLabel,
                                                   content: l10n.studyYear(
                                                     widget.year!,
@@ -496,14 +571,16 @@ class _LectureState extends State<Lecture> {
                                               if (widget.degreeLevel != null)
                                                 DescriptionItem(
                                                   icon: LucideIcons.award,
-                                                  color: Colors.orange,
+                                                  color: AppColor.systemOrange,
+                                                textColor: textColor,
                                                   name: l10n.degreeLevelLabel,
                                                   content: widget.degreeLevel!,
                                                 ),
                                               if (widget.programName != null)
                                                 DescriptionItem(
                                                   icon: LucideIcons.bookOpen,
-                                                  color: Colors.purple,
+                                                  color: AppColor.systemPurple,
+                                                textColor: textColor,
                                                   name: l10n.fieldLabel,
                                                   content: widget.programName!,
                                                 ),
@@ -514,7 +591,8 @@ class _LectureState extends State<Lecture> {
                                               if (widget.professor != null)
                                                 DescriptionItem(
                                                   icon: LucideIcons.user,
-                                                  color: Colors.blue,
+                                                  color: AppColor.systemBlue,
+                                                textColor: textColor,
                                                   name: l10n.professorLabel,
                                                   content:
                                                       widget.professor ??
@@ -522,7 +600,8 @@ class _LectureState extends State<Lecture> {
                                                 ),
                                               DescriptionItem(
                                                 icon: LucideIcons.bookLock,
-                                                color: Colors.green,
+                                                color: AppColor.systemGreen,
+                                                textColor: textColor,
                                                 name: l10n.groupLabel,
                                                 content: longToShort(
                                                   widget.group,
@@ -532,7 +611,8 @@ class _LectureState extends State<Lecture> {
                                                   !isCanceledOrRector)
                                                 DescriptionItem(
                                                   icon: LucideIcons.stickyNote,
-                                                  color: Colors.yellow,
+                                                  color: AppColor.systemYellow,
+                                                textColor: textColor,
                                                   name: l10n.notesLabel,
                                                   content:
                                                       widget.notes ??
@@ -555,17 +635,18 @@ class _LectureState extends State<Lecture> {
       ),
     );
 
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
-        child: isIOS
-            ? BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: cardContainer,
-              )
-            : cardContainer,
-      ),
+    // Bez własnego marginesu — odstępy między kartami ustawia lista.
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_cardRadius),
+      child: isIOS
+          ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: cardContainer,
+            )
+          : cardContainer,
     );
   }
 }
+
+// Pastylka jednej sali na karcie z kilkoma salami. Kolory pochodne od koloru
+// tekstu karty, jak reszta elementów — na pastelu ciemnieje, nie bieleje.

@@ -1,9 +1,7 @@
 // Główna powłoka nawigacyjna aplikacji — AppBar z hamburgerem, Sidebar, BottomBar i PageView.
 // Sidebar używa AnimationController — treść przesuwa się w prawo, sidebar wsuwa się z lewej.
 
-import 'dart:ui' show ImageFilter;
-
-import 'package:cupertino_native/cupertino_native.dart';
+import 'package:cupertino_native_better/cupertino_native.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -12,9 +10,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:plan_pm/api/models/announcement_model.dart';
 import 'package:plan_pm/changelog.dart';
 import 'package:plan_pm/env_config.dart';
-import 'package:plan_pm/global/pages/external_link_page.dart';
 import 'package:plan_pm/global/theme/colors.dart';
 import 'package:plan_pm/global/widgets/announcement_dialog.dart';
+import 'package:plan_pm/global/widgets/app_bar.dart';
+import 'package:plan_pm/global/widgets/back_button.dart';
 import 'package:plan_pm/global/widgets/navigation_bar.dart';
 import 'package:plan_pm/global/widgets/sidebar.dart';
 import 'package:plan_pm/global/widgets/whats_new_dialog.dart';
@@ -23,6 +22,7 @@ import 'package:plan_pm/pages/home/home_page.dart';
 import 'package:plan_pm/pages/lectures/lectures_page.dart';
 import 'package:plan_pm/pages/news/news_page.dart';
 import 'package:plan_pm/pages/settings/settings_page.dart';
+import 'package:plan_pm/global/utils/external_links.dart';
 import 'package:plan_pm/global/utils/routing.dart';
 import 'package:plan_pm/service/backend_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -31,10 +31,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 List<Map<String, dynamic>> getPages(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
+  // `scrollsUnderBar`: czy lista zakładki wjeżdża pod pasek tytułu. Plan
+  // zajęć ma nagłówek z wyborem dnia poniżej paska — jego lista przewija się
+  // pod nagłówkiem, nie pod paskiem, więc tło paska nie ma się tam włączać.
   return [
-    {"widget": const HomePage(), "title": l10n.pageTitleHome},
-    {"widget": const LecturesPage(), "title": l10n.pageTitleLectures},
-    {"widget": const NewsPage(), "title": l10n.pageTitleNews},
+    {
+      "widget": const HomePage(),
+      "title": l10n.pageTitleHome,
+      "scrollsUnderBar": true,
+    },
+    {
+      "widget": const LecturesPage(),
+      "title": l10n.pageTitleLectures,
+      "scrollsUnderBar": false,
+    },
+    {
+      "widget": const NewsPage(),
+      "title": l10n.pageTitleNews,
+      "scrollsUnderBar": true,
+    },
   ];
 }
 
@@ -50,6 +65,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+
+  // Stan „treść pod paskiem" każdej zakładki z osobna — PageView trzyma
+  // wszystkie trzy, więc pasek musi znać stan bieżącej, nie ostatnio
+  // przewijanej (patrz [AppLargeTitleBar]).
+  final Map<int, bool> _scrolledUnder = {};
+
+  void _setScrolledUnder(int index, bool value) {
+    if ((_scrolledUnder[index] ?? false) == value) return;
+    setState(() => _scrolledUnder[index] = value);
+  }
+
   late final AnimationController _sidebarController;
   late final Animation<Offset> _sidebarSlide;
   late final Animation<Offset> _contentSlide;
@@ -84,6 +110,11 @@ class _MyHomePageState extends State<MyHomePage>
     _sidebarController.dispose();
     _preloadPageController.dispose();
     super.dispose();
+  }
+
+  void _openExternal(String url) {
+    _closeSidebar();
+    openExternalLinkOrNotify(context, url);
   }
 
   void _openSidebar() => _sidebarController.forward();
@@ -171,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     final pages = getPages(context);
     final l10n = AppLocalizations.of(context)!;
-    final sidebarWidth = MediaQuery.of(context).size.width * 0.85;
+    final sidebarWidth = MediaQuery.of(context).size.width * 0.84;
 
     return Stack(
       children: [
@@ -182,64 +213,34 @@ class _MyHomePageState extends State<MyHomePage>
             extendBody: true,
             extendBodyBehindAppBar: true,
             backgroundColor: AppColor.background,
-            appBar: AppBar(
-              systemOverlayStyle: Theme.of(context).brightness == Brightness.light
-                  ? SystemUiOverlayStyle.dark
-                  : SystemUiOverlayStyle.light,
-              backgroundColor: Colors.transparent,
-              forceMaterialTransparency: true,
-              shape: Border(bottom: BorderSide(color: AppColor.outline)),
-              flexibleSpace: Builder(
-                builder: (context) {
-                  final isLight = Theme.of(context).brightness == Brightness.light;
-                  return ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Container(
-                        color: AppColor.background.withValues(alpha: isLight ? 0.92 : 0.5),
-                      ),
-                    ),
-                  );
+            appBar: AppLargeTitleBar(
+              title: pages[_currentIndex]['title'],
+              scrolledUnder: _scrolledUnder[_currentIndex] ?? false,
+              leading: AppNavButton(
+                icon: LucideIcons.menu,
+                symbol: 'line.3.horizontal',
+                label: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  _openSidebar();
                 },
-              ),
-              leading: Builder(
-                builder: (ctx) => defaultTargetPlatform == TargetPlatform.iOS
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: CNButton.icon(
-                            icon: const CNSymbol('line.3.horizontal', size: 20),
-                            style: CNButtonStyle.glass,
-                            onPressed: () {
-                              HapticFeedback.selectionClick();
-                              _openSidebar();
-                            },
-                          ),
-                        ),
-                      )
-                    : IconButton(
-                        onPressed: () {
-                          HapticFeedback.selectionClick();
-                          _openSidebar();
-                        },
-                        icon: Icon(
-                          LucideIcons.menu,
-                          color: AppColor.onBackgroundVariant,
-                        ),
-                      ),
-              ),
-              centerTitle: true,
-              title: Text(
-                pages[_currentIndex]['title'],
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.onBackground,
-                ),
               ),
             ),
             bottomNavigationBar: defaultTargetPlatform == TargetPlatform.iOS
                 ? CNTabBar(
                     tint: AppColor.primary,
+                    // Domyślnie plugin nie maluje natywnego paska, dopóki trwa
+                    // animacja push/pop strony nad nim — po wyjściu z ustawień
+                    // pasek pojawiał się dopiero po zakończeniu przejścia.
+                    // Malujemy go cały czas. Artefakt halo przy przejściach
+                    // (Issue #29 pluginu), dla którego to ukrywanie powstało,
+                    // plugin od 1.5 tłumi natywnie (`setTransitioning`),
+                    // niezależnie od tej flagi.
+                    autoHideOnPageTransition: false,
+                    // cupertino_native_better przekazuje rozmiar symbolu do
+                    // natywnego paska (domyślnie 24 pt — za duże); stary plugin
+                    // zostawiał systemowy. 18 pt odpowiada dawnemu wyglądowi.
+                    iconSize: 18,
                     currentIndex: _currentIndex,
                     onTap: (newIndex) {
                       setState(() => _currentIndex = newIndex);
@@ -279,7 +280,14 @@ class _MyHomePageState extends State<MyHomePage>
               children: [
                 PreloadPageView.builder(
                   itemCount: pages.length,
-                  itemBuilder: (context, index) => pages[index]["widget"],
+                  itemBuilder: (context, index) {
+                    final Widget page = pages[index]["widget"];
+                    if (pages[index]["scrollsUnderBar"] != true) return page;
+                    return ScrollEdgeListener(
+                      onChanged: (value) => _setScrolledUnder(index, value),
+                      child: page,
+                    );
+                  },
                   preloadPagesCount: 2,
                   onPageChanged: (value) {
                     setState(() => _currentIndex = value);
@@ -316,8 +324,9 @@ class _MyHomePageState extends State<MyHomePage>
                   behavior: HitTestBehavior.opaque,
                   onTap: _closeSidebar,
                   child: Container(
-                    color: Colors.black.withAlpha(
-                      (_sidebarController.value * 150).round(),
+                    // overlays-default z design systemu, narastający z wysunięciem.
+                    color: AppColor.overlay.withValues(
+                      alpha: AppColor.overlay.a * _sidebarController.value,
                     ),
                   ),
                 ),
@@ -341,52 +350,17 @@ class _MyHomePageState extends State<MyHomePage>
                       }
                     },
                     child: Sidebar(
-                      onPeTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://wf-zajecia.am.szczecin.pl/login',
-                              icon: LucideIcons.dumbbell,
-                              title: l10n.pePageTitle,
-                              description: l10n.pePageDescription,
-                              buttonLabel: l10n.pePageButton,
-                            ),
-                          ),
-                        );
-                      },
-                      onStudentIdTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://mlegitymacja.am.szczecin.pl',
-                              icon: LucideIcons.creditCard,
-                              title: l10n.studentIdPageTitle,
-                              description: l10n.studentIdPageDescription,
-                              buttonLabel: l10n.studentIdPageButton,
-                            ),
-                          ),
-                        );
-                      },
-                      onVirtualUniversityTap: () {
-                        _closeSidebar();
-                        Navigator.push(
-                          context,
-                          appRoute(
-                            (_) => ExternalLinkPage(
-                              url: 'https://wu.pm.szczecin.pl',
-                              icon: LucideIcons.landmark,
-                              title: l10n.virtualUniversityPageTitle,
-                              description:
-                                  l10n.virtualUniversityPageDescription,
-                              buttonLabel: l10n.virtualUniversityPageButton,
-                            ),
-                          ),
-                        );
-                      },
+                      // Skróty z menu to strony uczelni — otwieramy je od razu
+                      // w przeglądarce (strzałka ↗ w menu), bez ekranu pośredniego.
+                      onPeTap: () =>
+                          _openExternal(ExternalLinks.physicalEducation),
+                      onStudentIdTap: () =>
+                          _openExternal(ExternalLinks.studentId),
+                      onVirtualUniversityTap: () =>
+                          _openExternal(ExternalLinks.virtualUniversity),
+                      // Dubel z Ustawień — celowo, żeby nie trzeba było go szukać.
+                      onFeedbackTap: () =>
+                          _openExternal(ExternalLinks.feedbackForm),
                       onSettingsTap: () {
                         _closeSidebar();
                         Navigator.push(

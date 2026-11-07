@@ -54,6 +54,16 @@ platform :ios do
         keychain_password: keychain_password,
       )
 
+      # Intermediate the distribution certificate is issued by. The build host
+      # only has the expired G1 in its System keychain, so without this
+      # codesign cannot build the chain and fails with errSecInternalComponent.
+      # Public Apple certificate (apple.com/certificateauthority), valid to 2030.
+      import_certificate(
+        certificate_path: "fastlane/AppleWWDRCAG3.cer",
+        keychain_name: keychain_name,
+        keychain_password: keychain_password,
+      )
+
     end
 
     signing_xcargs = signing_xcargs.join(" ")

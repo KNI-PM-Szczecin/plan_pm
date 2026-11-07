@@ -9,40 +9,11 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get stage1Title => '';
+  String get welcomeTagline =>
+      'Зрозумілий і швидкий розклад занять із переглядом наживо.';
 
   @override
-  String get stage1Button => 'Ласкаво просимо до Plan PM';
-
-  @override
-  String get stage2Title =>
-      'Перегляньте всі заняття у зручному тижневому розкладі.';
-
-  @override
-  String get stage2Button => 'Далі';
-
-  @override
-  String get stage3Title =>
-      'Легко знаходьте свої аудиторії завдяки детальній інформації про місцезнаходження.';
-
-  @override
-  String get stage3Button => 'Далі';
-
-  @override
-  String get stage4Title =>
-      'Отримуйте нагадування перед кожним заняттям, щоб ніколи їх не пропустити.';
-
-  @override
-  String get stage4Button => 'Розпочати';
-
-  @override
-  String get welcomePageSelectionText => 'Повернутися до WelcomeScreen';
-
-  @override
-  String get inputPageSelectionText => 'Повернутися до InputPage';
-
-  @override
-  String get inputPageLabel => 'Ваші академічні дані';
+  String get welcomeButton => 'Ласкаво просимо до Plan PM';
 
   @override
   String get facultyLabel => 'Факультет';
@@ -75,25 +46,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get extramuralButton => 'Заочна';
 
   @override
-  String get continueButton => 'Продовжити';
-
-  @override
-  String get homePageLabel => 'Дані студента:';
-
-  @override
-  String get facultyText => 'Факультет';
-
-  @override
-  String get fieldText => 'Напрямок';
-
-  @override
-  String get specialisationText => 'Спеціалізація';
-
-  @override
   String get yearText => 'Рік';
-
-  @override
-  String get typeText => 'Форма навчання';
 
   @override
   String get dataNaN => 'Немає даних';
@@ -105,17 +58,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get skipButton => 'Пропустити';
 
   @override
-  String get fullTimeStudy => 'Стаціонарна';
-
-  @override
-  String get partTimeStudy => 'Нестаціонарна';
-
-  @override
   String get groupSelection => 'Вибір групи';
 
   @override
   String get groupSelectionHint =>
       'Виберіть свій факультет, напрямок і форму, щоб персоналізувати розклад занять';
+
+  @override
+  String get groupSelectionIntro =>
+      'Виберіть групи, до яких ви належите — розклад показуватиме лише ваші заняття. Без вибору ви побачите заняття всього напряму.';
 
   @override
   String get groupLoading => 'Завантаження груп...';
@@ -124,19 +75,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupSettings => 'Налаштування навчання';
 
   @override
-  String get groupSelectionHintAfterLoad =>
-      'На основі ваших налаштувань навчання ми завантажили доступні групи. Виберіть одну або декілька, щоб відстежувати різні розклади.';
-
-  @override
   String get save => 'Зберегти';
 
   @override
   String get todayDataNaN => 'Немає занять на сьогодні';
-
-  @override
-  String pageErrorMess(Object snapshotError) {
-    return 'Помилка у FutureBuilder $snapshotError';
-  }
 
   @override
   String lectureLength(num lecturesLength) {
@@ -153,9 +95,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get recentLecture => 'Ваші 3 найближчі заняття';
-
-  @override
-  String get lectureLoading => 'Завантаження розкладу';
 
   @override
   String get todayLecturesNaN => 'Немає занять на сьогодні';
@@ -186,28 +125,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get daysShortSun => 'Нд';
 
   @override
-  String get daysMon => 'понеділок';
+  String get previousWeek => 'Попередній тиждень';
 
   @override
-  String get daysTue => 'вівторок';
-
-  @override
-  String get daysWed => 'середа';
-
-  @override
-  String get daysThu => 'четвер';
-
-  @override
-  String get daysFri => 'п\'ятниця';
+  String get nextWeek => 'Наступний тиждень';
 
   @override
   String get selectedGroupsHeader => 'Вибрані групи';
 
   @override
   String get changeGroupsButton => 'Змінити групи';
-
-  @override
-  String get selectedGroupsLabel => 'Вибрані групи';
 
   @override
   String get noDataAvailable => 'Дані недоступні';
@@ -248,10 +175,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get groupTypeElective => 'Вибіркові предмети';
 
   @override
-  String get groupTypeElectiveHint => 'Можна вибрати кілька';
+  String get groupTypeOther => 'Інше';
 
   @override
-  String get groupTypeOther => 'Інше';
+  String get selectAllButton => 'Вибрати всі';
+
+  @override
+  String get deselectAllButton => 'Зняти всі';
+
+  @override
+  String selectedCount(int count) {
+    return 'Вибрано: $count';
+  }
 
   @override
   String get pageTitleHome => 'Головна';
@@ -269,15 +204,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get debugHeader => 'Налагодження';
 
   @override
-  String get returnToLabel => 'Повернутися до';
-
-  @override
-  String get welcomeScreenButton => 'Екран привітання';
-
-  @override
-  String get inputPageButton => 'Екран вводу даних';
-
-  @override
   String get professorLabel => 'Професор';
 
   @override
@@ -287,7 +213,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get lengthLabel => 'Тривалість';
 
   @override
-  String get additionalInformation => 'ДОДАТКОВА ІНФОРМАЦІЯ';
+  String get additionalInformation => 'Додаткова інформація';
 
   @override
   String get notesLabel => 'Нотатки';
@@ -314,22 +240,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get sendFeedbackButton => 'Надіслати відгук';
 
   @override
-  String get feedbackPageHeadline => 'Ваш відгук важливий для нас!';
-
-  @override
-  String get feedbackPageDescription =>
-      'Форма відкриється у вашому браузері, щоб ви могли безпечно увійти.';
-
-  @override
-  String get feedbackFormOpenGenericError =>
-      'Не вдалося відкрити форму відгуку.';
-
-  @override
-  String feedbackFormOpenError(String error) {
-    return 'Не вдалося відкрити форму відгуку: $error';
-  }
-
-  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -350,22 +260,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get roomNaN => 'Немає аудиторії';
 
   @override
-  String dateWithWeekday(DateTime date) {
-    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMEd(localeName);
-    final String dateString = dateDateFormat.format(date);
-
-    return '$dateString';
-  }
-
-  @override
-  String dateDayMonth(DateTime date1) {
-    final intl.DateFormat date1DateFormat = intl.DateFormat.MMMM(localeName);
-    final String date1String = date1DateFormat.format(date1);
-
-    return '$date1String';
-  }
-
-  @override
   String get details => 'Деталі';
 
   @override
@@ -374,6 +268,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get noNews => 'Немає новин';
+
+  @override
+  String get universityStructureEmptyTitle => 'Немає даних про університет';
 
   @override
   String get universityStructureEmpty =>
@@ -390,42 +287,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pePageTitle => 'Запис на фізичне виховання';
 
   @override
-  String get pePageDescription =>
-      'Оберіть заняття з фізичного виховання на цей семестр. Пам\'ятайте, що запис проводиться періодично.';
-
-  @override
-  String get pePageButton => 'Перейти до запису';
-
-  @override
-  String get pePageUrlError => 'Не вдалося відкрити сторінку запису.';
-
-  @override
   String get studentIdPageTitle => 'Студентський квиток';
 
   @override
-  String get studentIdPageDescription =>
-      'Оформлення або поновлення студентського квитка здійснюється через університетський акаунт. Пам\'ятайте, що квиток дійсний протягом семестру.';
-
-  @override
-  String get studentIdPageButton => 'Перейти до оформлення';
-
-  @override
-  String get studentIdPageUrlError =>
-      'Не вдалося відкрити сторінку студентського квитка.';
-
-  @override
   String get virtualUniversityPageTitle => 'Віртуальний університет';
-
-  @override
-  String get virtualUniversityPageDescription =>
-      'Перевіряйте оцінки, особисті дані та вирішуйте університетські справи через портал Віртуального університету.';
-
-  @override
-  String get virtualUniversityPageButton => 'Відкрити портал';
-
-  @override
-  String get virtualUniversityPageUrlError =>
-      'Не вдалося відкрити портал Віртуального університету.';
 
   @override
   String get degreeLevelLabel => 'Ступінь навчання';
@@ -445,6 +310,9 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get networkErrorDescription =>
       'Перевірте з\'єднання з інтернетом і спробуйте ще раз.';
+
+  @override
+  String get retryButton => 'Спробувати ще раз';
 
   @override
   String get noGroupsAvailable => 'Немає доступних груп';
@@ -483,12 +351,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get themeSystem => 'Системна';
 
   @override
-  String get appearanceHint => 'Виберіть тему, яка вам найбільше підходить';
-
-  @override
-  String get activeThemeLabel => 'Активна тема: ';
-
-  @override
   String get personalizationHeader => 'Персоналізація';
 
   @override
@@ -514,12 +376,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get accentColorTitle => 'Колір акценту';
-
-  @override
-  String get amoledModeTitle => 'AMOLED Чорний';
-
-  @override
-  String get amoledModeDesc => 'Абсолютно чорний фон для темного режиму';
 
   @override
   String get eventStyleTitle => 'Стиль подій';
@@ -551,6 +407,16 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get openSourceInfo => 'Цей додаток має відкритий вихідний код';
+
+  @override
+  String get openSourceHeader => 'Відкритий код';
+
+  @override
+  String get themeSystemHint =>
+      'Системна змінюється разом із налаштуваннями телефону.';
+
+  @override
+  String get themeHeader => 'Тема';
 
   @override
   String get githubRepo => 'Відкрити репозиторій на Github';
@@ -615,6 +481,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get roleLecturerButton => 'Я викладач';
 
   @override
+  String get roleStudentSubtitle => 'Розклад за напрямом і групою';
+
+  @override
+  String get roleLecturerSubtitle => 'Розклад за викладачем';
+
+  @override
+  String get nextButton => 'Далі';
+
+  @override
   String get lecturerSelectionTitle => 'Виберіть викладача';
 
   @override
@@ -634,22 +509,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get roleStudentViewTitle => 'Перегляд студента';
 
   @override
-  String get roleStudentViewSubtitle => 'Переключитися на розклад студента';
-
-  @override
   String get roleViewingAsStudent => 'Ви переглядаєте розклад як студент.';
 
   @override
   String get roleViewingAsLecturer => 'Ви переглядаєте розклад як викладач.';
 
   @override
-  String get roleCurrentlyActive => 'Зараз активний';
-
-  @override
   String get roleLecturerViewTitle => 'Перегляд викладача';
-
-  @override
-  String get roleLecturerViewSubtitle => 'Переключитися на перегляд викладача';
 
   @override
   String get debugRoleSelector => 'Вибір ролі';
@@ -664,9 +530,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get debugSevenDayMode => 'Режим 7 днів';
 
   @override
-  String get newsLoading => 'Завантаження новин';
-
-  @override
   String get newsNoDataDescription =>
       'Немає нових повідомлень. Перевірте пізніше для оновлень.';
 
@@ -678,10 +541,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get gdprTitle => 'Конфіденційність і дані';
-
-  @override
-  String get gdprBody =>
-      'Додаток Plan PM відображає імена, наукові звання та розклади занять викладачів Морського університету в Щецині. Ці дані отримані з публічно доступних університетських систем та є персональними даними відповідно до Загального регламенту захисту даних (GDPR).\n\nКористуючись додатком, ви підтверджуєте, що розумієте мету відображення цих даних, та надаєте на це згоду.';
 
   @override
   String get gdprAccept => 'Розумію і погоджуюсь';
@@ -710,4 +569,51 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get gdprRevoke =>
       'Ви можете відкликати згоду в будь-який момент у налаштуваннях.';
+
+  @override
+  String get noticeTitle => 'Від студентів для студентів';
+
+  @override
+  String get noticeSubtitle =>
+      'Plan PM — неофіційний застосунок, створений членами Студентського наукового гуртка інформатики (KNI).';
+
+  @override
+  String get noticeAuthorsTitle => 'Створено студентами';
+
+  @override
+  String get noticeAuthorsBody =>
+      'Застосунок розвиває Студентський науковий гурток інформатики Морського університету в Щецині. Університет не здійснює нагляду за ним.';
+
+  @override
+  String get noticeSupplementaryTitle => 'Допоміжний інструмент';
+
+  @override
+  String get noticeSupplementaryBody =>
+      'Розклад у застосунку може бути неактуальним. Застосунок не звільняє від обов\'язку стежити за повідомленнями на офіційному сайті університету.';
+
+  @override
+  String get noticeOfficialTitle => 'Чинним є сайт університету';
+
+  @override
+  String get noticeOfficialBody =>
+      'Основним джерелом інформації є розклад на plany.am.szczecin.pl. Неактуальний розклад у застосунку не виправдовує відсутності на заняттях.';
+
+  @override
+  String get noticeOpenOfficial => 'Відкрити офіційний розклад';
+
+  @override
+  String get noticeAccept => 'Зрозуміло';
+
+  @override
+  String get noticeFooter =>
+      'Неофіційний застосунок KNI. Чинним є розклад на plany.am.szczecin.pl';
+
+  @override
+  String get aboutDataSourceHeader => 'Джерело даних';
+
+  @override
+  String get aboutNoticeRow => 'Інформація про застосунок';
+
+  @override
+  String get couldNotOpenLink => 'Не вдалося відкрити посилання';
 }

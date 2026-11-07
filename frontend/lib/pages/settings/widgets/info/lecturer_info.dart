@@ -1,20 +1,15 @@
-// Karta z danymi wykładowcy — imię i nazwisko z tytułem.
-// Przycisk "Edytuj" pobiera listę wykładowców i otwiera [LecturerSelectionPage].
-// Po wyborze zapisuje dane, synchronizuje plan i wraca do ekranu głównego.
+// Sekcja z danymi wykładowcy — imię i nazwisko z tytułem.
+// Akcja "Edytuj" pobiera listę wykładowców i otwiera [LecturerSelectionPage];
+// wybór zapisuje i synchronizuje [applyLecturerSelection].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:plan_pm/api/models/lecturer_item.dart';
 import 'package:plan_pm/global/models/lecturer.dart';
-import 'package:plan_pm/pages/settings/widgets/controls/themed_outline_button.dart';
-import 'package:plan_pm/pages/settings/widgets/menu/menu_section.dart';
-import 'package:plan_pm/pages/settings/widgets/info/info_text.dart';
+import 'package:plan_pm/global/utils/lecturer_flow.dart';
+import 'package:plan_pm/global/widgets/app_grouped_section.dart';
+import 'package:plan_pm/global/widgets/app_list_row.dart';
+import 'package:plan_pm/global/widgets/app_section.dart';
 import 'package:plan_pm/pages/lecturer/lecturer_selection_page.dart';
-import 'package:plan_pm/service/backend_service.dart';
-import 'package:plan_pm/service/cache_service.dart';
-import 'package:plan_pm/service/database_service.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LecturerInfo extends StatefulWidget {
   const LecturerInfo({super.key});
@@ -24,38 +19,22 @@ class LecturerInfo extends StatefulWidget {
 }
 
 class _LecturerInfoState extends State<LecturerInfo> {
+  /// Trwa pobieranie listy wykładowców — kolejne tapnięcia „Edytuj" ignorujemy.
+  bool _loadingLecturers = false;
+
   Future<void> _editLecturer() async {
+    if (_loadingLecturers) return;
     HapticFeedback.lightImpact();
-    final lecturers = await BackendService().fetchTeachers();
-    if (!mounted) return;
+    _loadingLecturers = true;
+    final lecturers = await loadLecturers(context);
+    _loadingLecturers = false;
+    if (lecturers == null || !mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => LecturerSelectionPage(
           lecturers: lecturers,
-          onContinue: (LecturerItem selected) async {
-            Lecturer.id = selected.id;
-            Lecturer.name = selected.name;
-            Lecturer.title = selected.title;
-
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('lecturer_id', selected.id);
-            await prefs.setString('lecturer_name', selected.name);
-            if (selected.title != null) {
-              await prefs.setString('lecturer_title', selected.title!);
-            } else {
-              await prefs.remove('lecturer_title');
-            }
-
-            await DatabaseService.instance.clearLectures();
-            await CacheService().syncNews();
-            await CacheService().syncLectures();
-
-            if (!mounted) return;
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil('/home', (_) => false);
-          },
+          onContinue: (selected) => applyLecturerSelection(context, selected),
         ),
       ),
     );
@@ -64,20 +43,16 @@ class _LecturerInfoState extends State<LecturerInfo> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return MenuSection(
-      title: l10n.lecturerInfoHeader,
-      action: [
-        ThemedOutlineButton(
-          onPressed: _editLecturer,
-          label: l10n.editButton,
-          icon: LucideIcons.edit3,
-        ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return AppSection(
+      header: l10n.lecturerInfoHeader,
+      actionLabel: l10n.editButton,
+      onAction: _editLecturer,
+      child: AppGroupedSection(
         children: [
-          InfoText(title: l10n.lecturerLabel, content: Lecturer.displayName),
-          const SizedBox(height: 5),
+          AppListRow(
+            title: l10n.lecturerLabel,
+            value: Lecturer.displayName ?? l10n.dataNaN,
+          ),
         ],
       ),
     );

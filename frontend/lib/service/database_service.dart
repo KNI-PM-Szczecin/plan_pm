@@ -13,6 +13,30 @@ class DatabaseService {
 
   static const int dbVersion = 2;
 
+  /// „Wszystkie" newsy — limit dla pełnej listy (zakładka Nowości).
+  static const int newsLimitAll = 9999;
+
+  // Ostatni odczyt każdej tabeli — widżety podają go jako
+  // `FutureBuilder.initialData`, więc po starcie i przy odświeżeniu rysują
+  // się od razu z danymi zamiast klatki szkieletu (odczyt SQLite trwa
+  // 1–2 klatki i treść „skakała"). Kasowany przy czyszczeniu tabeli, żeby po
+  // zmianie roli/grup nie mignęły stare zajęcia. Rozgrzewa go
+  // `app_initialization.dart`, zanim zdejmie splash.
+  List<LectureModel>? _lastLectures;
+  List<NewsModel>? _lastNews;
+  int _lastNewsLimit = 0;
+
+  List<LectureModel>? get lastLectures => _lastLectures;
+
+  /// Ostatnio odczytane newsy przycięte do [limit] — albo `null`, gdy
+  /// poprzedni odczyt był węższy i nie wiadomo, czy w tabeli jest ich więcej.
+  List<NewsModel>? lastNews(int limit) {
+    final news = _lastNews;
+    if (news == null) return null;
+    if (limit > _lastNewsLimit && news.length >= _lastNewsLimit) return null;
+    return news.take(limit).toList();
+  }
+
   // Lectures
   static const String _lecturesTableName = "lectures";
   static const String _lecturesIdColumnName = "id";
@@ -138,11 +162,13 @@ class DatabaseService {
   }
 
   Future<int> clearLectures() async {
+    _lastLectures = null;
     final db = await database;
     return await db.delete(_lecturesTableName);
   }
 
   Future<int> clearNews() async {
+    _lastNews = null;
     final db = await database;
     return await db.delete(_newsTableName);
   }
@@ -153,7 +179,7 @@ class DatabaseService {
       _lecturesTableName,
       orderBy: '$_lecturesDateColumnName ASC, $_lecturesStartTimeColumnName ASC',
     );
-    return data.map((row) {
+    return _lastLectures = data.map((row) {
       final date = DateTime.fromMillisecondsSinceEpoch(
         row[_lecturesDateColumnName] as int,
       );
@@ -208,7 +234,8 @@ class DatabaseService {
       orderBy: '$_newsCreatedAtColumnName DESC',
       limit: limit,
     );
-    return data.map((row) {
+    _lastNewsLimit = limit;
+    return _lastNews = data.map((row) {
       final createdAt = DateTime.fromMillisecondsSinceEpoch(
         row[_newsCreatedAtColumnName] as int,
       );

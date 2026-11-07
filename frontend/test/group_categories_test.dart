@@ -48,11 +48,6 @@ void main() {
         final elective = sections.singleWhere(
           (s) => s.kind == GroupKind.elective,
         );
-        expect(
-          elective.multiSelect,
-          isTrue,
-          reason: 'obieralnych wybiera się kilka naraz',
-        );
         expect(elective.entries, isNotEmpty);
         for (final entry in elective.entries) {
           expect(
@@ -62,14 +57,9 @@ void main() {
           );
         }
 
-        // Grupy rocznika zostają pojedynczym wyborem — także projektowa, która
-        // wcześniej konkurowała o ten sam slot co obieralne.
+        // Grupy rocznika mają własne sekcje, bez obieralnych w środku — także
+        // projektowa, która wcześniej konkurowała o ten sam slot co obieralne.
         for (final section in sections.where((s) => s.kind != GroupKind.elective)) {
-          expect(
-            section.multiSelect,
-            isFalse,
-            reason: 'do grupy ${section.kind} należy się jednej',
-          );
           for (final entry in section.entries) {
             expect(entry.pool.toUpperCase(), isNot(startsWith('WIET')));
           }
@@ -91,16 +81,34 @@ void main() {
         .toList()
       ..sort();
 
-    test('żaden nie dostaje sekcji wielokrotnego wyboru', () {
+    test('żaden nie dostaje sekcji obieralnych', () {
       expect(plansWithout, isNotEmpty);
       for (final plan in plansWithout) {
         final sections = buildGroupSections(groupsByPlan[plan]!);
         expect(
-          sections.where((s) => s.multiSelect),
+          sections.where((s) => s.kind == GroupKind.elective),
           isEmpty,
           reason: plan,
         );
       }
+    });
+
+    // Uczelnia dzieli zwykłe grupy per przedmiot: AiR 1. rok ma P01–P06 i
+    // student jest w kilku projektowych naraz — sekcja musi je wszystkie
+    // wystawić do zaznaczenia, nie jeden slot.
+    test('AiR 1. rok: sześć grup projektowych w jednej sekcji', () {
+      final sections = buildGroupSections(
+        groupsByPlan['Automatyka i robotyka|1|S|inż.']!,
+      );
+      final project = sections.singleWhere((s) => s.kind == GroupKind.project);
+      expect(project.entries.map((e) => e.code), [
+        'P01',
+        'P02',
+        'P03',
+        'P04',
+        'P05',
+        'P06',
+      ]);
     });
   });
 

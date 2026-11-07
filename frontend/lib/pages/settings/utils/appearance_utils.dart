@@ -11,6 +11,13 @@ String getThemeName(ThemeMode mode, AppLocalizations l10n) {
   return l10n.themeSystem;
 }
 
+String getLanguageName(Locale? locale, AppLocalizations l10n) {
+  if (locale?.languageCode == 'pl') return l10n.languagePolish;
+  if (locale?.languageCode == 'en') return l10n.languageEnglish;
+  if (locale?.languageCode == 'uk') return l10n.languageUkrainian;
+  return l10n.languageSystem;
+}
+
 String getEventStyleName(EventColorStyle style, AppLocalizations l10n) {
   switch (style) {
     case EventColorStyle.current: return l10n.eventStyleCurrent;

@@ -1,6 +1,7 @@
-// Wiersz metadanych wiadomości: typ • liczba dni temu.
+// Wiersz metadanych wiadomości: kategoria (akcent, wersaliki) i „ile dni temu".
 import 'package:flutter/material.dart';
 import 'package:plan_pm/global/theme/colors.dart';
+import 'package:plan_pm/global/theme/typography.dart';
 import 'package:plan_pm/l10n/app_localizations.dart';
 
 class NewsMetaRow extends StatelessWidget {
@@ -17,18 +18,20 @@ class NewsMetaRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
-        Text(
-          messageType.toUpperCase(),
-          style: TextStyle(
-            color: AppColor.primary,
-            fontWeight: FontWeight.w600,
+        Expanded(
+          child: Text(
+            messageType.toUpperCase(),
+            style: AppTextStyle.footnoteEmphasized.copyWith(
+              color: AppColor.primary,
+            ),
           ),
         ),
-        const Spacer(),
         Text(
           l10n.daysAgo(DateTime.now().difference(timestamp).inDays),
-          style: TextStyle(color: AppColor.onSurfaceVariant),
+          style: AppTextStyle.footnote.copyWith(color: AppColor.labelSecondary),
         ),
       ],
     );

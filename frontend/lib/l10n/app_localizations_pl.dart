@@ -9,40 +9,11 @@ class AppLocalizationsPl extends AppLocalizations {
   AppLocalizationsPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get stage1Title => '';
+  String get welcomeTagline =>
+      'Przejrzysty i szybki plan zajęć z podglądem na żywo.';
 
   @override
-  String get stage1Button => 'Witaj w Plan PM';
-
-  @override
-  String get stage2Title =>
-      'Zobacz wszystkie zajęcia w przejrzystym planie tygodniowym.';
-
-  @override
-  String get stage2Button => 'Dalej';
-
-  @override
-  String get stage3Title =>
-      'Znajdź swoje sale łatwo dzięki szczegółowym informacjom o lokalizacji.';
-
-  @override
-  String get stage3Button => 'Dalej';
-
-  @override
-  String get stage4Title =>
-      'Otrzymuj przypomnienia przed każdym zajęciami, żeby nigdy ich nie przegapić.';
-
-  @override
-  String get stage4Button => 'Rozpocznij';
-
-  @override
-  String get welcomePageSelectionText => 'Powrót do WelcomeScreen';
-
-  @override
-  String get inputPageSelectionText => 'Powrót do InputPage';
-
-  @override
-  String get inputPageLabel => 'Twoje Dane Akademickie';
+  String get welcomeButton => 'Witaj w Plan PM';
 
   @override
   String get facultyLabel => 'Wydział';
@@ -75,25 +46,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get extramuralButton => 'Zaoczne';
 
   @override
-  String get continueButton => 'Kontynuuj';
-
-  @override
-  String get homePageLabel => 'Dane studenta to: ';
-
-  @override
-  String get facultyText => 'Wydział';
-
-  @override
-  String get fieldText => 'Kierunek';
-
-  @override
-  String get specialisationText => 'Specjalizacja';
-
-  @override
   String get yearText => 'Rok';
-
-  @override
-  String get typeText => 'Tryb studiów';
 
   @override
   String get dataNaN => 'Brak danych';
@@ -105,17 +58,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get skipButton => 'Pomiń';
 
   @override
-  String get fullTimeStudy => 'Stacjonarne';
-
-  @override
-  String get partTimeStudy => 'Niestacjonarne';
-
-  @override
   String get groupSelection => 'Wybór grupy';
 
   @override
   String get groupSelectionHint =>
       'Wybierz swój wydział, kierunek i tryb, aby spersonalizować plan zajęć';
+
+  @override
+  String get groupSelectionIntro =>
+      'Wybierz grupy, do których należysz — plan pokaże tylko Twoje zajęcia. Bez wyboru zobaczysz zajęcia całego kierunku.';
 
   @override
   String get groupLoading => 'Ładowanie grup...';
@@ -124,19 +75,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupSettings => 'Ustawienia studiów';
 
   @override
-  String get groupSelectionHintAfterLoad =>
-      'Na podstawie Twoich ustawień studiów pobraliśmy dostępne grupy. Wybierz jedną lub wiele, aby śledzić kilka planów.';
-
-  @override
   String get save => 'Zapisz';
 
   @override
   String get todayDataNaN => 'Brak zajęć na dziś';
-
-  @override
-  String pageErrorMess(Object snapshotError) {
-    return 'Błąd w FutureBuilder $snapshotError';
-  }
 
   @override
   String lectureLength(num lecturesLength) {
@@ -145,9 +87,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get recentLecture => 'Twoje 3 najbliższe zajęcia';
-
-  @override
-  String get lectureLoading => 'Ładowanie planu';
 
   @override
   String get todayLecturesNaN => 'Brak zajęć na dziś';
@@ -178,28 +117,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get daysShortSun => 'Nd';
 
   @override
-  String get daysMon => 'poniedziałek';
+  String get previousWeek => 'Poprzedni tydzień';
 
   @override
-  String get daysTue => 'wtorek';
-
-  @override
-  String get daysWed => 'środa';
-
-  @override
-  String get daysThu => 'czwartek';
-
-  @override
-  String get daysFri => 'piątek';
+  String get nextWeek => 'Następny tydzień';
 
   @override
   String get selectedGroupsHeader => 'Wybrane grupy';
 
   @override
   String get changeGroupsButton => 'Zmień grupy';
-
-  @override
-  String get selectedGroupsLabel => 'Wybrane grupy';
 
   @override
   String get noDataAvailable => 'Brak danych';
@@ -240,10 +167,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get groupTypeElective => 'Przedmioty obieralne';
 
   @override
-  String get groupTypeElectiveHint => 'Możesz zaznaczyć kilka';
+  String get groupTypeOther => 'Inne';
 
   @override
-  String get groupTypeOther => 'Inne';
+  String get selectAllButton => 'Zaznacz wszystkie';
+
+  @override
+  String get deselectAllButton => 'Odznacz wszystkie';
+
+  @override
+  String selectedCount(int count) {
+    return 'Wybrano: $count';
+  }
 
   @override
   String get pageTitleHome => 'Strona główna';
@@ -261,15 +196,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get debugHeader => 'Debug';
 
   @override
-  String get returnToLabel => 'Powrót do';
-
-  @override
-  String get welcomeScreenButton => 'Welcome screen';
-
-  @override
-  String get inputPageButton => 'Podaj dane';
-
-  @override
   String get professorLabel => 'Prowadzący';
 
   @override
@@ -279,7 +205,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get lengthLabel => 'Czas trwania';
 
   @override
-  String get additionalInformation => 'INFORMACJE DODATKOWE';
+  String get additionalInformation => 'Informacje dodatkowe';
 
   @override
   String get notesLabel => 'Notatki';
@@ -306,22 +232,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sendFeedbackButton => 'Prześlij opinie';
 
   @override
-  String get feedbackPageHeadline => 'Twoja opinia jest dla nas ważna!';
-
-  @override
-  String get feedbackPageDescription =>
-      'Formularz otworzy się w Twojej przeglądarce, abyś mógł bezpiecznie się zalogować.';
-
-  @override
-  String get feedbackFormOpenGenericError =>
-      'Nie udało się otworzyć formularza opinii.';
-
-  @override
-  String feedbackFormOpenError(String error) {
-    return 'Nie udało się otworzyć formularza opinii: $error';
-  }
-
-  @override
   String daysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -342,22 +252,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get roomNaN => 'Brak sali';
 
   @override
-  String dateWithWeekday(DateTime date) {
-    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMEd(localeName);
-    final String dateString = dateDateFormat.format(date);
-
-    return '$dateString';
-  }
-
-  @override
-  String dateDayMonth(DateTime date1) {
-    final intl.DateFormat date1DateFormat = intl.DateFormat.MMMM(localeName);
-    final String date1String = date1DateFormat.format(date1);
-
-    return '$date1String';
-  }
-
-  @override
   String get details => 'Szczegóły';
 
   @override
@@ -365,6 +259,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get noNews => 'Brak aktualności';
+
+  @override
+  String get universityStructureEmptyTitle => 'Brak danych o uczelni';
 
   @override
   String get universityStructureEmpty =>
@@ -380,42 +277,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pePageTitle => 'Zapisy na WF';
 
   @override
-  String get pePageDescription =>
-      'Wybierz zajęcia z wychowania fizycznego na ten semestr. Pamiętaj, że zapisy odbywają się okresowo.';
-
-  @override
-  String get pePageButton => 'Przejdź do zapisów';
-
-  @override
-  String get pePageUrlError => 'Nie udało się otworzyć strony zapisów.';
-
-  @override
   String get studentIdPageTitle => 'Legitymacja studencka';
 
   @override
-  String get studentIdPageDescription =>
-      'Wyrobienie lub odnowienie legitymacji studenckiej odbywa się przez uczelniane konto. Pamiętaj, że legitymacja jest ważna przez semestr.';
-
-  @override
-  String get studentIdPageButton => 'Przejdź do wyrobienia';
-
-  @override
-  String get studentIdPageUrlError =>
-      'Nie udało się otworzyć strony legitymacji.';
-
-  @override
   String get virtualUniversityPageTitle => 'Wirtualna uczelnia';
-
-  @override
-  String get virtualUniversityPageDescription =>
-      'Sprawdź swoje oceny, dane osobowe i załatwiaj sprawy uczelniane przez portal Wirtualnej Uczelni.';
-
-  @override
-  String get virtualUniversityPageButton => 'Otwórz portal';
-
-  @override
-  String get virtualUniversityPageUrlError =>
-      'Nie udało się otworzyć portalu Wirtualnej Uczelni.';
 
   @override
   String get degreeLevelLabel => 'Stopień studiów';
@@ -435,6 +300,9 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get networkErrorDescription =>
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
+
+  @override
+  String get retryButton => 'Spróbuj ponownie';
 
   @override
   String get noGroupsAvailable => 'Brak dostępnych grup';
@@ -473,12 +341,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get themeSystem => 'Systemowy';
 
   @override
-  String get appearanceHint => 'Wybierz motyw, który najbardziej Ci odpowiada';
-
-  @override
-  String get activeThemeLabel => 'Aktywny motyw: ';
-
-  @override
   String get personalizationHeader => 'Personalizacja';
 
   @override
@@ -504,12 +366,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get accentColorTitle => 'Kolor wiodący';
-
-  @override
-  String get amoledModeTitle => 'Prawdziwa czerń';
-
-  @override
-  String get amoledModeDesc => 'Całkowicie czarne tło w trybie ciemnym';
 
   @override
   String get eventStyleTitle => 'Styl kolorowania zajęć';
@@ -541,6 +397,16 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get openSourceInfo => 'Ta aplikacja jest open-source';
+
+  @override
+  String get openSourceHeader => 'Open source';
+
+  @override
+  String get themeSystemHint =>
+      'Systemowy przełącza się razem z ustawieniami telefonu.';
+
+  @override
+  String get themeHeader => 'Motyw';
 
   @override
   String get githubRepo => 'Otwórz repozytorium na Github';
@@ -605,6 +471,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get roleLecturerButton => 'Jestem wykładowcą';
 
   @override
+  String get roleStudentSubtitle => 'Plan według kierunku i grupy';
+
+  @override
+  String get roleLecturerSubtitle => 'Plan według prowadzącego';
+
+  @override
+  String get nextButton => 'Dalej';
+
+  @override
   String get lecturerSelectionTitle => 'Wybierz prowadzącego';
 
   @override
@@ -624,9 +499,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get roleStudentViewTitle => 'Widok studenta';
 
   @override
-  String get roleStudentViewSubtitle => 'Przełącz na plan studenta';
-
-  @override
   String get roleViewingAsStudent => 'Przeglądasz aktualnie plan jako student.';
 
   @override
@@ -634,13 +506,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Przeglądasz aktualnie plan jako wykładowca.';
 
   @override
-  String get roleCurrentlyActive => 'Aktualnie aktywny';
-
-  @override
   String get roleLecturerViewTitle => 'Widok wykładowcy';
-
-  @override
-  String get roleLecturerViewSubtitle => 'Przełącz na widok wykładowcy';
 
   @override
   String get debugRoleSelector => 'Wybór roli';
@@ -655,9 +521,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get debugSevenDayMode => 'Tryb 7-dniowy';
 
   @override
-  String get newsLoading => 'Ładowanie aktualności';
-
-  @override
   String get newsNoDataDescription =>
       'Brak nowych wiadomości. Sprawdź później, aby zobaczyć aktualizacje.';
 
@@ -669,10 +532,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get gdprTitle => 'Prywatność i dane';
-
-  @override
-  String get gdprBody =>
-      'Aplikacja Plan PM wyświetla imiona, nazwiska, tytuły naukowe i plany zajęć wykładowców Politechniki Morskiej w Szczecinie. Dane te są pobierane z publicznie dostępnych systemów uczelni i stanowią dane osobowe w rozumieniu Rozporządzenia o Ochronie Danych Osobowych (RODO).\n\nKorzystając z aplikacji, potwierdzasz, że rozumiesz cel prezentowania tych danych i wyrażasz na to zgodę.';
 
   @override
   String get gdprAccept => 'Rozumiem i akceptuję';
@@ -701,4 +560,51 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get gdprRevoke =>
       'Możesz cofnąć zgodę w dowolnym momencie w ustawieniach.';
+
+  @override
+  String get noticeTitle => 'Od studentów dla studentów';
+
+  @override
+  String get noticeSubtitle =>
+      'Plan PM to nieoficjalna aplikacja tworzona przez członków Koła Naukowego Informatyki.';
+
+  @override
+  String get noticeAuthorsTitle => 'Tworzona przez studentów';
+
+  @override
+  String get noticeAuthorsBody =>
+      'Aplikację rozwija Koło Naukowe Informatyki Politechniki Morskiej w Szczecinie. Uczelnia nie nadzoruje jej działania.';
+
+  @override
+  String get noticeSupplementaryTitle => 'Narzędzie dodatkowe';
+
+  @override
+  String get noticeSupplementaryBody =>
+      'Plan w aplikacji może być nieaktualny. Aplikacja nie zwalnia z obowiązku śledzenia komunikatów na oficjalnej stronie uczelni.';
+
+  @override
+  String get noticeOfficialTitle => 'Obowiązuje strona uczelni';
+
+  @override
+  String get noticeOfficialBody =>
+      'Nadrzędnym źródłem informacji jest plan na plany.am.szczecin.pl. Nieaktualny plan w aplikacji nie usprawiedliwia nieobecności na zajęciach.';
+
+  @override
+  String get noticeOpenOfficial => 'Otwórz oficjalny plan';
+
+  @override
+  String get noticeAccept => 'Rozumiem';
+
+  @override
+  String get noticeFooter =>
+      'Nieoficjalna aplikacja KNI. Obowiązuje plan na plany.am.szczecin.pl';
+
+  @override
+  String get aboutDataSourceHeader => 'Źródło danych';
+
+  @override
+  String get aboutNoticeRow => 'Informacja o aplikacji';
+
+  @override
+  String get couldNotOpenLink => 'Nie udało się otworzyć linku';
 }
